@@ -73,7 +73,7 @@ export function Sticker({
   className,
 }: {
   children: ReactNode;
-  tone?: "pink" | "lavender" | "yellow" | "frog" | "leaf";
+  tone?: "pink" | "lavender" | "yellow" | "frog" | "leaf" | "cream";
   className?: string;
 }) {
   const toneClass = {
@@ -82,6 +82,7 @@ export function Sticker({
     yellow: "bg-yellow",
     frog: "bg-frog",
     leaf: "bg-leaf",
+    cream: "bg-cream",
   }[tone];
   return (
     <span
