@@ -109,7 +109,7 @@ function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
   if (hero) used.add(hero.id);
 
   // Compact homepage: fewer, stronger cards and a light video load for phones.
-  const meetIvy = take(photoPosts, 2);
+  const meetIvy = take(photoPosts, 3);
   const freshPhotoPosts = take(photoPosts, 2);
   const freshVideoPosts = take(videoPosts, 4);
   const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
