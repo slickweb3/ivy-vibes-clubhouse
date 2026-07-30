@@ -117,7 +117,7 @@ function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
   const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
   const ivyTv = take(videoPosts, 8);
   const hallOfFame = take(photoPosts, 8);
-  const memeMachine = take([...photoPosts, ...videoPosts], 3);
+  const memeMachine = take([...photoPosts, ...videoPosts], 2);
   const ownerCorner = take([...photoPosts, ...videoPosts], 1)[0] ?? null;
 
   return { hero, meetIvy, freshPosts, ivyTv, hallOfFame, memeMachine, ownerCorner };
