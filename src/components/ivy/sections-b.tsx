@@ -7,7 +7,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Section, MediaPlaceholder, InfoCard, Sticker, StatusChip } from "./primitives";
+import { Section, MediaPlaceholder, ApprovedMedia, InfoCard, Sticker, StatusChip } from "./primitives";
+import type { UnifiedMediaItem } from "@/types/media";
 import { CrownDoodle, FrogDoodle, IvyWordmark, PawDoodle, VineDivider } from "./doodles";
 import { useEmbedConsent } from "./cookie-consent";
 import {
@@ -33,7 +34,7 @@ const MEME_PHOTOS = [
   "Approved meme photo 6",
 ];
 
-export function MemeMachine() {
+export function MemeMachine({ items = [] }: { items?: UnifiedMediaItem[] }) {
   const [photo, setPhoto] = useState(0);
   const [topCaption, setTopCaption] = useState(memeMachine.captions[0]);
   const [bottomCaption, setBottomCaption] = useState(memeMachine.captions[1]);
@@ -51,7 +52,8 @@ export function MemeMachine() {
       <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
         <div className="rounded-2xl bg-card p-4 pop-static">
           <div className="relative">
-            <MediaPlaceholder
+            <ApprovedMedia
+              item={items[photo] ?? null}
               label={MEME_PHOTOS[photo]}
               aspect="square"
               tone="leaf"
@@ -71,7 +73,10 @@ export function MemeMachine() {
           <fieldset>
             <legend className="font-display text-base text-charcoal">1. Choose an Ivy photo</legend>
             <div className="mt-3 grid grid-cols-3 gap-3">
-              {MEME_PHOTOS.map((label, index) => (
+              {(items.length > 0
+                ? items.map((item, index) => item.altText || `Approved meme photo ${index + 1}`)
+                : MEME_PHOTOS
+              ).map((label, index) => (
                 <button
                   key={label}
                   type="button"
@@ -82,7 +87,13 @@ export function MemeMachine() {
                     photo === index ? "bg-frog" : "bg-card hover:bg-leaf",
                   )}
                 >
-                  <MediaPlaceholder label={`Photo ${index + 1}`} aspect="square" tone="leaf" compact />
+                  <ApprovedMedia
+                    item={items[index] ?? null}
+                    label={`Photo ${index + 1}`}
+                    aspect="square"
+                    tone="leaf"
+                    compact
+                  />
                   <span className="sr-only">{label}</span>
                 </button>
               ))}
