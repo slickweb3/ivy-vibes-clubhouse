@@ -565,8 +565,10 @@ export function TokenRecord() {
     { label: "Token name", value: projectConfig.projectName },
     { label: "Ticker", value: projectConfig.ticker },
     { label: "Blockchain", value: displayValue(projectConfig.blockchain) },
+    { label: "Launch platform", value: displayValue(projectConfig.launchPlatform) },
     { label: "Contract address", value: shortenAddress(projectConfig.contractAddress) },
     { label: "Total supply", value: displayValue(projectConfig.tokenSupply) },
+    { label: "Buy / sell tax", value: "0% / 0%" },
     { label: "Launch date", value: displayValue(projectConfig.launchDate) },
     { label: "Tokenomics", value: displayValue(projectConfig.tokenomicsUrl) },
     { label: "Record last updated", value: displayValue(projectConfig.tokenRecordUpdatedAt) },
@@ -577,7 +579,7 @@ export function TokenRecord() {
       id="token-record"
       eyebrow="$IVY"
       title={tokenRecord.heading}
-      intro="Nothing here is estimated. Every unverified field stays marked Coming Soon."
+      intro="Nothing here is estimated. Every unconfirmed field stays marked Coming Soon."
       tone="white"
     >
       <div className="overflow-hidden rounded-2xl bg-cream pop-static">
