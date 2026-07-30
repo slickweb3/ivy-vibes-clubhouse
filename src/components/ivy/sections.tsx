@@ -330,15 +330,25 @@ export function PostCard({ post }: { post: UnifiedMediaItem }) {
 
 /* ----------------------------------------------------------------- Ivy TV */
 
-export function IvyTV() {
+export function IvyTV({ items: approved = [] }: { items?: UnifiedMediaItem[] }) {
   const [category, setCategory] = useState<IvyTvCategory>("All");
   const { embedsAllowed, openSettings } = useEmbedConsent();
+
+  const approvedVideos = useMemo(
+    () => approved.filter((item) => isVideoLike(item) || item.mediaKind === "image"),
+    [approved],
+  );
 
   const items = useMemo(
     () => (category === "All" ? ivyTvItems : ivyTvItems.filter((item) => item.category === category)),
     [category],
   );
 
+  // Approved imports appear under "All" and "Latest Posts"; the curated
+  // placeholder rails stay for categories that have no approved item yet.
+  const showApproved = category === "All" || category === "Latest Posts";
+  const featuredApproved =
+    approvedVideos.find((item) => item.isFeatured) ?? approvedVideos[0] ?? null;
   const featured = ivyTvItems.find((item) => item.isFeatured);
 
   return (
@@ -352,7 +362,8 @@ export function IvyTV() {
     >
       {featured ? (
         <div className="mb-10 grid gap-6 rounded-2xl bg-cream p-5 pop-static lg:grid-cols-[1.4fr_1fr]">
-          <MediaPlaceholder
+          <ApprovedMedia
+            item={featuredApproved}
             label={featured.mediaLabel}
             aspect="video"
             tone="leaf"
@@ -360,8 +371,12 @@ export function IvyTV() {
           />
           <div className="flex flex-col justify-center gap-3">
             <Sticker tone="yellow">Featured episode</Sticker>
-            <h3 className="font-display text-2xl text-charcoal">{featured.title}</h3>
-            <p className="text-sm text-charcoal/85">{featured.caption}</p>
+            <h3 className="font-display text-2xl text-charcoal">
+              {featuredApproved ? "Straight from the Frog Queen" : featured.title}
+            </h3>
+            <p className="text-sm text-charcoal/85">
+              {featuredApproved ? displayCaption(featuredApproved) || featured.caption : featured.caption}
+            </p>
             <p className="text-sm text-charcoal/70">
               {embedsAllowed
                 ? "Embeds are allowed. The player will appear once an approved video is linked."
@@ -400,6 +415,34 @@ export function IvyTV() {
         })}
       </div>
 
+      {showApproved && approvedVideos.length > 0 ? (
+        <ul className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {approvedVideos.map((item) => (
+            <li key={item.key} className="rounded-2xl bg-cream p-4 pop-static">
+              <ApprovedMedia item={item} label="Approved Ivy video" aspect="tall" tone="leaf" compact />
+              <p className="mt-3 line-clamp-3 text-sm text-charcoal/85">{displayCaption(item)}</p>
+              <div className="mt-3 flex items-center gap-2">
+                {item.permalink ? (
+                  <a
+                    href={item.permalink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-lavender px-3 font-display text-xs text-charcoal"
+                  >
+                    <Play aria-hidden className="h-3.5 w-3.5" />
+                    Watch on {item.platform === "tiktok" ? "TikTok" : "Instagram"}
+                  </a>
+                ) : (
+                  <span className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-lavender px-3 font-display text-xs text-charcoal">
+                    <Play aria-hidden className="h-3.5 w-3.5" /> Approved clip
+                  </span>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
       <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
           <li key={item.id} className="rounded-2xl bg-cream p-4 pop-static">
@@ -422,7 +465,7 @@ export function IvyTV() {
 
 /* ----------------------------------------------------------- Hall of Fame */
 
-export function HallOfFame() {
+export function HallOfFame({ items = [] }: { items?: UnifiedMediaItem[] }) {
   return (
     <Section
       id="hall-of-fame"
@@ -432,7 +475,19 @@ export function HallOfFame() {
       tone="lavender"
     >
       <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 [&>*]:mb-4">
-        {hallOfFameCaptions.map((caption, index) => (
+        {items.map((item, index) => (
+          <Polaroid
+            key={item.key}
+            item={item}
+            label="Approved Ivy photo"
+            caption={displayCaption(item) || hallOfFameCaptions[index % hallOfFameCaptions.length]}
+            rotate={index % 3 === 0 ? -2.5 : index % 3 === 1 ? 1.5 : -1}
+            tone={(["leaf", "cream", "yellow", "pink"] as const)[index % 4]}
+            aspect={index % 4 === 0 ? "portrait" : "square"}
+            className="break-inside-avoid"
+          />
+        ))}
+        {hallOfFameCaptions.slice(0, Math.max(hallOfFameCaptions.length - items.length, 0)).map((caption, index) => (
           <Polaroid
             key={caption}
             label={`Approved Ivy photo ${index + 1}`}
