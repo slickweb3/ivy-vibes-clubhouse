@@ -175,7 +175,7 @@ export function Sticker({
         className,
       )}
     >
-      {children}
+      {keepTickerCase(children)}
     </span>
   );
 }
