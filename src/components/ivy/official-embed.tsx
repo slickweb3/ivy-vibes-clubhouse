@@ -51,7 +51,7 @@ export function OfficialSocialEmbed({
           observer.disconnect();
         }
       },
-      { rootMargin: "600px 0px" },
+      { rootMargin: "200px 0px" },
     );
     observer.observe(node);
     return () => observer.disconnect();
@@ -61,16 +61,32 @@ export function OfficialSocialEmbed({
   const fallbackLabel = curatedFallbackLabel(post);
   const [playing, setPlaying] = useState(false);
   const [posterBroken, setPosterBroken] = useState(false);
+  const isTikTok = post.platform === "tiktok";
+
+  // Phones struggle when many TikTok players exist at once, so a video player is
+  // only mounted on tap and any previously opened player is unmounted first.
+  useEffect(() => {
+    if (!playing) return;
+    const id = post.id;
+    activePlayerId = id;
+    const unsubscribe = subscribeActivePlayer((next) => {
+      if (next !== id) setPlaying(false);
+    });
+    notifyActivePlayer(id);
+    return unsubscribe;
+  }, [playing, post.id]);
+
   // TikTok gives us its own official poster image, so the card shows a real
   // picture straight away and the video opens in TikTok's player on tap.
-  const usePoster =
-    post.platform === "tiktok" && !!post.thumbnailUrl && !posterBroken && !playing;
+  const showPlayGate = isTikTok && !playing;
+  const usePoster = showPlayGate && !!post.thumbnailUrl && !posterBroken;
   const showEmbed = embedsAllowed && !failed;
-  const aspect = post.platform === "tiktok" ? "aspect-[9/16]" : "aspect-[3/4]";
+  const aspect = isTikTok ? "aspect-[9/16]" : "aspect-[3/4]";
   const embedSrc =
-    post.platform === "tiktok" && playing
+    isTikTok && playing
       ? `${post.officialEmbedUrl}${post.officialEmbedUrl.includes("?") ? "&" : "?"}autoplay=1`
       : post.officialEmbedUrl;
+
 
   return (
     <figure
