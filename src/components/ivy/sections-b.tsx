@@ -229,9 +229,7 @@ export function RoyalCourt() {
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {royalCourt.channels.map((channel) => {
           const url =
-            channel.id === "email"
-              ? projectConfig.contactEmail
-              : (projectConfig.socials as unknown as Record<string, string | null>)[channel.id] ?? null;
+            (projectConfig.socials as unknown as Record<string, string | null>)[channel.id] ?? null;
           return (
             <li key={channel.id} className="rounded-2xl bg-cream p-5 pop-static">
               <div className="flex items-center justify-between gap-3">
