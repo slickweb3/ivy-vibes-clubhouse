@@ -108,16 +108,17 @@ function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
 
   if (hero) used.add(hero.id);
 
-  // Keep the site photo-forward: at most 15 videos across the whole homepage.
-  const meetIvy = take(photoPosts, 3);
-  const freshPhotoPosts = take(photoPosts, 1);
+  // Compact homepage: fewer, stronger cards and a light video load for phones.
+  const meetIvy = take(photoPosts, 2);
+  const freshPhotoPosts = take(photoPosts, 2);
   const freshVideoPosts = take(videoPosts, 4);
   const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
-  const ivyTv = take(videoPosts, 8);
-  const hallOfFame = take(photoPosts, 10);
+  const ivyTv: CuratedPost[] = [];
+  const hallOfFame = take(photoPosts, 4);
   const ownerCorner = take([...photoPosts, ...videoPosts], 1)[0] ?? null;
 
   return { hero, meetIvy, freshPosts, ivyTv, hallOfFame, ownerCorner };
+
 }
 
 function Home() {
