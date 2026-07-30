@@ -102,15 +102,17 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
           aria-label="Cookie choices"
           className="fixed inset-x-3 bottom-3 z-50 rounded-2xl bg-card p-4 pop-static sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md"
         >
-          <h2 className="font-display text-base text-charcoal">Optional embeds are switched off</h2>
+          <h2 className="font-display text-base text-charcoal">Ivy&apos;s posts are loading from Instagram &amp; TikTok</h2>
           <p className="mt-1.5 text-sm text-charcoal/80">
-            Social video embeds can set cookies belonging to the hosting platform. Until you allow
-            them you will see a thumbnail, the caption and a link to the original post.
+            Her official embeds show up automatically so you can watch straight away. They can set
+            cookies belonging to Instagram or TikTok — switch them off any time and you&apos;ll get a
+            card with a link to the original post instead.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Button onClick={grant} className="min-h-11 rounded-full bg-frog font-display text-charcoal pop hover:bg-frog">
-              Allow embeds
+              Keep embeds on
             </Button>
+
             <Button
               onClick={deny}
               variant="secondary"
