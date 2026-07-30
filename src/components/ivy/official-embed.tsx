@@ -59,8 +59,18 @@ export function OfficialSocialEmbed({
 
   const label = platformLabel(post.platform);
   const fallbackLabel = curatedFallbackLabel(post);
+  const [playing, setPlaying] = useState(false);
+  const [posterBroken, setPosterBroken] = useState(false);
+  // TikTok gives us its own official poster image, so the card shows a real
+  // picture straight away and the video opens in TikTok's player on tap.
+  const usePoster =
+    post.platform === "tiktok" && !!post.thumbnailUrl && !posterBroken && !playing;
   const showEmbed = embedsAllowed && !failed;
   const aspect = post.platform === "tiktok" ? "aspect-[9/16]" : "aspect-[4/5]";
+  const embedSrc =
+    post.platform === "tiktok" && playing
+      ? `${post.officialEmbedUrl}${post.officialEmbedUrl.includes("?") ? "&" : "?"}autoplay=1`
+      : post.officialEmbedUrl;
 
   return (
     <figure
@@ -77,7 +87,35 @@ export function OfficialSocialEmbed({
           toneBg[tone],
         )}
       >
-        {showEmbed ? (
+        {showEmbed && usePoster ? (
+          <button
+            type="button"
+            onClick={() => setPlaying(true)}
+            aria-label={`Play Ivy's ${label} video${post.adminLabel ? ` — ${post.adminLabel}` : ""}`}
+            className="group absolute inset-0 h-full w-full"
+          >
+            <img
+              src={post.thumbnailUrl ?? ""}
+              alt={
+                post.originalCaption ??
+                `Ivy in an official ${label} video from @${post.sourceAccountHandle}`
+              }
+              loading="lazy"
+              decoding="async"
+              referrerPolicy="no-referrer"
+              onError={() => setPosterBroken(true)}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <span
+              aria-hidden
+              className="absolute inset-0 flex items-center justify-center bg-charcoal/10 transition-colors group-hover:bg-charcoal/25"
+            >
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-card/90 ink-border transition-transform motion-safe:group-hover:scale-110">
+                <Play className="ml-0.5 h-6 w-6 text-ivy" />
+              </span>
+            </span>
+          </button>
+        ) : showEmbed ? (
           <>
             {!loaded ? (
               <div
@@ -88,15 +126,15 @@ export function OfficialSocialEmbed({
                 <PawDoodle className="h-5 w-5 text-charcoal/40" />
               </div>
             ) : null}
-            {inView ? (
+            {inView || playing ? (
               <iframe
-                src={post.officialEmbedUrl}
+                src={embedSrc}
                 title={`Official ${label} post from @${post.sourceAccountHandle}${
                   post.adminLabel ? ` — ${post.adminLabel}` : ""
                 }`}
                 loading="lazy"
                 referrerPolicy="strict-origin-when-cross-origin"
-                allow="encrypted-media; picture-in-picture; fullscreen"
+                allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                 allowFullScreen
                 scrolling="no"
                 onLoad={() => setLoaded(true)}
@@ -134,6 +172,13 @@ export function OfficialSocialEmbed({
           </div>
         )}
       </div>
+
+      {post.originalCaption && !compact ? (
+        <p className="line-clamp-2 text-xs leading-snug text-charcoal/80">
+          {post.originalCaption}
+        </p>
+      ) : null}
+
 
       <figcaption className="flex flex-wrap items-center justify-between gap-2 text-xs">
         <a
