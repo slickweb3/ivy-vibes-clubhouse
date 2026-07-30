@@ -241,3 +241,35 @@
     scroll-behavior: auto !important;
   }
 }
+
+@utility ivy-drift {
+  animation: ivy-drift 30s linear infinite;
+}
+
+@utility ivy-glow {
+  animation: ivy-glow 12s ease-in-out infinite;
+}
+
+@keyframes ivy-drift {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(55vh) translateX(3vw) rotate(180deg);
+  }
+  100% {
+    transform: translateY(120vh) translateX(-2vw) rotate(360deg);
+  }
+}
+
+@keyframes ivy-glow {
+  0%,
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.15) translateY(-3vh);
+    opacity: 0.9;
+  }
+}
