@@ -291,6 +291,7 @@ export const royalCourt = {
     { id: "tiktok", label: "TikTok" },
     { id: "x", label: "X" },
     { id: "telegram", label: "Telegram" },
+    { id: "community", label: "X Community" },
   ],
   gallery:
     "A moderated community gallery is planned. There is no upload form yet—submissions will open once moderation is in place.",

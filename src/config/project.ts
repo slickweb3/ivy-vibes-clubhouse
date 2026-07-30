@@ -21,6 +21,7 @@ export interface ProjectSocials {
   tiktok: Maybe;
   x: Maybe;
   telegram: Maybe;
+  community: Maybe;
 }
 
 export interface ProjectConfig {
@@ -59,8 +60,9 @@ export const projectConfig: ProjectConfig = {
   socials: {
     instagram: "https://www.instagram.com/frogqueenivy/",
     tiktok: "https://www.tiktok.com/@ivyvibing",
-    x: "https://x.com/ivyvibing",
+    x: "https://x.com/Ivyvibing",
     telegram: "https://t.me/frogqueenivy",
+    community: "https://x.com/i/communities/1930581728466202736",
   },
   socialFeed: {
     instagramEnabled: false,

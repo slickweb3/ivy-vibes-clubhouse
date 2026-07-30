@@ -19,6 +19,7 @@ const socialLabels: Record<string, string> = {
   tiktok: "TikTok",
   x: "X",
   telegram: "Telegram",
+  community: "X Community",
 };
 
 function AnnouncementBar() {
