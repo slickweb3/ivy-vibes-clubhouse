@@ -18,6 +18,7 @@ import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as MediaUsageRouteImport } from './routes/media-usage'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RiskDisclosureRouteImport } from './routes/risk-disclosure'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiSocialFeedRouteImport } from './routes/api/social-feed'
@@ -69,6 +70,11 @@ const RiskDisclosureRoute = RiskDisclosureRouteImport.update({
   path: '/risk-disclosure',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/media-usage': typeof MediaUsageRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByTo {
   '/media-usage': typeof MediaUsageRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
@@ -145,6 +153,7 @@ export interface FileRoutesById {
   '/media-usage': typeof MediaUsageRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
@@ -163,6 +172,7 @@ export interface FileRouteTypes {
     | '/media-usage'
     | '/privacy'
     | '/risk-disclosure'
+    | '/sitemap.xml'
     | '/terms'
     | '/admin'
     | '/api/social-feed'
@@ -179,6 +189,7 @@ export interface FileRouteTypes {
     | '/media-usage'
     | '/privacy'
     | '/risk-disclosure'
+    | '/sitemap.xml'
     | '/terms'
     | '/admin'
     | '/api/social-feed'
@@ -196,6 +207,7 @@ export interface FileRouteTypes {
     | '/media-usage'
     | '/privacy'
     | '/risk-disclosure'
+    | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/admin'
     | '/api/social-feed'
@@ -214,6 +226,7 @@ export interface RootRouteChildren {
   MediaUsageRoute: typeof MediaUsageRoute
   PrivacyRoute: typeof PrivacyRoute
   RiskDisclosureRoute: typeof RiskDisclosureRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   ApiSocialFeedRoute: typeof ApiSocialFeedRoute
   LegalSlugRoute: typeof LegalSlugRoute
@@ -286,6 +299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RiskDisclosureRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -352,6 +372,7 @@ const rootRouteChildren: RootRouteChildren = {
   MediaUsageRoute: MediaUsageRoute,
   PrivacyRoute: PrivacyRoute,
   RiskDisclosureRoute: RiskDisclosureRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   ApiSocialFeedRoute: ApiSocialFeedRoute,
   LegalSlugRoute: LegalSlugRoute,
