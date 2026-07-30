@@ -66,7 +66,7 @@ export function OfficialSocialEmbed({
   const usePoster =
     post.platform === "tiktok" && !!post.thumbnailUrl && !posterBroken && !playing;
   const showEmbed = embedsAllowed && !failed;
-  const aspect = post.platform === "tiktok" ? "aspect-[9/16]" : "aspect-[4/5]";
+  const aspect = post.platform === "tiktok" ? "aspect-[9/16]" : "aspect-[3/4]";
   const embedSrc =
     post.platform === "tiktok" && playing
       ? `${post.officialEmbedUrl}${post.officialEmbedUrl.includes("?") ? "&" : "?"}autoplay=1`
