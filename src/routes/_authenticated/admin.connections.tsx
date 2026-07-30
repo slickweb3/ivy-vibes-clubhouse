@@ -62,7 +62,7 @@ function ConnectionsPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         {(cardsQuery.data ?? placeholderCards()).map((card) => (
-          <article key={card.platform} className="rounded-2xl bg-cream p-5 pop-static">
+          <article key={card.platform} className="rounded-2xl bg-card p-5 pop-static">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-display text-xl text-charcoal capitalize">{card.platform}</h2>
               <StatusChip
@@ -140,7 +140,7 @@ function ConnectionsPage() {
         ))}
       </div>
 
-      <section className="rounded-2xl bg-cream p-5 pop-static">
+      <section className="rounded-2xl bg-card p-5 pop-static">
         <h2 className="font-display text-lg text-charcoal">Sync history</h2>
         <p className="mt-1 text-sm text-charcoal/80">
           Sanitized counts only. If an upstream request fails, the last successful public feed is

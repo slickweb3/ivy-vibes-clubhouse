@@ -62,7 +62,7 @@ function AuthPage() {
 
   return (
     <main id="main" className="grid min-h-dvh place-items-center bg-leaf px-4 py-12">
-      <div className="w-full max-w-md rounded-2xl bg-cream p-6 pop-static">
+      <div className="w-full max-w-md rounded-2xl bg-card p-6 pop-static">
         <Link to="/" aria-label="IvyVibing home">
           <IvyWordmark />
         </Link>

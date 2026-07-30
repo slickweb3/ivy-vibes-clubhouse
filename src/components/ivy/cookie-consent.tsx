@@ -90,7 +90,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
         <div
           role="region"
           aria-label="Cookie choices"
-          className="fixed inset-x-3 bottom-3 z-50 rounded-2xl bg-cream p-4 pop-static sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md"
+          className="fixed inset-x-3 bottom-3 z-50 rounded-2xl bg-card p-4 pop-static sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md"
         >
           <h2 className="font-display text-base text-charcoal">Optional embeds are switched off</h2>
           <p className="mt-1.5 text-sm text-charcoal/80">
@@ -104,7 +104,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
             <Button
               onClick={deny}
               variant="secondary"
-              className="min-h-11 rounded-full bg-cream font-display text-charcoal pop hover:bg-cream"
+              className="min-h-11 rounded-full bg-card font-display text-charcoal pop hover:bg-card"
             >
               Keep them off
             </Button>
@@ -120,7 +120,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
       ) : null}
 
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent className="max-w-lg rounded-2xl bg-cream pop-static">
+        <DialogContent className="max-w-lg rounded-2xl bg-card pop-static">
           <DialogHeader>
             <DialogTitle className="font-display text-2xl text-charcoal">Cookie settings</DialogTitle>
             <DialogDescription className="text-charcoal/80">
@@ -175,7 +175,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
             <Button
               variant="secondary"
               onClick={() => setSettingsOpen(false)}
-              className="min-h-11 rounded-full bg-cream font-display text-charcoal pop hover:bg-cream"
+              className="min-h-11 rounded-full bg-card font-display text-charcoal pop hover:bg-card"
             >
               Cancel
             </Button>

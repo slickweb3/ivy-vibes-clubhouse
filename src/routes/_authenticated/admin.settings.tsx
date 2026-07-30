@@ -119,7 +119,7 @@ function SettingsPage() {
         </section>
       ) : null}
 
-      <section className="rounded-2xl bg-cream p-5 pop-static">
+      <section className="rounded-2xl bg-card p-5 pop-static">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="font-display text-lg text-charcoal">Automatic publication</h2>
           <StatusChip
@@ -156,7 +156,7 @@ function SettingsPage() {
         ) : null}
       </section>
 
-      <section className="rounded-2xl bg-cream p-5 pop-static">
+      <section className="rounded-2xl bg-card p-5 pop-static">
         <h2 className="font-display text-lg text-charcoal">Audit log</h2>
         <p className="mt-1 text-sm text-charcoal/80">
           Every approval, placement change and automation rule application is recorded.

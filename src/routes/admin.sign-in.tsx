@@ -60,7 +60,7 @@ function AdminSignIn() {
   };
 
   return (
-    <main id="main" className="min-h-dvh bg-cream px-4 py-12">
+    <main id="main" className="min-h-dvh bg-background px-4 py-12">
       <div className="mx-auto flex max-w-md flex-col gap-6">
         <Link to="/" className="self-start" aria-label="IvyVibing home">
           <IvyWordmark />
@@ -88,7 +88,7 @@ function AdminSignIn() {
                 required
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="min-h-11 rounded-xl border-[3px] border-charcoal bg-cream"
+                className="min-h-11 rounded-xl border-[3px] border-charcoal bg-card"
               />
             </div>
             <div className="space-y-2">
@@ -100,7 +100,7 @@ function AdminSignIn() {
                 required
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="min-h-11 rounded-xl border-[3px] border-charcoal bg-cream"
+                className="min-h-11 rounded-xl border-[3px] border-charcoal bg-card"
               />
             </div>
 
@@ -126,7 +126,7 @@ function AdminSignIn() {
           </p>
         </div>
 
-        <Link to="/" className="text-center font-display text-charcoal underline underline-offset-4">
+        <Link to="/" className="text-center font-display text-foreground underline underline-offset-4">
           Back to IvyVibing
         </Link>
       </div>

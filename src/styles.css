@@ -73,24 +73,24 @@
   --yellow: #ffd86b;
 
   /* semantic */
-  --background: #fff8e7;
-  --foreground: #151515;
-  --card: #ffffff;
+  --background: #174f36;
+  --foreground: #fff8e7;
+  --card: #fff8e7;
   --card-foreground: #151515;
-  --popover: #ffffff;
+  --popover: #fff8e7;
   --popover-foreground: #151515;
   --primary: #83d94e;
   --primary-foreground: #12351f;
-  --secondary: #174f36;
-  --secondary-foreground: #fff8e7;
-  --muted: #f3ecd9;
-  --muted-foreground: #5b5a52;
+  --secondary: #c9f39b;
+  --secondary-foreground: #12351f;
+  --muted: #1e5a3c;
+  --muted-foreground: #c9f39b;
   --accent: #ff8eae;
   --accent-foreground: #151515;
   --destructive: #d9483b;
   --destructive-foreground: #fff8e7;
-  --border: #151515;
-  --input: #151515;
+  --border: #2c4a38;
+  --input: #2c4a38;
   --ring: #83d94e;
 
   --gradient-meadow: linear-gradient(160deg, #c9f39b 0%, #fff8e7 55%, #ffd86b 100%);
@@ -181,7 +181,7 @@
 }
 
 @utility polaroid {
-  background: #ffffff;
+  background: var(--card);
   border: 3px solid var(--charcoal);
   box-shadow: 0 14px 30px -18px rgba(21, 21, 21, 0.7);
   padding: 0.75rem 0.75rem 2.75rem;

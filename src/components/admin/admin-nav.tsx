@@ -13,7 +13,7 @@ export function AdminNav() {
   return (
     <nav
       aria-label="Admin sections"
-      className="border-b-[3px] border-charcoal bg-cream/70 backdrop-blur"
+      className="border-b-[3px] border-charcoal bg-card/70 backdrop-blur"
     >
       <ul className="mx-auto flex max-w-6xl flex-wrap gap-2 px-4 py-2 sm:px-6">
         {LINKS.map((link) => (
