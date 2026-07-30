@@ -482,10 +482,12 @@ export type Database = {
           auto_publish_verified_posts: boolean
           automation_paused: boolean
           blockchain: string | null
+          chart_provider: string
           contact_email: string | null
           contract_address: string | null
           created_at: string
           default_community_reuse: boolean
+          dev_wallet_address: string | null
           discord_url: string | null
           explorer_url: string | null
           id: string
@@ -493,6 +495,10 @@ export type Database = {
           instagram_url: string | null
           is_published: boolean
           launch_date: string | null
+          launch_platform: string | null
+          launch_platform_url: string | null
+          market_data_enabled: boolean
+          pair_address: string | null
           posts_per_platform: number
           project_name: string
           sync_interval_hours: number
@@ -510,10 +516,12 @@ export type Database = {
           auto_publish_verified_posts?: boolean
           automation_paused?: boolean
           blockchain?: string | null
+          chart_provider?: string
           contact_email?: string | null
           contract_address?: string | null
           created_at?: string
           default_community_reuse?: boolean
+          dev_wallet_address?: string | null
           discord_url?: string | null
           explorer_url?: string | null
           id?: string
@@ -521,6 +529,10 @@ export type Database = {
           instagram_url?: string | null
           is_published?: boolean
           launch_date?: string | null
+          launch_platform?: string | null
+          launch_platform_url?: string | null
+          market_data_enabled?: boolean
+          pair_address?: string | null
           posts_per_platform?: number
           project_name?: string
           sync_interval_hours?: number
@@ -538,10 +550,12 @@ export type Database = {
           auto_publish_verified_posts?: boolean
           automation_paused?: boolean
           blockchain?: string | null
+          chart_provider?: string
           contact_email?: string | null
           contract_address?: string | null
           created_at?: string
           default_community_reuse?: boolean
+          dev_wallet_address?: string | null
           discord_url?: string | null
           explorer_url?: string | null
           id?: string
@@ -549,6 +563,10 @@ export type Database = {
           instagram_url?: string | null
           is_published?: boolean
           launch_date?: string | null
+          launch_platform?: string | null
+          launch_platform_url?: string | null
+          market_data_enabled?: boolean
+          pair_address?: string | null
           posts_per_platform?: number
           project_name?: string
           sync_interval_hours?: number
