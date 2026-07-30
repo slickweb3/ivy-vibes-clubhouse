@@ -68,13 +68,16 @@ export function OfficialSocialEmbed({
   useEffect(() => {
     if (!playing) return;
     const id = post.id;
-    activePlayerId = id;
-    const unsubscribe = subscribeActivePlayer((next) => {
+    const listener = (next: string) => {
       if (next !== id) setPlaying(false);
+    };
+    activePlayerListeners.add(listener);
+    activePlayerListeners.forEach((other) => {
+      if (other !== listener) other(id);
     });
-    notifyActivePlayer(id);
-    return unsubscribe;
+    return () => activePlayerListeners.delete(listener);
   }, [playing, post.id]);
+
 
   // TikTok gives us its own official poster image, so the card shows a real
   // picture straight away and the video opens in TikTok's player on tap.
