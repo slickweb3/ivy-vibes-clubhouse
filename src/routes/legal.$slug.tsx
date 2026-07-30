@@ -3,7 +3,7 @@ import { SiteNav } from "@/components/ivy/header";
 import { SiteFooter } from "@/components/ivy/sections-b";
 import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import { Sticker } from "@/components/ivy/primitives";
-import { getLegalPage, legalPages } from "@/data/legal";
+import { getLegalPage, legalPages, type LegalPage } from "@/data/legal";
 
 export const Route = createFileRoute("/legal/$slug")({
   loader: ({ params }) => {
@@ -74,7 +74,7 @@ function LegalMissing({ message }: { message: string }) {
 }
 
 function LegalPageView() {
-  const { page } = Route.useLoaderData();
+  const { page } = Route.useLoaderData() as { page: LegalPage };
 
   return (
     <Shell>
