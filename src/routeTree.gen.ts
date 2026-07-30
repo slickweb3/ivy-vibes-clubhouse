@@ -25,9 +25,11 @@ import { Route as ApiSocialFeedRouteImport } from './routes/api/social-feed'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminConnectionsRouteImport } from './routes/_authenticated/admin.connections'
+import { Route as AuthenticatedAdminCuratedRouteImport } from './routes/_authenticated/admin.curated'
 import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminTokenRouteImport } from './routes/_authenticated/admin.token'
+import { Route as ApiPublicCuratedPostsRouteImport } from './routes/api/public/curated-posts'
 import { Route as ApiPublicMarketRouteImport } from './routes/api/public/market'
 import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
 import { Route as ApiPublicOauthProviderActionRouteImport } from './routes/api/public/oauth/$provider.$action'
@@ -112,6 +114,12 @@ const AuthenticatedAdminConnectionsRoute =
     path: '/admin/connections',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminCuratedRoute =
+  AuthenticatedAdminCuratedRouteImport.update({
+    id: '/admin/curated',
+    path: '/admin/curated',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminMediaRoute = AuthenticatedAdminMediaRouteImport.update({
   id: '/admin/media',
   path: '/admin/media',
@@ -127,6 +135,11 @@ const AuthenticatedAdminTokenRoute = AuthenticatedAdminTokenRouteImport.update({
   id: '/admin/token',
   path: '/admin/token',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiPublicCuratedPostsRoute = ApiPublicCuratedPostsRouteImport.update({
+  id: '/api/public/curated-posts',
+  path: '/api/public/curated-posts',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicMarketRoute = ApiPublicMarketRouteImport.update({
   id: '/api/public/market',
@@ -161,9 +174,11 @@ export interface FileRoutesByFullPath {
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
+  '/admin/curated': typeof AuthenticatedAdminCuratedRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/token': typeof AuthenticatedAdminTokenRoute
+  '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -184,9 +199,11 @@ export interface FileRoutesByTo {
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
+  '/admin/curated': typeof AuthenticatedAdminCuratedRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/token': typeof AuthenticatedAdminTokenRoute
+  '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -209,9 +226,11 @@ export interface FileRoutesById {
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/_authenticated/admin/connections': typeof AuthenticatedAdminConnectionsRoute
+  '/_authenticated/admin/curated': typeof AuthenticatedAdminCuratedRoute
   '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/token': typeof AuthenticatedAdminTokenRoute
+  '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -234,9 +253,11 @@ export interface FileRouteTypes {
     | '/api/social-feed'
     | '/legal/$slug'
     | '/admin/connections'
+    | '/admin/curated'
     | '/admin/media'
     | '/admin/settings'
     | '/admin/token'
+    | '/api/public/curated-posts'
     | '/api/public/market'
     | '/admin/'
     | '/api/public/hooks/social-sync'
@@ -257,9 +278,11 @@ export interface FileRouteTypes {
     | '/api/social-feed'
     | '/legal/$slug'
     | '/admin/connections'
+    | '/admin/curated'
     | '/admin/media'
     | '/admin/settings'
     | '/admin/token'
+    | '/api/public/curated-posts'
     | '/api/public/market'
     | '/admin'
     | '/api/public/hooks/social-sync'
@@ -281,9 +304,11 @@ export interface FileRouteTypes {
     | '/api/social-feed'
     | '/legal/$slug'
     | '/_authenticated/admin/connections'
+    | '/_authenticated/admin/curated'
     | '/_authenticated/admin/media'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/token'
+    | '/api/public/curated-posts'
     | '/api/public/market'
     | '/_authenticated/admin/'
     | '/api/public/hooks/social-sync'
@@ -305,6 +330,7 @@ export interface RootRouteChildren {
   AdminSignInRoute: typeof AdminSignInRoute
   ApiSocialFeedRoute: typeof ApiSocialFeedRoute
   LegalSlugRoute: typeof LegalSlugRoute
+  ApiPublicCuratedPostsRoute: typeof ApiPublicCuratedPostsRoute
   ApiPublicMarketRoute: typeof ApiPublicMarketRoute
   ApiPublicHooksSocialSyncRoute: typeof ApiPublicHooksSocialSyncRoute
   ApiPublicOauthProviderActionRoute: typeof ApiPublicOauthProviderActionRoute
@@ -424,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminConnectionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/curated': {
+      id: '/_authenticated/admin/curated'
+      path: '/admin/curated'
+      fullPath: '/admin/curated'
+      preLoaderRoute: typeof AuthenticatedAdminCuratedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/media': {
       id: '/_authenticated/admin/media'
       path: '/admin/media'
@@ -444,6 +477,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/token'
       preLoaderRoute: typeof AuthenticatedAdminTokenRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/curated-posts': {
+      id: '/api/public/curated-posts'
+      path: '/api/public/curated-posts'
+      fullPath: '/api/public/curated-posts'
+      preLoaderRoute: typeof ApiPublicCuratedPostsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/market': {
       id: '/api/public/market'
@@ -471,6 +511,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminConnectionsRoute: typeof AuthenticatedAdminConnectionsRoute
+  AuthenticatedAdminCuratedRoute: typeof AuthenticatedAdminCuratedRoute
   AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminTokenRoute: typeof AuthenticatedAdminTokenRoute
@@ -479,6 +520,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminConnectionsRoute: AuthenticatedAdminConnectionsRoute,
+  AuthenticatedAdminCuratedRoute: AuthenticatedAdminCuratedRoute,
   AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminTokenRoute: AuthenticatedAdminTokenRoute,
@@ -503,6 +545,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminSignInRoute: AdminSignInRoute,
   ApiSocialFeedRoute: ApiSocialFeedRoute,
   LegalSlugRoute: LegalSlugRoute,
+  ApiPublicCuratedPostsRoute: ApiPublicCuratedPostsRoute,
   ApiPublicMarketRoute: ApiPublicMarketRoute,
   ApiPublicHooksSocialSyncRoute: ApiPublicHooksSocialSyncRoute,
   ApiPublicOauthProviderActionRoute: ApiPublicOauthProviderActionRoute,

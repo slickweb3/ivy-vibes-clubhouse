@@ -10,6 +10,9 @@ import {
 } from "@/types/media";
 import { CrownDoodle, FrogDoodle, GrassStrip, LeafDoodle, PawDoodle, VineDivider } from "./doodles";
 import { useEmbedConsent } from "./cookie-consent";
+import { OfficialSocialEmbed, CuratedNote } from "./official-embed";
+import { platformLabel, type CuratedFeed, type CuratedPost } from "@/types/curated";
+
 import {
   freshPosts,
   hallOfFameCaptions,
@@ -36,7 +39,16 @@ import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ Hero */
 
-export function Hero({ media, market }: { media?: UnifiedMediaItem | null; market?: MarketSnapshot | null }) {
+export function Hero({
+  media,
+  market,
+  curatedHero,
+}: {
+  media?: UnifiedMediaItem | null;
+  market?: MarketSnapshot | null;
+  curatedHero?: CuratedPost | null;
+}) {
+
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden bg-leaf">
       <div className="pointer-events-none absolute -top-10 -right-8 hidden opacity-70 sm:block">
@@ -89,15 +101,20 @@ export function Hero({ media, market }: { media?: UnifiedMediaItem | null; marke
 
         <div className="relative">
           <div className="relative rotate-1">
-            <ApprovedMedia
-              item={media}
-              label={heroCopy.mediaLabel}
-              hint="Photo or video supplied by Ivy's owner"
-              aspect="portrait"
-              tone="cream"
-              className="mx-auto max-w-md"
-            />
+            {curatedHero ? (
+              <OfficialSocialEmbed post={curatedHero} tone="cream" className="mx-auto max-w-md" />
+            ) : (
+              <ApprovedMedia
+                item={media}
+                label={heroCopy.mediaLabel}
+                hint="Photo or video supplied by Ivy's owner"
+                aspect="portrait"
+                tone="cream"
+                className="mx-auto max-w-md"
+              />
+            )}
           </div>
+
           <Sticker tone="yellow" className="absolute -top-3 -left-2 rotate-[-8deg]">
             <FrogDoodle className="h-4 w-5 text-ivy" /> Frog Queen
           </Sticker>
@@ -156,10 +173,17 @@ export function MeetIvy() {
 
 /* ------------------------------------------------- Fresh from the Queen */
 
-export function FreshFromTheFrogQueen({ media }: { media: SiteMedia }) {
+export function FreshFromTheFrogQueen({
+  media,
+  curated = [],
+}: {
+  media: SiteMedia;
+  curated?: CuratedPost[];
+}) {
   const { postsPerPlatform } = projectConfig.socialFeed;
+  const trackRef = useRef<HTMLUListElement>(null);
 
-  const platforms = [
+  const importedPlatforms = [
     {
       key: "instagram" as const,
       label: "Instagram",
@@ -176,37 +200,79 @@ export function FreshFromTheFrogQueen({ media }: { media: SiteMedia }) {
       posts: media.freshPosts.tiktok,
       connection: media.connections.tiktok,
     },
-  ];
+  ].filter((platform) => platform.posts.length > 0);
+
+  const scrollBy = (direction: 1 | -1) => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.scrollBy({ left: direction * track.clientWidth * 0.85, behavior: "smooth" });
+  };
 
   return (
     <Section
       id="fresh-posts"
-      eyebrow="Live feed"
+      eyebrow="Hand-picked"
       title={freshPosts.heading}
       intro={freshPosts.body}
       tone="white"
     >
-      <div className="grid gap-8 lg:grid-cols-2">
-        {platforms.map((platform) => (
-          <PlatformFeed
-            key={platform.key}
-            label={platform.label}
-            heading={platform.heading}
-            slotLabel={platform.slotLabel}
-            posts={platform.posts}
-            connection={platform.connection}
-            count={postsPerPlatform}
-            lastUpdated={media.lastUpdated}
-          />
-        ))}
-      </div>
+      {curated.length > 0 ? (
+        <>
+          <ul
+            ref={trackRef}
+            aria-label="Curated official posts from Ivy's accounts"
+            className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 lg:grid-cols-3"
+          >
+            {curated.map((post) => (
+              <li key={post.id} className="w-[78%] shrink-0 snap-start sm:w-auto">
+                <OfficialSocialEmbed post={post} tone={post.platform === "tiktok" ? "lavender" : "leaf"} />
+              </li>
+            ))}
+          </ul>
 
-      <p className="mt-6 rounded-xl bg-yellow p-4 text-sm text-charcoal pop-static">
-        {freshPosts.empty} Instagram and TikTok do not sponsor or endorse this project.
-      </p>
+          <div className="mt-3 flex gap-2 sm:hidden">
+            <Button
+              type="button"
+              onClick={() => scrollBy(-1)}
+              aria-label="Previous post"
+              className="min-h-11 min-w-11 rounded-full bg-card px-4 font-display text-charcoal pop hover:bg-leaf"
+            >
+              &lsaquo; Previous
+            </Button>
+            <Button
+              type="button"
+              onClick={() => scrollBy(1)}
+              aria-label="Next post"
+              className="min-h-11 min-w-11 rounded-full bg-card px-4 font-display text-charcoal pop hover:bg-leaf"
+            >
+              Next &rsaquo;
+            </Button>
+          </div>
+        </>
+      ) : null}
+
+      {importedPlatforms.length > 0 ? (
+        <div className="mt-8 grid gap-8 lg:grid-cols-2">
+          {importedPlatforms.map((platform) => (
+            <PlatformFeed
+              key={platform.key}
+              label={platform.label}
+              heading={platform.heading}
+              slotLabel={platform.slotLabel}
+              posts={platform.posts}
+              connection={platform.connection}
+              count={postsPerPlatform}
+              lastUpdated={media.lastUpdated}
+            />
+          ))}
+        </div>
+      ) : null}
+
+      <CuratedNote className="mt-6" />
     </Section>
   );
 }
+
 
 function PlatformFeed({
   label,
@@ -339,9 +405,18 @@ export function PostCard({ post }: { post: UnifiedMediaItem }) {
 
 /* ----------------------------------------------------------------- Ivy TV */
 
-export function IvyTV({ items: approved = [] }: { items?: UnifiedMediaItem[] }) {
+export function IvyTV({
+  items: approved = [],
+  curated = [],
+}: {
+  items?: UnifiedMediaItem[];
+  curated?: CuratedPost[];
+}) {
   const [category, setCategory] = useState<IvyTvCategory>("All");
   const { embedsAllowed, openSettings } = useEmbedConsent();
+  const curatedFeatured = curated.find((post) => post.isFeatured) ?? curated[0] ?? null;
+  const curatedRest = curated.filter((post) => post.id !== curatedFeatured?.id);
+
 
   const approvedVideos = useMemo(
     () => approved.filter((item) => isVideoLike(item) || item.mediaKind === "image"),
@@ -371,25 +446,33 @@ export function IvyTV({ items: approved = [] }: { items?: UnifiedMediaItem[] }) 
     >
       {featured ? (
         <div className="mb-10 grid gap-6 rounded-2xl bg-card p-5 pop-static lg:grid-cols-[1.4fr_1fr]">
-          <ApprovedMedia
-            item={featuredApproved}
-            label={featured.mediaLabel}
-            aspect="video"
-            tone="leaf"
-            hint="Featured episode slot"
-          />
+          {curatedFeatured ? (
+            <OfficialSocialEmbed post={curatedFeatured} tone="lavender" className="mx-auto w-full max-w-sm" />
+          ) : (
+            <ApprovedMedia
+              item={featuredApproved}
+              label={featured.mediaLabel}
+              aspect="video"
+              tone="leaf"
+              hint="Featured episode slot"
+            />
+          )}
           <div className="flex flex-col justify-center gap-3">
             <Sticker tone="yellow">Featured episode</Sticker>
             <h3 className="font-display text-2xl text-charcoal">
-              {featuredApproved ? "Straight from the Frog Queen" : featured.title}
+              {curatedFeatured || featuredApproved ? "Straight from the Frog Queen" : featured.title}
             </h3>
             <p className="text-sm text-charcoal/85">
-              {featuredApproved ? displayCaption(featuredApproved) || featured.caption : featured.caption}
+              {curatedFeatured
+                ? `Hand-picked from Ivy's official ${platformLabel(curatedFeatured.platform)} account. Her original caption plays inside the official embed.`
+                : featuredApproved
+                  ? displayCaption(featuredApproved) || featured.caption
+                  : featured.caption}
             </p>
             <p className="text-sm text-charcoal/70">
               {embedsAllowed
-                ? "Embeds are allowed. The player will appear once an approved video is linked."
-                : "Video embeds are switched off. You will see a thumbnail, the caption and a link to the original post."}
+                ? "Embeds are allowed, so the official player loads directly from the platform."
+                : "Player embeds are switched off. Use “Load official post” on any card, or allow embeds below."}
             </p>
             {!embedsAllowed ? (
               <Button
@@ -402,6 +485,17 @@ export function IvyTV({ items: approved = [] }: { items?: UnifiedMediaItem[] }) 
           </div>
         </div>
       ) : null}
+
+      {curatedRest.length > 0 && (category === "All" || category === "Latest Posts") ? (
+        <ul className="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {curatedRest.map((post) => (
+            <li key={post.id}>
+              <OfficialSocialEmbed post={post} tone="lavender" compact />
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
 
       <div role="tablist" aria-label="Ivy TV categories" className="mb-6 flex flex-wrap gap-2">
         {ivyTv.categories.map((tab) => {
@@ -474,16 +568,36 @@ export function IvyTV({ items: approved = [] }: { items?: UnifiedMediaItem[] }) 
 
 /* ----------------------------------------------------------- Hall of Fame */
 
-export function HallOfFame({ items = [] }: { items?: UnifiedMediaItem[] }) {
+export function HallOfFame({
+  items = [],
+  curated = [],
+}: {
+  items?: UnifiedMediaItem[];
+  curated?: CuratedPost[];
+}) {
   return (
     <Section
       id="hall-of-fame"
       eyebrow="Scrapbook"
       title="The Ivy Hall of Fame"
-      intro="A community scrapbook wall. Every frame is reserved for an owner-approved photograph of the real Ivy."
+      intro="A scrapbook wall of hand-picked posts from Ivy's official Instagram, shown with Instagram's own embeds."
       tone="lavender"
     >
+      {curated.length > 0 ? (
+        <ul className="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {curated.map((post, index) => (
+            <li
+              key={post.id}
+              style={{ transform: `rotate(${index % 3 === 0 ? -1.5 : index % 3 === 1 ? 1.5 : -0.5}deg)` }}
+            >
+              <OfficialSocialEmbed post={post} tone={index % 2 === 0 ? "cream" : "yellow"} />
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
       <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 [&>*]:mb-4">
+
         {items.map((item, index) => (
           <Polaroid
             key={item.key}
@@ -496,7 +610,10 @@ export function HallOfFame({ items = [] }: { items?: UnifiedMediaItem[] }) {
             className="break-inside-avoid"
           />
         ))}
-        {hallOfFameCaptions.slice(0, Math.max(hallOfFameCaptions.length - items.length, 0)).map((caption, index) => (
+        {(curated.length > 0
+          ? []
+          : hallOfFameCaptions.slice(0, Math.max(hallOfFameCaptions.length - items.length, 0))
+        ).map((caption, index) => (
           <Polaroid
             key={caption}
             label={`Approved Ivy photo ${index + 1}`}
@@ -507,6 +624,7 @@ export function HallOfFame({ items = [] }: { items?: UnifiedMediaItem[] }) {
             className="break-inside-avoid"
           />
         ))}
+
       </div>
       <p className="mt-8 text-sm text-charcoal/80">
         A moderated community submission form will open once moderation is in place.
