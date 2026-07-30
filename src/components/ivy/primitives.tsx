@@ -227,6 +227,7 @@ export function Section({
 }
 
 export function Polaroid({
+  item,
   label,
   caption,
   rotate = 0,
@@ -235,6 +236,7 @@ export function Polaroid({
   tape = true,
   className,
 }: {
+  item?: UnifiedMediaItem | null;
   label: string;
   caption: string;
   rotate?: number;
@@ -249,7 +251,7 @@ export function Polaroid({
       style={{ transform: `rotate(${rotate}deg)` }}
     >
       {tape ? <Tape className="-top-3 left-1/2 -translate-x-1/2" rotate={rotate > 0 ? -8 : 7} /> : null}
-      <MediaPlaceholder label={label} aspect={aspect} tone={tone} compact />
+      <ApprovedMedia item={item} label={label} aspect={aspect} tone={tone} compact />
       <figcaption className="mt-3 text-center font-display text-sm text-charcoal">{caption}</figcaption>
     </figure>
   );
