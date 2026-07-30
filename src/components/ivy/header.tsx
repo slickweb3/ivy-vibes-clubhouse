@@ -10,8 +10,16 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { announcement, joinTheVibeMessage, navLinks } from "@/data/site-content";
+import { officialLinks } from "@/config/project";
 import { CrownDoodle, FrogDoodle, IvyWordmark, PawDoodle } from "./doodles";
 import { cn } from "@/lib/utils";
+
+const socialLabels: Record<string, string> = {
+  instagram: "Instagram",
+  tiktok: "TikTok",
+  x: "X",
+  telegram: "Telegram",
+};
 
 function AnnouncementBar() {
   return (
