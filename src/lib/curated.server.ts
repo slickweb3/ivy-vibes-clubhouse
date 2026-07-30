@@ -32,11 +32,17 @@ function normalize(row: Row): CuratedPost {
     displayOrder: typeof row.display_order === "number" ? row.display_order : 0,
     sourceAccountHandle: String(row.source_account_handle ?? ""),
     sourceAccountUrl: String(row.source_account_url ?? ""),
+    thumbnailUrl:
+      typeof row.thumbnail_url === "string" && row.thumbnail_url ? row.thumbnail_url : null,
+    originalCaption:
+      typeof row.original_caption === "string" && row.original_caption
+        ? row.original_caption
+        : null,
   };
 }
 
 const COLUMNS =
-  "id, platform, original_post_url, platform_post_id, official_embed_url, admin_label, placements, is_visible, is_active, is_pinned, is_featured, display_order, source_account_handle, source_account_url";
+  "id, platform, original_post_url, platform_post_id, official_embed_url, admin_label, placements, is_visible, is_active, is_pinned, is_featured, display_order, source_account_handle, source_account_url, thumbnail_url, original_caption, thumbnail_fetched_at";
 
 export async function readCuratedFeed(): Promise<CuratedFeed> {
   const { publicClient } = await import("./media-read.server");
@@ -52,7 +58,35 @@ export async function readCuratedFeed(): Promise<CuratedFeed> {
 
     if (error || !data) return EMPTY_CURATED_FEED;
 
-    const all = (data as Row[])
+    const rows = data as Row[];
+    // Keep TikTok posters fresh (their CDN links are signed and short-lived) so
+    // every card shows a real picture before the official player is opened.
+    try {
+      const { isPosterStale, refreshTikTokPosters } = await import("./curated-thumbs.server");
+      const stale = rows
+        .filter(
+          (row) =>
+            row.platform === "tiktok" &&
+            row.is_active !== false &&
+            row.is_visible !== false &&
+            isPosterStale(
+              typeof row.thumbnail_fetched_at === "string" ? row.thumbnail_fetched_at : null,
+            ),
+        )
+        .map((row) => ({ id: String(row.id), postUrl: String(row.original_post_url ?? "") }));
+      const refreshed = await refreshTikTokPosters(stale);
+      for (const row of rows) {
+        const poster = refreshed.get(String(row.id));
+        if (poster) {
+          row.thumbnail_url = poster.thumbnailUrl;
+          row.original_caption = poster.originalCaption ?? row.original_caption;
+        }
+      }
+    } catch {
+      // Posters stay as cached; embeds still work.
+    }
+
+    const all = rows
       .map(normalize)
       .filter((post) => post.isVisible && post.isActive)
       .sort((a, b) => {

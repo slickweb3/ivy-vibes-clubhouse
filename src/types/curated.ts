@@ -41,6 +41,10 @@ export interface CuratedPost {
   displayOrder: number;
   sourceAccountHandle: string;
   sourceAccountUrl: string;
+  /** Official platform-provided poster image (TikTok oEmbed). Never re-hosted. */
+  thumbnailUrl: string | null;
+  /** Ivy's own caption, exactly as the platform returns it. */
+  originalCaption: string | null;
 }
 
 export interface CuratedFeed {
