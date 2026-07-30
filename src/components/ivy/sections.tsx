@@ -426,7 +426,6 @@ export function IvyTV({
   items?: UnifiedMediaItem[];
   curated?: CuratedPost[];
 }) {
-  const [category, setCategory] = useState<IvyTvCategory>("All");
   const { embedsAllowed, openSettings } = useEmbedConsent();
   const curatedFeatured = curated.find((post) => post.isFeatured) ?? curated[0] ?? null;
   const curatedRest = curated.filter((post) => post.id !== curatedFeatured?.id);
@@ -437,17 +436,12 @@ export function IvyTV({
     [approved],
   );
 
-  const items = useMemo(
-    () => (category === "All" ? ivyTvItems : ivyTvItems.filter((item) => item.category === category)),
-    [category],
-  );
+  const items = ivyTvItems;
 
-  // Approved imports appear under "All" and "Latest Posts"; the curated
-  // placeholder rails stay for categories that have no approved item yet.
-  const showApproved = category === "All" || category === "Latest Posts";
   const featuredApproved =
     approvedVideos.find((item) => item.isFeatured) ?? approvedVideos[0] ?? null;
   const featured = ivyTvItems.find((item) => item.isFeatured);
+
 
   return (
     <Section
@@ -500,7 +494,7 @@ export function IvyTV({
         </div>
       ) : null}
 
-      {curatedRest.length > 0 && (category === "All" || category === "Latest Posts") ? (
+      {curatedRest.length > 0 ? (
         <ul className="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {curatedRest.map((post) => (
             <li key={post.id}>
