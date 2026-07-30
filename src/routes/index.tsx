@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { getSiteMedia } from "@/lib/site-media.functions";
+import { EMPTY_SITE_MEDIA, type SiteMedia } from "@/types/media";
 import { SiteNav } from "@/components/ivy/header";
 import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import {
@@ -36,10 +38,20 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
+  // Public read model: approved + visible + active items only.
+  loader: async (): Promise<SiteMedia> => {
+    try {
+      return await getSiteMedia();
+    } catch {
+      return EMPTY_SITE_MEDIA;
+    }
+  },
   component: Home,
+  errorComponent: () => <Home />,
 });
 
 function Home() {
+  const media = Route.useLoaderData?.() ?? EMPTY_SITE_MEDIA;
   return (
     <CookieConsentProvider>
       <a
@@ -50,15 +62,15 @@ function Home() {
       </a>
       <SiteNav />
       <main id="main">
-        <Hero />
+        <Hero media={media.hero} />
         <MeetIvy />
-        <FreshFromTheFrogQueen />
-        <IvyTV />
-        <HallOfFame />
+        <FreshFromTheFrogQueen media={media} />
+        <IvyTV items={media.ivyTv} />
+        <HallOfFame items={media.hallOfFame} />
         <TheLore />
         <WhyIvy />
         <TokenRecord />
-        <MemeMachine />
+        <MemeMachine items={media.memeMachine} />
         <OwnersCorner />
         <RoyalCourt />
         <FAQ />
