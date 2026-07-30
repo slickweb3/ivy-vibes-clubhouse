@@ -1,24 +1,66 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { SiteNav, Hero } from "@/components/ivy/header";
+import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
+import {
+  MeetIvy,
+  FreshFromTheFrogQueen,
+  IvyTV,
+  HallOfFame,
+  TheLore,
+  WhyIvy,
+  TokenRecord,
+} from "@/components/ivy/sections";
+import {
+  MemeMachine,
+  OwnersCorner,
+  RoyalCourt,
+  FAQ,
+  SiteFooter,
+} from "@/components/ivy/sections-b";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+const TITLE = "IvyVibing — $IVY, the Short Spine Queen's clubhouse";
+const DESCRIPTION =
+  "Short spine, big vibes. The official IvyVibing clubhouse for $IVY, the community meme coin inspired by Ivy, the Short Spine Queen and Frog Queen.";
+
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: Home,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Home() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <CookieConsentProvider>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[70] focus:rounded-full focus:bg-frog focus:px-4 focus:py-2 focus:font-display"
+      >
+        Skip to content
+      </a>
+      <SiteNav />
+      <main id="main">
+        <Hero />
+        <MeetIvy />
+        <FreshFromTheFrogQueen />
+        <IvyTV />
+        <HallOfFame />
+        <TheLore />
+        <WhyIvy />
+        <TokenRecord />
+        <MemeMachine />
+        <OwnersCorner />
+        <RoyalCourt />
+        <FAQ />
+      </main>
+      <SiteFooter />
+    </CookieConsentProvider>
   );
 }
