@@ -137,7 +137,7 @@ export function Hero({
 
 /* -------------------------------------------------------------- Meet Ivy */
 
-export function MeetIvy() {
+export function MeetIvy({ curated = [] }: { curated?: CuratedPost[] }) {
   return (
     <Section
       id="meet-ivy"
@@ -155,18 +155,32 @@ export function MeetIvy() {
       <VineDivider className="my-12" />
 
       <div className="grid gap-8 md:grid-cols-3">
-        {meetIvy.editorial.map((item, index) => (
-          <article key={item.heading} className="flex flex-col gap-4">
-            <Polaroid
-              label={item.mediaLabel}
-              caption={item.heading}
-              rotate={index % 2 === 0 ? -2 : 2}
-              tone={index === 1 ? "lavender" : "leaf"}
-            />
-            <p className="text-sm leading-relaxed text-charcoal/85">{item.body}</p>
-          </article>
-        ))}
+        {meetIvy.editorial.map((item, index) => {
+          // Show one of Ivy's own official posts here when we have one curated
+          // for this slot; otherwise keep the honest owner-approved placeholder.
+          const post = curated[index];
+          return (
+            <article key={item.heading} className="flex flex-col gap-4">
+              {post ? (
+                <OfficialSocialEmbed
+                  post={post}
+                  tone={index === 1 ? "lavender" : "leaf"}
+                  className={index % 2 === 0 ? "-rotate-1" : "rotate-1"}
+                />
+              ) : (
+                <Polaroid
+                  label={item.mediaLabel}
+                  caption={item.heading}
+                  rotate={index % 2 === 0 ? -2 : 2}
+                  tone={index === 1 ? "lavender" : "leaf"}
+                />
+              )}
+              <p className="text-sm leading-relaxed text-charcoal/85">{item.body}</p>
+            </article>
+          );
+        })}
       </div>
+
     </Section>
   );
 }
