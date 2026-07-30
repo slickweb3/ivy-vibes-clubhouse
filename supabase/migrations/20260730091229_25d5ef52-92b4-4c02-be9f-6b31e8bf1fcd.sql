@@ -1,0 +1,1 @@
+UPDATE public.project_config SET project_name = 'ivy vibing' WHERE project_name ILIKE 'ivyvibing';
