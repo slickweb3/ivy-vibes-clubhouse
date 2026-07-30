@@ -147,8 +147,8 @@ export function IvyWordmark({ className }: { className?: string }) {
         <PawDoodle className="h-4 w-4 text-cream" />
       </span>
       <span className="font-display text-xl leading-none tracking-tight">
-        <span className="text-ivy">Ivy</span>
-        <span className="text-charcoal">Vibing</span>
+        <span className="text-ivy">ivy </span>
+        <span className="text-charcoal">vibing</span>
         <span className="ml-1 rounded-full bg-yellow px-1.5 py-0.5 align-middle text-[0.6rem] tracking-widest text-charcoal uppercase pop-static">
           $IVY
         </span>
