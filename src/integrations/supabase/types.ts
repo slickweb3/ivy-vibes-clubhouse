@@ -248,8 +248,10 @@ export type Database = {
       }
       media_items: {
         Row: {
+          allow_autoplay: boolean
           alt_text: string
           approval_status: Database["public"]["Enums"]["approval_status"]
+          caption: string | null
           created_at: string
           credit: string | null
           display_order: number
@@ -257,8 +259,13 @@ export type Database = {
           external_url: string | null
           height: number | null
           id: string
+          is_active: boolean
+          is_featured: boolean
+          is_pinned: boolean
           is_visible: boolean
           kind: Database["public"]["Enums"]["media_kind"]
+          permalink: string | null
+          published_at: string | null
           storage_path: string | null
           thumbnail_url: string | null
           title: string
@@ -267,8 +274,10 @@ export type Database = {
           width: number | null
         }
         Insert: {
+          allow_autoplay?: boolean
           alt_text?: string
           approval_status?: Database["public"]["Enums"]["approval_status"]
+          caption?: string | null
           created_at?: string
           credit?: string | null
           display_order?: number
@@ -276,8 +285,13 @@ export type Database = {
           external_url?: string | null
           height?: number | null
           id?: string
+          is_active?: boolean
+          is_featured?: boolean
+          is_pinned?: boolean
           is_visible?: boolean
           kind?: Database["public"]["Enums"]["media_kind"]
+          permalink?: string | null
+          published_at?: string | null
           storage_path?: string | null
           thumbnail_url?: string | null
           title: string
@@ -286,8 +300,10 @@ export type Database = {
           width?: number | null
         }
         Update: {
+          allow_autoplay?: boolean
           alt_text?: string
           approval_status?: Database["public"]["Enums"]["approval_status"]
+          caption?: string | null
           created_at?: string
           credit?: string | null
           display_order?: number
@@ -295,14 +311,46 @@ export type Database = {
           external_url?: string | null
           height?: number | null
           id?: string
+          is_active?: boolean
+          is_featured?: boolean
+          is_pinned?: boolean
           is_visible?: boolean
           kind?: Database["public"]["Enums"]["media_kind"]
+          permalink?: string | null
+          published_at?: string | null
           storage_path?: string | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
           usable_in_memes?: boolean
           width?: number | null
+        }
+        Relationships: []
+      }
+      media_placements: {
+        Row: {
+          created_at: string
+          id: string
+          is_auto: boolean
+          placement: Database["public"]["Enums"]["media_placement"]
+          source_id: string
+          source_type: Database["public"]["Enums"]["media_source"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_auto?: boolean
+          placement: Database["public"]["Enums"]["media_placement"]
+          source_id: string
+          source_type: Database["public"]["Enums"]["media_source"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_auto?: boolean
+          placement?: Database["public"]["Enums"]["media_placement"]
+          source_id?: string
+          source_type?: Database["public"]["Enums"]["media_source"]
         }
         Relationships: []
       }
@@ -371,6 +419,39 @@ export type Database = {
           },
         ]
       }
+      oauth_states: {
+        Row: {
+          code_verifier: string | null
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          platform: Database["public"]["Enums"]["social_platform"]
+          redirect_uri: string
+          state: string
+        }
+        Insert: {
+          code_verifier?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          platform: Database["public"]["Enums"]["social_platform"]
+          redirect_uri: string
+          state: string
+        }
+        Update: {
+          code_verifier?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          platform?: Database["public"]["Enums"]["social_platform"]
+          redirect_uri?: string
+          state?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -397,10 +478,14 @@ export type Database = {
       }
       project_config: {
         Row: {
+          auto_categorize_verified_posts: boolean
+          auto_publish_verified_posts: boolean
+          automation_paused: boolean
           blockchain: string | null
           contact_email: string | null
           contract_address: string | null
           created_at: string
+          default_community_reuse: boolean
           discord_url: string | null
           explorer_url: string | null
           id: string
@@ -421,10 +506,14 @@ export type Database = {
           x_url: string | null
         }
         Insert: {
+          auto_categorize_verified_posts?: boolean
+          auto_publish_verified_posts?: boolean
+          automation_paused?: boolean
           blockchain?: string | null
           contact_email?: string | null
           contract_address?: string | null
           created_at?: string
+          default_community_reuse?: boolean
           discord_url?: string | null
           explorer_url?: string | null
           id?: string
@@ -445,10 +534,14 @@ export type Database = {
           x_url?: string | null
         }
         Update: {
+          auto_categorize_verified_posts?: boolean
+          auto_publish_verified_posts?: boolean
+          automation_paused?: boolean
           blockchain?: string | null
           contact_email?: string | null
           contract_address?: string | null
           created_at?: string
+          default_community_reuse?: boolean
           discord_url?: string | null
           explorer_url?: string | null
           id?: string
@@ -470,39 +563,84 @@ export type Database = {
         }
         Relationships: []
       }
+      social_connection_secrets: {
+        Row: {
+          access_token_cipher: string | null
+          cipher_alg: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          platform: Database["public"]["Enums"]["social_platform"]
+          refresh_token_cipher: string | null
+          updated_at: string
+        }
+        Insert: {
+          access_token_cipher?: string | null
+          cipher_alg?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          platform: Database["public"]["Enums"]["social_platform"]
+          refresh_token_cipher?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access_token_cipher?: string | null
+          cipher_alg?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          platform?: Database["public"]["Enums"]["social_platform"]
+          refresh_token_cipher?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       social_connections: {
         Row: {
           account_name: string | null
+          connected_at: string | null
           created_at: string
+          external_account_id: string | null
           id: string
           is_connected: boolean
+          last_error: string | null
           last_sync_at: string | null
           last_sync_status: string | null
           platform: Database["public"]["Enums"]["social_platform"]
+          scopes: string[]
           token_expires_at: string | null
           token_ref: string | null
           updated_at: string
         }
         Insert: {
           account_name?: string | null
+          connected_at?: string | null
           created_at?: string
+          external_account_id?: string | null
           id?: string
           is_connected?: boolean
+          last_error?: string | null
           last_sync_at?: string | null
           last_sync_status?: string | null
           platform: Database["public"]["Enums"]["social_platform"]
+          scopes?: string[]
           token_expires_at?: string | null
           token_ref?: string | null
           updated_at?: string
         }
         Update: {
           account_name?: string | null
+          connected_at?: string | null
           created_at?: string
+          external_account_id?: string | null
           id?: string
           is_connected?: boolean
+          last_error?: string | null
           last_sync_at?: string | null
           last_sync_status?: string | null
           platform?: Database["public"]["Enums"]["social_platform"]
+          scopes?: string[]
           token_expires_at?: string | null
           token_ref?: string | null
           updated_at?: string
@@ -513,16 +651,21 @@ export type Database = {
         Row: {
           account_name: string | null
           allow_autoplay: boolean
+          allow_community_reuse: boolean
           alt_text: string
+          approval_source: string | null
           approval_status: Database["public"]["Enums"]["approval_status"]
+          approved_at: string | null
           caption: string | null
           created_at: string
           custom_caption: string | null
           duration: number | null
           embed_url: string | null
           fallback_thumbnail_url: string | null
+          hashtags: string[]
           height: number | null
           id: string
+          is_active: boolean
           is_featured: boolean
           is_pinned: boolean
           is_visible: boolean
@@ -533,24 +676,31 @@ export type Database = {
           platform: Database["public"]["Enums"]["social_platform"]
           platform_post_id: string
           published_at: string | null
+          source_account_id: string | null
           sync_source: Database["public"]["Enums"]["sync_source"]
           thumbnail_url: string | null
+          unavailable_at: string | null
           updated_at: string
           width: number | null
         }
         Insert: {
           account_name?: string | null
           allow_autoplay?: boolean
+          allow_community_reuse?: boolean
           alt_text?: string
+          approval_source?: string | null
           approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
           caption?: string | null
           created_at?: string
           custom_caption?: string | null
           duration?: number | null
           embed_url?: string | null
           fallback_thumbnail_url?: string | null
+          hashtags?: string[]
           height?: number | null
           id?: string
+          is_active?: boolean
           is_featured?: boolean
           is_pinned?: boolean
           is_visible?: boolean
@@ -561,24 +711,31 @@ export type Database = {
           platform: Database["public"]["Enums"]["social_platform"]
           platform_post_id: string
           published_at?: string | null
+          source_account_id?: string | null
           sync_source?: Database["public"]["Enums"]["sync_source"]
           thumbnail_url?: string | null
+          unavailable_at?: string | null
           updated_at?: string
           width?: number | null
         }
         Update: {
           account_name?: string | null
           allow_autoplay?: boolean
+          allow_community_reuse?: boolean
           alt_text?: string
+          approval_source?: string | null
           approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
           caption?: string | null
           created_at?: string
           custom_caption?: string | null
           duration?: number | null
           embed_url?: string | null
           fallback_thumbnail_url?: string | null
+          hashtags?: string[]
           height?: number | null
           id?: string
+          is_active?: boolean
           is_featured?: boolean
           is_pinned?: boolean
           is_visible?: boolean
@@ -589,8 +746,10 @@ export type Database = {
           platform?: Database["public"]["Enums"]["social_platform"]
           platform_post_id?: string
           published_at?: string | null
+          source_account_id?: string | null
           sync_source?: Database["public"]["Enums"]["sync_source"]
           thumbnail_url?: string | null
+          unavailable_at?: string | null
           updated_at?: string
           width?: number | null
         }
@@ -688,9 +847,41 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      unified_media: {
+        Row: {
+          account_name: string | null
+          allow_autoplay: boolean | null
+          allow_community_reuse: boolean | null
+          alt_text: string | null
+          approved_at: string | null
+          display_order: number | null
+          duration_seconds: number | null
+          embed_url: string | null
+          fallback_thumbnail_url: string | null
+          hashtags: string[] | null
+          height: number | null
+          is_featured: boolean | null
+          is_pinned: boolean | null
+          media_kind: Database["public"]["Enums"]["media_kind"] | null
+          media_url: string | null
+          original_caption: string | null
+          permalink: string | null
+          platform: string | null
+          platform_post_id: string | null
+          published_at: string | null
+          source_account_id: string | null
+          source_id: string | null
+          source_type: Database["public"]["Enums"]["media_source"] | null
+          thumbnail_url: string | null
+          updated_at: string | null
+          website_caption: string | null
+          width: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      bootstrap_first_admin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -704,6 +895,13 @@ export type Database = {
       app_role: "admin" | "editor" | "viewer"
       approval_status: "pending" | "approved" | "rejected"
       media_kind: "image" | "video" | "carousel" | "reel"
+      media_placement:
+        | "hero"
+        | "fresh_posts"
+        | "ivy_tv"
+        | "hall_of_fame"
+        | "meme_machine"
+      media_source: "upload" | "social"
       social_platform: "instagram" | "tiktok"
       sync_source: "manual" | "api"
     }
@@ -836,6 +1034,14 @@ export const Constants = {
       app_role: ["admin", "editor", "viewer"],
       approval_status: ["pending", "approved", "rejected"],
       media_kind: ["image", "video", "carousel", "reel"],
+      media_placement: [
+        "hero",
+        "fresh_posts",
+        "ivy_tv",
+        "hall_of_fame",
+        "meme_machine",
+      ],
+      media_source: ["upload", "social"],
       social_platform: ["instagram", "tiktok"],
       sync_source: ["manual", "api"],
     },

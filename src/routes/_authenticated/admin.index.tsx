@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/tabs";
 import { StatusChip, Sticker, MediaPlaceholder } from "@/components/ivy/primitives";
 import { IvyWordmark } from "@/components/ivy/doodles";
+import { AdminNav } from "@/components/admin/admin-nav";
 import { getAdminStatus, getConnectionCards, refreshSocialFeed } from "@/lib/admin.functions";
 import { projectConfig, displayValue } from "@/config/project";
 import { faqEntries, ivyTvItems, loreChapters, memeMachine } from "@/data/site-content";
 import { legalPages } from "@/data/legal";
 
-export const Route = createFileRoute("/_authenticated/admin")({
+export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({
     meta: [
       { title: "Admin dashboard — IvyVibing" },
@@ -90,6 +91,8 @@ function AdminDashboard() {
           </div>
         </div>
       </header>
+
+      <AdminNav />
 
       <main id="main" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <h1 className="text-3xl text-charcoal sm:text-4xl">Ivy control room</h1>

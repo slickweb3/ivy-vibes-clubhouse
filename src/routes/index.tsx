@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { getSiteMedia } from "@/lib/site-media.functions";
+import { EMPTY_SITE_MEDIA, type SiteMedia } from "@/types/media";
 import { SiteNav } from "@/components/ivy/header";
 import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import {
@@ -36,10 +38,25 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
+  // Public read model: approved + visible + active items only.
+  loader: async (): Promise<SiteMedia> => {
+    try {
+      return await getSiteMedia();
+    } catch {
+      return EMPTY_SITE_MEDIA;
+    }
+  },
   component: Home,
+  errorComponent: () => (
+    <main className="mx-auto max-w-2xl px-6 py-24 text-center">
+      <h1 className="font-display text-3xl">The clubhouse is catching its breath</h1>
+      <p className="mt-3 text-charcoal/80">Please refresh in a moment.</p>
+    </main>
+  ),
 });
 
 function Home() {
+  const media = Route.useLoaderData() ?? EMPTY_SITE_MEDIA;
   return (
     <CookieConsentProvider>
       <a
@@ -50,15 +67,15 @@ function Home() {
       </a>
       <SiteNav />
       <main id="main">
-        <Hero />
+        <Hero media={media.hero} />
         <MeetIvy />
-        <FreshFromTheFrogQueen />
-        <IvyTV />
-        <HallOfFame />
+        <FreshFromTheFrogQueen media={media} />
+        <IvyTV items={media.ivyTv} />
+        <HallOfFame items={media.hallOfFame} />
         <TheLore />
         <WhyIvy />
         <TokenRecord />
-        <MemeMachine />
+        <MemeMachine items={media.memeMachine} />
         <OwnersCorner />
         <RoyalCourt />
         <FAQ />

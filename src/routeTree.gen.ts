@@ -20,10 +20,13 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RiskDisclosureRouteImport } from './routes/risk-disclosure'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AdminSignInRouteImport } from './routes/admin.sign-in'
 import { Route as ApiSocialFeedRouteImport } from './routes/api/social-feed'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminConnectionsRouteImport } from './routes/_authenticated/admin.connections'
+import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
 import { Route as ApiPublicOauthProviderActionRouteImport } from './routes/api/public/oauth/$provider.$action'
 
@@ -81,11 +84,6 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AdminSignInRoute = AdminSignInRouteImport.update({
   id: '/admin/sign-in',
   path: '/admin/sign-in',
@@ -101,6 +99,28 @@ const LegalSlugRoute = LegalSlugRouteImport.update({
   path: '/legal/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminConnectionsRoute =
+  AuthenticatedAdminConnectionsRouteImport.update({
+    id: '/admin/connections',
+    path: '/admin/connections',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminMediaRoute = AuthenticatedAdminMediaRouteImport.update({
+  id: '/admin/media',
+  path: '/admin/media',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/admin/settings',
+    path: '/admin/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicHooksSocialSyncRoute =
   ApiPublicHooksSocialSyncRouteImport.update({
     id: '/api/public/hooks/social-sync',
@@ -125,10 +145,13 @@ export interface FileRoutesByFullPath {
   '/risk-disclosure': typeof RiskDisclosureRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/admin/sign-in': typeof AdminSignInRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
+  '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
+  '/admin/media': typeof AuthenticatedAdminMediaRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
 }
@@ -143,10 +166,13 @@ export interface FileRoutesByTo {
   '/risk-disclosure': typeof RiskDisclosureRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/admin/sign-in': typeof AdminSignInRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
+  '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
+  '/admin/media': typeof AuthenticatedAdminMediaRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
 }
@@ -163,10 +189,13 @@ export interface FileRoutesById {
   '/risk-disclosure': typeof RiskDisclosureRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/admin/sign-in': typeof AdminSignInRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
+  '/_authenticated/admin/connections': typeof AuthenticatedAdminConnectionsRoute
+  '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
 }
@@ -183,10 +212,13 @@ export interface FileRouteTypes {
     | '/risk-disclosure'
     | '/sitemap.xml'
     | '/terms'
-    | '/admin'
     | '/admin/sign-in'
     | '/api/social-feed'
     | '/legal/$slug'
+    | '/admin/connections'
+    | '/admin/media'
+    | '/admin/settings'
+    | '/admin/'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
   fileRoutesByTo: FileRoutesByTo
@@ -201,10 +233,13 @@ export interface FileRouteTypes {
     | '/risk-disclosure'
     | '/sitemap.xml'
     | '/terms'
-    | '/admin'
     | '/admin/sign-in'
     | '/api/social-feed'
     | '/legal/$slug'
+    | '/admin/connections'
+    | '/admin/media'
+    | '/admin/settings'
+    | '/admin'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
   id:
@@ -220,10 +255,13 @@ export interface FileRouteTypes {
     | '/risk-disclosure'
     | '/sitemap.xml'
     | '/terms'
-    | '/_authenticated/admin'
     | '/admin/sign-in'
     | '/api/social-feed'
     | '/legal/$slug'
+    | '/_authenticated/admin/connections'
+    | '/_authenticated/admin/media'
+    | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
   fileRoutesById: FileRoutesById
@@ -326,13 +364,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/admin/sign-in': {
       id: '/admin/sign-in'
       path: '/admin/sign-in'
@@ -354,6 +385,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegalSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/connections': {
+      id: '/_authenticated/admin/connections'
+      path: '/admin/connections'
+      fullPath: '/admin/connections'
+      preLoaderRoute: typeof AuthenticatedAdminConnectionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/media': {
+      id: '/_authenticated/admin/media'
+      path: '/admin/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AuthenticatedAdminMediaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/hooks/social-sync': {
       id: '/api/public/hooks/social-sync'
       path: '/api/public/hooks/social-sync'
@@ -372,11 +431,17 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminConnectionsRoute: typeof AuthenticatedAdminConnectionsRoute
+  AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminConnectionsRoute: AuthenticatedAdminConnectionsRoute,
+  AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

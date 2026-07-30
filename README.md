@@ -186,3 +186,62 @@ endorse this project.
 - Meme Machine exposes preset caption chips plus disabled architecture controls
   (image, caption position, size, light/dark treatment, export, copy social
   caption). No uploads and no free-text captions.
+
+## Ivy Social Pipeline
+
+Official accounts (the only accounts eligible for automatic publication):
+
+- Instagram — [@frogqueenivy](https://www.instagram.com/frogqueenivy/)
+- TikTok — [@ivyvibing](https://www.tiktok.com/@ivyvibing)
+- Linktree — https://linktr.ee/ivyvibing
+
+### Unified approved-media read model
+
+`unified_media` (database view) + `media_placements` feed a single reader,
+`src/lib/media-read.server.ts`. Hero, Fresh Posts, Ivy TV, Hall of Fame and the
+Meme Machine all consume the same `SiteMedia` object, so an approved item
+appears everywhere its placements say it should — never only in Fresh Posts.
+
+Ivy's original caption is stored verbatim and used as the website copy. A
+website-only caption override is optional and never overwrites the source.
+
+### Placement defaults
+
+| Media | Placements |
+| --- | --- |
+| video / reel | Fresh Posts + Ivy TV |
+| image / carousel | Fresh Posts + Hall of Fame |
+| Hero | newest approved image, unless an owner-pinned hero exists |
+| Meme Machine | only items with community reuse enabled (off by default) |
+
+Manual pinned/featured and manual placements always win over automation.
+
+### Environment variables
+
+```
+INSTAGRAM_CLIENT_ID / INSTAGRAM_CLIENT_SECRET / INSTAGRAM_REDIRECT_URI
+TIKTOK_CLIENT_KEY   / TIKTOK_CLIENT_SECRET    / TIKTOK_REDIRECT_URI
+SOCIAL_TOKEN_ENCRYPTION_KEY   # AES-256-GCM key for stored platform tokens
+SOCIAL_SYNC_SECRET            # shared secret for the scheduled sync hook
+```
+
+Redirect URIs must point at `/api/public/oauth/<platform>/callback`.
+
+### Owner authorization
+
+1. An administrator opens `/admin/connections`.
+2. **Connect** starts the official OAuth flow with a CSRF `state` value.
+3. On success the token is encrypted server-side; only a reference is stored.
+4. A sync is triggered immediately, then every
+   `projectConfig.socialFeed.syncIntervalHours` hours via
+   `POST /api/public/hooks/social-sync` with the `x-sync-secret` header.
+
+Until this is done every platform honestly reports **disconnected** and the
+site shows labelled owner-media placeholders.
+
+### Sync behaviour
+
+Dedupes on `(platform, platform_post_id)`, preserves every administrator
+override, marks content that disappears upstream inactive instead of deleting
+it, and keeps the last successful public feed when an upstream call fails.
+Nothing is scraped and no platform media is rehosted.

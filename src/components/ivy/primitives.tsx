@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import { CrownDoodle, PawDoodle, Tape } from "./doodles";
+import { displayCaption, posterUrl, type UnifiedMediaItem } from "@/types/media";
+
 
 export type Tone = "leaf" | "cream" | "lavender" | "yellow" | "pink" | "frog";
 
@@ -69,7 +71,69 @@ export function MediaPlaceholder({
   );
 }
 
+/**
+ * Renders an approved item from the unified media model inside the same
+ * frame as the placeholder, so the layout never shifts. When no approved item
+ * exists yet it falls back to the labelled owner-media placeholder.
+ *
+ * This shows the platform's own poster/thumbnail — it is not a third-party
+ * embed, so it is not cookie-consent gated. Actual embeds are.
+ */
+export function ApprovedMedia({
+  item,
+  label,
+  hint,
+  aspect = "square",
+  tone = "leaf",
+  className,
+  compact = false,
+}: {
+  item?: UnifiedMediaItem | null;
+  label: string;
+  hint?: string;
+  aspect?: keyof typeof aspectMap;
+  tone?: Tone;
+  className?: string;
+  compact?: boolean;
+}) {
+  const poster = item ? posterUrl(item) : null;
+  if (!item || !poster) {
+    return (
+      <MediaPlaceholder
+        label={label}
+        hint={hint}
+        aspect={aspect}
+        tone={tone}
+        className={className}
+        compact={compact}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        "relative w-full overflow-hidden rounded-xl ink-border",
+        aspectMap[aspect],
+        toneBg[tone],
+        className,
+      )}
+    >
+      <img
+        src={poster}
+        alt={item.altText || displayCaption(item) || "Official Ivy media"}
+        loading="lazy"
+        decoding="async"
+        width={item.width ?? undefined}
+        height={item.height ?? undefined}
+        className="h-full w-full object-cover"
+      />
+    </div>
+  );
+}
+
 export function ComingSoonPill({ className }: { className?: string }) {
+
   return (
     <span
       className={cn(
@@ -163,6 +227,7 @@ export function Section({
 }
 
 export function Polaroid({
+  item,
   label,
   caption,
   rotate = 0,
@@ -171,6 +236,7 @@ export function Polaroid({
   tape = true,
   className,
 }: {
+  item?: UnifiedMediaItem | null;
   label: string;
   caption: string;
   rotate?: number;
@@ -185,7 +251,7 @@ export function Polaroid({
       style={{ transform: `rotate(${rotate}deg)` }}
     >
       {tape ? <Tape className="-top-3 left-1/2 -translate-x-1/2" rotate={rotate > 0 ? -8 : 7} /> : null}
-      <MediaPlaceholder label={label} aspect={aspect} tone={tone} compact />
+      <ApprovedMedia item={item} label={label} aspect={aspect} tone={tone} compact />
       <figcaption className="mt-3 text-center font-display text-sm text-charcoal">{caption}</figcaption>
     </figure>
   );
