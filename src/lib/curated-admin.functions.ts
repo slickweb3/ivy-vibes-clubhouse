@@ -67,6 +67,13 @@ export interface CuratedCreateInput {
   displayOrder?: number;
   isPinned?: boolean;
   isFeatured?: boolean;
+  /**
+   * Instagram post URLs do not contain the account handle and this workflow
+   * never scrapes or calls an API, so ownership cannot be verified in code.
+   * Staff must explicitly confirm they opened the original post and saw that
+   * it belongs to @frogqueenivy.
+   */
+  instagramOwnershipConfirmed?: boolean;
 }
 
 export const createCuratedPost = createServerFn({ method: "POST" })
@@ -79,6 +86,14 @@ export const createCuratedPost = createServerFn({ method: "POST" })
 
     const parsed = parseCuratedUrl(data.url ?? "");
     if ("error" in parsed) throw new Error(parsed.error);
+
+    // TikTok handles are validated from the URL itself. Instagram cannot be,
+    // so we require the admin's explicit ownership confirmation instead.
+    if (parsed.platform === "instagram" && data.instagramOwnershipConfirmed !== true) {
+      throw new Error(
+        "Confirm you opened the original post and verified it belongs to @frogqueenivy.",
+      );
+    }
 
     const placements = (data.placements ?? []).filter((p) =>
       (CURATED_PLACEMENTS as string[]).includes(p),
@@ -115,7 +130,10 @@ export const createCuratedPost = createServerFn({ method: "POST" })
       action: "curated_post_added",
       entityType: "curated_social_posts",
       entityId: parsed.platformPostId,
-      summary: `Added ${parsed.platform} post ${parsed.platformPostId} as an official embed.`,
+      summary:
+        parsed.platform === "instagram"
+          ? `Added Instagram post ${parsed.platformPostId} as an official embed. Ownership of @frogqueenivy was confirmed manually by staff (Instagram URLs carry no handle).`
+          : `Added TikTok post ${parsed.platformPostId} as an official embed. Handle @${parsed.sourceAccountHandle} was validated from the URL.`,
     });
 
     return { ok: true };
