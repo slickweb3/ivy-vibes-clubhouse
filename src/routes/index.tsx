@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getSiteMedia } from "@/lib/site-media.functions";
+import { getMarketSnapshot } from "@/lib/market.functions";
+import type { MarketSnapshot } from "@/lib/market.server";
 import { EMPTY_SITE_MEDIA, type SiteMedia } from "@/types/media";
 import { SiteNav } from "@/components/ivy/header";
 import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
@@ -13,6 +15,7 @@ import {
   WhyIvy,
   TokenRecord,
 } from "@/components/ivy/sections";
+import { LiveMarket } from "@/components/ivy/market";
 import {
   MemeMachine,
   OwnerCorner,
@@ -39,12 +42,12 @@ export const Route = createFileRoute("/")({
     links: [{ rel: "canonical", href: "/" }],
   }),
   // Public read model: approved + visible + active items only.
-  loader: async (): Promise<SiteMedia> => {
-    try {
-      return await getSiteMedia();
-    } catch {
-      return EMPTY_SITE_MEDIA;
-    }
+  loader: async (): Promise<HomeData> => {
+    const [media, market] = await Promise.all([
+      getSiteMedia().catch(() => EMPTY_SITE_MEDIA),
+      getMarketSnapshot().catch(() => null),
+    ]);
+    return { media, market };
   },
   component: Home,
   errorComponent: () => (
@@ -55,8 +58,15 @@ export const Route = createFileRoute("/")({
   ),
 });
 
+interface HomeData {
+  media: SiteMedia;
+  market: MarketSnapshot | null;
+}
+
 function Home() {
-  const media = Route.useLoaderData() ?? EMPTY_SITE_MEDIA;
+  const data = Route.useLoaderData();
+  const media = data?.media ?? EMPTY_SITE_MEDIA;
+  const market = data?.market ?? null;
   return (
     <CookieConsentProvider>
       <a
@@ -74,7 +84,8 @@ function Home() {
         <HallOfFame items={media.hallOfFame} />
         <TheLore />
         <WhyIvy />
-        <TokenRecord />
+        <TokenRecord market={market ?? undefined} />
+        {market ? <LiveMarket snapshot={market} /> : null}
         <MemeMachine items={media.memeMachine} />
         <OwnerCorner />
         <RoyalCourt />
