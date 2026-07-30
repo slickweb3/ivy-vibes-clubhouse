@@ -16,7 +16,7 @@ import {
   footerDisclaimer,
   memeMachine,
   navLinks,
-  ownersCorner,
+  ownerCorner,
   royalCourt,
 } from "@/data/site-content";
 import { legalPages } from "@/data/legal";
@@ -187,24 +187,24 @@ export function MemeMachine({ items = [] }: { items?: UnifiedMediaItem[] }) {
 
 /* --------------------------------------------------------- Owner's Corner */
 
-export function OwnersCorner() {
+export function OwnerCorner() {
   return (
     <Section
-      id="owners-corner"
+      id="owner-corner"
       eyebrow="Owner's Corner"
-      title={ownersCorner.heading}
-      intro={ownersCorner.body}
+      title={ownerCorner.heading}
+      intro={ownerCorner.body}
       tone="lavender"
     >
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
         <MediaPlaceholder
-          label={ownersCorner.mediaLabel}
+          label={ownerCorner.mediaLabel}
           aspect="portrait"
           tone="cream"
           hint="Shared only with the owner's permission"
         />
         <div className="grid gap-4 sm:grid-cols-2">
-          {ownersCorner.cards.map((card) => (
+          {ownerCorner.cards.map((card) => (
             <InfoCard key={card.title} title={card.title} body={card.body} tone="cream" />
           ))}
         </div>

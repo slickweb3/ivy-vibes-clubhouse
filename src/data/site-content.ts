@@ -347,7 +347,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "Does the project support Ivy?",
     answer:
-      "The project states that creator rewards and specified proceeds are intended to benefit Ivy and her owners. Detailed allocation information should be published before launch.",
+      "The project states that creator rewards and specified proceeds are intended to benefit Ivy and her owner. Detailed allocation information should be published before launch.",
   },
   {
     question: "Is short spine syndrome a dog breed?",

@@ -15,7 +15,7 @@ import {
 } from "@/components/ivy/sections";
 import {
   MemeMachine,
-  OwnersCorner,
+  OwnerCorner,
   RoyalCourt,
   FAQ,
   SiteFooter,
@@ -76,7 +76,7 @@ function Home() {
         <WhyIvy />
         <TokenRecord />
         <MemeMachine items={media.memeMachine} />
-        <OwnersCorner />
+        <OwnerCorner />
         <RoyalCourt />
         <FAQ />
       </main>
