@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import { CrownDoodle, PawDoodle, Tape } from "./doodles";
+import { displayCaption, posterUrl, type UnifiedMediaItem } from "@/types/media";
+
 
 export type Tone = "leaf" | "cream" | "lavender" | "yellow" | "pink" | "frog";
 
