@@ -71,13 +71,23 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
   const deny = useCallback(() => persist("denied"), [persist]);
 
   const openSettings = useCallback(() => {
-    setDraftAllowed(consent === "granted");
+    setDraftAllowed(consent !== "denied");
     setSettingsOpen(true);
   }, [consent]);
 
+  // Official Instagram/TikTok embeds load by default so Ivy's posts appear
+  // straight away; visitors can switch them off in the banner or settings.
+  // Gated on `hydrated` so a stored "denied" choice is respected before any
+  // third-party request is made.
   const value = useMemo<ConsentContextValue>(
-    () => ({ consent, embedsAllowed: consent === "granted", grant, deny, openSettings }),
-    [consent, grant, deny, openSettings],
+    () => ({
+      consent,
+      embedsAllowed: hydrated && consent !== "denied",
+      grant,
+      deny,
+      openSettings,
+    }),
+    [consent, hydrated, grant, deny, openSettings],
   );
 
   const showBanner = hydrated && consent === "unknown";
@@ -92,15 +102,17 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
           aria-label="Cookie choices"
           className="fixed inset-x-3 bottom-3 z-50 rounded-2xl bg-card p-4 pop-static sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md"
         >
-          <h2 className="font-display text-base text-charcoal">Optional embeds are switched off</h2>
+          <h2 className="font-display text-base text-charcoal">Ivy&apos;s posts are loading from Instagram &amp; TikTok</h2>
           <p className="mt-1.5 text-sm text-charcoal/80">
-            Social video embeds can set cookies belonging to the hosting platform. Until you allow
-            them you will see a thumbnail, the caption and a link to the original post.
+            Her official embeds show up automatically so you can watch straight away. They can set
+            cookies belonging to Instagram or TikTok — switch them off any time and you&apos;ll get a
+            card with a link to the original post instead.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Button onClick={grant} className="min-h-11 rounded-full bg-frog font-display text-charcoal pop hover:bg-frog">
-              Allow embeds
+              Keep embeds on
             </Button>
+
             <Button
               onClick={deny}
               variant="secondary"
