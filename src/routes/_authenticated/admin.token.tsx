@@ -13,7 +13,7 @@ import { getMarketSnapshot } from "@/lib/market.functions";
 export const Route = createFileRoute("/_authenticated/admin/token")({
   head: () => ({
     meta: [
-      { title: "Token & chart — IvyVibing admin" },
+      { title: "Token & chart — ivy vibing admin" },
       {
         name: "description",
         content:

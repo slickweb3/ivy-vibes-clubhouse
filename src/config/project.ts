@@ -1,5 +1,5 @@
 /**
- * IvyVibing — single source of truth.
+ * ivy vibing — single source of truth.
  *
  * RULE: never invent a contract address, blockchain, supply, launch date,
  * tokenomics, price, market cap, exchange, social profile, partnership,
@@ -42,7 +42,7 @@ export interface ProjectConfig {
 }
 
 export const projectConfig: ProjectConfig = {
-  projectName: "IvyVibing",
+  projectName: "ivy vibing",
   ticker: "$IVY",
   tagline: "Short Spine. Big Vibes.",
   // Planned launch venue. The mint/contract address stays null until it exists.

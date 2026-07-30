@@ -25,7 +25,7 @@ import {
   SiteFooter,
 } from "@/components/ivy/sections-b";
 
-const TITLE = "$IVY — The Official IvyVibing Meme Coin";
+const TITLE = "$IVY — The Official ivy vibing Meme Coin";
 const DESCRIPTION =
   "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $IVY community project.";
 

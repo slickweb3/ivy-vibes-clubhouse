@@ -17,7 +17,7 @@ import { countCuratedPosts } from "@/lib/curated-admin.functions";
 export const Route = createFileRoute("/_authenticated/admin/connections")({
   head: () => ({
     meta: [
-      { title: "Connections — IvyVibing admin" },
+      { title: "Connections — ivy vibing admin" },
       { name: "description", content: "Authorize Ivy's official Instagram and TikTok accounts." },
       { name: "robots", content: "noindex" },
     ],

@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IvyWordmark, CrownDoodle } from "@/components/ivy/doodles";
 
-const TITLE = "Team sign in — IvyVibing";
+const TITLE = "Team sign in — ivy vibing";
 const DESCRIPTION =
-  "Sign in to the IvyVibing admin area. Access is restricted to Ivy's owner and approved editors.";
+  "Sign in to the ivy vibing admin area. Access is restricted to Ivy's owner and approved editors.";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -63,7 +63,7 @@ function AuthPage() {
   return (
     <main id="main" className="grid min-h-dvh place-items-center bg-leaf px-4 py-12">
       <div className="w-full max-w-md rounded-2xl bg-card p-6 pop-static">
-        <Link to="/" aria-label="IvyVibing home">
+        <Link to="/" aria-label="ivy vibing home">
           <IvyWordmark />
         </Link>
         <h1 className="mt-6 flex items-center gap-2 text-3xl text-charcoal">

@@ -15,12 +15,12 @@ export const Route = createFileRoute("/legal/$slug")({
     if (!loaderData) {
       return {
         meta: [
-          { title: "Page unavailable — IvyVibing" },
+          { title: "Page unavailable — ivy vibing" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
-    const title = `${loaderData.page.title} — IvyVibing`;
+    const title = `${loaderData.page.title} — ivy vibing`;
     return {
       meta: [
         { title },

@@ -68,7 +68,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
           <DialogHeader>
             <DialogTitle className="font-display text-2xl text-charcoal">Cookie settings</DialogTitle>
             <DialogDescription className="text-charcoal/80">
-              IvyVibing uses no analytics or advertising cookies. The only third-party storage
+              ivy vibing uses no analytics or advertising cookies. The only third-party storage
               comes from Ivy&apos;s own Instagram and TikTok players.
             </DialogDescription>
           </DialogHeader>

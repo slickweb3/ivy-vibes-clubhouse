@@ -24,7 +24,7 @@ import {
 export const Route = createFileRoute("/_authenticated/admin/curated")({
   head: () => ({
     meta: [
-      { title: "Curated posts — IvyVibing admin" },
+      { title: "Curated posts — ivy vibing admin" },
       {
         name: "description",
         content:

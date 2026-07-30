@@ -21,8 +21,8 @@ import { legalPages } from "@/data/legal";
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({
     meta: [
-      { title: "Admin dashboard — IvyVibing" },
-      { name: "description", content: "Manage IvyVibing content, media and social connections." },
+      { title: "Admin dashboard — ivy vibing" },
+      { name: "description", content: "Manage ivy vibing content, media and social connections." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -75,7 +75,7 @@ function AdminDashboard() {
     <div className="min-h-dvh bg-leaf">
       <header className="border-b-[3px] border-charcoal bg-card">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
-          <Link to="/" aria-label="IvyVibing home">
+          <Link to="/" aria-label="ivy vibing home">
             <IvyWordmark />
           </Link>
           <Sticker tone="yellow">Admin</Sticker>

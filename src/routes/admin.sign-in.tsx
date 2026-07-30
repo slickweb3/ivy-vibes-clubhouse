@@ -7,9 +7,9 @@ import { Label } from "@/components/ui/label";
 import { CrownDoodle, PawDoodle, IvyWordmark } from "@/components/ivy/doodles";
 import { Sticker } from "@/components/ivy/primitives";
 
-const TITLE = "Admin sign-in — IvyVibing";
+const TITLE = "Admin sign-in — ivy vibing";
 const DESCRIPTION =
-  "Sign in to the IvyVibing administrator workspace to manage Ivy's approved media, copy and disclosures.";
+  "Sign in to the ivy vibing administrator workspace to manage Ivy's approved media, copy and disclosures.";
 
 export const Route = createFileRoute("/admin/sign-in")({
   head: () => ({
@@ -62,7 +62,7 @@ function AdminSignIn() {
   return (
     <main id="main" className="min-h-dvh bg-background px-4 py-12">
       <div className="mx-auto flex max-w-md flex-col gap-6">
-        <Link to="/" className="self-start" aria-label="IvyVibing home">
+        <Link to="/" className="self-start" aria-label="ivy vibing home">
           <IvyWordmark />
         </Link>
 
@@ -127,7 +127,7 @@ function AdminSignIn() {
         </div>
 
         <Link to="/" className="text-center font-display text-foreground underline underline-offset-4">
-          Back to IvyVibing
+          Back to ivy vibing
         </Link>
       </div>
     </main>
