@@ -21,6 +21,7 @@ import { Route as RiskDisclosureRouteImport } from './routes/risk-disclosure'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AdminSignInRouteImport } from './routes/admin.sign-in'
 import { Route as ApiSocialFeedRouteImport } from './routes/api/social-feed'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
@@ -85,6 +86,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AdminSignInRoute = AdminSignInRouteImport.update({
+  id: '/admin/sign-in',
+  path: '/admin/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSocialFeedRoute = ApiSocialFeedRouteImport.update({
   id: '/api/social-feed',
   path: '/api/social-feed',
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/admin/sign-in': typeof AdminSignInRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/admin/sign-in': typeof AdminSignInRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/admin/sign-in': typeof AdminSignInRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/admin'
+    | '/admin/sign-in'
     | '/api/social-feed'
     | '/legal/$slug'
     | '/api/public/hooks/social-sync'
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/admin'
+    | '/admin/sign-in'
     | '/api/social-feed'
     | '/legal/$slug'
     | '/api/public/hooks/social-sync'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/admin'
+    | '/admin/sign-in'
     | '/api/social-feed'
     | '/legal/$slug'
     | '/api/public/hooks/social-sync'
@@ -228,6 +240,7 @@ export interface RootRouteChildren {
   RiskDisclosureRoute: typeof RiskDisclosureRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  AdminSignInRoute: typeof AdminSignInRoute
   ApiSocialFeedRoute: typeof ApiSocialFeedRoute
   LegalSlugRoute: typeof LegalSlugRoute
   ApiPublicHooksSocialSyncRoute: typeof ApiPublicHooksSocialSyncRoute
@@ -320,6 +333,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/admin/sign-in': {
+      id: '/admin/sign-in'
+      path: '/admin/sign-in'
+      fullPath: '/admin/sign-in'
+      preLoaderRoute: typeof AdminSignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/social-feed': {
       id: '/api/social-feed'
       path: '/api/social-feed'
@@ -374,6 +394,7 @@ const rootRouteChildren: RootRouteChildren = {
   RiskDisclosureRoute: RiskDisclosureRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  AdminSignInRoute: AdminSignInRoute,
   ApiSocialFeedRoute: ApiSocialFeedRoute,
   LegalSlugRoute: LegalSlugRoute,
   ApiPublicHooksSocialSyncRoute: ApiPublicHooksSocialSyncRoute,

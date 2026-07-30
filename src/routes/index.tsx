@@ -19,9 +19,9 @@ import {
   SiteFooter,
 } from "@/components/ivy/sections-b";
 
-const TITLE = "IvyVibing — $IVY, the Short Spine Queen's clubhouse";
+const TITLE = "$IVY — The Official IvyVibing Meme Coin";
 const DESCRIPTION =
-  "Short spine, big vibes. The official IvyVibing clubhouse for $IVY, the community meme coin inspired by Ivy, the Short Spine Queen and Frog Queen.";
+  "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $IVY community project.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,7 +32,9 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "/" },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Home,
 });
