@@ -83,7 +83,7 @@ function Home() {
       <SiteNav />
       <main id="main">
         <Hero media={media.hero} market={market} curatedHero={curated.hero} />
-        <MeetIvy />
+        <MeetIvy curated={curated.hallOfFame.slice(0, 3)} />
         <FreshFromTheFrogQueen media={media} curated={curated.freshPosts} />
         <IvyTV items={media.ivyTv} curated={curated.ivyTv} />
         <HallOfFame items={media.hallOfFame} curated={curated.hallOfFame} />
