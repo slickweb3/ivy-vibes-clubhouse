@@ -1,6 +1,6 @@
-# IvyVibing — $IVY
+# ivy vibing — $ivy
 
-The official clubhouse for **$IVY**, the community meme coin inspired by **Ivy**, the
+The official clubhouse for **$ivy**, the community meme coin inspired by **Ivy**, the
 Short Spine Queen and Frog Queen. Ivy comes first; crypto comes second.
 
 Built with TanStack Start (React 19 + Vite 7), Tailwind CSS v4 and Lovable Cloud
@@ -55,7 +55,7 @@ src/
     cookie-consent.tsx       consent provider + settings dialog
     header.tsx               announcement bar, sticky nav, Join the Vibe
     sections.tsx             Hero, Meet Ivy, Fresh Posts, Ivy TV, Hall of Fame,
-                             The Lore, Why $IVY, Token Record
+                             The Lore, Why $ivy, Token Record
     sections-b.tsx           Meme Machine, Owner's Corner, Royal Court, FAQ, Footer
   lib/
     social-feed.server.ts    reads ONLY the local cache table
@@ -162,7 +162,7 @@ brand image with an absolute URL exists.
 
 ## Disclaimer
 
-$IVY is a community meme project. Digital assets are highly speculative and may
+$ivy is a community meme project. Digital assets are highly speculative and may
 lose all value. Nothing in this repository or on the website is financial,
 legal or tax advice. Instagram, TikTok and other platforms do not sponsor or
 endorse this project.
@@ -180,7 +180,7 @@ endorse this project.
   review before launch).
 - `/admin/sign-in` is the polished, setup-required administrator entry point.
   There are no demo or hard-coded credentials anywhere in the codebase.
-- SEO: title `$IVY — The Official IvyVibing Meme Coin`, matching meta
+- SEO: title `$ivy — The Official ivy vibing Meme Coin`, matching meta
   description, self-referencing canonical, `public/robots.txt`,
   `/sitemap.xml` server route and an original crown/paw/leaf `favicon.svg`.
 - Meme Machine exposes preset caption chips plus disabled architecture controls
