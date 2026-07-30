@@ -79,7 +79,7 @@ export function MiniChart({ snapshot }: { snapshot: MarketSnapshot }) {
     <div className="rounded-3xl bg-card p-4 pop-static sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="font-display text-[0.7rem] tracking-wide text-charcoal/70 uppercase">
-          $ivy · live view
+          <span className="lowercase">$ivy</span> · live view
         </p>
         {live && change !== null ? (
           <span
