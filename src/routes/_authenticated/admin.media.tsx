@@ -51,7 +51,7 @@ function MediaPage() {
       ) : null}
 
       {rows.length === 0 && !mediaQuery.isLoading && !mediaQuery.isError ? (
-        <div className="rounded-2xl bg-cream p-5 pop-static">
+        <div className="rounded-2xl bg-card p-5 pop-static">
           <h2 className="font-display text-lg text-charcoal">Nothing imported yet</h2>
           <p className="mt-2 text-sm text-charcoal/85">
             Once Ivy&apos;s owner authorizes Instagram or TikTok, imported posts appear here with
@@ -110,7 +110,7 @@ function MediaRow({ row, onSaved }: { row: AdminMediaRow; onSaved: () => void })
   }
 
   return (
-    <article className="rounded-2xl bg-cream p-5 pop-static">
+    <article className="rounded-2xl bg-card p-5 pop-static">
       <div className="flex flex-wrap items-center gap-2">
         <StatusChip
           status={row.approvalStatus === "approved" ? "ok" : row.approvalStatus === "rejected" ? "off" : "pending"}

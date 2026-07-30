@@ -39,7 +39,7 @@ function Panel({
   children?: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl bg-cream p-5 pop-static">
+    <section className="rounded-2xl bg-card p-5 pop-static">
       <h3 className="font-display text-lg text-charcoal">{title}</h3>
       <p className="mt-1 text-sm text-charcoal/80">{description}</p>
       {children ? <div className="mt-4">{children}</div> : null}
@@ -73,7 +73,7 @@ function AdminDashboard() {
 
   return (
     <div className="min-h-dvh bg-leaf">
-      <header className="border-b-[3px] border-charcoal bg-cream">
+      <header className="border-b-[3px] border-charcoal bg-card">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
           <Link to="/" aria-label="IvyVibing home">
             <IvyWordmark />
@@ -123,7 +123,7 @@ function AdminDashboard() {
         </div>
 
         <Tabs defaultValue="overview" className="mt-8">
-          <TabsList className="flex h-auto flex-wrap justify-start gap-1 bg-cream p-1.5 pop-static">
+          <TabsList className="flex h-auto flex-wrap justify-start gap-1 bg-card p-1.5 pop-static">
             {[
               ["overview", "Overview"],
               ["social", "Social"],

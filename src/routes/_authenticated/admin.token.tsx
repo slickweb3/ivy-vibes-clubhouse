@@ -115,7 +115,7 @@ function TokenPage() {
       title="Token & chart"
       intro="Nothing about the token is published until you type it here. Saving a mint address is what turns the public tracker and the Dexscreener chart on."
     >
-      <section className="rounded-2xl bg-cream p-5 pop-static">
+      <section className="rounded-2xl bg-card p-5 pop-static">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="font-display text-lg text-charcoal">Live feed status</h2>
           <StatusChip
@@ -170,14 +170,14 @@ function TokenPage() {
                 onChange={(event) =>
                   setDraft((prev) => ({ ...prev, [field.key]: event.target.value }))
                 }
-                className="mt-1 min-h-11 rounded-xl border-2 border-charcoal bg-cream"
+                className="mt-1 min-h-11 rounded-xl border-2 border-charcoal bg-card"
               />
               <span className="mt-1 block text-xs text-charcoal/70">{field.help}</span>
             </label>
           ))}
         </div>
 
-        <div className="mt-5 flex items-center justify-between gap-4 rounded-xl bg-cream p-4">
+        <div className="mt-5 flex items-center justify-between gap-4 rounded-xl bg-card p-4">
           <div>
             <p className="font-display text-sm text-charcoal">Live market data</p>
             <p className="text-xs text-charcoal/70">
