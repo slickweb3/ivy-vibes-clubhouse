@@ -11,7 +11,7 @@ import {
 import { CrownDoodle, FrogDoodle, GrassStrip, LeafDoodle, PawDoodle, VineDivider } from "./doodles";
 import { useEmbedConsent } from "./cookie-consent";
 import { OfficialSocialEmbed, CuratedNote } from "./official-embed";
-import { platformLabel, type CuratedFeed, type CuratedPost } from "@/types/curated";
+import { platformLabel, type CuratedPost } from "@/types/curated";
 
 import {
   freshPosts,
@@ -202,7 +202,7 @@ export function FreshFromTheFrogQueen({
       key: "instagram" as const,
       label: "Instagram",
       heading: "Latest on Instagram",
-      slotLabel: "Add official Ivy Reel here",
+      slotLabel: "Official Ivy Reel",
       posts: media.freshPosts.instagram,
       connection: media.connections.instagram,
     },
@@ -210,7 +210,7 @@ export function FreshFromTheFrogQueen({
       key: "tiktok" as const,
       label: "TikTok",
       heading: "Latest on TikTok",
-      slotLabel: "Add approved Ivy video here",
+      slotLabel: "Official Ivy video",
       posts: media.freshPosts.tiktok,
       connection: media.connections.tiktok,
     },
@@ -265,7 +265,7 @@ export function FreshFromTheFrogQueen({
         </>
       ) : null}
 
-      {importedPlatforms.length > 0 ? (
+      {curated.length === 0 && importedPlatforms.length > 0 ? (
         <div className="mt-8 grid gap-8 lg:grid-cols-2">
           {importedPlatforms.map((platform) => (
             <PlatformFeed
@@ -354,7 +354,7 @@ function PlatformFeed({
         ))}
         {Array.from({ length: slots }).map((_, index) => (
           <li key={`slot-${index}`} className="w-[70%] shrink-0 snap-start sm:w-auto">
-            <MediaPlaceholder
+              <MediaPlaceholder
               label={slotLabel}
               aspect="square"
               tone={index === 1 ? "lavender" : "leaf"}
@@ -486,7 +486,7 @@ export function IvyTV({
             <p className="text-sm text-charcoal/70">
               {embedsAllowed
                 ? "Embeds are allowed, so the official player loads directly from the platform."
-                : "Player embeds are switched off. Use “Load official post” on any card, or allow embeds below."}
+                : "Player embeds are switched off in cookie settings, but every card still links to the original post."}
             </p>
             {!embedsAllowed ? (
               <Button
@@ -532,7 +532,7 @@ export function IvyTV({
         })}
       </div>
 
-      {showApproved && approvedVideos.length > 0 ? (
+      {curated.length === 0 && showApproved && approvedVideos.length > 0 ? (
         <ul className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {approvedVideos.map((item) => (
             <li key={item.key} className="rounded-2xl bg-card p-4 pop-static">
@@ -571,7 +571,7 @@ export function IvyTV({
               <div className="mt-3 flex items-center gap-2">
                 <span className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-lavender px-3 font-display text-xs text-charcoal">
                   <Play aria-hidden className="h-3.5 w-3.5" />
-                  {item.videoUrl ? "Play" : "Awaiting video"}
+                {item.videoUrl ? "Play" : "Official clip"}
                 </span>
                 <span className="text-xs text-charcoal/70">{item.category}</span>
               </div>

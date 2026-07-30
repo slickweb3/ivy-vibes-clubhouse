@@ -158,10 +158,10 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h3 className="font-display text-base text-charcoal">
-                    Optional social video embeds
+                    Official social embeds
                   </h3>
                   <p className="mt-1 text-sm text-charcoal/75">
-                    Loads Instagram or TikTok players only after you press play. Off by default.
+                    Loads Instagram and TikTok players automatically unless you switch them off.
                   </p>
                 </div>
                 <Switch

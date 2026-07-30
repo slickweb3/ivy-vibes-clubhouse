@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ExternalLinkIcon, Play } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useEmbedConsent } from "./cookie-consent";
 import { Sticker } from "./primitives";
 import { CrownDoodle, FrogDoodle, PawDoodle } from "./doodles";
@@ -16,8 +15,8 @@ import { cn } from "@/lib/utils";
  *
  * Nothing is downloaded, proxied or rehosted: the iframe points straight at
  * Instagram / TikTok, and Ivy's original caption is shown by the platform
- * inside that frame. Before consent (or an explicit click) only a branded
- * card with a direct link is rendered — no third-party request is made.
+ * inside that frame. When embeds are disabled in cookie settings, only a
+ * branded card with a direct link is rendered — no third-party request is made.
  */
 export function OfficialSocialEmbed({
   post,
@@ -31,12 +30,11 @@ export function OfficialSocialEmbed({
   compact?: boolean;
 }) {
   const { embedsAllowed, openSettings } = useEmbedConsent();
-  const [loadRequested, setLoadRequested] = useState(false);
   const [failed, setFailed] = useState(false);
 
   const label = platformLabel(post.platform);
   const fallbackLabel = curatedFallbackLabel(post);
-  const showEmbed = (embedsAllowed || loadRequested) && !failed;
+  const showEmbed = embedsAllowed && !failed;
   const aspect = post.platform === "tiktok" ? "aspect-[9/16]" : "aspect-[4/5]";
 
   return (
@@ -89,15 +87,7 @@ export function OfficialSocialEmbed({
                 This post can&apos;t be shown here right now — open it on {label}.
               </p>
             ) : null}
-            {!failed ? (
-              <Button
-                type="button"
-                onClick={() => setLoadRequested(true)}
-                className="min-h-11 rounded-full bg-frog px-4 font-display text-xs text-charcoal pop hover:bg-frog"
-              >
-                Load official post
-              </Button>
-            ) : null}
+            {!failed ? <span className="text-xs text-charcoal/70">Open the original post from the link below.</span> : null}
           </div>
         )}
       </div>
@@ -117,7 +107,7 @@ export function OfficialSocialEmbed({
         ) : null}
       </figcaption>
 
-      {!embedsAllowed && !loadRequested && !compact ? (
+      {!embedsAllowed && !compact ? (
         <button
           type="button"
           onClick={openSettings}

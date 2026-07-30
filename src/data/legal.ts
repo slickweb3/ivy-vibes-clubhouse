@@ -125,8 +125,8 @@ export const legalPages: LegalPage[] = [
       {
         heading: "Optional third-party embeds",
         paragraphs: [
-          "Social video embeds may set cookies belonging to the platform hosting the video. These embeds are disabled by default and load only after you allow them and press play.",
-          "Until you allow them, you will see a thumbnail, caption and a link to the original post instead.",
+          "Social embeds may set cookies belonging to Instagram or TikTok. Official post embeds load automatically unless you switch them off in Cookie Settings.",
+          "If you switch them off, you will see a branded card with a link to the original post instead.",
         ],
       },
       {
@@ -289,13 +289,13 @@ export const legalPages: LegalPage[] = [
       {
         heading: "Media",
         paragraphs: [
-          "Video embeds never autoplay with sound, load only on request and one at a time. Captions will be provided for official video content where available.",
+          "Video embeds never autoplay with sound. Official captions remain inside the Instagram or TikTok embed where the platform provides them.",
         ],
       },
       {
         heading: "Known limitations",
         paragraphs: [
-          "Owner-approved media has not been supplied yet, so images are represented by labelled placeholders. Alternative text will be reviewed when real media is added.",
+          "Curated public embeds are labelled with their official platform source. Any future direct-upload media will receive reviewed alternative text before publication.",
         ],
       },
       {
