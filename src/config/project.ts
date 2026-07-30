@@ -52,8 +52,8 @@ export const projectConfig: ProjectConfig = {
   tokenomicsUrl: null,
   tokenRecordUpdatedAt: null,
   socials: {
-    instagram: null,
-    tiktok: null,
+    instagram: "https://www.instagram.com/frogqueenivy/",
+    tiktok: "https://www.tiktok.com/@ivyvibing",
     x: null,
     telegram: null,
     discord: null,
