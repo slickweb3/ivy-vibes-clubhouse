@@ -139,6 +139,22 @@ export function ComingSoonPill({ className }: { className?: string }) {
   );
 }
 
+/** Keeps the "$ivy" ticker lowercase inside uppercase-styled chips. */
+export function keepTickerCase(children: ReactNode): ReactNode {
+  if (typeof children !== "string") return children;
+  const parts = children.split(/(\$ivy)/gi);
+  if (parts.length === 1) return children;
+  return parts.map((part, index) =>
+    /^\$ivy$/i.test(part) ? (
+      <span key={index} className="lowercase">
+        $ivy
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
+
 export function Sticker({
   children,
   tone = "pink",
