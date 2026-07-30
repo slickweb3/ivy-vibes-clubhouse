@@ -218,7 +218,11 @@ export const updateAutomationSettings = createServerFn({ method: "POST" })
     if (data.automationPaused !== undefined) patch.automation_paused = data.automationPaused;
 
     const { data: row } = await supabase.from("project_config").select("id").limit(1).maybeSingle();
-    if (row) await supabase.from("project_config").update(patch).eq("id", (row as { id: string }).id);
+    if (row)
+      await supabase
+        .from("project_config")
+        .update(patch as never)
+        .eq("id", (row as { id: string }).id);
 
     await audit(supabase, userId, {
       action: "update_automation_settings",
@@ -398,13 +402,13 @@ export const updateMediaItem = createServerFn({ method: "POST" })
       if (data.allowCommunityReuse !== undefined)
         patch.allow_community_reuse = data.allowCommunityReuse;
       if (Object.keys(patch).length > 0) {
-        await supabase.from("social_posts").update(patch).eq("id", data.sourceId);
+        await supabase.from("social_posts").update(patch as never).eq("id", data.sourceId);
       }
     } else {
       if (data.allowCommunityReuse !== undefined) patch.usable_in_memes = data.allowCommunityReuse;
       delete patch.fallback_thumbnail_url;
       if (Object.keys(patch).length > 0) {
-        await supabase.from("media_items").update(patch).eq("id", data.sourceId);
+        await supabase.from("media_items").update(patch as never).eq("id", data.sourceId);
       }
     }
 
@@ -460,6 +464,18 @@ export const listAuditLog = createServerFn({ method: "GET" })
     }>;
   });
 
+export interface SyncRunRow {
+  id: string;
+  platform: string;
+  status: string;
+  started_at: string;
+  finished_at: string | null;
+  items_fetched: number;
+  items_upserted: number;
+  items_marked_unavailable: number;
+  message: string | null;
+}
+
 export const listSyncRuns = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -474,5 +490,5 @@ export const listSyncRuns = createServerFn({ method: "GET" })
       )
       .order("started_at", { ascending: false })
       .limit(20);
-    return (data ?? []) as Array<Record<string, unknown>>;
+    return (data ?? []) as SyncRunRow[];
   });
