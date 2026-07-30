@@ -8,7 +8,7 @@ export type Tone = "leaf" | "cream" | "lavender" | "yellow" | "pink" | "frog";
 
 const toneBg: Record<Tone, string> = {
   leaf: "bg-leaf",
-  cream: "bg-cream",
+  cream: "bg-card",
   lavender: "bg-lavender",
   yellow: "bg-yellow",
   pink: "bg-pink",
@@ -191,7 +191,7 @@ export function Section({
   headingClassName?: string;
 }) {
   const toneClass = {
-    cream: "bg-cream text-charcoal",
+    cream: "bg-background text-foreground",
     leaf: "bg-leaf text-charcoal",
     ivy: "night text-cream",
     white: "bg-card text-card-foreground",
@@ -292,7 +292,7 @@ export function StatusChip({
   const map = {
     ok: "bg-frog text-charcoal",
     pending: "bg-yellow text-charcoal",
-    off: "bg-muted text-charcoal",
+    off: "bg-muted text-cream",
   }[status];
   const symbol = { ok: "●", pending: "◐", off: "○" }[status];
   return (
