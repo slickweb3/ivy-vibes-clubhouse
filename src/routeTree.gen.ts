@@ -27,6 +27,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminConnectionsRouteImport } from './routes/_authenticated/admin.connections'
 import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminTokenRouteImport } from './routes/_authenticated/admin.token'
 import { Route as ApiPublicMarketRouteImport } from './routes/api/public/market'
 import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
 import { Route as ApiPublicOauthProviderActionRouteImport } from './routes/api/public/oauth/$provider.$action'
@@ -122,6 +123,11 @@ const AuthenticatedAdminSettingsRoute =
     path: '/admin/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminTokenRoute = AuthenticatedAdminTokenRouteImport.update({
+  id: '/admin/token',
+  path: '/admin/token',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiPublicMarketRoute = ApiPublicMarketRouteImport.update({
   id: '/api/public/market',
   path: '/api/public/market',
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/token': typeof AuthenticatedAdminTokenRoute
   '/api/public/market': typeof ApiPublicMarketRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/token': typeof AuthenticatedAdminTokenRoute
   '/api/public/market': typeof ApiPublicMarketRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/token': typeof AuthenticatedAdminTokenRoute
   '/api/public/market': typeof ApiPublicMarketRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -227,6 +236,7 @@ export interface FileRouteTypes {
     | '/admin/connections'
     | '/admin/media'
     | '/admin/settings'
+    | '/admin/token'
     | '/api/public/market'
     | '/admin/'
     | '/api/public/hooks/social-sync'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/admin/connections'
     | '/admin/media'
     | '/admin/settings'
+    | '/admin/token'
     | '/api/public/market'
     | '/admin'
     | '/api/public/hooks/social-sync'
@@ -272,6 +283,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/connections'
     | '/_authenticated/admin/media'
     | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/token'
     | '/api/public/market'
     | '/_authenticated/admin/'
     | '/api/public/hooks/social-sync'
@@ -426,6 +438,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/token': {
+      id: '/_authenticated/admin/token'
+      path: '/admin/token'
+      fullPath: '/admin/token'
+      preLoaderRoute: typeof AuthenticatedAdminTokenRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/market': {
       id: '/api/public/market'
       path: '/api/public/market'
@@ -454,6 +473,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminConnectionsRoute: typeof AuthenticatedAdminConnectionsRoute
   AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminTokenRoute: typeof AuthenticatedAdminTokenRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -461,6 +481,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminConnectionsRoute: AuthenticatedAdminConnectionsRoute,
   AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminTokenRoute: AuthenticatedAdminTokenRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
