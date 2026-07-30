@@ -21,7 +21,6 @@ export interface ProjectSocials {
   tiktok: Maybe;
   x: Maybe;
   telegram: Maybe;
-  discord: Maybe;
 }
 
 export interface ProjectConfig {
