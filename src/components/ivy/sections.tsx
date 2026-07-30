@@ -144,8 +144,20 @@ export function FreshFromTheFrogQueen() {
   const { instagramEnabled, tiktokEnabled, postsPerPlatform } = projectConfig.socialFeed;
 
   const platforms = [
-    { key: "instagram", label: "Instagram", enabled: instagramEnabled },
-    { key: "tiktok", label: "TikTok", enabled: tiktokEnabled },
+    {
+      key: "instagram",
+      label: "Instagram",
+      heading: "Latest on Instagram",
+      slotLabel: "Add official Ivy Reel here",
+      enabled: instagramEnabled,
+    },
+    {
+      key: "tiktok",
+      label: "TikTok",
+      heading: "Latest on TikTok",
+      slotLabel: "Add approved Ivy video here",
+      enabled: tiktokEnabled,
+    },
   ] as const;
 
   return (
@@ -161,6 +173,8 @@ export function FreshFromTheFrogQueen() {
           <PlatformFeed
             key={platform.key}
             label={platform.label}
+            heading={platform.heading}
+            slotLabel={platform.slotLabel}
             enabled={platform.enabled}
             count={postsPerPlatform}
           />
@@ -176,10 +190,14 @@ export function FreshFromTheFrogQueen() {
 
 function PlatformFeed({
   label,
+  heading,
+  slotLabel,
   enabled,
   count,
 }: {
   label: string;
+  heading: string;
+  slotLabel: string;
   enabled: boolean;
   count: number;
 }) {
@@ -194,7 +212,7 @@ function PlatformFeed({
   return (
     <div className="rounded-2xl bg-cream p-5 pop-static">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="font-display text-xl text-charcoal">{label}</h3>
+        <h3 className="font-display text-xl text-charcoal">{heading}</h3>
         <StatusChip
           status={enabled ? "pending" : "off"}
           label={enabled ? "Awaiting first sync" : "Not connected"}
@@ -215,7 +233,7 @@ function PlatformFeed({
         {Array.from({ length: count }).map((_, index) => (
           <li key={index} className="w-[70%] shrink-0 snap-start sm:w-auto">
             <MediaPlaceholder
-              label={`${label} slot ${index + 1}`}
+              label={slotLabel}
               aspect="square"
               tone={index === 1 ? "lavender" : "leaf"}
               compact
@@ -228,18 +246,18 @@ function PlatformFeed({
         <Button
           type="button"
           onClick={() => scrollBy(-1)}
-          aria-label={`Scroll ${label} placeholders backwards`}
+          aria-label={`Previous ${label} slot`}
           className="min-h-11 min-w-11 rounded-full bg-card px-4 font-display text-charcoal pop hover:bg-leaf"
         >
-          ‹
+          ‹ Previous
         </Button>
         <Button
           type="button"
           onClick={() => scrollBy(1)}
-          aria-label={`Scroll ${label} placeholders forwards`}
+          aria-label={`Next ${label} slot`}
           className="min-h-11 min-w-11 rounded-full bg-card px-4 font-display text-charcoal pop hover:bg-leaf"
         >
-          ›
+          Next ›
         </Button>
       </div>
 

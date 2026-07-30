@@ -263,7 +263,7 @@ export const memeMachine = {
 export const ownersCorner = {
   heading: "Behind Every Queen Is a Very Dedicated Human",
   body: "Ivy's online story exists because someone has cared for her, understood her needs and shared her personality with the world. $IVY should always respect the bond at the centre of the project.",
-  mediaLabel: "Add an approved photo of Ivy and Ivy's owner",
+  mediaLabel: "Add approved owner photograph here",
   cards: [
     { title: "A message from Ivy's owner", body: "A personal note will be published here." },
     { title: "A day in Ivy's routine", body: "Ivy's human will share what a normal day looks like." },

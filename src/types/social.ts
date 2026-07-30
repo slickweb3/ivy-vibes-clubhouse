@@ -55,7 +55,7 @@ export interface SocialPost {
   approvalStatus: ApprovalStatus;
 }
 
-export type PlatformStatus = "not_configured" | "disconnected" | "connected" | "error";
+export type PlatformStatus = "connected" | "disconnected" | "expired" | "error";
 
 export interface SocialFeedStatus {
   instagram: PlatformStatus;

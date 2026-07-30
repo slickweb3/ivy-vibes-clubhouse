@@ -166,3 +166,23 @@ $IVY is a community meme project. Digital assets are highly speculative and may
 lose all value. Nothing in this repository or on the website is financial,
 legal or tax advice. Instagram, TikTok and other platforms do not sponsor or
 endorse this project.
+
+## Final alignment pass notes
+
+- Feed status values are exactly `connected | disconnected | expired | error`.
+  With no provider credentials configured, both platforms report
+  `disconnected` — the site never pretends a connection is live.
+- `GET /api/social-feed` reads the local `social_posts` cache only and is served
+  with `public, max-age=300, stale-while-revalidate=3600`.
+- Legal aliases `/terms`, `/privacy`, `/cookies`, `/risk-disclosure`,
+  `/media-usage`, `/community-guidelines` and `/accessibility` resolve to the
+  canonical `/legal/<slug>` draft pages (each marked as requiring professional
+  review before launch).
+- `/admin/sign-in` is the polished, setup-required administrator entry point.
+  There are no demo or hard-coded credentials anywhere in the codebase.
+- SEO: title `$IVY — The Official IvyVibing Meme Coin`, matching meta
+  description, self-referencing canonical, `public/robots.txt`,
+  `/sitemap.xml` server route and an original crown/paw/leaf `favicon.svg`.
+- Meme Machine exposes preset caption chips plus disabled architecture controls
+  (image, caption position, size, light/dark treatment, export, copy social
+  caption). No uploads and no free-text captions.

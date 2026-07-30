@@ -117,9 +117,40 @@ export function MemeMachine() {
           ))}
 
           <fieldset>
-            <legend className="font-display text-base text-charcoal">4. Export</legend>
+            <legend className="font-display text-base text-charcoal">4. Caption treatment</legend>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              {(
+                [
+                  { label: "Caption position", options: ["Top", "Bottom", "Both"] },
+                  { label: "Caption size", options: ["Small", "Medium", "Large"] },
+                  { label: "Treatment", options: ["Light", "Dark"] },
+                ] as const
+              ).map((control) => (
+                <div key={control.label}>
+                  <p className="font-display text-xs text-charcoal/80">{control.label}</p>
+                  <div className="mt-1 flex flex-wrap gap-1.5">
+                    {control.options.map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        disabled
+                        aria-disabled="true"
+                        title="Unlocks when approved Ivy photos are supplied"
+                        className="min-h-11 rounded-full bg-card px-3 font-display text-xs text-charcoal pop-static disabled:opacity-70"
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend className="font-display text-base text-charcoal">5. Export</legend>
             <div className="mt-3 flex flex-wrap gap-2">
-              {["Download meme", "Copy image", "Share meme"].map((action) => (
+              {["Download meme", "Copy image", "Copy social caption"].map((action) => (
                 <Button
                   key={action}
                   disabled
