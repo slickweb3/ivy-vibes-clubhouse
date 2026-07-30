@@ -10,33 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiSocialFeedRouteImport } from './routes/api/social-feed'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSocialFeedRoute = ApiSocialFeedRouteImport.update({
+  id: '/api/social-feed',
+  path: '/api/social-feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/social-feed': typeof ApiSocialFeedRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/social-feed': typeof ApiSocialFeedRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/social-feed': typeof ApiSocialFeedRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/api/social-feed'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/api/social-feed'
+  id: '__root__' | '/' | '/api/social-feed'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiSocialFeedRoute: typeof ApiSocialFeedRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +58,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/social-feed': {
+      id: '/api/social-feed'
+      path: '/api/social-feed'
+      fullPath: '/api/social-feed'
+      preLoaderRoute: typeof ApiSocialFeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiSocialFeedRoute: ApiSocialFeedRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
