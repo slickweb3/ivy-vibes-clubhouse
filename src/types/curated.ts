@@ -85,10 +85,19 @@ export function tiktokEmbedUrl(videoId: string): string {
 
 /**
  * Validates a public Instagram/TikTok post URL and derives the official embed
- * URL. Hostname, path shape and account handle are all checked — nothing is
- * fetched from the platform.
+ * URL. Nothing is ever fetched from the platform.
+ *
+ * TikTok: the account handle is part of the URL (`/@handle/video/id`), so the
+ * exact official handle IS validated automatically here.
+ *
+ * Instagram: a `/p/…` or `/reel/…` URL contains ONLY the shortcode — it does
+ * not contain the account handle. Because this workflow never scrapes and
+ * never calls an API, ownership CANNOT be verified in code. The stored
+ * Instagram handle is the officially declared account, recorded on the basis
+ * of an explicit admin confirmation in the admin UI, not an automatic check.
  */
 export function parseCuratedUrl(input: string): ParsedCuratedUrl | { error: string } {
+
   let url: URL;
   try {
     url = new URL(input.trim());
