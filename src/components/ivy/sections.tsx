@@ -55,13 +55,15 @@ export function Hero() {
 
           <div className="mt-7 flex flex-wrap gap-3">
             <Button asChild className="min-h-12 rounded-full bg-frog px-6 font-display text-base text-charcoal pop hover:bg-frog">
-              <a href="#meet-ivy">Meet Ivy</a>
+              <a href="#meet-ivy">Meet the Queen</a>
             </Button>
-            <Button asChild className="min-h-12 rounded-full bg-pink px-6 font-display text-base text-charcoal pop hover:bg-pink">
-              <a href="#ivy-tv">Watch Ivy TV</a>
-            </Button>
-            <Button asChild variant="secondary" className="min-h-12 rounded-full bg-cream px-6 font-display text-base text-charcoal pop hover:bg-cream">
-              <a href="#token-record">$IVY details</a>
+            <Button
+              disabled
+              aria-disabled="true"
+              title="Token details are not confirmed yet"
+              className="min-h-12 rounded-full bg-cream px-6 font-display text-base text-charcoal pop-static hover:bg-cream disabled:opacity-80"
+            >
+              $IVY Coming Soon
             </Button>
           </div>
 
