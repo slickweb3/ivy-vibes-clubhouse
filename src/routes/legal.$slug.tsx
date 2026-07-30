@@ -41,7 +41,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <CookieConsentProvider>
       <SiteNav isHome={false} />
-      <main id="main" className="bg-cream">
+      <main id="main" className="bg-background">
         {children}
       </main>
       <SiteFooter />
@@ -53,15 +53,15 @@ function LegalMissing({ message }: { message: string }) {
   return (
     <Shell>
       <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
-        <h1 className="text-3xl text-charcoal sm:text-4xl">Policy unavailable</h1>
-        <p className="mt-3 text-charcoal/85">{message}</p>
+        <h1 className="text-3xl text-foreground sm:text-4xl">Policy unavailable</h1>
+        <p className="mt-3 text-foreground/85">{message}</p>
         <ul className="mt-6 space-y-2">
           {legalPages.map((page) => (
             <li key={page.slug}>
               <Link
                 to="/legal/$slug"
                 params={{ slug: page.slug }}
-                className="font-display text-charcoal underline underline-offset-4"
+                className="font-display text-foreground underline underline-offset-4"
               >
                 {page.title}
               </Link>
@@ -82,8 +82,8 @@ function LegalPageView() {
         {page.needsLegalReview ? (
           <Sticker tone="yellow">Draft — requires professional legal review</Sticker>
         ) : null}
-        <h1 className="mt-4 text-4xl leading-tight text-charcoal sm:text-5xl">{page.title}</h1>
-        <p className="mt-3 text-lg text-charcoal/85">{page.summary}</p>
+        <h1 className="mt-4 text-4xl leading-tight text-foreground sm:text-5xl">{page.title}</h1>
+        <p className="mt-3 text-lg text-foreground/85">{page.summary}</p>
 
         <nav aria-label="On this page" className="mt-8 rounded-2xl bg-card p-5 pop-static">
           <h2 className="font-display text-base text-charcoal">On this page</h2>
@@ -104,9 +104,9 @@ function LegalPageView() {
         <div className="mt-10 space-y-8">
           {page.sections.map((section, index) => (
             <section key={section.heading} id={`section-${index}`} className="scroll-mt-32">
-              <h2 className="font-display text-2xl text-charcoal">{section.heading}</h2>
+              <h2 className="font-display text-2xl text-foreground">{section.heading}</h2>
               {section.paragraphs.map((paragraph) => (
-                <p key={paragraph} className="mt-3 leading-relaxed text-charcoal/85">
+                <p key={paragraph} className="mt-3 leading-relaxed text-foreground/85">
                   {paragraph}
                 </p>
               ))}
@@ -114,8 +114,8 @@ function LegalPageView() {
           ))}
         </div>
 
-        <nav aria-label="Other policies" className="mt-14 border-t-[3px] border-charcoal pt-6">
-          <h2 className="font-display text-base text-charcoal">Other policies</h2>
+        <nav aria-label="Other policies" className="mt-14 border-t-[3px] border-foreground pt-6">
+          <h2 className="font-display text-base text-foreground">Other policies</h2>
           <ul className="mt-3 flex flex-wrap gap-2">
             {legalPages
               .filter((other) => other.slug !== page.slug)
