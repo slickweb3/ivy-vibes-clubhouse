@@ -8,7 +8,7 @@
  */
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ComingSoonPill, Section, StatusChip } from "@/components/ivy/primitives";
+import { ComingSoonPill, Section, StatusChip, keepTickerCase } from "@/components/ivy/primitives";
 import { useEmbedConsent } from "@/components/ivy/cookie-consent";
 import type { MarketSnapshot } from "@/lib/market.server";
 
