@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { ExternalLinkIcon, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Section, MediaPlaceholder, ApprovedMedia, Polaroid, InfoCard, Sticker, StatusChip, ComingSoonPill } from "./primitives";
@@ -23,7 +23,6 @@ import {
   meetIvy,
   tokenRecord,
   whyIvy,
-  type IvyTvCategory,
 } from "@/data/site-content";
 import {
   COMING_SOON,
@@ -426,7 +425,6 @@ export function IvyTV({
   items?: UnifiedMediaItem[];
   curated?: CuratedPost[];
 }) {
-  const [category, setCategory] = useState<IvyTvCategory>("All");
   const { embedsAllowed, openSettings } = useEmbedConsent();
   const curatedFeatured = curated.find((post) => post.isFeatured) ?? curated[0] ?? null;
   const curatedRest = curated.filter((post) => post.id !== curatedFeatured?.id);
@@ -437,17 +435,12 @@ export function IvyTV({
     [approved],
   );
 
-  const items = useMemo(
-    () => (category === "All" ? ivyTvItems : ivyTvItems.filter((item) => item.category === category)),
-    [category],
-  );
+  const items = ivyTvItems;
 
-  // Approved imports appear under "All" and "Latest Posts"; the curated
-  // placeholder rails stay for categories that have no approved item yet.
-  const showApproved = category === "All" || category === "Latest Posts";
   const featuredApproved =
     approvedVideos.find((item) => item.isFeatured) ?? approvedVideos[0] ?? null;
   const featured = ivyTvItems.find((item) => item.isFeatured);
+
 
   return (
     <Section
@@ -500,7 +493,7 @@ export function IvyTV({
         </div>
       ) : null}
 
-      {curatedRest.length > 0 && (category === "All" || category === "Latest Posts") ? (
+      {curatedRest.length > 0 ? (
         <ul className="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {curatedRest.map((post) => (
             <li key={post.id}>
@@ -511,28 +504,10 @@ export function IvyTV({
       ) : null}
 
 
-      <div role="tablist" aria-label="Ivy TV categories" className="mb-6 flex flex-wrap gap-2">
-        {ivyTv.categories.map((tab) => {
-          const selected = tab === category;
-          return (
-            <button
-              key={tab}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => setCategory(tab)}
-              className={cn(
-                "min-h-11 rounded-full px-4 font-display text-sm pop-static transition-colors",
-                selected ? "bg-frog text-charcoal" : "bg-card/90 text-charcoal hover:bg-leaf",
-              )}
-            >
-              {tab}
-            </button>
-          );
-        })}
-      </div>
 
-      {curated.length === 0 && showApproved && approvedVideos.length > 0 ? (
+
+
+      {curated.length === 0 && approvedVideos.length > 0 ? (
         <ul className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {approvedVideos.map((item) => (
             <li key={item.key} className="rounded-2xl bg-card p-4 pop-static">
