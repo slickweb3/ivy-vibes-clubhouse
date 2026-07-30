@@ -1,7 +1,13 @@
 import { useMemo, useRef, useState } from "react";
 import { ExternalLinkIcon, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Section, MediaPlaceholder, Polaroid, InfoCard, Sticker, StatusChip, ComingSoonPill } from "./primitives";
+import { Section, MediaPlaceholder, ApprovedMedia, Polaroid, InfoCard, Sticker, StatusChip, ComingSoonPill } from "./primitives";
+import {
+  displayCaption,
+  isVideoLike,
+  type SiteMedia,
+  type UnifiedMediaItem,
+} from "@/types/media";
 import { CrownDoodle, FrogDoodle, GrassStrip, LeafDoodle, PawDoodle, VineDivider } from "./doodles";
 import { useEmbedConsent } from "./cookie-consent";
 import {
@@ -27,7 +33,7 @@ import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ Hero */
 
-export function Hero() {
+export function Hero({ media }: { media?: UnifiedMediaItem | null }) {
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden bg-leaf">
       <div className="pointer-events-none absolute -top-10 -right-8 hidden opacity-70 sm:block">
@@ -80,7 +86,8 @@ export function Hero() {
 
         <div className="relative">
           <div className="relative rotate-1">
-            <MediaPlaceholder
+            <ApprovedMedia
+              item={media}
               label={heroCopy.mediaLabel}
               hint="Photo or video supplied by Ivy's owner"
               aspect="portrait"
@@ -140,25 +147,27 @@ export function MeetIvy() {
 
 /* ------------------------------------------------- Fresh from the Queen */
 
-export function FreshFromTheFrogQueen() {
-  const { instagramEnabled, tiktokEnabled, postsPerPlatform } = projectConfig.socialFeed;
+export function FreshFromTheFrogQueen({ media }: { media: SiteMedia }) {
+  const { postsPerPlatform } = projectConfig.socialFeed;
 
   const platforms = [
     {
-      key: "instagram",
+      key: "instagram" as const,
       label: "Instagram",
       heading: "Latest on Instagram",
       slotLabel: "Add official Ivy Reel here",
-      enabled: instagramEnabled,
+      posts: media.freshPosts.instagram,
+      connection: media.connections.instagram,
     },
     {
-      key: "tiktok",
+      key: "tiktok" as const,
       label: "TikTok",
       heading: "Latest on TikTok",
       slotLabel: "Add approved Ivy video here",
-      enabled: tiktokEnabled,
+      posts: media.freshPosts.tiktok,
+      connection: media.connections.tiktok,
     },
-  ] as const;
+  ];
 
   return (
     <Section
@@ -175,8 +184,10 @@ export function FreshFromTheFrogQueen() {
             label={platform.label}
             heading={platform.heading}
             slotLabel={platform.slotLabel}
-            enabled={platform.enabled}
+            posts={platform.posts}
+            connection={platform.connection}
             count={postsPerPlatform}
+            lastUpdated={media.lastUpdated}
           />
         ))}
       </div>
@@ -192,16 +203,21 @@ function PlatformFeed({
   label,
   heading,
   slotLabel,
-  enabled,
+  posts,
+  connection,
   count,
+  lastUpdated,
 }: {
   label: string;
   heading: string;
   slotLabel: string;
-  enabled: boolean;
+  posts: UnifiedMediaItem[];
+  connection: SiteMedia["connections"]["instagram"];
   count: number;
+  lastUpdated: string | null;
 }) {
   const trackRef = useRef<HTMLUListElement>(null);
+  const connected = connection.status === "connected";
 
   const scrollBy = (direction: 1 | -1) => {
     const track = trackRef.current;
@@ -209,29 +225,46 @@ function PlatformFeed({
     track.scrollBy({ left: direction * track.clientWidth * 0.85, behavior: "smooth" });
   };
 
+  const slots = Math.max(count - posts.length, 0);
+
   return (
     <div className="rounded-2xl bg-cream p-5 pop-static">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="font-display text-xl text-charcoal">{heading}</h3>
         <StatusChip
-          status={enabled ? "pending" : "off"}
-          label={enabled ? "Awaiting first sync" : "Not connected"}
+          status={connected ? "ok" : connection.status === "expired" ? "pending" : "off"}
+          label={
+            connected
+              ? connection.accountName
+                ? `Connected · @${connection.accountName}`
+                : "Connected"
+              : connection.status === "expired"
+                ? "Authorization expired"
+                : "Not connected"
+          }
         />
       </div>
 
       <p className="mt-2 text-sm text-charcoal/80">
-        {enabled
-          ? freshPosts.loading
-          : `Ivy's official ${label} account has not been connected yet. Nothing here is scraped or guessed.`}
+        {posts.length > 0
+          ? `Straight from Ivy's official ${label} account, captions in her own words.`
+          : connected
+            ? freshPosts.loading
+            : `Ivy's official ${label} account has not been connected yet. Nothing here is scraped or guessed.`}
       </p>
 
       <ul
         ref={trackRef}
-        aria-label={`${label} placeholder posts`}
+        aria-label={`${label} posts`}
         className="mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0"
       >
-        {Array.from({ length: count }).map((_, index) => (
-          <li key={index} className="w-[70%] shrink-0 snap-start sm:w-auto">
+        {posts.map((post) => (
+          <li key={post.key} className="w-[70%] shrink-0 snap-start sm:w-auto">
+            <PostCard post={post} />
+          </li>
+        ))}
+        {Array.from({ length: slots }).map((_, index) => (
+          <li key={`slot-${index}`} className="w-[70%] shrink-0 snap-start sm:w-auto">
             <MediaPlaceholder
               label={slotLabel}
               aspect="square"
@@ -246,26 +279,52 @@ function PlatformFeed({
         <Button
           type="button"
           onClick={() => scrollBy(-1)}
-          aria-label={`Previous ${label} slot`}
+          aria-label={`Previous ${label} post`}
           className="min-h-11 min-w-11 rounded-full bg-card px-4 font-display text-charcoal pop hover:bg-leaf"
         >
-          ‹ Previous
+          &lsaquo; Previous
         </Button>
         <Button
           type="button"
           onClick={() => scrollBy(1)}
-          aria-label={`Next ${label} slot`}
+          aria-label={`Next ${label} post`}
           className="min-h-11 min-w-11 rounded-full bg-card px-4 font-display text-charcoal pop hover:bg-leaf"
         >
-          Next ›
+          Next &rsaquo;
         </Button>
       </div>
 
       <p className="mt-4 text-xs text-charcoal/70">
-        Feed served from this site's own cache via <code>/api/social-feed</code>. Last updated:{" "}
-        {COMING_SOON}.
+        Served from this site&apos;s own cache. Last updated:{" "}
+        {lastUpdated ? new Date(lastUpdated).toLocaleDateString() : COMING_SOON}.
       </p>
     </div>
+  );
+}
+
+/** One imported post. Ivy's original caption is the primary copy. */
+export function PostCard({ post }: { post: UnifiedMediaItem }) {
+  const caption = displayCaption(post);
+  return (
+    <figure className="flex h-full flex-col gap-2">
+      <ApprovedMedia item={post} label="Official Ivy post" aspect="square" tone="leaf" compact />
+      {caption ? (
+        <figcaption className="line-clamp-3 text-sm leading-snug text-charcoal/85">
+          {caption}
+        </figcaption>
+      ) : null}
+      {post.permalink ? (
+        <a
+          href={post.permalink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-11 items-center gap-1 font-display text-xs text-ivy underline underline-offset-4"
+        >
+          View original post
+          <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />
+        </a>
+      ) : null}
+    </figure>
   );
 }
 
