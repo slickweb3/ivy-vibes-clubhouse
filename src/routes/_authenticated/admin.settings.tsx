@@ -46,7 +46,7 @@ const TOGGLES: Array<{
   {
     key: "defaultCommunityReuse",
     label: "Default community / meme reuse",
-    help: "Off by default. The Meme Machine only ever uses items explicitly marked reusable.",
+    help: "Off by default. Only items explicitly marked reusable may be shared for community reuse.",
   },
   {
     key: "automationPaused",

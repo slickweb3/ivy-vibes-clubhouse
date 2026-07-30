@@ -15,7 +15,7 @@ import { IvyWordmark } from "@/components/ivy/doodles";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { getAdminStatus, getConnectionCards, refreshSocialFeed } from "@/lib/admin.functions";
 import { projectConfig, displayValue } from "@/config/project";
-import { faqEntries, ivyTvItems, loreChapters, memeMachine } from "@/data/site-content";
+import { faqEntries, ivyTvItems, loreChapters } from "@/data/site-content";
 import { legalPages } from "@/data/legal";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
@@ -243,10 +243,9 @@ function AdminDashboard() {
             />
           </TabsContent>
 
-          <TabsContent value="content" className="mt-6 grid gap-4 md:grid-cols-3">
+          <TabsContent value="content" className="mt-6 grid gap-4 md:grid-cols-2">
             <Panel title="FAQ entries" description={`${faqEntries.length} published questions.`} />
             <Panel title="Lore chapters" description={`${loreChapters.length} chapters, dates unconfirmed.`} />
-            <Panel title="Meme captions" description={`${memeMachine.captions.length} approved captions.`} />
           </TabsContent>
 
           <TabsContent value="legal" className="mt-6 grid gap-4 md:grid-cols-2">

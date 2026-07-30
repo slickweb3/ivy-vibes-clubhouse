@@ -19,7 +19,6 @@ import {
 } from "@/components/ivy/sections";
 import { LiveMarket } from "@/components/ivy/market";
 import {
-  MemeMachine,
   OwnerCorner,
   RoyalCourt,
   FAQ,
@@ -73,7 +72,6 @@ interface HomeCuratedSections {
   freshPosts: CuratedPost[];
   ivyTv: CuratedPost[];
   hallOfFame: CuratedPost[];
-  memeMachine: CuratedPost[];
   ownerCorner: CuratedPost | null;
 }
 
@@ -116,11 +114,10 @@ function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
   const freshVideoPosts = take(videoPosts, 4);
   const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
   const ivyTv = take(videoPosts, 8);
-  const hallOfFame = take(photoPosts, 8);
-  const memeMachine = take([...photoPosts, ...videoPosts], 2);
+  const hallOfFame = take(photoPosts, 10);
   const ownerCorner = take([...photoPosts, ...videoPosts], 1)[0] ?? null;
 
-  return { hero, meetIvy, freshPosts, ivyTv, hallOfFame, memeMachine, ownerCorner };
+  return { hero, meetIvy, freshPosts, ivyTv, hallOfFame, ownerCorner };
 }
 
 function Home() {
@@ -148,7 +145,6 @@ function Home() {
         <WhyIvy />
         <TokenRecord market={market ?? undefined} />
         {market ? <LiveMarket snapshot={market} /> : null}
-        <MemeMachine items={media.memeMachine} curated={homeCurated.memeMachine} />
         <OwnerCorner curatedPost={homeCurated.ownerCorner} />
         <RoyalCourt />
         <FAQ />
