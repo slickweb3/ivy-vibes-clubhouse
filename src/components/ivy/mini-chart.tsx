@@ -1,5 +1,5 @@
 /**
- * Small live $IVY view: a first-party sparkline + price chip.
+ * Small live $ivy view: a first-party sparkline + price chip.
  *
  * Honesty rules:
  * - No third-party code loads here. The shape is drawn from Dexscreener's own
@@ -59,7 +59,7 @@ function Sparkline({ points, up }: { points: number[]; up: boolean }) {
       viewBox={`0 0 ${w} ${h}`}
       className="h-14 w-full"
       role="img"
-      aria-label={`24 hour $IVY price trend, ${up ? "up" : "down"}`}
+      aria-label={`24 hour $ivy price trend, ${up ? "up" : "down"}`}
       preserveAspectRatio="none"
     >
       <path d={area} fill={fill} fillOpacity="0.35" />
@@ -79,7 +79,7 @@ export function MiniChart({ snapshot }: { snapshot: MarketSnapshot }) {
     <div className="rounded-3xl bg-card p-4 pop-static sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="font-display text-[0.7rem] tracking-wide text-charcoal/70 uppercase">
-          $IVY · live view
+          $ivy · live view
         </p>
         {live && change !== null ? (
           <span

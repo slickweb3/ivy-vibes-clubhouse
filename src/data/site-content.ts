@@ -9,13 +9,13 @@
  */
 
 export const announcement =
-  "$IVY is getting ready to hop online. Official links and contract address coming soon.";
+  "$ivy is getting ready to hop online. Official links and contract address coming soon.";
 
 export const heroCopy = {
   badge: "Official ivy vibing Project",
   headlineLine1: "SHORT SPINE.",
   headlineLine2: "BIG VIBES.",
-  body: "Meet Ivy—the internet's beloved Frog Queen, professional grass roller and undisputed master of doing everything her own way. $IVY is a community meme coin celebrating the dog who proved that being built different is a superpower.",
+  body: "Meet Ivy—the internet's beloved Frog Queen, professional grass roller and undisputed master of doing everything her own way. $ivy is a community meme coin celebrating the dog who proved that being built different is a superpower.",
   mediaLabel: "Official Ivy portrait",
   stickers: ["Frog Mode", "Certified Queen", "Built Different", "Main Character", "Internet Royalty"],
 };
@@ -199,12 +199,12 @@ export const loreChapters = [
   "Grass rolling becomes a royal tradition",
   "The ivy vibing community grows",
   "The Short Spine Queen becomes an internet favourite",
-  "$IVY begins its next chapter",
+  "$ivy begins its next chapter",
 ];
 
 export const whyIvy = {
   heading: "More Than a Meme. It's an Ivy Vibe.",
-  body: "$IVY is a community-driven celebration of Ivy and the owner who has cared for her, filmed her unforgettable moments and shared her personality with the world. The project is designed to keep Ivy at the centre of everything.",
+  body: "$ivy is a community-driven celebration of Ivy and the owner who has cared for her, filmed her unforgettable moments and shared her personality with the world. The project is designed to keep Ivy at the centre of everything.",
   cards: [
     {
       title: "Officially Ivy",
@@ -234,10 +234,10 @@ export const whyIvy = {
 export const tokenRecord = {
   heading: "The Official Frog Queen Token Record",
   warning:
-    "Always verify the contract address on this website. Fake $IVY tokens and impersonator accounts may exist.",
+    "Always verify the contract address on this website. Fake $ivy tokens and impersonator accounts may exist.",
   planHeading: "Planned launch & tokenomics",
   planNote:
-    "$IVY will launch on pump.fun on Solana as a standard fair launch. These are the pump.fun defaults, published in advance. The mint address and launch date appear here the moment they exist.",
+    "$ivy will launch on pump.fun on Solana as a standard fair launch. These are the pump.fun defaults, published in advance. The mint address and launch date appear here the moment they exist.",
   plan: [
     {
       title: "Fair launch on pump.fun",
@@ -245,7 +245,7 @@ export const tokenRecord = {
       tone: "frog" as const,
     },
     {
-      title: "1,000,000,000 $IVY",
+      title: "1,000,000,000 $ivy",
       body: "The standard pump.fun fixed supply. No minting after launch — the mint authority is revoked by the platform.",
       tone: "yellow" as const,
     },
@@ -262,19 +262,19 @@ export const tokenRecord = {
   ],
   purposeHeading: "Creator rewards go to Ivy",
   purposeBody:
-    "pump.fun pays creator rewards from trading activity to the coin's creator wallet. For $IVY those rewards are intended for Ivy and her owner — her care, her comfort and her ongoing adventures. That is the ultimate purpose of this project.",
+    "pump.fun pays creator rewards from trading activity to the coin's creator wallet. For $ivy those rewards are intended for Ivy and her owner — her care, her comfort and her ongoing adventures. That is the ultimate purpose of this project.",
   purposeDisclaimer:
     "ivy vibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner. Full allocation and proceeds details will be published before launch.",
 };
 
 export const ownerCorner = {
   heading: "Behind Every Queen Is a Very Dedicated Human",
-  body: "Ivy's online story exists because someone has cared for her, understood her needs and shared her personality with the world. $IVY should always respect the bond at the centre of the project.",
+  body: "Ivy's online story exists because someone has cared for her, understood her needs and shared her personality with the world. $ivy should always respect the bond at the centre of the project.",
   mediaLabel: "Ivy and her human",
   cards: [
     { title: "Ivy comes first", body: "Her care, comfort and routine always outrank anything happening on-chain." },
     { title: "Only official content", body: "Every clip and photo on this site is an official Instagram or TikTok post, hosted by the platform." },
-    { title: "Creator rewards", body: "pump.fun creator rewards from $IVY trading are intended for Ivy and her owner." },
+    { title: "Creator rewards", body: "pump.fun creator rewards from $ivy trading are intended for Ivy and her owner." },
     { title: "No private details", body: "Nothing about Ivy's household, location or medical records is published here." },
     { title: "Transparent proceeds", body: "Full allocation and proceeds information will be published before launch." },
     { title: "Community, not charity", body: "ivy vibing is not a registered charity — it is a community meme project built around Ivy." },
@@ -303,14 +303,14 @@ export interface FaqEntry {
 
 export const faqEntries: FaqEntry[] = [
   {
-    question: "What is $IVY?",
+    question: "What is $ivy?",
     answer:
-      "$IVY is a community meme coin inspired by ivy vibing and created to celebrate Ivy, her owner and the community surrounding her.",
+      "$ivy is a community meme coin inspired by ivy vibing and created to celebrate Ivy, her owner and the community surrounding her.",
   },
   {
     question: "Is the token live?",
     answer:
-      "Not yet. $IVY will launch on pump.fun on Solana with the standard pump.fun fair-launch setup. The launch date and the verified mint address will be published on this website — until they appear here, nothing is live.",
+      "Not yet. $ivy will launch on pump.fun on Solana with the standard pump.fun fair-launch setup. The launch date and the verified mint address will be published on this website — until they appear here, nothing is live.",
   },
   {
     question: "Where can I find official links?",
@@ -318,7 +318,7 @@ export const faqEntries: FaqEntry[] = [
       "Ivy's official Instagram, TikTok, X and Telegram links are published on this website. Treat any other account or contract as unverified.",
   },
   {
-    question: "Does buying $IVY guarantee a return?",
+    question: "Does buying $ivy guarantee a return?",
     answer:
       "No. Meme coins and digital assets are highly speculative and may lose some or all of their value.",
   },
@@ -348,7 +348,7 @@ export const faqEntries: FaqEntry[] = [
 ];
 
 export const footerDisclaimer =
-  "$IVY is a community meme project inspired by ivy vibing. Digital assets and meme coins are highly speculative and may lose all value. Nothing on this website constitutes financial, legal or tax advice. Always verify official links and the contract address before interacting with any token. Instagram, TikTok and other social platforms do not sponsor or endorse this project.";
+  "$ivy is a community meme project inspired by ivy vibing. Digital assets and meme coins are highly speculative and may lose all value. Nothing on this website constitutes financial, legal or tax advice. Always verify official links and the contract address before interacting with any token. Instagram, TikTok and other social platforms do not sponsor or endorse this project.";
 
 export const joinTheVibeMessage =
   "Ivy's official channels are listed below. Only trust links published directly on this website.";
@@ -358,7 +358,7 @@ export const navLinks = [
   { label: "Ivy TV", hash: "#ivy-tv" },
   { label: "Fresh Posts", hash: "#fresh-posts" },
   { label: "The Lore", hash: "#the-lore" },
-  { label: "$IVY", hash: "#token-record" },
+  { label: "$ivy", hash: "#token-record" },
   { label: "Chart", hash: "#live-chart" },
   { label: "FAQ", hash: "#faq" },
 ];

@@ -150,7 +150,7 @@ export function IvyWordmark({ className }: { className?: string }) {
         <span className="text-ivy">ivy </span>
         <span className="text-charcoal">vibing</span>
         <span className="ml-1 rounded-full bg-yellow px-1.5 py-0.5 align-middle text-[0.6rem] tracking-widest text-charcoal uppercase pop-static">
-          $IVY
+          $ivy
         </span>
       </span>
       <LeafDoodle className="h-4 w-4 text-frog" />

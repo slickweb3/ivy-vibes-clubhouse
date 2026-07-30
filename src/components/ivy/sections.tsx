@@ -83,7 +83,7 @@ export function Hero({
               title="Token details are not confirmed yet"
               className="min-h-12 rounded-full bg-card px-6 font-display text-base text-charcoal pop-static hover:bg-card disabled:opacity-80"
             >
-              $IVY Coming Soon
+              $ivy Coming Soon
             </Button>
           </div>
 
@@ -659,11 +659,11 @@ export function TheLore() {
   );
 }
 
-/* --------------------------------------------------------------- Why $IVY */
+/* --------------------------------------------------------------- Why $ivy */
 
 export function WhyIvy() {
   return (
-    <Section id="why-ivy" eyebrow="Why $IVY" title={whyIvy.heading} intro={whyIvy.body} tone="leaf">
+    <Section id="why-ivy" eyebrow="Why $ivy" title={whyIvy.heading} intro={whyIvy.body} tone="leaf">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {whyIvy.cards.map((card) => (
           <InfoCard key={card.title} title={card.title} body={card.body} tone={card.tone} />
@@ -710,14 +710,14 @@ export function TokenRecord({ market }: { market?: MarketSnapshot }) {
   return (
     <Section
       id="token-record"
-      eyebrow="$IVY"
+      eyebrow="$ivy"
       title={tokenRecord.heading}
       intro="Nothing here is estimated. Every unconfirmed field stays marked Coming Soon."
       tone="white"
     >
       <div className="overflow-hidden rounded-2xl bg-card pop-static">
         <table className="w-full text-left">
-          <caption className="sr-only">Official $IVY token record</caption>
+          <caption className="sr-only">Official $ivy token record</caption>
           <tbody>
             {rows.map((row) => (
               <tr key={row.label} className="border-b border-charcoal/10 last:border-0">
