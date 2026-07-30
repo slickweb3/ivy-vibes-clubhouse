@@ -18,7 +18,7 @@ import {
   ownersCorner,
   royalCourt,
 } from "@/data/site-content";
-import { footerLegalLinks } from "@/data/legal";
+import { legalPages } from "@/data/legal";
 import { COMING_SOON, projectConfig } from "@/config/project";
 import { cn } from "@/lib/utils";
 
@@ -172,7 +172,7 @@ export function RoyalCourt() {
           const url =
             channel.id === "email"
               ? projectConfig.contactEmail
-              : (projectConfig.socials as Record<string, string | null>)[channel.id] ?? null;
+              : (projectConfig.socials as unknown as Record<string, string | null>)[channel.id] ?? null;
           return (
             <li key={channel.id} className="rounded-2xl bg-cream p-5 pop-static">
               <div className="flex items-center justify-between gap-3">
@@ -276,7 +276,7 @@ export function SiteFooter() {
         <nav aria-label="Legal and disclosures">
           <h2 className="font-display text-base text-cream">Legal</h2>
           <ul className="mt-3 space-y-1">
-            {footerLegalLinks.map((page) => (
+            {legalPages.map((page) => (
               <li key={page.slug}>
                 <Link
                   to="/legal/$slug"
