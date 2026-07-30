@@ -27,6 +27,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminConnectionsRouteImport } from './routes/_authenticated/admin.connections'
 import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as ApiPublicMarketRouteImport } from './routes/api/public/market'
 import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
 import { Route as ApiPublicOauthProviderActionRouteImport } from './routes/api/public/oauth/$provider.$action'
 
@@ -121,6 +122,11 @@ const AuthenticatedAdminSettingsRoute =
     path: '/admin/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicMarketRoute = ApiPublicMarketRouteImport.update({
+  id: '/api/public/market',
+  path: '/api/public/market',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksSocialSyncRoute =
   ApiPublicHooksSocialSyncRouteImport.update({
     id: '/api/public/hooks/social-sync',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public/market': typeof ApiPublicMarketRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public/market': typeof ApiPublicMarketRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public/market': typeof ApiPublicMarketRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/admin/connections'
     | '/admin/media'
     | '/admin/settings'
+    | '/api/public/market'
     | '/admin/'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/admin/connections'
     | '/admin/media'
     | '/admin/settings'
+    | '/api/public/market'
     | '/admin'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/connections'
     | '/_authenticated/admin/media'
     | '/_authenticated/admin/settings'
+    | '/api/public/market'
     | '/_authenticated/admin/'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
@@ -281,6 +293,7 @@ export interface RootRouteChildren {
   AdminSignInRoute: typeof AdminSignInRoute
   ApiSocialFeedRoute: typeof ApiSocialFeedRoute
   LegalSlugRoute: typeof LegalSlugRoute
+  ApiPublicMarketRoute: typeof ApiPublicMarketRoute
   ApiPublicHooksSocialSyncRoute: typeof ApiPublicHooksSocialSyncRoute
   ApiPublicOauthProviderActionRoute: typeof ApiPublicOauthProviderActionRoute
 }
@@ -413,6 +426,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/market': {
+      id: '/api/public/market'
+      path: '/api/public/market'
+      fullPath: '/api/public/market'
+      preLoaderRoute: typeof ApiPublicMarketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/social-sync': {
       id: '/api/public/hooks/social-sync'
       path: '/api/public/hooks/social-sync'
@@ -462,6 +482,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminSignInRoute: AdminSignInRoute,
   ApiSocialFeedRoute: ApiSocialFeedRoute,
   LegalSlugRoute: LegalSlugRoute,
+  ApiPublicMarketRoute: ApiPublicMarketRoute,
   ApiPublicHooksSocialSyncRoute: ApiPublicHooksSocialSyncRoute,
   ApiPublicOauthProviderActionRoute: ApiPublicOauthProviderActionRoute,
 }
