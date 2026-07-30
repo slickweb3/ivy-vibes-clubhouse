@@ -235,6 +235,36 @@ export const tokenRecord = {
   heading: "The Official Frog Queen Token Record",
   warning:
     "Always verify the contract address on this website. Fake $IVY tokens and impersonator accounts may exist.",
+  planHeading: "Planned launch & tokenomics",
+  planNote:
+    "$IVY will launch on pump.fun on Solana as a standard fair launch. These are the pump.fun defaults, published in advance. The mint address and launch date appear here the moment they exist.",
+  plan: [
+    {
+      title: "Fair launch on pump.fun",
+      body: "No presale, no private round, no team allocation. Everyone buys on the same bonding curve from block one.",
+      tone: "frog" as const,
+    },
+    {
+      title: "1,000,000,000 $IVY",
+      body: "The standard pump.fun fixed supply. No minting after launch — the mint authority is revoked by the platform.",
+      tone: "yellow" as const,
+    },
+    {
+      title: "0% buy & sell tax",
+      body: "pump.fun tokens have no transfer tax. Only Solana network fees and the platform's standard trading fee apply.",
+      tone: "lavender" as const,
+    },
+    {
+      title: "Liquidity burned at graduation",
+      body: "When the bonding curve completes, liquidity moves on-chain and the LP tokens are burned by the platform.",
+      tone: "pink" as const,
+    },
+  ],
+  purposeHeading: "Creator rewards go to Ivy",
+  purposeBody:
+    "pump.fun pays creator rewards from trading activity to the coin's creator wallet. For $IVY those rewards are intended for Ivy and her owners — her care, her comfort and her ongoing adventures. That is the ultimate purpose of this project.",
+  purposeDisclaimer:
+    "IvyVibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owners. Full allocation and proceeds details will be published before launch.",
 };
 
 export const memeMachine = {
@@ -302,7 +332,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "Is the token live?",
     answer:
-      "Not yet. The official blockchain, launch date and verified contract address will be published on this website.",
+      "Not yet. $IVY will launch on pump.fun on Solana with the standard pump.fun fair-launch setup. The launch date and the verified mint address will be published on this website — until they appear here, nothing is live.",
   },
   {
     question: "Where can I find official links?",

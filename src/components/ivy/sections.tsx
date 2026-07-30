@@ -565,8 +565,10 @@ export function TokenRecord() {
     { label: "Token name", value: projectConfig.projectName },
     { label: "Ticker", value: projectConfig.ticker },
     { label: "Blockchain", value: displayValue(projectConfig.blockchain) },
+    { label: "Launch platform", value: displayValue(projectConfig.launchPlatform) },
     { label: "Contract address", value: shortenAddress(projectConfig.contractAddress) },
     { label: "Total supply", value: displayValue(projectConfig.tokenSupply) },
+    { label: "Buy / sell tax", value: "0% / 0%" },
     { label: "Launch date", value: displayValue(projectConfig.launchDate) },
     { label: "Tokenomics", value: displayValue(projectConfig.tokenomicsUrl) },
     { label: "Record last updated", value: displayValue(projectConfig.tokenRecordUpdatedAt) },
@@ -577,7 +579,7 @@ export function TokenRecord() {
       id="token-record"
       eyebrow="$IVY"
       title={tokenRecord.heading}
-      intro="Nothing here is estimated. Every unverified field stays marked Coming Soon."
+      intro="Nothing here is estimated. Every unconfirmed field stays marked Coming Soon."
       tone="white"
     >
       <div className="overflow-hidden rounded-2xl bg-cream pop-static">
@@ -610,6 +612,26 @@ export function TokenRecord() {
           <ExternalLinkIcon aria-hidden className="h-4 w-4" />
           {verified ? "View on explorer" : "Contract Coming Soon"}
         </Button>
+      </div>
+
+      <div className="mt-8">
+        <h3 className="font-display text-xl text-charcoal sm:text-2xl">{tokenRecord.planHeading}</h3>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-charcoal/85">
+          {tokenRecord.planNote}
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {tokenRecord.plan.map((card) => (
+            <InfoCard key={card.title} title={card.title} body={card.body} tone={card.tone} />
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-2xl bg-leaf p-5 pop-static">
+        <h3 className="font-display text-lg text-charcoal">{tokenRecord.purposeHeading}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-charcoal/85">{tokenRecord.purposeBody}</p>
+        <p className="mt-3 text-xs leading-relaxed text-charcoal/70">
+          {tokenRecord.purposeDisclaimer}
+        </p>
       </div>
 
       <p className="mt-5 rounded-xl bg-pink p-4 font-display text-sm text-charcoal pop-static">
