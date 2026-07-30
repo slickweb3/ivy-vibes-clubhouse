@@ -5,6 +5,7 @@ const LINKS = [
   { to: "/admin", label: "Overview" },
   { to: "/admin/connections", label: "Connections" },
   { to: "/admin/media", label: "Media library" },
+  { to: "/admin/token", label: "Token & chart" },
   { to: "/admin/settings", label: "Automation" },
 ] as const;
 

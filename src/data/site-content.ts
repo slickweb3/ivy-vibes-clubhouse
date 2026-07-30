@@ -381,6 +381,7 @@ export const navLinks = [
   { label: "Fresh Posts", hash: "#fresh-posts" },
   { label: "The Lore", hash: "#the-lore" },
   { label: "$IVY", hash: "#token-record" },
+  { label: "Chart", hash: "#live-chart" },
   { label: "Meme Machine", hash: "#meme-machine" },
   { label: "FAQ", hash: "#faq" },
 ];

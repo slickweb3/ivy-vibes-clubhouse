@@ -25,10 +25,12 @@ import {
 import {
   COMING_SOON,
   displayValue,
+  explorerUrl,
   hasVerifiedContract,
   projectConfig,
   shortenAddress,
 } from "@/config/project";
+import type { MarketSnapshot } from "@/lib/market.server";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ Hero */
@@ -559,20 +561,33 @@ export function WhyIvy() {
 
 /* ---------------------------------------------------------- Token record */
 
-export function TokenRecord() {
-  const verified = hasVerifiedContract();
+export function TokenRecord({ market }: { market?: MarketSnapshot }) {
+  // Live database values win over the static defaults; anything missing in
+  // both stays "Coming Soon".
+  const live = market?.config;
+  const config = {
+    ...projectConfig,
+    blockchain: live?.blockchain ?? projectConfig.blockchain,
+    contractAddress: live?.contractAddress ?? projectConfig.contractAddress,
+    launchDate: live?.launchDate ?? projectConfig.launchDate,
+    tokenSupply: live?.tokenSupply ?? projectConfig.tokenSupply,
+    launchPlatform: live?.launchPlatform ?? projectConfig.launchPlatform,
+  };
+  const verified = hasVerifiedContract(config);
+  const explorer = explorerUrl(config);
   const rows = [
-    { label: "Token name", value: projectConfig.projectName },
-    { label: "Ticker", value: projectConfig.ticker },
-    { label: "Blockchain", value: displayValue(projectConfig.blockchain) },
-    { label: "Launch platform", value: displayValue(projectConfig.launchPlatform) },
-    { label: "Contract address", value: shortenAddress(projectConfig.contractAddress) },
-    { label: "Total supply", value: displayValue(projectConfig.tokenSupply) },
+    { label: "Token name", value: config.projectName },
+    { label: "Ticker", value: config.ticker },
+    { label: "Blockchain", value: displayValue(config.blockchain) },
+    { label: "Launch platform", value: displayValue(config.launchPlatform) },
+    { label: "Contract address", value: shortenAddress(config.contractAddress) },
+    { label: "Total supply", value: displayValue(config.tokenSupply) },
     { label: "Buy / sell tax", value: "0% / 0%" },
-    { label: "Launch date", value: displayValue(projectConfig.launchDate) },
-    { label: "Tokenomics", value: displayValue(projectConfig.tokenomicsUrl) },
-    { label: "Record last updated", value: displayValue(projectConfig.tokenRecordUpdatedAt) },
+    { label: "Launch date", value: displayValue(config.launchDate) },
+    { label: "Tokenomics", value: displayValue(config.tokenomicsUrl) },
+    { label: "Record last updated", value: displayValue(config.tokenRecordUpdatedAt) },
   ];
+
 
   return (
     <Section
@@ -605,13 +620,33 @@ export function TokenRecord() {
           status={verified ? "ok" : "pending"}
           label={verified ? "Contract published" : "Contract not published yet"}
         />
-        <Button
-          disabled={!verified}
-          className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog disabled:opacity-70"
-        >
-          <ExternalLinkIcon aria-hidden className="h-4 w-4" />
-          {verified ? "View on explorer" : "Contract Coming Soon"}
-        </Button>
+        {verified && explorer ? (
+          <a
+            href={explorer}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-frog px-5 font-display text-sm text-charcoal pop"
+          >
+            <ExternalLinkIcon aria-hidden className="h-4 w-4" />
+            View on explorer
+          </a>
+        ) : (
+          <Button
+            disabled
+            className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog disabled:opacity-70"
+          >
+            <ExternalLinkIcon aria-hidden className="h-4 w-4" />
+            Contract Coming Soon
+          </Button>
+        )}
+        {market?.pairUrl ? (
+          <a
+            href="#live-chart"
+            className="inline-flex min-h-11 items-center rounded-full bg-yellow px-5 font-display text-sm text-charcoal pop"
+          >
+            See the live chart
+          </a>
+        ) : null}
       </div>
 
       <div className="mt-8">
