@@ -77,7 +77,7 @@ function Home() {
       </a>
       <SiteNav />
       <main id="main">
-        <Hero media={media.hero} />
+        <Hero media={media.hero} market={market} />
         <MeetIvy />
         <FreshFromTheFrogQueen media={media} />
         <IvyTV items={media.ivyTv} />

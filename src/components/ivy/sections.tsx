@@ -31,6 +31,7 @@ import {
   shortenAddress,
 } from "@/config/project";
 import type { MarketSnapshot } from "@/lib/market.server";
+import { MiniChart } from "@/components/ivy/mini-chart";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ Hero */
