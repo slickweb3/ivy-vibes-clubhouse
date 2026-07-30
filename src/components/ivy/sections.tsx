@@ -476,7 +476,7 @@ export function TokenRecord() {
           className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog disabled:opacity-70"
         >
           <ExternalLinkIcon aria-hidden className="h-4 w-4" />
-          {verified ? "View on explorer" : "Explorer link coming soon"}
+          {verified ? "View on explorer" : "Contract Coming Soon"}
         </Button>
       </div>
 
