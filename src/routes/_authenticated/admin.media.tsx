@@ -6,7 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AdminShell } from "@/components/admin/admin-nav";
 import { StatusChip } from "@/components/ivy/primitives";
-import { listAdminMedia, updateMediaItem, type AdminMediaRow } from "@/lib/admin.functions";
+import {
+  listAdminMedia,
+  updateMediaItem,
+  type AdminMediaRow,
+  type MediaUpdateInput,
+} from "@/lib/admin.functions";
 import { PLACEMENTS, PLACEMENT_LABELS, type Placement } from "@/types/media";
 
 export const Route = createFileRoute("/_authenticated/admin/media")({
@@ -25,7 +30,6 @@ export const Route = createFileRoute("/_authenticated/admin/media")({
 
 function MediaPage() {
   const fetchMedia = useServerFn(listAdminMedia);
-  const saveItem = useServerFn(updateMediaItem);
 
   const mediaQuery = useQuery({
     queryKey: ["admin", "media"],
@@ -58,22 +62,19 @@ function MediaPage() {
 
       <div className="space-y-4">
         {rows.map((row) => (
-          <MediaRow key={`${row.sourceType}:${row.sourceId}`} row={row} onSave={saveItem} onSaved={() => mediaQuery.refetch()} />
+          <MediaRow
+            key={`${row.sourceType}:${row.sourceId}`}
+            row={row}
+            onSaved={() => mediaQuery.refetch()}
+          />
         ))}
       </div>
     </AdminShell>
   );
 }
 
-function MediaRow({
-  row,
-  onSave,
-  onSaved,
-}: {
-  row: AdminMediaRow;
-  onSave: (args: { data: Record<string, unknown> }) => Promise<unknown>;
-  onSaved: () => void;
-}) {
+function MediaRow({ row, onSaved }: { row: AdminMediaRow; onSaved: () => void }) {
+  const onSave = useServerFn(updateMediaItem);
   const [websiteCaption, setWebsiteCaption] = useState(row.websiteCaption ?? "");
   const [altText, setAltText] = useState(row.altText);
   const [fallback, setFallback] = useState(row.fallbackThumbnailUrl ?? "");
@@ -87,7 +88,7 @@ function MediaRow({
   });
   const [saving, setSaving] = useState(false);
 
-  async function save(extra: Record<string, unknown> = {}) {
+  async function save(extra: Partial<MediaUpdateInput> = {}) {
     setSaving(true);
     try {
       await onSave({
