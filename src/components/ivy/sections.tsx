@@ -546,22 +546,26 @@ export function IvyTV({
         </ul>
       ) : null}
 
-      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => (
-          <li key={item.id} className="rounded-2xl bg-card p-4 pop-static">
-            <MediaPlaceholder label={item.mediaLabel} aspect="tall" tone="leaf" compact />
-            <h3 className="mt-3 font-display text-base text-charcoal">{item.title}</h3>
-            <p className="mt-1 text-sm text-charcoal/80">{item.caption}</p>
-            <div className="mt-3 flex items-center gap-2">
-              <span className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-lavender px-3 font-display text-xs text-charcoal">
-                <Play aria-hidden className="h-3.5 w-3.5" />
-                {item.videoUrl ? "Play" : "Awaiting video"}
-              </span>
-              <span className="text-xs text-charcoal/70">{item.category}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {/* Placeholder rail only appears while no curated official clips exist. */}
+      {curated.length === 0 ? (
+        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <li key={item.id} className="rounded-2xl bg-card p-4 pop-static">
+              <MediaPlaceholder label={item.mediaLabel} aspect="tall" tone="leaf" compact />
+              <h3 className="mt-3 font-display text-base text-charcoal">{item.title}</h3>
+              <p className="mt-1 text-sm text-charcoal/80">{item.caption}</p>
+              <div className="mt-3 flex items-center gap-2">
+                <span className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-lavender px-3 font-display text-xs text-charcoal">
+                  <Play aria-hidden className="h-3.5 w-3.5" />
+                  {item.videoUrl ? "Play" : "Awaiting video"}
+                </span>
+                <span className="text-xs text-charcoal/70">{item.category}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
     </Section>
   );
 }
