@@ -6,12 +6,12 @@ import { EMPTY_CURATED_FEED, type CuratedFeed, type CuratedPost } from "@/types/
 import type { MarketSnapshot } from "@/lib/market.server";
 import { EMPTY_SITE_MEDIA, type SiteMedia } from "@/types/media";
 import { SiteNav } from "@/components/ivy/header";
+import { AmbientVibes } from "@/components/ivy/ambient";
 import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import {
   Hero,
   MeetIvy,
   FreshFromTheFrogQueen,
-  IvyTV,
   HallOfFame,
   TheLore,
   WhyIvy,
@@ -135,12 +135,12 @@ function Home() {
       >
         Skip to content
       </a>
+      <AmbientVibes />
       <SiteNav />
       <main id="main">
         <Hero media={media.hero} market={market} curatedHero={homeCurated.hero} />
         <MeetIvy curated={homeCurated.meetIvy} />
         <FreshFromTheFrogQueen media={media} curated={homeCurated.freshPosts} />
-        <IvyTV items={media.ivyTv} curated={homeCurated.ivyTv} />
         <HallOfFame items={media.hallOfFame} curated={homeCurated.hallOfFame} />
         <TheLore />
         <WhyIvy />
