@@ -181,7 +181,7 @@
 }
 
 @utility polaroid {
-  background: #ffffff;
+  background: var(--card);
   border: 3px solid var(--charcoal);
   box-shadow: 0 14px 30px -18px rgba(21, 21, 21, 0.7);
   padding: 0.75rem 0.75rem 2.75rem;
