@@ -87,6 +87,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "IvyVibing" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "$IVY — The Official IvyVibing Meme Coin" },
+      { name: "twitter:title", content: "$IVY — The Official IvyVibing Meme Coin" },
+      { property: "og:description", content: "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $IVY community project." },
+      { name: "twitter:description", content: "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $IVY community project." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41c25704-61f3-450c-8529-61b43b1e3809/id-preview-7b226fe4--ae92a54f-76f5-4c2b-9762-2e06f523c495.lovable.app-1785391145344.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41c25704-61f3-450c-8529-61b43b1e3809/id-preview-7b226fe4--ae92a54f-76f5-4c2b-9762-2e06f523c495.lovable.app-1785391145344.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
