@@ -25,10 +25,12 @@ import {
 import {
   COMING_SOON,
   displayValue,
+  explorerUrl,
   hasVerifiedContract,
   projectConfig,
   shortenAddress,
 } from "@/config/project";
+import type { MarketSnapshot } from "@/lib/market.server";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ Hero */
