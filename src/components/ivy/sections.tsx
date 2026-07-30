@@ -234,10 +234,10 @@ export function FreshFromTheFrogQueen({
           <ul
             ref={trackRef}
             aria-label="Curated official posts from Ivy's accounts"
-            className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 lg:grid-cols-3"
+            className="rail flex gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 lg:grid-cols-3"
           >
             {curated.map((post) => (
-              <li key={post.id} className="w-[78%] shrink-0 snap-start sm:w-auto">
+              <li key={post.id} className="rail-item w-[80%] min-w-0 shrink-0 sm:w-auto">
                 <OfficialSocialEmbed post={post} tone={post.platform === "tiktok" ? "lavender" : "leaf"} />
               </li>
             ))}
@@ -344,15 +344,15 @@ function PlatformFeed({
       <ul
         ref={trackRef}
         aria-label={`${label} posts`}
-        className="mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0"
+        className="rail mt-4 flex gap-3 overflow-x-auto pb-2 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0"
       >
         {posts.map((post) => (
-          <li key={post.key} className="w-[70%] shrink-0 snap-start sm:w-auto">
+          <li key={post.key} className="rail-item w-[72%] min-w-0 shrink-0 sm:w-auto">
             <PostCard post={post} />
           </li>
         ))}
         {Array.from({ length: slots }).map((_, index) => (
-          <li key={`slot-${index}`} className="w-[70%] shrink-0 snap-start sm:w-auto">
+          <li key={`slot-${index}`} className="rail-item w-[72%] min-w-0 shrink-0 sm:w-auto">
               <MediaPlaceholder
               label={slotLabel}
               aspect="square"

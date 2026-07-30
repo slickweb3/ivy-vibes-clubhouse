@@ -100,7 +100,7 @@ export function OfficialSocialEmbed({
   return (
     <figure
       className={cn(
-        "flex flex-col gap-3 self-start rounded-2xl bg-card p-3 pop-static",
+        "embed-perf flex min-w-0 flex-col gap-3 self-start rounded-2xl bg-card p-3 pop-static",
         className,
       )}
     >

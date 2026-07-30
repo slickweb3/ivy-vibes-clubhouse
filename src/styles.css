@@ -120,6 +120,12 @@
 @layer base {
   * {
     border-color: var(--color-border);
+    min-width: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
@@ -127,7 +133,27 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
   }
+
+  img,
+  iframe,
+  video {
+    max-width: 100%;
+  }
+
+  /* Long single-word captions from Instagram must never widen a card. */
+  p,
+  h1,
+  h2,
+  h3,
+  figcaption {
+    overflow-wrap: anywhere;
+  }
+
 
   h1,
   h2,
@@ -272,4 +298,22 @@
     transform: scale(1.15) translateY(-3vh);
     opacity: 0.9;
   }
+}
+
+/* Offscreen embed cards skip layout/paint work until they scroll near. */
+@utility embed-perf {
+  content-visibility: auto;
+  contain-intrinsic-size: 520px;
+}
+
+/* Horizontal rails: momentum scrolling with snap and no visible scrollbar. */
+@utility rail {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+@utility rail-item {
+  scroll-snap-align: center;
 }
