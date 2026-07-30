@@ -41,6 +41,8 @@ export interface MarketSnapshot {
   dexId: string | null;
   priceUsd: number | null;
   priceChange24h: number | null;
+  /** % change over 5m / 1h / 6h / 24h windows (Dexscreener). Used for the mini sparkline. */
+  priceChanges: { m5: number | null; h1: number | null; h6: number | null; h24: number | null } | null;
   marketCapUsd: number | null;
   fdvUsd: number | null;
   liquidityUsd: number | null;
@@ -78,6 +80,7 @@ function emptySnapshot(
     dexId: null,
     priceUsd: null,
     priceChange24h: null,
+    priceChanges: null,
     marketCapUsd: null,
     fdvUsd: null,
     liquidityUsd: null,
@@ -208,6 +211,12 @@ export async function readMarketSnapshot(): Promise<MarketSnapshot> {
     dexId: best.dexId ?? null,
     priceUsd: numOf(best.priceUsd),
     priceChange24h: numOf(best.priceChange?.h24),
+    priceChanges: {
+      m5: numOf(best.priceChange?.m5),
+      h1: numOf(best.priceChange?.h1),
+      h6: numOf(best.priceChange?.h6),
+      h24: numOf(best.priceChange?.h24),
+    },
     marketCapUsd: numOf(best.marketCap),
     fdvUsd: numOf(best.fdv),
     liquidityUsd: numOf(best.liquidity?.usd),
