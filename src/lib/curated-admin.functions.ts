@@ -16,7 +16,7 @@ import {
 } from "@/types/curated";
 
 const COLUMNS =
-  "id, platform, original_post_url, platform_post_id, official_embed_url, admin_label, placements, is_visible, is_active, is_pinned, is_featured, display_order, source_account_handle, source_account_url";
+  "id, platform, original_post_url, platform_post_id, official_embed_url, admin_label, placements, is_visible, is_active, is_pinned, is_featured, display_order, source_account_handle, source_account_url, thumbnail_url, original_caption";
 
 type Row = Record<string, unknown>;
 type CuratedPatch = Database["public"]["Tables"]["curated_social_posts"]["Update"];
@@ -40,6 +40,12 @@ function toPost(row: Row): CuratedPost {
     displayOrder: typeof row.display_order === "number" ? row.display_order : 0,
     sourceAccountHandle: String(row.source_account_handle ?? ""),
     sourceAccountUrl: String(row.source_account_url ?? ""),
+    thumbnailUrl:
+      typeof row.thumbnail_url === "string" && row.thumbnail_url ? row.thumbnail_url : null,
+    originalCaption:
+      typeof row.original_caption === "string" && row.original_caption
+        ? row.original_caption
+        : null,
   };
 }
 
