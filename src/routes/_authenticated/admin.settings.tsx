@@ -170,7 +170,7 @@ function SettingsPage() {
                 <span className="font-display">{entry.action}</span>
                 {entry.summary ? <span className="block text-charcoal/85">{entry.summary}</span> : null}
                 <span className="block text-charcoal/60">
-                  {entry.actor_email ?? "system"} · {new Date(entry.created_at).toLocaleString()}
+                  {new Date(entry.created_at).toLocaleString()}
                 </span>
               </li>
             ))}
