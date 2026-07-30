@@ -508,7 +508,7 @@ export function IvyTV({
 
 
 
-      {curated.length === 0 && showApproved && approvedVideos.length > 0 ? (
+      {curated.length === 0 && approvedVideos.length > 0 ? (
         <ul className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {approvedVideos.map((item) => (
             <li key={item.key} className="rounded-2xl bg-card p-4 pop-static">
