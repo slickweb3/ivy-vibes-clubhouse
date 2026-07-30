@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ExternalLinkIcon, Play } from "lucide-react";
 import { useEmbedConsent } from "./cookie-consent";
 import { Sticker } from "./primitives";
