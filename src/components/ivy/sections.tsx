@@ -559,20 +559,33 @@ export function WhyIvy() {
 
 /* ---------------------------------------------------------- Token record */
 
-export function TokenRecord() {
-  const verified = hasVerifiedContract();
+export function TokenRecord({ market }: { market?: MarketSnapshot }) {
+  // Live database values win over the static defaults; anything missing in
+  // both stays "Coming Soon".
+  const live = market?.config;
+  const config = {
+    ...projectConfig,
+    blockchain: live?.blockchain ?? projectConfig.blockchain,
+    contractAddress: live?.contractAddress ?? projectConfig.contractAddress,
+    launchDate: live?.launchDate ?? projectConfig.launchDate,
+    tokenSupply: live?.tokenSupply ?? projectConfig.tokenSupply,
+    launchPlatform: live?.launchPlatform ?? projectConfig.launchPlatform,
+  };
+  const verified = hasVerifiedContract(config);
+  const explorer = explorerUrl(config);
   const rows = [
-    { label: "Token name", value: projectConfig.projectName },
-    { label: "Ticker", value: projectConfig.ticker },
-    { label: "Blockchain", value: displayValue(projectConfig.blockchain) },
-    { label: "Launch platform", value: displayValue(projectConfig.launchPlatform) },
-    { label: "Contract address", value: shortenAddress(projectConfig.contractAddress) },
-    { label: "Total supply", value: displayValue(projectConfig.tokenSupply) },
+    { label: "Token name", value: config.projectName },
+    { label: "Ticker", value: config.ticker },
+    { label: "Blockchain", value: displayValue(config.blockchain) },
+    { label: "Launch platform", value: displayValue(config.launchPlatform) },
+    { label: "Contract address", value: shortenAddress(config.contractAddress) },
+    { label: "Total supply", value: displayValue(config.tokenSupply) },
     { label: "Buy / sell tax", value: "0% / 0%" },
-    { label: "Launch date", value: displayValue(projectConfig.launchDate) },
-    { label: "Tokenomics", value: displayValue(projectConfig.tokenomicsUrl) },
-    { label: "Record last updated", value: displayValue(projectConfig.tokenRecordUpdatedAt) },
+    { label: "Launch date", value: displayValue(config.launchDate) },
+    { label: "Tokenomics", value: displayValue(config.tokenomicsUrl) },
+    { label: "Record last updated", value: displayValue(config.tokenRecordUpdatedAt) },
   ];
+
 
   return (
     <Section
