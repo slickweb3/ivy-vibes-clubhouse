@@ -83,6 +83,63 @@ export type Database = {
         }
         Relationships: []
       }
+      curated_social_posts: {
+        Row: {
+          admin_label: string | null
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          is_featured: boolean
+          is_pinned: boolean
+          is_visible: boolean
+          official_embed_url: string
+          original_post_url: string
+          placements: string[]
+          platform: Database["public"]["Enums"]["social_platform"]
+          platform_post_id: string
+          source_account_handle: string
+          source_account_url: string
+          updated_at: string
+        }
+        Insert: {
+          admin_label?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_featured?: boolean
+          is_pinned?: boolean
+          is_visible?: boolean
+          official_embed_url: string
+          original_post_url: string
+          placements?: string[]
+          platform: Database["public"]["Enums"]["social_platform"]
+          platform_post_id: string
+          source_account_handle: string
+          source_account_url: string
+          updated_at?: string
+        }
+        Update: {
+          admin_label?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          is_featured?: boolean
+          is_pinned?: boolean
+          is_visible?: boolean
+          official_embed_url?: string
+          original_post_url?: string
+          placements?: string[]
+          platform?: Database["public"]["Enums"]["social_platform"]
+          platform_post_id?: string
+          source_account_handle?: string
+          source_account_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       faq_entries: {
         Row: {
           answer: string

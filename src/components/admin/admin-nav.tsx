@@ -3,7 +3,9 @@ import { cn } from "@/lib/utils";
 
 const LINKS = [
   { to: "/admin", label: "Overview" },
+  { to: "/admin/curated", label: "Curated posts" },
   { to: "/admin/connections", label: "Connections" },
+
   { to: "/admin/media", label: "Media library" },
   { to: "/admin/token", label: "Token & chart" },
   { to: "/admin/settings", label: "Automation" },

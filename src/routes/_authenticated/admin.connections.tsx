@@ -48,8 +48,21 @@ function ConnectionsPage() {
   return (
     <AdminShell
       title="Platform connections"
-      intro="Official Instagram and TikTok APIs only — nothing here scrapes. A connection is only reported as connected after Ivy's owner completes the authorization flow."
+      intro="Optional. The live site currently runs on curated official embeds added by URL, so no developer app or owner OAuth is needed. These API connections stay available for a future automatic feed."
     >
+      <div className="rounded-2xl bg-leaf p-5 pop-static">
+        <h2 className="font-display text-lg text-charcoal">Curated embeds are powering the site</h2>
+        <p className="mt-2 text-sm text-charcoal/85">
+          Posts are added manually on the{" "}
+          <a href="/admin/curated" className="text-ivy underline underline-offset-4">
+            Curated posts
+          </a>{" "}
+          screen using public Instagram and TikTok links. Nothing is scraped, downloaded or
+          re-hosted, and Ivy&rsquo;s captions stay inside the platforms&rsquo; own embeds. Connecting
+          an API account below is not required and does not change what visitors see today.
+        </p>
+      </div>
+
       {!isAdmin ? (
         <div className="rounded-2xl bg-yellow p-5 pop-static">
           <h2 className="font-display text-lg text-charcoal">Administrator role required</h2>
