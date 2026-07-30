@@ -152,7 +152,7 @@ function AdminDashboard() {
                   ["Blockchain", displayValue(projectConfig.blockchain)],
                   ["Contract address", displayValue(projectConfig.contractAddress)],
                   ["Launch date", displayValue(projectConfig.launchDate)],
-                  ["Contact email", displayValue(projectConfig.contactEmail)],
+                  ["Telegram", displayValue(projectConfig.socials.telegram)],
                 ].map(([label, value]) => (
                   <div key={label} className="flex justify-between gap-4">
                     <dt className="text-charcoal/70">{label}</dt>

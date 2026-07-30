@@ -283,9 +283,6 @@ export const royalCourt = {
     { id: "tiktok", label: "TikTok" },
     { id: "x", label: "X" },
     { id: "telegram", label: "Telegram" },
-    { id: "discord", label: "Discord" },
-    { id: "email", label: "Community email" },
-    { id: "contact", label: "Contact form" },
   ],
   gallery:
     "A moderated community gallery is planned. There is no upload form yet—submissions will open once moderation is in place.",

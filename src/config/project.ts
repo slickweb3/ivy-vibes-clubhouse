@@ -21,7 +21,6 @@ export interface ProjectSocials {
   tiktok: Maybe;
   x: Maybe;
   telegram: Maybe;
-  discord: Maybe;
 }
 
 export interface ProjectConfig {
@@ -36,7 +35,6 @@ export interface ProjectConfig {
   tokenomicsUrl: Maybe;
   tokenRecordUpdatedAt: Maybe;
   socials: ProjectSocials;
-  contactEmail: Maybe;
   socialFeed: SocialFeedConfig;
 }
 
@@ -54,11 +52,9 @@ export const projectConfig: ProjectConfig = {
   socials: {
     instagram: "https://www.instagram.com/frogqueenivy/",
     tiktok: "https://www.tiktok.com/@ivyvibing",
-    x: null,
-    telegram: null,
-    discord: null,
+    x: "https://x.com/ivyvibing",
+    telegram: "https://t.me/IvyVibing",
   },
-  contactEmail: null,
   socialFeed: {
     instagramEnabled: false,
     tiktokEnabled: false,
