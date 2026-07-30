@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { ExternalLinkIcon, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Section, MediaPlaceholder, ApprovedMedia, Polaroid, InfoCard, Sticker, StatusChip, ComingSoonPill } from "./primitives";
@@ -23,7 +23,6 @@ import {
   meetIvy,
   tokenRecord,
   whyIvy,
-  type IvyTvCategory,
 } from "@/data/site-content";
 import {
   COMING_SOON,
