@@ -39,7 +39,7 @@ const STATUS_LABEL: Record<MarketSnapshot["status"], { status: "ok" | "pending" 
 function Stat({ label, value }: { label: string; value: string | null }) {
   return (
     <div className="rounded-2xl bg-card p-4 pop-static">
-      <p className="font-display text-[0.7rem] tracking-wide text-charcoal/70 uppercase">{label}</p>
+      <p className="font-display text-[0.7rem] tracking-wide text-charcoal/70 uppercase">{keepTickerCase(label)}</p>
       <div className="mt-2 font-display text-xl text-charcoal sm:text-2xl">
         {value ?? <ComingSoonPill />}
       </div>
