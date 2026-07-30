@@ -94,12 +94,15 @@ export type Database = {
           is_pinned: boolean
           is_visible: boolean
           official_embed_url: string
+          original_caption: string | null
           original_post_url: string
           placements: string[]
           platform: Database["public"]["Enums"]["social_platform"]
           platform_post_id: string
           source_account_handle: string
           source_account_url: string
+          thumbnail_fetched_at: string | null
+          thumbnail_url: string | null
           updated_at: string
         }
         Insert: {
@@ -112,12 +115,15 @@ export type Database = {
           is_pinned?: boolean
           is_visible?: boolean
           official_embed_url: string
+          original_caption?: string | null
           original_post_url: string
           placements?: string[]
           platform: Database["public"]["Enums"]["social_platform"]
           platform_post_id: string
           source_account_handle: string
           source_account_url: string
+          thumbnail_fetched_at?: string | null
+          thumbnail_url?: string | null
           updated_at?: string
         }
         Update: {
@@ -130,12 +136,15 @@ export type Database = {
           is_pinned?: boolean
           is_visible?: boolean
           official_embed_url?: string
+          original_caption?: string | null
           original_post_url?: string
           placements?: string[]
           platform?: Database["public"]["Enums"]["social_platform"]
           platform_post_id?: string
           source_account_handle?: string
           source_account_url?: string
+          thumbnail_fetched_at?: string | null
+          thumbnail_url?: string | null
           updated_at?: string
         }
         Relationships: []
