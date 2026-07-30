@@ -1,4 +1,3 @@
-import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   Accordion,
@@ -7,219 +6,21 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Section, MediaPlaceholder, ApprovedMedia, InfoCard, Sticker, StatusChip } from "./primitives";
-import type { UnifiedMediaItem } from "@/types/media";
-import { curatedFallbackLabel, type CuratedPost } from "@/types/curated";
+import { Section, MediaPlaceholder, InfoCard, Sticker, StatusChip } from "./primitives";
+import type { CuratedPost } from "@/types/curated";
 import { OfficialSocialEmbed } from "./official-embed";
 import { CrownDoodle, FrogDoodle, IvyWordmark, PawDoodle, VineDivider } from "./doodles";
 import { useEmbedConsent } from "./cookie-consent";
 import {
   faqEntries,
   footerDisclaimer,
-  memeMachine,
   navLinks,
   ownerCorner,
   royalCourt,
 } from "@/data/site-content";
 import { legalPages } from "@/data/legal";
 import { COMING_SOON, projectConfig } from "@/config/project";
-import { cn } from "@/lib/utils";
 
-/* ---------------------------------------------------------- Meme Machine */
-
-const MEME_PHOTOS = [
-  "Approved meme photo 1",
-  "Approved meme photo 2",
-  "Approved meme photo 3",
-  "Approved meme photo 4",
-  "Approved meme photo 5",
-  "Approved meme photo 6",
-];
-
-export function MemeMachine({
-  items = [],
-  curated = [],
-}: {
-  items?: UnifiedMediaItem[];
-  curated?: CuratedPost[];
-}) {
-  const [photo, setPhoto] = useState(0);
-  const [topCaption, setTopCaption] = useState(memeMachine.captions[0]);
-  const [bottomCaption, setBottomCaption] = useState(memeMachine.captions[1]);
-
-  const captions = useMemo(() => memeMachine.captions, []);
-
-  if (items.length === 0 && curated.length > 0) {
-    return (
-      <Section
-        id="meme-machine"
-        eyebrow="Make something silly"
-        title={memeMachine.heading}
-        intro={memeMachine.body}
-        tone="cream"
-      >
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {curated.map((post, index) => (
-            <OfficialSocialEmbed
-              key={post.id}
-              post={post}
-              tone={(index % 2 === 0 ? "leaf" : "lavender")}
-              compact
-            />
-          ))}
-        </div>
-        <p className="mt-6 rounded-xl bg-yellow p-4 text-sm text-charcoal pop-static">
-          Official embeds only: these posts stay hosted by Instagram/TikTok, and meme export stays locked until Ivy has reusable media approved for community use.
-        </p>
-      </Section>
-    );
-  }
-
-  return (
-    <Section
-      id="meme-machine"
-      eyebrow="Make something silly"
-      title={memeMachine.heading}
-      intro={memeMachine.body}
-      tone="cream"
-    >
-      <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
-        <div className="rounded-2xl bg-card p-4 pop-static">
-          <div className="relative">
-            <ApprovedMedia
-              item={items[photo] ?? null}
-              label={MEME_PHOTOS[photo]}
-              aspect="square"
-              tone="leaf"
-              hint={memeMachine.emptyState}
-            />
-            <p className="pointer-events-none absolute inset-x-3 top-3 text-center font-display text-lg text-cream uppercase drop-shadow-[2px_2px_0_#151515] sm:text-2xl">
-              {topCaption}
-            </p>
-            <p className="pointer-events-none absolute inset-x-3 bottom-3 text-center font-display text-lg text-cream uppercase drop-shadow-[2px_2px_0_#151515] sm:text-2xl">
-              {bottomCaption}
-            </p>
-          </div>
-          <p className="mt-3 text-xs text-charcoal/70">{memeMachine.note}</p>
-        </div>
-
-        <div className="space-y-6">
-          <fieldset>
-            <legend className="font-display text-base text-charcoal">1. Choose an Ivy photo</legend>
-            <div className="mt-3 grid grid-cols-3 gap-3">
-              {(items.length > 0
-                ? items.map((item, index) => item.altText || `Approved meme photo ${index + 1}`)
-                : curated.length > 0
-                  ? curated.map(curatedFallbackLabel)
-                  : MEME_PHOTOS
-              ).map((label, index) => (
-                <button
-                  key={label}
-                  type="button"
-                  onClick={() => setPhoto(index)}
-                  aria-pressed={photo === index}
-                  className={cn(
-                    "rounded-xl p-1.5 pop-static transition-colors",
-                    photo === index ? "bg-frog" : "bg-card hover:bg-leaf",
-                  )}
-                >
-                  <ApprovedMedia
-                    item={items[index] ?? null}
-                    label={`Photo ${index + 1}`}
-                    aspect="square"
-                    tone="leaf"
-                    compact
-                  />
-                  <span className="sr-only">{label}</span>
-                </button>
-              ))}
-            </div>
-          </fieldset>
-
-          {(
-            [
-              { legend: "2. Top caption", value: topCaption, set: setTopCaption },
-              { legend: "3. Bottom caption", value: bottomCaption, set: setBottomCaption },
-            ] as const
-          ).map((group) => (
-            <fieldset key={group.legend}>
-              <legend className="font-display text-base text-charcoal">{group.legend}</legend>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {captions.map((caption) => (
-                  <button
-                    key={caption}
-                    type="button"
-                    onClick={() => group.set(caption)}
-                    aria-pressed={group.value === caption}
-                    className={cn(
-                      "min-h-11 rounded-full px-3.5 font-display text-xs pop-static transition-colors",
-                      group.value === caption ? "bg-pink text-charcoal" : "bg-card text-charcoal hover:bg-leaf",
-                    )}
-                  >
-                    {caption}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-          ))}
-
-          <fieldset>
-            <legend className="font-display text-base text-charcoal">4. Caption treatment</legend>
-            <div className="mt-3 grid gap-3 sm:grid-cols-3">
-              {(
-                [
-                  { label: "Caption position", options: ["Top", "Bottom", "Both"] },
-                  { label: "Caption size", options: ["Small", "Medium", "Large"] },
-                  { label: "Treatment", options: ["Light", "Dark"] },
-                ] as const
-              ).map((control) => (
-                <div key={control.label}>
-                  <p className="font-display text-xs text-charcoal/80">{control.label}</p>
-                  <div className="mt-1 flex flex-wrap gap-1.5">
-                    {control.options.map((option) => (
-                      <button
-                        key={option}
-                        type="button"
-                        disabled
-                        aria-disabled="true"
-                        title="Direct meme editing is not enabled for platform embeds"
-                        className="min-h-11 rounded-full bg-card px-3 font-display text-xs text-charcoal pop-static disabled:opacity-70"
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend className="font-display text-base text-charcoal">5. Export</legend>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {["Download meme", "Copy image", "Copy social caption"].map((action) => (
-                <Button
-                  key={action}
-                  disabled
-                  aria-disabled="true"
-                  title="Export is not enabled for platform embeds"
-                  className="min-h-11 rounded-full bg-card px-4 font-display text-sm text-charcoal pop-static hover:bg-card disabled:opacity-70"
-                >
-                  {action} — {COMING_SOON}
-                </Button>
-              ))}
-            </div>
-          </fieldset>
-
-          <p className="rounded-xl bg-yellow p-4 text-sm text-charcoal pop-static">
-            Downloading and sharing stay locked until a reusable photo set is approved. No uploads
-            and no free-text captions — ever.
-          </p>
-        </div>
-      </div>
-    </Section>
-  );
-}
 
 /* --------------------------------------------------------- Owner's Corner */
 
