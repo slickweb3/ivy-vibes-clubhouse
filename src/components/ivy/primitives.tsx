@@ -169,7 +169,7 @@ export function Sticker({
   return (
     <span
       className={cn(
-        "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 py-1 font-display text-xs tracking-wide text-charcoal uppercase pop-static",
+        "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 py-1 font-display text-xs tracking-wide text-charcoal pop-static",
         toneBg[tone],
         float && "float-slow",
         className,
