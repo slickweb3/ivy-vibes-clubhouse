@@ -223,12 +223,12 @@ export const whyIvy = {
     },
     {
       title: "Made to Support the Queen",
-      body: "Creator rewards and specified project proceeds are intended to benefit Ivy and her owners.",
+      body: "Creator rewards and specified project proceeds are intended to benefit Ivy and her owner.",
       tone: "lavender" as const,
     },
   ],
   transparencyPanel:
-    "Complete allocation, tokenomics and proceeds information will be published before launch. IvyVibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owners.",
+    "Complete allocation, tokenomics and proceeds information will be published before launch. IvyVibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner.",
 };
 
 export const tokenRecord = {
@@ -262,9 +262,9 @@ export const tokenRecord = {
   ],
   purposeHeading: "Creator rewards go to Ivy",
   purposeBody:
-    "pump.fun pays creator rewards from trading activity to the coin's creator wallet. For $IVY those rewards are intended for Ivy and her owners — her care, her comfort and her ongoing adventures. That is the ultimate purpose of this project.",
+    "pump.fun pays creator rewards from trading activity to the coin's creator wallet. For $IVY those rewards are intended for Ivy and her owner — her care, her comfort and her ongoing adventures. That is the ultimate purpose of this project.",
   purposeDisclaimer:
-    "IvyVibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owners. Full allocation and proceeds details will be published before launch.",
+    "IvyVibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner. Full allocation and proceeds details will be published before launch.",
 };
 
 export const memeMachine = {
@@ -290,7 +290,7 @@ export const memeMachine = {
   ],
 };
 
-export const ownersCorner = {
+export const ownerCorner = {
   heading: "Behind Every Queen Is a Very Dedicated Human",
   body: "Ivy's online story exists because someone has cared for her, understood her needs and shared her personality with the world. $IVY should always respect the bond at the centre of the project.",
   mediaLabel: "Add approved owner photograph here",

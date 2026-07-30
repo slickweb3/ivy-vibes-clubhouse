@@ -178,7 +178,7 @@ export const legalPages: LegalPage[] = [
       {
         heading: "Proceeds",
         paragraphs: [
-          "IvyVibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owners. Complete allocation, tokenomics and proceeds information will be published before launch.",
+          "IvyVibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner. Complete allocation, tokenomics and proceeds information will be published before launch.",
         ],
       },
     ],
