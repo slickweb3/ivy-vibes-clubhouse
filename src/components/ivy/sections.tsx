@@ -511,26 +511,8 @@ export function IvyTV({
       ) : null}
 
 
-      <div role="tablist" aria-label="Ivy TV categories" className="mb-6 flex flex-wrap gap-2">
-        {ivyTv.categories.map((tab) => {
-          const selected = tab === category;
-          return (
-            <button
-              key={tab}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => setCategory(tab)}
-              className={cn(
-                "min-h-11 rounded-full px-4 font-display text-sm pop-static transition-colors",
-                selected ? "bg-frog text-charcoal" : "bg-card/90 text-charcoal hover:bg-leaf",
-              )}
-            >
-              {tab}
-            </button>
-          );
-        })}
-      </div>
+
+
 
       {curated.length === 0 && showApproved && approvedVideos.length > 0 ? (
         <ul className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
