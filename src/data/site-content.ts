@@ -332,7 +332,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "Is the token live?",
     answer:
-      "Not yet. The official blockchain, launch date and verified contract address will be published on this website.",
+      "Not yet. $IVY will launch on pump.fun on Solana with the standard pump.fun fair-launch setup. The launch date and the verified mint address will be published on this website — until they appear here, nothing is live.",
   },
   {
     question: "Where can I find official links?",
