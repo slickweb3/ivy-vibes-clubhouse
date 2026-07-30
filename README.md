@@ -34,7 +34,7 @@ bun run dev     # http://localhost:8080
 | `src/lib/social-sync.functions.ts` | Instagram/TikTok OAuth + 12-hour sync stubs |
 | `src/lib/auth.ts` | Roles, permissions, audit-log types |
 | `src/components/ivy/*` | Design-system primitives and homepage sections |
-| `supabase/migrations/` | PostgreSQL schema with RLS + grants |
+| `db/migrations/` | PostgreSQL schema with RLS + grants |
 
 ## Design system
 
@@ -56,7 +56,7 @@ Display type: Bricolage Grotesque. Body: Nunito. Utilities: `pop`, `pop-static`,
 ## Turning the scaffolds on
 
 ### 1. Database + auth
-Enable Lovable Cloud, then apply `supabase/migrations/0001_ivy_init.sql`. Set `features.databaseConnected` and `features.authConfigured` to `true` in `src/config/project.ts` and swap `readCachedFeed()` in `src/data/social.ts` for a database read.
+Enable Lovable Cloud, then apply `db/migrations/0001_ivy_init.sql`. Set `features.databaseConnected` and `features.authConfigured` to `true` in `src/config/project.ts` and swap `readCachedFeed()` in `src/data/social.ts` for a database read.
 
 Grant yourself the owner role:
 

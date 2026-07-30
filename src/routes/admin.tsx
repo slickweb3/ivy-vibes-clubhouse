@@ -42,7 +42,7 @@ function AdminPage() {
           </p>
           <ol className="mt-5 list-decimal space-y-2 pl-5 text-sm">
             <li>Enable Lovable Cloud to provision the database and auth.</li>
-            <li>Run the migrations in <code>supabase/migrations/</code>.</li>
+            <li>Run the migrations in <code>db/migrations/</code>.</li>
             <li>
               Flip <code>features.authConfigured</code> in <code>src/config/project.ts</code> once sign-in works.
             </li>
