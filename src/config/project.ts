@@ -27,6 +27,9 @@ export interface ProjectConfig {
   projectName: string;
   ticker: string;
   tagline: string;
+  /** Launch venue, e.g. pump.fun. Null until the owner confirms it. */
+  launchPlatform: Maybe;
+  launchPlatformUrl: Maybe;
   blockchain: Maybe;
   contractAddress: Maybe;
   explorerBaseUrl: Maybe;
@@ -42,11 +45,15 @@ export const projectConfig: ProjectConfig = {
   projectName: "IvyVibing",
   ticker: "$IVY",
   tagline: "Short Spine. Big Vibes.",
-  blockchain: null,
+  // Planned launch venue. The mint/contract address stays null until it exists.
+  launchPlatform: "pump.fun",
+  launchPlatformUrl: "https://pump.fun",
+  blockchain: "Solana",
   contractAddress: null,
-  explorerBaseUrl: null,
+  explorerBaseUrl: "https://solscan.io/token",
   launchDate: null,
-  tokenSupply: null,
+  // pump.fun standard fixed supply.
+  tokenSupply: "1,000,000,000 $IVY",
   tokenomicsUrl: null,
   tokenRecordUpdatedAt: null,
   socials: {
