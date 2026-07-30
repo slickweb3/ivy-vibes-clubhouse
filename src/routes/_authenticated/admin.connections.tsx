@@ -12,6 +12,7 @@ import {
   refreshSocialFeed,
   type ConnectionCard,
 } from "@/lib/admin.functions";
+import { countCuratedPosts } from "@/lib/curated-admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/connections")({
   head: () => ({
@@ -30,8 +31,15 @@ function ConnectionsPage() {
   const fetchRuns = useServerFn(listSyncRuns);
   const runRefresh = useServerFn(refreshSocialFeed);
   const runDisconnect = useServerFn(disconnectPlatform);
+  const fetchCuratedCount = useServerFn(countCuratedPosts);
 
   const statusQuery = useQuery({ queryKey: ["admin", "status"], queryFn: () => fetchStatus() });
+  const curatedCountQuery = useQuery({
+    queryKey: ["admin", "curated-count"],
+    queryFn: () => fetchCuratedCount(),
+    retry: false,
+  });
+  const curatedActive = curatedCountQuery.data?.active ?? null;
   const isAdmin = statusQuery.data?.isAdmin ?? false;
 
   const cardsQuery = useQuery({
@@ -48,19 +56,32 @@ function ConnectionsPage() {
   return (
     <AdminShell
       title="Platform connections"
-      intro="Optional. The live site currently runs on curated official embeds added by URL, so no developer app or owner OAuth is needed. These API connections stay available for a future automatic feed."
+      intro="Curated official embeds are the recommended, current workflow for this site. Platform API connections below are entirely optional and are not needed for anything visitors see today."
     >
-      <div className="rounded-2xl bg-leaf p-5 pop-static">
-        <h2 className="font-display text-lg text-charcoal">Curated embeds are powering the site</h2>
-        <p className="mt-2 text-sm text-charcoal/85">
+      <div className="rounded-2xl bg-frog p-5 pop-static">
+        <p className="font-display text-xs uppercase tracking-[0.2em] text-charcoal/70">
+          Recommended workflow · active
+        </p>
+        <p className="mt-2 font-display text-3xl leading-tight text-charcoal sm:text-4xl">
+          {curatedActive === null
+            ? "Curated public posts"
+            : `${curatedActive} curated public post${curatedActive === 1 ? "" : "s"} active`}
+        </p>
+        <p className="mt-3 text-sm text-charcoal/85">
           Posts are added manually on the{" "}
           <a href="/admin/curated" className="text-ivy underline underline-offset-4">
             Curated posts
           </a>{" "}
           screen using public Instagram and TikTok links. Nothing is scraped, downloaded or
-          re-hosted, and Ivy&rsquo;s captions stay inside the platforms&rsquo; own embeds. Connecting
-          an API account below is not required and does not change what visitors see today.
+          re-hosted, and Ivy&rsquo;s media and original captions stay hosted inside the
+          platforms&rsquo; own embeds.
         </p>
+        <Button
+          asChild
+          className="mt-4 min-h-11 rounded-full bg-charcoal px-5 font-display text-cream pop hover:bg-charcoal"
+        >
+          <a href="/admin/curated">Manage curated posts</a>
+        </Button>
       </div>
 
       {!isAdmin ? (
@@ -73,7 +94,15 @@ function ConnectionsPage() {
         </div>
       ) : null}
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <section className="rounded-2xl border-[3px] border-dashed border-charcoal/40 bg-leaf/40 p-5">
+        <h2 className="font-display text-lg text-charcoal">Optional future automation</h2>
+        <p className="mt-1 max-w-3xl text-sm text-charcoal/80">
+          Nothing below is required. These platform API connections would only be used if Ivy&rsquo;s
+          owner later chooses an automatic feed. Leaving them unconfigured is a perfectly valid,
+          fully working setup.
+        </p>
+
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
         {(cardsQuery.data ?? placeholderCards()).map((card) => (
           <article key={card.platform} className="rounded-2xl bg-card p-5 pop-static">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -100,9 +129,11 @@ function ConnectionsPage() {
 
             {!card.credentialsConfigured ? (
               <div className="mt-4 rounded-xl bg-yellow p-4 text-sm text-charcoal">
-                <p className="font-display">Setup required</p>
+                <p className="font-display">Optional API credentials not configured</p>
                 <p className="mt-1">
-                  Missing environment variables: {card.missingEnvVars.join(", ") || "none"}.
+                  Not needed for the curated embed workflow. If automation is ever enabled, these
+                  environment variables would be required:{" "}
+                  {card.missingEnvVars.join(", ") || "none"}.
                 </p>
                 <a
                   className="mt-2 inline-flex min-h-11 items-center underline underline-offset-4"
@@ -151,7 +182,8 @@ function ConnectionsPage() {
             </div>
           </article>
         ))}
-      </div>
+        </div>
+      </section>
 
       <section className="rounded-2xl bg-card p-5 pop-static">
         <h2 className="font-display text-lg text-charcoal">Sync history</h2>
