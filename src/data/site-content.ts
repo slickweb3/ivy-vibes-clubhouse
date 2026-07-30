@@ -267,42 +267,20 @@ export const tokenRecord = {
     "IvyVibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner. Full allocation and proceeds details will be published before launch.",
 };
 
-export const memeMachine = {
-  heading: "Ivy Meme Machine",
-  body: "Build a royal meme from approved Ivy photographs. No uploads, no free text—only owner-approved images and pre-written captions.",
-  note: "Only use photographs approved for community sharing.",
-  emptyState: "Reusable meme photos are not enabled yet.",
-  captions: [
-    "Frog Mode Activated",
-    "Short Spine Long Legacy",
-    "Bow Before the Queen",
-    "Built Different",
-    "Vibing Is the Utility",
-    "Stay Weird",
-    "$IVY Energy",
-    "Royal Behaviour",
-    "Touch Grass With Ivy",
-    "Queen of the Rotation",
-    "Maximum Frog",
-    "The Shape of Greatness",
-    "Internet Royalty",
-    "Long Live Ivy",
-  ],
-};
-
 export const ownerCorner = {
   heading: "Behind Every Queen Is a Very Dedicated Human",
   body: "Ivy's online story exists because someone has cared for her, understood her needs and shared her personality with the world. $IVY should always respect the bond at the centre of the project.",
   mediaLabel: "Ivy and her human",
   cards: [
-    { title: "A message from Ivy's owner", body: "A personal note will be published here." },
-    { title: "A day in Ivy's routine", body: "Ivy's human will share what a normal day looks like." },
-    { title: "Behind the scenes", body: "The stories behind the clips everyone already loves." },
-    { title: "Project updates", body: "Direct updates from Ivy's human about $IVY." },
-    { title: "Transparent proceeds updates", body: "Published once allocation details are finalised." },
-    { title: "Approved care updates", body: "Only what Ivy's family chooses to share. No private details." },
+    { title: "Ivy comes first", body: "Her care, comfort and routine always outrank anything happening on-chain." },
+    { title: "Only official content", body: "Every clip and photo on this site is an official Instagram or TikTok post, hosted by the platform." },
+    { title: "Creator rewards", body: "pump.fun creator rewards from $IVY trading are intended for Ivy and her owner." },
+    { title: "No private details", body: "Nothing about Ivy's household, location or medical records is published here." },
+    { title: "Transparent proceeds", body: "Full allocation and proceeds information will be published before launch." },
+    { title: "Community, not charity", body: "IvyVibing is not a registered charity — it is a community meme project built around Ivy." },
   ],
 };
+
 
 export const royalCourt = {
   heading: "The Royal Court",
