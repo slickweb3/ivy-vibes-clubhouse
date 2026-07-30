@@ -79,7 +79,8 @@ function publicClient() {
 }
 
 function platformStatus(enabled: boolean, connected: boolean): PlatformStatus {
-  if (!enabled) return "not_configured";
+  // No credentials configured yet -> honestly reported as disconnected.
+  if (!enabled) return "disconnected";
   return connected ? "connected" : "disconnected";
 }
 
