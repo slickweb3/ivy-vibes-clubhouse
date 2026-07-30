@@ -314,7 +314,7 @@ function PlatformFeed({
     track.scrollBy({ left: direction * track.clientWidth * 0.85, behavior: "smooth" });
   };
 
-  const slots = Math.max(count - posts.length, 0);
+  const slots = 0;
 
   return (
     <div className="rounded-2xl bg-card p-5 pop-static">

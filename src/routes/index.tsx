@@ -110,22 +110,14 @@ function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
 
   if (hero) used.add(hero.id);
 
+  // Keep the site photo-forward: at most 15 videos across the whole homepage.
   const meetIvy = take(photoPosts, 3);
-  const freshPhotoPosts = take(
-    photoPosts.filter((post) => post.placements.includes("fresh_posts")),
-    2,
-  );
-  const freshVideoPosts = take(
-    videoPosts.filter((post) => post.placements.includes("fresh_posts")),
-    6,
-  );
+  const freshPhotoPosts = take(photoPosts, 1);
+  const freshVideoPosts = take(videoPosts, 4);
   const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
-  const ivyTv = take(videoPosts.filter((post) => post.placements.includes("ivy_tv")), 12);
-  const hallOfFame = take(
-    photoPosts.filter((post) => post.placements.includes("hall_of_fame")),
-    8,
-  );
-  const memeMachine = take([...photoPosts, ...videoPosts], 4);
+  const ivyTv = take(videoPosts, 8);
+  const hallOfFame = take(photoPosts, 8);
+  const memeMachine = take([...photoPosts, ...videoPosts], 2);
   const ownerCorner = take([...photoPosts, ...videoPosts], 1)[0] ?? null;
 
   return { hero, meetIvy, freshPosts, ivyTv, hallOfFame, memeMachine, ownerCorner };

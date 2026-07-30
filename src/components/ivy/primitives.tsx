@@ -24,18 +24,18 @@ const aspectMap = {
 } as const;
 
 /**
- * Labelled owner-approved-media placeholder.
- * Never a stock dog photo and never an artificial Ivy.
+ * Decorative clubhouse tile. Purely ornamental brand pattern — it never asks
+ * for media, never shows a stock dog and never fakes an Ivy photo.
  */
 export function MediaPlaceholder({
-  label,
-  hint,
+  label: _label,
+  hint: _hint,
   aspect = "square",
   tone = "leaf",
   className,
-  compact = false,
+  compact: _compact = false,
 }: {
-  label: string;
+  label?: string;
   hint?: string;
   aspect?: keyof typeof aspectMap;
   tone?: Tone;
@@ -44,29 +44,22 @@ export function MediaPlaceholder({
 }) {
   return (
     <div
-      role="img"
-      aria-label={`Owner-approved media placeholder — ${label}`}
+      aria-hidden
       className={cn(
-        "relative flex w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl p-3 text-center ink-border",
+        "relative flex w-full items-center justify-center overflow-hidden rounded-xl ink-border",
         aspectMap[aspect],
         toneBg[tone],
         className,
       )}
       style={{
         backgroundImage:
-          "repeating-linear-gradient(45deg, rgba(21,21,21,0.07) 0 10px, transparent 10px 20px)",
+          "repeating-linear-gradient(45deg, rgba(21,21,21,0.06) 0 12px, transparent 12px 24px)",
       }}
     >
-      <PawDoodle className="h-6 w-6 text-cream/80" />
-      {!compact && (
-        <span className="rounded-full bg-charcoal px-2.5 py-1 font-display text-[0.6rem] tracking-[0.15em] text-cream uppercase">
-          Official Ivy media
-        </span>
-      )}
-      <span className="max-w-[22ch] font-display text-xs leading-tight text-charcoal sm:text-sm">
-        {label}
-      </span>
-      {hint ? <span className="text-[0.7rem] text-charcoal/70">{hint}</span> : null}
+      <div className="flex items-center gap-2 opacity-70">
+        <PawDoodle className="h-6 w-6 text-charcoal" />
+        <CrownDoodle className="h-6 w-6 text-charcoal" />
+      </div>
     </div>
   );
 }
