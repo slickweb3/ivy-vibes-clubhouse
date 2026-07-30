@@ -112,25 +112,32 @@ export function OfficialSocialEmbed({
           toneBg[tone],
         )}
       >
-        {showEmbed && usePoster ? (
+        {showEmbed && showPlayGate ? (
           <button
             type="button"
             onClick={() => setPlaying(true)}
             aria-label={`Play Ivy's ${label} video${post.adminLabel ? ` — ${post.adminLabel}` : ""}`}
             className="group absolute inset-0 h-full w-full"
           >
-            <img
-              src={post.thumbnailUrl ?? ""}
-              alt={
-                post.originalCaption ??
-                `Ivy in an official ${label} video from @${post.sourceAccountHandle}`
-              }
-              loading="lazy"
-              decoding="async"
-              referrerPolicy="no-referrer"
-              onError={() => setPosterBroken(true)}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+            {usePoster ? (
+              <img
+                src={post.thumbnailUrl ?? ""}
+                alt={
+                  post.originalCaption ??
+                  `Ivy in an official ${label} video from @${post.sourceAccountHandle}`
+                }
+                loading="lazy"
+                decoding="async"
+                referrerPolicy="no-referrer"
+                onError={() => setPosterBroken(true)}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            ) : (
+              <span aria-hidden className="absolute inset-0 flex items-center justify-center gap-2">
+                <CrownDoodle className="h-6 w-10 text-ivy/70" />
+                <PawDoodle className="h-6 w-6 text-charcoal/40" />
+              </span>
+            )}
             <span
               aria-hidden
               className="absolute inset-0 flex items-center justify-center bg-charcoal/10 transition-colors group-hover:bg-charcoal/25"
@@ -141,6 +148,7 @@ export function OfficialSocialEmbed({
             </span>
           </button>
         ) : showEmbed ? (
+
           <>
             {!loaded ? (
               <div
