@@ -116,6 +116,23 @@ export function MemeMachine() {
             </fieldset>
           ))}
 
+          <fieldset>
+            <legend className="font-display text-base text-charcoal">4. Export</legend>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {["Download meme", "Copy image", "Share meme"].map((action) => (
+                <Button
+                  key={action}
+                  disabled
+                  aria-disabled="true"
+                  title="Export unlocks when approved Ivy photos are supplied"
+                  className="min-h-11 rounded-full bg-card px-4 font-display text-sm text-charcoal pop-static hover:bg-card disabled:opacity-70"
+                >
+                  {action} — {COMING_SOON}
+                </Button>
+              ))}
+            </div>
+          </fieldset>
+
           <p className="rounded-xl bg-yellow p-4 text-sm text-charcoal pop-static">
             Downloading and sharing open once Ivy's family supplies the approved photo set. No
             uploads and no free-text captions — ever.
