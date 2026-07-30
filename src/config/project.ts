@@ -1,103 +1,100 @@
 /**
- * Unified project configuration for IvyVibing.
+ * IvyVibing — single source of truth.
  *
- * RULE: never invent token, contract, chain, launch, social, price, exchange,
- * partnership or audit details. Anything unverified stays `null` and renders
- * as "Coming Soon" in the UI.
+ * RULE: never invent a contract address, blockchain, supply, launch date,
+ * tokenomics, price, market cap, exchange, social profile, partnership,
+ * audit or milestone date. Anything unverified stays `null` and the UI
+ * renders "Coming Soon".
  */
 
-export type MaybeValue = string | null;
+export type Maybe = string | null;
 
-export interface TokenRecordConfig {
-  name: MaybeValue;
-  ticker: MaybeValue;
-  blockchain: MaybeValue;
-  contractAddress: MaybeValue;
-  totalSupply: MaybeValue;
-  taxes: MaybeValue;
-  liquidity: MaybeValue;
-  launchDate: MaybeValue;
-  explorerUrl: MaybeValue;
-  auditStatus: MaybeValue;
-  exchanges: string[];
-  partnerships: string[];
+export interface SocialFeedConfig {
+  instagramEnabled: boolean;
+  tiktokEnabled: boolean;
+  postsPerPlatform: number;
+  syncIntervalHours: number;
 }
 
-export interface SocialLinkConfig {
-  id: string;
-  label: string;
-  url: MaybeValue;
-  handle: MaybeValue;
-}
-
-export interface FeatureFlags {
-  socialSyncEnabled: boolean;
-  databaseConnected: boolean;
-  authConfigured: boolean;
-  instagramOAuthConfigured: boolean;
-  tiktokOAuthConfigured: boolean;
-  memeMachineUploadsEnabled: boolean;
+export interface ProjectSocials {
+  instagram: Maybe;
+  tiktok: Maybe;
+  x: Maybe;
+  telegram: Maybe;
+  discord: Maybe;
 }
 
 export interface ProjectConfig {
-  siteName: string;
+  projectName: string;
+  ticker: string;
   tagline: string;
-  description: string;
-  mascot: { name: string; titles: string[] };
-  token: TokenRecordConfig;
-  socials: SocialLinkConfig[];
-  features: FeatureFlags;
-  syncIntervalHours: number;
-  ownerContactEmail: MaybeValue;
+  blockchain: Maybe;
+  contractAddress: Maybe;
+  explorerBaseUrl: Maybe;
+  launchDate: Maybe;
+  tokenSupply: Maybe;
+  tokenomicsUrl: Maybe;
+  tokenRecordUpdatedAt: Maybe;
+  socials: ProjectSocials;
+  contactEmail: Maybe;
+  socialFeed: SocialFeedConfig;
 }
 
 export const projectConfig: ProjectConfig = {
-  siteName: "IvyVibing",
-  tagline: "SHORT SPINE. BIG VIBES.",
-  description:
-    "The official internet clubhouse of Ivy — the Short Spine Queen and Frog Queen — and her community coin, $IVY.",
-  mascot: {
-    name: "Ivy",
-    titles: ["Short Spine Queen", "Frog Queen"],
+  projectName: "IvyVibing",
+  ticker: "$IVY",
+  tagline: "Short Spine. Big Vibes.",
+  blockchain: null,
+  contractAddress: null,
+  explorerBaseUrl: null,
+  launchDate: null,
+  tokenSupply: null,
+  tokenomicsUrl: null,
+  tokenRecordUpdatedAt: null,
+  socials: {
+    instagram: null,
+    tiktok: null,
+    x: null,
+    telegram: null,
+    discord: null,
   },
-  token: {
-    name: null,
-    ticker: "$IVY",
-    blockchain: null,
-    contractAddress: null,
-    totalSupply: null,
-    taxes: null,
-    liquidity: null,
-    launchDate: null,
-    explorerUrl: null,
-    auditStatus: null,
-    exchanges: [],
-    partnerships: [],
+  contactEmail: null,
+  socialFeed: {
+    instagramEnabled: false,
+    tiktokEnabled: false,
+    postsPerPlatform: 3,
+    syncIntervalHours: 12,
   },
-  socials: [
-    { id: "instagram", label: "Instagram", url: null, handle: null },
-    { id: "tiktok", label: "TikTok", url: null, handle: null },
-    { id: "x", label: "X", url: null, handle: null },
-    { id: "telegram", label: "Telegram", url: null, handle: null },
-  ],
-  features: {
-    socialSyncEnabled: false,
-    databaseConnected: false,
-    authConfigured: false,
-    instagramOAuthConfigured: false,
-    tiktokOAuthConfigured: false,
-    memeMachineUploadsEnabled: false,
-  },
-  syncIntervalHours: 12,
-  ownerContactEmail: null,
 };
 
 export const COMING_SOON = "Coming Soon";
 
-export function displayValue(value: MaybeValue): string {
-  return value && value.trim().length > 0 ? value : COMING_SOON;
+export function isSet(value: Maybe): value is string {
+  return typeof value === "string" && value.trim().length > 0;
 }
 
-export function isConfigured(value: MaybeValue): boolean {
-  return Boolean(value && value.trim().length > 0);
+export function displayValue(value: Maybe): string {
+  return isSet(value) ? value : COMING_SOON;
+}
+
+/** A contract is only "live" when both the address and the chain are set. */
+export function hasVerifiedContract(config: ProjectConfig = projectConfig): boolean {
+  return isSet(config.contractAddress) && isSet(config.blockchain);
+}
+
+export function shortenAddress(address: Maybe): string {
+  if (!isSet(address) || address.length < 12) return COMING_SOON;
+  return `${address.slice(0, 6)}…${address.slice(-4)}`;
+}
+
+export function explorerUrl(config: ProjectConfig = projectConfig): string | null {
+  if (!hasVerifiedContract(config) || !isSet(config.explorerBaseUrl)) return null;
+  return `${config.explorerBaseUrl.replace(/\/$/, "")}/${config.contractAddress}`;
+}
+
+/** Any official community link published on this site. */
+export function officialLinks(config: ProjectConfig = projectConfig) {
+  return Object.entries(config.socials)
+    .filter(([, url]) => isSet(url))
+    .map(([key, url]) => ({ key, url: url as string }));
 }

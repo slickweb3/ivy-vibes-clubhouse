@@ -10,18 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ApiSocialFeedRouteImport } from './routes/api/social-feed'
-import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSocialFeedRoute = ApiSocialFeedRouteImport.update({
@@ -29,44 +22,31 @@ const ApiSocialFeedRoute = ApiSocialFeedRouteImport.update({
   path: '/api/social-feed',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LegalSlugRoute = LegalSlugRouteImport.update({
-  id: '/legal/$slug',
-  path: '/legal/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
-  '/legal/$slug': typeof LegalSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
-  '/legal/$slug': typeof LegalSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
-  '/legal/$slug': typeof LegalSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/api/social-feed' | '/legal/$slug'
+  fullPaths: '/' | '/api/social-feed'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/api/social-feed' | '/legal/$slug'
-  id: '__root__' | '/' | '/admin' | '/api/social-feed' | '/legal/$slug'
+  to: '/' | '/api/social-feed'
+  id: '__root__' | '/' | '/api/social-feed'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
   ApiSocialFeedRoute: typeof ApiSocialFeedRoute
-  LegalSlugRoute: typeof LegalSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -78,13 +58,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/social-feed': {
       id: '/api/social-feed'
       path: '/api/social-feed'
@@ -92,21 +65,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSocialFeedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/legal/$slug': {
-      id: '/legal/$slug'
-      path: '/legal/$slug'
-      fullPath: '/legal/$slug'
-      preLoaderRoute: typeof LegalSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
   ApiSocialFeedRoute: ApiSocialFeedRoute,
-  LegalSlugRoute: LegalSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
