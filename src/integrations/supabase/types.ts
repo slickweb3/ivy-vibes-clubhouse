@@ -549,6 +549,7 @@ export type Database = {
           automation_paused: boolean
           blockchain: string | null
           chart_provider: string
+          community_url: string | null
           contact_email: string | null
           contract_address: string | null
           created_at: string
@@ -583,6 +584,7 @@ export type Database = {
           automation_paused?: boolean
           blockchain?: string | null
           chart_provider?: string
+          community_url?: string | null
           contact_email?: string | null
           contract_address?: string | null
           created_at?: string
@@ -617,6 +619,7 @@ export type Database = {
           automation_paused?: boolean
           blockchain?: string | null
           chart_provider?: string
+          community_url?: string | null
           contact_email?: string | null
           contract_address?: string | null
           created_at?: string
