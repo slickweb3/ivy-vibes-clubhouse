@@ -174,6 +174,83 @@ export function FreshFromTheFrogQueen() {
   );
 }
 
+function PlatformFeed({
+  label,
+  enabled,
+  count,
+}: {
+  label: string;
+  enabled: boolean;
+  count: number;
+}) {
+  const trackRef = useRef<HTMLUListElement>(null);
+
+  const scrollBy = (direction: 1 | -1) => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.scrollBy({ left: direction * track.clientWidth * 0.85, behavior: "smooth" });
+  };
+
+  return (
+    <div className="rounded-2xl bg-cream p-5 pop-static">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="font-display text-xl text-charcoal">{label}</h3>
+        <StatusChip
+          status={enabled ? "pending" : "off"}
+          label={enabled ? "Awaiting first sync" : "Not connected"}
+        />
+      </div>
+
+      <p className="mt-2 text-sm text-charcoal/80">
+        {enabled
+          ? freshPosts.loading
+          : `Ivy's official ${label} account has not been connected yet. Nothing here is scraped or guessed.`}
+      </p>
+
+      <ul
+        ref={trackRef}
+        aria-label={`${label} placeholder posts`}
+        className="mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0"
+      >
+        {Array.from({ length: count }).map((_, index) => (
+          <li key={index} className="w-[70%] shrink-0 snap-start sm:w-auto">
+            <MediaPlaceholder
+              label={`${label} slot ${index + 1}`}
+              aspect="square"
+              tone={index === 1 ? "lavender" : "leaf"}
+              compact
+            />
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-3 flex gap-2 sm:hidden">
+        <Button
+          type="button"
+          onClick={() => scrollBy(-1)}
+          aria-label={`Scroll ${label} placeholders backwards`}
+          className="min-h-11 min-w-11 rounded-full bg-card px-4 font-display text-charcoal pop hover:bg-leaf"
+        >
+          ‹
+        </Button>
+        <Button
+          type="button"
+          onClick={() => scrollBy(1)}
+          aria-label={`Scroll ${label} placeholders forwards`}
+          className="min-h-11 min-w-11 rounded-full bg-card px-4 font-display text-charcoal pop hover:bg-leaf"
+        >
+          ›
+        </Button>
+      </div>
+
+      <p className="mt-4 text-xs text-charcoal/70">
+        Feed served from this site's own cache via <code>/api/social-feed</code>. Last updated:{" "}
+        {COMING_SOON}.
+      </p>
+    </div>
+  );
+}
+
 /* ----------------------------------------------------------------- Ivy TV */
 
 export function IvyTV() {
