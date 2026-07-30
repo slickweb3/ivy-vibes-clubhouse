@@ -10,8 +10,16 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { announcement, joinTheVibeMessage, navLinks } from "@/data/site-content";
+import { officialLinks } from "@/config/project";
 import { CrownDoodle, FrogDoodle, IvyWordmark, PawDoodle } from "./doodles";
 import { cn } from "@/lib/utils";
+
+const socialLabels: Record<string, string> = {
+  instagram: "Instagram",
+  tiktok: "TikTok",
+  x: "X",
+  telegram: "Telegram",
+};
 
 function AnnouncementBar() {
   return (
@@ -33,6 +41,7 @@ function JoinTheVibeDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const links = officialLinks();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md rounded-2xl bg-card pop-static">
@@ -45,9 +54,27 @@ function JoinTheVibeDialog({
             {joinTheVibeMessage}
           </DialogDescription>
         </DialogHeader>
+        {links.length > 0 ? (
+          <ul className="grid gap-2">
+            {links.map(({ key, url }) => (
+              <li key={key}>
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between gap-3 rounded-xl border-[3px] border-charcoal bg-leaf px-3 py-2 text-sm font-bold text-charcoal pop-static transition-transform hover:-translate-y-0.5"
+                >
+                  <span>{socialLabels[key] ?? key}</span>
+                  <span className="truncate text-xs font-medium text-charcoal/70">
+                    {url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : null}
         <p className="rounded-xl bg-yellow p-3 text-sm text-charcoal pop-static">
-          There are no official Instagram, TikTok, X, Telegram or Discord links yet. Anything
-          claiming otherwise is not us.
+          These are the only official IvyVibing channels. Anything else claiming to be us is not us.
         </p>
       </DialogContent>
     </Dialog>

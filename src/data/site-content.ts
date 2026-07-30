@@ -306,7 +306,7 @@ export const ownerCorner = {
 
 export const royalCourt = {
   heading: "The Royal Court",
-  body: "Every official IvyVibing channel will be listed here—and only here—once it exists.",
+  body: "Every official IvyVibing channel is listed here—and only here.",
   safety: "Only trust accounts linked directly from IvyVibing's official website.",
   channels: [
     { id: "instagram", label: "Instagram" },
@@ -337,7 +337,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "Where can I find official links?",
     answer:
-      "All official social links will be added directly to this website. Treat any other account or contract as unverified until then.",
+      "Ivy's official Instagram, TikTok, X and Telegram links are published on this website. Treat any other account or contract as unverified.",
   },
   {
     question: "Does buying $IVY guarantee a return?",
@@ -373,7 +373,7 @@ export const footerDisclaimer =
   "$IVY is a community meme project inspired by IvyVibing. Digital assets and meme coins are highly speculative and may lose all value. Nothing on this website constitutes financial, legal or tax advice. Always verify official links and the contract address before interacting with any token. Instagram, TikTok and other social platforms do not sponsor or endorse this project.";
 
 export const joinTheVibeMessage =
-  "Official community links are coming soon. Only trust links published directly on this website.";
+  "Ivy's official channels are listed below. Only trust links published directly on this website.";
 
 export const navLinks = [
   { label: "Meet Ivy", hash: "#meet-ivy" },
