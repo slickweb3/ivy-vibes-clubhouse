@@ -35,7 +35,7 @@ import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ Hero */
 
-export function Hero({ media }: { media?: UnifiedMediaItem | null }) {
+export function Hero({ media, market }: { media?: UnifiedMediaItem | null; market?: MarketSnapshot | null }) {
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden bg-leaf">
       <div className="pointer-events-none absolute -top-10 -right-8 hidden opacity-70 sm:block">
@@ -103,6 +103,12 @@ export function Hero({ media }: { media?: UnifiedMediaItem | null }) {
           <Sticker tone="pink" className="absolute -bottom-3 right-2 rotate-[6deg]">
             <PawDoodle className="h-4 w-4 text-charcoal" /> Short Spine Queen
           </Sticker>
+
+          {market ? (
+            <div className="mt-8 -rotate-1">
+              <MiniChart snapshot={market} />
+            </div>
+          ) : null}
         </div>
       </div>
 
