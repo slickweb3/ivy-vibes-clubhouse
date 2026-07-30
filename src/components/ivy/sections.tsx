@@ -158,39 +158,12 @@ export function FreshFromTheFrogQueen() {
     >
       <div className="grid gap-8 lg:grid-cols-2">
         {platforms.map((platform) => (
-          <div key={platform.key} className="rounded-2xl bg-cream p-5 pop-static">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h3 className="font-display text-xl text-charcoal">{platform.label}</h3>
-              <StatusChip
-                status={platform.enabled ? "pending" : "off"}
-                label={platform.enabled ? "Awaiting first sync" : "Not connected"}
-              />
-            </div>
-
-            <p className="mt-2 text-sm text-charcoal/80">
-              {platform.enabled
-                ? freshPosts.loading
-                : `Ivy's official ${platform.label} account has not been connected yet. Nothing here is scraped or guessed.`}
-            </p>
-
-            <ul className="mt-4 grid gap-3 sm:grid-cols-3">
-              {Array.from({ length: postsPerPlatform }).map((_, index) => (
-                <li key={index}>
-                  <MediaPlaceholder
-                    label={`${platform.label} slot ${index + 1}`}
-                    aspect="square"
-                    tone={index === 1 ? "lavender" : "leaf"}
-                    compact
-                  />
-                </li>
-              ))}
-            </ul>
-
-            <p className="mt-4 text-xs text-charcoal/70">
-              Feed served from this site's own cache via <code>/api/social-feed</code>. Last
-              updated: {COMING_SOON}.
-            </p>
-          </div>
+          <PlatformFeed
+            key={platform.key}
+            label={platform.label}
+            enabled={platform.enabled}
+            count={postsPerPlatform}
+          />
         ))}
       </div>
 
