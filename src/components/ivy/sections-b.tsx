@@ -231,7 +231,7 @@ export function RoyalCourt() {
           const url =
             (projectConfig.socials as unknown as Record<string, string | null>)[channel.id] ?? null;
           return (
-            <li key={channel.id} className="rounded-2xl bg-cream p-5 pop-static">
+            <li key={channel.id} className="rounded-2xl bg-card p-5 pop-static">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="font-display text-lg text-charcoal">{channel.label}</h3>
                 <StatusChip status={url ? "ok" : "pending"} label={url ? "Official" : COMING_SOON} />
@@ -275,7 +275,7 @@ export function RoyalCourt() {
       <Button
         onClick={openSettings}
         variant="secondary"
-        className="mt-6 min-h-11 rounded-full bg-cream px-5 font-display text-charcoal pop hover:bg-cream"
+        className="mt-6 min-h-11 rounded-full bg-card px-5 font-display text-charcoal pop hover:bg-card"
       >
         Cookie settings
       </Button>
@@ -299,7 +299,7 @@ export function FAQ() {
           <AccordionItem
             key={entry.question}
             value={`faq-${index}`}
-            className="rounded-2xl border-0 bg-cream px-4 pop-static"
+            className="rounded-2xl border-0 bg-card px-4 pop-static"
           >
             <AccordionTrigger className="py-4 text-left font-display text-base text-charcoal hover:no-underline sm:text-lg">
               {entry.question}

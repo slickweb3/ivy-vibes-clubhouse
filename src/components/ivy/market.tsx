@@ -38,7 +38,7 @@ const STATUS_LABEL: Record<MarketSnapshot["status"], { status: "ok" | "pending" 
 
 function Stat({ label, value }: { label: string; value: string | null }) {
   return (
-    <div className="rounded-2xl bg-cream p-4 pop-static">
+    <div className="rounded-2xl bg-card p-4 pop-static">
       <p className="font-display text-[0.7rem] tracking-wide text-charcoal/70 uppercase">{label}</p>
       <div className="mt-2 font-display text-xl text-charcoal sm:text-2xl">
         {value ?? <ComingSoonPill />}
@@ -111,7 +111,7 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
       ) : null}
 
       {/* Consent-gated third-party chart */}
-      <div className="mt-8 overflow-hidden rounded-2xl bg-cream p-4 pop-static">
+      <div className="mt-8 overflow-hidden rounded-2xl bg-card p-4 pop-static">
         <h3 className="font-display text-lg text-charcoal">Price chart</h3>
         {!snapshot.chartEmbedUrl ? (
           <p className="mt-2 text-sm text-charcoal/80">

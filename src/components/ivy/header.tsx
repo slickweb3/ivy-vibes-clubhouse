@@ -35,7 +35,7 @@ function JoinTheVibeDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md rounded-2xl bg-cream pop-static">
+      <DialogContent className="max-w-md rounded-2xl bg-card pop-static">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-display text-2xl text-charcoal">
             <CrownDoodle className="h-5 w-8 text-frog" />
@@ -72,7 +72,7 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
   return (
     <>
       <AnnouncementBar />
-      <header className="sticky top-0 z-40 border-b-[3px] border-charcoal bg-cream/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b-[3px] border-charcoal bg-card/95 backdrop-blur">
         <nav aria-label="Main" className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
           <Link to="/" className="shrink-0" aria-label="IvyVibing home">
             <IvyWordmark />
@@ -113,7 +113,7 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
         <div
           id="mobile-menu"
           hidden={!mobileOpen}
-          className={cn("border-t-[3px] border-charcoal bg-cream lg:hidden")}
+          className={cn("border-t-[3px] border-charcoal bg-card lg:hidden")}
         >
           <ul className="mx-auto max-w-6xl px-4 py-2">
             {navLinks.map((link) => (

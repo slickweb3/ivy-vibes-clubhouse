@@ -76,7 +76,7 @@ export function MiniChart({ snapshot }: { snapshot: MarketSnapshot }) {
   const points = live ? sparkPoints(snapshot) : null;
 
   return (
-    <div className="rounded-3xl bg-cream p-4 pop-static sm:p-5">
+    <div className="rounded-3xl bg-card p-4 pop-static sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="font-display text-[0.7rem] tracking-wide text-charcoal/70 uppercase">
           $IVY · live view
