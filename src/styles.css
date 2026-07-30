@@ -299,3 +299,21 @@
     opacity: 0.9;
   }
 }
+
+/* Offscreen embed cards skip layout/paint work until they scroll near. */
+@utility embed-perf {
+  content-visibility: auto;
+  contain-intrinsic-size: 520px;
+}
+
+/* Horizontal rails: momentum scrolling with snap and no visible scrollbar. */
+@utility rail {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+@utility rail-item {
+  scroll-snap-align: center;
+}
