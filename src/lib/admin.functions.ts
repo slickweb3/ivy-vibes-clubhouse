@@ -492,3 +492,98 @@ export const listSyncRuns = createServerFn({ method: "GET" })
       .limit(20);
     return (data ?? []) as SyncRunRow[];
   });
+
+/* ------------------------------------------------- token / market config */
+
+export interface TokenRecordSettings {
+  contractAddress: string | null;
+  devWalletAddress: string | null;
+  pairAddress: string | null;
+  blockchain: string | null;
+  launchDate: string | null;
+  tokenSupply: string | null;
+  launchPlatform: string | null;
+  launchPlatformUrl: string | null;
+  marketDataEnabled: boolean;
+}
+
+export const getTokenSettings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<TokenRecordSettings> => {
+    const { supabase, userId } = context;
+    const { requireStaff } = await import("@/lib/admin-guard.server");
+    await requireStaff(supabase, userId);
+
+    const { data } = await supabase
+      .from("project_config")
+      .select(
+        "contract_address, dev_wallet_address, pair_address, blockchain, launch_date, token_supply, launch_platform, launch_platform_url, market_data_enabled",
+      )
+      .limit(1)
+      .maybeSingle();
+
+    const row = (data ?? {}) as Record<string, unknown>;
+    const s = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
+    return {
+      contractAddress: s(row.contract_address),
+      devWalletAddress: s(row.dev_wallet_address),
+      pairAddress: s(row.pair_address),
+      blockchain: s(row.blockchain),
+      launchDate: s(row.launch_date),
+      tokenSupply: s(row.token_supply),
+      launchPlatform: s(row.launch_platform),
+      launchPlatformUrl: s(row.launch_platform_url),
+      marketDataEnabled: row.market_data_enabled !== false,
+    };
+  });
+
+/**
+ * Publishes the verified token record. Setting the contract address here is
+ * what switches the whole site from "Coming Soon" to live market data.
+ */
+export const updateTokenSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: Partial<TokenRecordSettings>) => input)
+  .handler(async ({ context, data }) => {
+    const { supabase, userId } = context;
+    const { requireAdmin, audit } = await import("@/lib/admin-guard.server");
+    await requireAdmin(supabase, userId);
+
+    const clean = (v: string | null | undefined) => {
+      if (v === undefined) return undefined;
+      const trimmed = (v ?? "").trim();
+      return trimmed.length ? trimmed.slice(0, 200) : null;
+    };
+
+    const patch: Record<string, string | boolean | null> = {};
+    const map: Array<[keyof TokenRecordSettings, string]> = [
+      ["contractAddress", "contract_address"],
+      ["devWalletAddress", "dev_wallet_address"],
+      ["pairAddress", "pair_address"],
+      ["blockchain", "blockchain"],
+      ["launchDate", "launch_date"],
+      ["tokenSupply", "token_supply"],
+      ["launchPlatform", "launch_platform"],
+      ["launchPlatformUrl", "launch_platform_url"],
+    ];
+    for (const [key, column] of map) {
+      const value = clean(data[key] as string | null | undefined);
+      if (value !== undefined) patch[column] = value;
+    }
+    if (data.marketDataEnabled !== undefined) patch.market_data_enabled = data.marketDataEnabled;
+    if (Object.keys(patch).length === 0) return { ok: true };
+
+    const { data: row } = await supabase.from("project_config").select("id").limit(1).maybeSingle();
+    if (row)
+      await supabase
+        .from("project_config")
+        .update(patch as never)
+        .eq("id", (row as { id: string }).id);
+
+    await audit(supabase, userId, {
+      action: "update_token_settings",
+      entityType: "project_config",
+      summary: `Token record updated: ${Object.keys(patch).join(", ")}.`,
+    });
+    return { ok: true };
+  });
