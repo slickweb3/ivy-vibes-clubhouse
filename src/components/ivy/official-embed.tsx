@@ -10,6 +10,9 @@ import {
 } from "@/types/curated";
 import { cn } from "@/lib/utils";
 
+/** Keeps at most one TikTok player mounted at a time (mobile performance). */
+const activePlayerListeners = new Set<(id: string) => void>();
+
 /**
  * Renders one curated post using the platform's OWN official embed.
  *
@@ -51,7 +54,7 @@ export function OfficialSocialEmbed({
           observer.disconnect();
         }
       },
-      { rootMargin: "600px 0px" },
+      { rootMargin: "200px 0px" },
     );
     observer.observe(node);
     return () => observer.disconnect();
@@ -61,16 +64,38 @@ export function OfficialSocialEmbed({
   const fallbackLabel = curatedFallbackLabel(post);
   const [playing, setPlaying] = useState(false);
   const [posterBroken, setPosterBroken] = useState(false);
+  const isTikTok = post.platform === "tiktok";
+
+  // Phones struggle when many TikTok players exist at once, so a video player is
+  // only mounted on tap and any previously opened player is unmounted first.
+  useEffect(() => {
+    if (!playing) return;
+    const id = post.id;
+    const listener = (next: string) => {
+      if (next !== id) setPlaying(false);
+    };
+    activePlayerListeners.add(listener);
+    activePlayerListeners.forEach((other) => {
+      if (other !== listener) other(id);
+    });
+    return () => {
+      activePlayerListeners.delete(listener);
+    };
+
+  }, [playing, post.id]);
+
+
   // TikTok gives us its own official poster image, so the card shows a real
   // picture straight away and the video opens in TikTok's player on tap.
-  const usePoster =
-    post.platform === "tiktok" && !!post.thumbnailUrl && !posterBroken && !playing;
+  const showPlayGate = isTikTok && !playing;
+  const usePoster = showPlayGate && !!post.thumbnailUrl && !posterBroken;
   const showEmbed = embedsAllowed && !failed;
-  const aspect = post.platform === "tiktok" ? "aspect-[9/16]" : "aspect-[3/4]";
+  const aspect = isTikTok ? "aspect-[9/16]" : "aspect-[3/4]";
   const embedSrc =
-    post.platform === "tiktok" && playing
+    isTikTok && playing
       ? `${post.officialEmbedUrl}${post.officialEmbedUrl.includes("?") ? "&" : "?"}autoplay=1`
       : post.officialEmbedUrl;
+
 
   return (
     <figure
@@ -87,25 +112,32 @@ export function OfficialSocialEmbed({
           toneBg[tone],
         )}
       >
-        {showEmbed && usePoster ? (
+        {showEmbed && showPlayGate ? (
           <button
             type="button"
             onClick={() => setPlaying(true)}
             aria-label={`Play Ivy's ${label} video${post.adminLabel ? ` — ${post.adminLabel}` : ""}`}
             className="group absolute inset-0 h-full w-full"
           >
-            <img
-              src={post.thumbnailUrl ?? ""}
-              alt={
-                post.originalCaption ??
-                `Ivy in an official ${label} video from @${post.sourceAccountHandle}`
-              }
-              loading="lazy"
-              decoding="async"
-              referrerPolicy="no-referrer"
-              onError={() => setPosterBroken(true)}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+            {usePoster ? (
+              <img
+                src={post.thumbnailUrl ?? ""}
+                alt={
+                  post.originalCaption ??
+                  `Ivy in an official ${label} video from @${post.sourceAccountHandle}`
+                }
+                loading="lazy"
+                decoding="async"
+                referrerPolicy="no-referrer"
+                onError={() => setPosterBroken(true)}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            ) : (
+              <span aria-hidden className="absolute inset-0 flex items-center justify-center gap-2">
+                <CrownDoodle className="h-6 w-10 text-ivy/70" />
+                <PawDoodle className="h-6 w-6 text-charcoal/40" />
+              </span>
+            )}
             <span
               aria-hidden
               className="absolute inset-0 flex items-center justify-center bg-charcoal/10 transition-colors group-hover:bg-charcoal/25"
@@ -116,6 +148,7 @@ export function OfficialSocialEmbed({
             </span>
           </button>
         ) : showEmbed ? (
+
           <>
             {!loaded ? (
               <div

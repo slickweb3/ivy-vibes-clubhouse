@@ -355,7 +355,6 @@ export const joinTheVibeMessage =
 
 export const navLinks = [
   { label: "Meet Ivy", hash: "#meet-ivy" },
-  { label: "Ivy TV", hash: "#ivy-tv" },
   { label: "Fresh Posts", hash: "#fresh-posts" },
   { label: "The Lore", hash: "#the-lore" },
   { label: "$ivy", hash: "#token-record" },

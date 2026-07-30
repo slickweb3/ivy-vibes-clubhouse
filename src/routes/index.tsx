@@ -6,12 +6,12 @@ import { EMPTY_CURATED_FEED, type CuratedFeed, type CuratedPost } from "@/types/
 import type { MarketSnapshot } from "@/lib/market.server";
 import { EMPTY_SITE_MEDIA, type SiteMedia } from "@/types/media";
 import { SiteNav } from "@/components/ivy/header";
+import { AmbientVibes } from "@/components/ivy/ambient";
 import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import {
   Hero,
   MeetIvy,
   FreshFromTheFrogQueen,
-  IvyTV,
   HallOfFame,
   TheLore,
   WhyIvy,
@@ -108,16 +108,17 @@ function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
 
   if (hero) used.add(hero.id);
 
-  // Keep the site photo-forward: at most 15 videos across the whole homepage.
-  const meetIvy = take(photoPosts, 3);
-  const freshPhotoPosts = take(photoPosts, 1);
+  // Compact homepage: fewer, stronger cards and a light video load for phones.
+  const meetIvy = take(photoPosts, 2);
+  const freshPhotoPosts = take(photoPosts, 2);
   const freshVideoPosts = take(videoPosts, 4);
   const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
-  const ivyTv = take(videoPosts, 8);
-  const hallOfFame = take(photoPosts, 10);
+  const ivyTv: CuratedPost[] = [];
+  const hallOfFame = take(photoPosts, 4);
   const ownerCorner = take([...photoPosts, ...videoPosts], 1)[0] ?? null;
 
   return { hero, meetIvy, freshPosts, ivyTv, hallOfFame, ownerCorner };
+
 }
 
 function Home() {
@@ -134,12 +135,12 @@ function Home() {
       >
         Skip to content
       </a>
+      <AmbientVibes />
       <SiteNav />
       <main id="main">
         <Hero media={media.hero} market={market} curatedHero={homeCurated.hero} />
         <MeetIvy curated={homeCurated.meetIvy} />
         <FreshFromTheFrogQueen media={media} curated={homeCurated.freshPosts} />
-        <IvyTV items={media.ivyTv} curated={homeCurated.ivyTv} />
         <HallOfFame items={media.hallOfFame} curated={homeCurated.hallOfFame} />
         <TheLore />
         <WhyIvy />

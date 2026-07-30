@@ -54,7 +54,7 @@ export function Hero({
         <LeafDoodle className="h-40 w-40 text-frog float-slow" />
       </div>
 
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2">
+      <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-2">
         <div>
           <Sticker tone="yellow">
             <CrownDoodle className="h-3.5 w-5 text-frog" />
