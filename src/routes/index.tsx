@@ -47,11 +47,16 @@ export const Route = createFileRoute("/")({
     }
   },
   component: Home,
-  errorComponent: () => <Home />,
+  errorComponent: () => (
+    <main className="mx-auto max-w-2xl px-6 py-24 text-center">
+      <h1 className="font-display text-3xl">The clubhouse is catching its breath</h1>
+      <p className="mt-3 text-charcoal/80">Please refresh in a moment.</p>
+    </main>
+  ),
 });
 
 function Home() {
-  const media = Route.useLoaderData?.() ?? EMPTY_SITE_MEDIA;
+  const media = Route.useLoaderData() ?? EMPTY_SITE_MEDIA;
   return (
     <CookieConsentProvider>
       <a
