@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteNav, Hero } from "@/components/ivy/header";
+import { SiteNav } from "@/components/ivy/header";
 import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import {
+  Hero,
   MeetIvy,
   FreshFromTheFrogQueen,
   IvyTV,

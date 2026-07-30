@@ -1,300 +1,352 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Section, MediaPlaceholder, Sticker, Polaroid, ComingSoon } from "./primitives";
+import { useMemo, useState } from "react";
+import { ExternalLinkIcon, Play } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Section, MediaPlaceholder, Polaroid, InfoCard, Sticker, StatusChip, ComingSoonPill } from "./primitives";
+import { CrownDoodle, FrogDoodle, GrassStrip, LeafDoodle, PawDoodle, VineDivider } from "./doodles";
 import { useEmbedConsent } from "./cookie-consent";
-import { manualFallbackFeed, type SocialPost, type SocialFeedResponse } from "@/data/social";
-import { projectConfig, displayValue, isConfigured } from "@/config/project";
+import {
+  freshPosts,
+  hallOfFameCaptions,
+  heroCopy,
+  ivyTv,
+  ivyTvItems,
+  loreChapters,
+  meetIvy,
+  tokenRecord,
+  whyIvy,
+  type IvyTvCategory,
+} from "@/data/site-content";
+import {
+  COMING_SOON,
+  displayValue,
+  hasVerifiedContract,
+  projectConfig,
+  shortenAddress,
+} from "@/config/project";
+import { cn } from "@/lib/utils";
 
-/* ---------------- Meet Ivy ---------------- */
+/* ------------------------------------------------------------------ Hero */
+
+export function Hero() {
+  return (
+    <section aria-labelledby="hero-title" className="relative overflow-hidden bg-leaf">
+      <div className="pointer-events-none absolute -top-10 -right-8 hidden opacity-70 sm:block">
+        <LeafDoodle className="h-40 w-40 text-frog float-slow" />
+      </div>
+
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2">
+        <div>
+          <Sticker tone="yellow">
+            <CrownDoodle className="h-3.5 w-5 text-frog" />
+            {heroCopy.badge}
+          </Sticker>
+
+          <h1
+            id="hero-title"
+            className="mt-5 text-[3rem] leading-[0.9] text-charcoal sm:text-[4.5rem] lg:text-[5.25rem]"
+          >
+            <span className="block">{heroCopy.headlineLine1}</span>
+            <span className="block text-ivy">{heroCopy.headlineLine2}</span>
+          </h1>
+
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-charcoal/90 sm:text-lg">
+            {heroCopy.body}
+          </p>
+
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Button asChild className="min-h-12 rounded-full bg-frog px-6 font-display text-base text-charcoal pop hover:bg-frog">
+              <a href="#meet-ivy">Meet Ivy</a>
+            </Button>
+            <Button asChild className="min-h-12 rounded-full bg-pink px-6 font-display text-base text-charcoal pop hover:bg-pink">
+              <a href="#ivy-tv">Watch Ivy TV</a>
+            </Button>
+            <Button asChild variant="secondary" className="min-h-12 rounded-full bg-cream px-6 font-display text-base text-charcoal pop hover:bg-cream">
+              <a href="#token-record">$IVY details</a>
+            </Button>
+          </div>
+
+          <ul className="mt-7 flex flex-wrap gap-2">
+            {heroCopy.stickers.map((sticker, index) => (
+              <li key={sticker}>
+                <Sticker tone={(["pink", "lavender", "yellow", "cream", "frog"] as const)[index % 5]} float>
+                  {sticker}
+                </Sticker>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="relative">
+          <div className="relative rotate-1">
+            <MediaPlaceholder
+              label={heroCopy.mediaLabel}
+              hint="Photo or video supplied by Ivy's owner"
+              aspect="portrait"
+              tone="cream"
+              className="mx-auto max-w-md"
+            />
+          </div>
+          <Sticker tone="yellow" className="absolute -top-3 -left-2 rotate-[-8deg]">
+            <FrogDoodle className="h-4 w-5 text-ivy" /> Frog Queen
+          </Sticker>
+          <Sticker tone="pink" className="absolute -bottom-3 right-2 rotate-[6deg]">
+            <PawDoodle className="h-4 w-4 text-charcoal" /> Short Spine Queen
+          </Sticker>
+        </div>
+      </div>
+
+      <GrassStrip />
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------- Meet Ivy */
 
 export function MeetIvy() {
-  const facts = [
-    { emoji: "👑", title: "Short Spine Queen", body: "A shorter spine, a bigger presence. Ivy takes up the whole room anyway." },
-    { emoji: "🐸", title: "Frog Queen", body: "The signature frog-sit: back legs out, zero apologies, maximum comedy." },
-    { emoji: "☀️", title: "Sunbeam Auditor", body: "Every warm patch of floor gets inspected, approved, then occupied." },
-    { emoji: "🐾", title: "Chief Vibe Officer", body: "Runs the clubhouse on a strict schedule of snacks, naps and nonsense." },
-  ];
   return (
     <Section
       id="meet-ivy"
-      eyebrow="Meet the queen"
-      title="Ivy, in her own words (translated)"
-      intro="Ivy is a real dog with a real family. Everything on this page is about her — the coin is just the clubhouse membership card."
+      eyebrow="Meet Ivy"
+      title={meetIvy.heading}
+      intro={meetIvy.body}
       tone="cream"
     >
-      <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-start">
-        <div className="grid gap-4 sm:grid-cols-2">
-          {facts.map((f) => (
-            <article key={f.title} className="rounded-2xl bg-card p-5 pop-static">
-              <span aria-hidden="true" className="text-3xl">
-                {f.emoji}
-              </span>
-              <h3 className="mt-3 text-xl">{f.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{f.body}</p>
-            </article>
-          ))}
-        </div>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
-          <Polaroid label="Portrait of Ivy" caption="Official royal portrait" rotate={-2} tone="lavender" />
-          <Polaroid label="Ivy mid frog-sit" caption="The frog-sit, patented" rotate={2} tone="leaf" />
-        </div>
+      <div className="grid gap-4 sm:grid-cols-3">
+        {meetIvy.cards.map((card) => (
+          <InfoCard key={card.title} title={card.title} body={card.body} tone={card.tone} />
+        ))}
+      </div>
+
+      <VineDivider className="my-12" />
+
+      <div className="grid gap-8 md:grid-cols-3">
+        {meetIvy.editorial.map((item, index) => (
+          <article key={item.heading} className="flex flex-col gap-4">
+            <Polaroid
+              label={item.mediaLabel}
+              caption={item.heading}
+              rotate={index % 2 === 0 ? -2 : 2}
+              tone={index === 1 ? "lavender" : "leaf"}
+            />
+            <p className="text-sm leading-relaxed text-charcoal/85">{item.body}</p>
+          </article>
+        ))}
       </div>
     </Section>
   );
 }
 
-/* ---------------- Social feed + accessible modal ---------------- */
+/* ------------------------------------------------- Fresh from the Queen */
 
 export function FreshFromTheFrogQueen() {
-  const [feed, setFeed] = useState<SocialFeedResponse>({
-    posts: manualFallbackFeed,
-    source: "fallback",
-    lastSyncedAt: null,
-    live: false,
-    notice: "Showing the owner-curated fallback feed.",
-  });
-  const [active, setActive] = useState<SocialPost | null>(null);
+  const { instagramEnabled, tiktokEnabled, postsPerPlatform } = projectConfig.socialFeed;
 
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/social-feed")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data: SocialFeedResponse | null) => {
-        if (!cancelled && data?.posts?.length) setFeed(data);
-      })
-      .catch(() => undefined);
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const platforms = [
+    { key: "instagram", label: "Instagram", enabled: instagramEnabled },
+    { key: "tiktok", label: "TikTok", enabled: tiktokEnabled },
+  ] as const;
 
   return (
     <Section
-      id="feed"
-      eyebrow="Fresh from the Frog Queen"
-      title="The feed"
-      intro="Posts appear here once the owner connects Ivy's accounts. Until then these are reserved, owner-curated slots."
-      tone="leaf"
+      id="fresh-posts"
+      eyebrow="Live feed"
+      title={freshPosts.heading}
+      intro={freshPosts.body}
+      tone="white"
     >
-      <div className="mb-6 flex flex-wrap items-center gap-3">
-        <Sticker tone="yellow">Live sync: not connected</Sticker>
-        <Sticker tone="cream">Last synced: —</Sticker>
-        <p className="text-sm text-charcoal/80">{feed.notice}</p>
+      <div className="grid gap-8 lg:grid-cols-2">
+        {platforms.map((platform) => (
+          <div key={platform.key} className="rounded-2xl bg-cream p-5 pop-static">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h3 className="font-display text-xl text-charcoal">{platform.label}</h3>
+              <StatusChip
+                status={platform.enabled ? "pending" : "off"}
+                label={platform.enabled ? "Awaiting first sync" : "Not connected"}
+              />
+            </div>
+
+            <p className="mt-2 text-sm text-charcoal/80">
+              {platform.enabled
+                ? freshPosts.loading
+                : `Ivy's official ${platform.label} account has not been connected yet. Nothing here is scraped or guessed.`}
+            </p>
+
+            <ul className="mt-4 grid gap-3 sm:grid-cols-3">
+              {Array.from({ length: postsPerPlatform }).map((_, index) => (
+                <li key={index}>
+                  <MediaPlaceholder
+                    label={`${platform.label} slot ${index + 1}`}
+                    aspect="square"
+                    tone={index === 1 ? "lavender" : "leaf"}
+                    compact
+                  />
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-4 text-xs text-charcoal/70">
+              Feed served from this site's own cache via <code>/api/social-feed</code>. Last
+              updated: {COMING_SOON}.
+            </p>
+          </div>
+        ))}
       </div>
 
-      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {feed.posts.map((post) => (
-          <li key={post.id}>
-            <button
-              type="button"
-              onClick={() => setActive(post)}
-              className="w-full rounded-2xl bg-card p-3 text-left pop"
-              aria-haspopup="dialog"
-            >
-              <MediaPlaceholder
-                label={post.media[0]?.altText ?? "Reserved media slot"}
-                aspect="square"
-                tone="cream"
-              />
-              <p className="mt-3 line-clamp-2 text-sm text-card-foreground">{post.caption}</p>
-              <p className="mt-2 text-xs text-muted-foreground">
-                {post.platform === "manual" ? "Owner-curated" : post.platform} · {post.postedAt ?? "Date pending"}
-              </p>
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <Dialog open={active !== null} onOpenChange={(o) => !o && setActive(null)}>
-        <DialogContent className="max-w-lg bg-cream">
-          <DialogHeader>
-            <DialogTitle className="font-display text-2xl">Post details</DialogTitle>
-            <DialogDescription className="text-charcoal/75">
-              {active?.isFallback
-                ? "This is a reserved slot. No live social data is connected."
-                : "Synced from a connected account."}
-            </DialogDescription>
-          </DialogHeader>
-          {active ? (
-            <div className="space-y-4">
-              <MediaPlaceholder label={active.media[0]?.altText ?? "Reserved media slot"} aspect="square" tone="leaf" />
-              <p className="text-sm">{active.caption}</p>
-              <dl className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <dt className="text-muted-foreground">Likes</dt>
-                  <dd>{active.likeCount ?? "—"}</dd>
-                </div>
-                <div>
-                  <dt className="text-muted-foreground">Comments</dt>
-                  <dd>{active.commentCount ?? "—"}</dd>
-                </div>
-              </dl>
-            </div>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+      <p className="mt-6 rounded-xl bg-yellow p-4 text-sm text-charcoal pop-static">
+        {freshPosts.empty} Instagram and TikTok do not sponsor or endorse this project.
+      </p>
     </Section>
   );
 }
 
-/* ---------------- Ivy TV (consent-gated embeds + carousel) ---------------- */
-
-const TV_SLOTS = [
-  { id: "tv-1", title: "The Frog-Sit Compilation", note: "Clip slot awaiting owner upload" },
-  { id: "tv-2", title: "Snack Negotiations, Round 12", note: "Clip slot awaiting owner upload" },
-  { id: "tv-3", title: "Zoomies: Short Spine Edition", note: "Clip slot awaiting owner upload" },
-  { id: "tv-4", title: "Sunbeam Patrol Documentary", note: "Clip slot awaiting owner upload" },
-];
+/* ----------------------------------------------------------------- Ivy TV */
 
 export function IvyTV() {
-  const { consent, grant } = useEmbedConsent();
-  const [index, setIndex] = useState(0);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const total = TV_SLOTS.length;
+  const [category, setCategory] = useState<IvyTvCategory>("All");
+  const { embedsAllowed, openSettings } = useEmbedConsent();
 
-  const go = (next: number) => setIndex((next + total) % total);
+  const items = useMemo(
+    () => (category === "All" ? ivyTvItems : ivyTvItems.filter((item) => item.category === category)),
+    [category],
+  );
+
+  const featured = ivyTvItems.find((item) => item.isFeatured);
 
   return (
     <Section
       id="ivy-tv"
       eyebrow="Ivy TV"
-      title="Now showing: absolutely nothing important"
-      intro="Video embeds stay off until you allow third-party content and the owner uploads approved clips."
+      title={ivyTv.heading}
+      intro={ivyTv.subtitle}
       tone="ivy"
+      headingClassName="text-cream"
     >
-      <div
-        role="group"
-        aria-roledescription="carousel"
-        aria-label="Ivy TV clips"
-        className="rounded-3xl bg-cream p-4 pop-static sm:p-6"
-      >
-        <div className="overflow-hidden rounded-2xl">
-          <div
-            ref={trackRef}
-            className="flex transition-transform duration-300 ease-out"
-            style={{ transform: `translateX(-${index * 100}%)` }}
-          >
-            {TV_SLOTS.map((slot, i) => (
-              <div
-                key={slot.id}
-                role="group"
-                aria-roledescription="slide"
-                aria-label={`${i + 1} of ${total}: ${slot.title}`}
-                aria-hidden={i !== index}
-                className="w-full shrink-0 px-1"
+      {featured ? (
+        <div className="mb-10 grid gap-6 rounded-2xl bg-cream p-5 pop-static lg:grid-cols-[1.4fr_1fr]">
+          <MediaPlaceholder
+            label={featured.mediaLabel}
+            aspect="video"
+            tone="leaf"
+            hint="Featured episode slot"
+          />
+          <div className="flex flex-col justify-center gap-3">
+            <Sticker tone="yellow">Featured episode</Sticker>
+            <h3 className="font-display text-2xl text-charcoal">{featured.title}</h3>
+            <p className="text-sm text-charcoal/85">{featured.caption}</p>
+            <p className="text-sm text-charcoal/70">
+              {embedsAllowed
+                ? "Embeds are allowed. The player will appear once an approved video is linked."
+                : "Video embeds are switched off. You will see a thumbnail, the caption and a link to the original post."}
+            </p>
+            {!embedsAllowed ? (
+              <Button
+                onClick={openSettings}
+                className="min-h-11 w-fit rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog"
               >
-                {consent === "granted" ? (
-                  <MediaPlaceholder
-                    label={slot.title}
-                    hint="Embeds allowed — waiting on an owner-approved video URL."
-                    aspect="video"
-                    tone="cream"
-                  />
-                ) : (
-                  <div className="grid aspect-video w-full place-items-center rounded-xl bg-muted p-6 text-center ink-border">
-                    <div>
-                      <p className="font-display text-lg">Embed blocked</p>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        Allow third-party embeds to load Ivy TV.
-                      </p>
-                      <button type="button" onClick={grant} className="mt-4 rounded-full bg-frog px-5 py-2 font-display text-sm pop">
-                        Allow embeds
-                      </button>
-                    </div>
-                  </div>
-                )}
-                <p className="mt-3 font-display text-lg text-charcoal">{slot.title}</p>
-                <p className="text-sm text-charcoal/70">{slot.note}</p>
-              </div>
-            ))}
+                Cookie settings
+              </Button>
+            ) : null}
           </div>
         </div>
+      ) : null}
 
-        <div className="mt-5 flex items-center justify-between gap-4">
-          <button type="button" onClick={() => go(index - 1)} className="rounded-full bg-card px-4 py-2 font-display text-sm pop" aria-label="Previous clip">
-            ←
-          </button>
-          <ul className="flex items-center gap-2" role="tablist" aria-label="Choose clip">
-            {TV_SLOTS.map((slot, i) => (
-              <li key={slot.id}>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={i === index}
-                  aria-label={`Go to clip ${i + 1}`}
-                  onClick={() => setIndex(i)}
-                  className={`h-4 w-4 rounded-full ink-border ${i === index ? "bg-frog" : "bg-card"}`}
-                />
-              </li>
-            ))}
-          </ul>
-          <button type="button" onClick={() => go(index + 1)} className="rounded-full bg-card px-4 py-2 font-display text-sm pop" aria-label="Next clip">
-            →
-          </button>
-        </div>
+      <div role="tablist" aria-label="Ivy TV categories" className="mb-6 flex flex-wrap gap-2">
+        {ivyTv.categories.map((tab) => {
+          const selected = tab === category;
+          return (
+            <button
+              key={tab}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => setCategory(tab)}
+              className={cn(
+                "min-h-11 rounded-full px-4 font-display text-sm pop-static transition-colors",
+                selected ? "bg-frog text-charcoal" : "bg-cream/90 text-charcoal hover:bg-leaf",
+              )}
+            >
+              {tab}
+            </button>
+          );
+        })}
       </div>
+
+      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => (
+          <li key={item.id} className="rounded-2xl bg-cream p-4 pop-static">
+            <MediaPlaceholder label={item.mediaLabel} aspect="tall" tone="leaf" compact />
+            <h3 className="mt-3 font-display text-base text-charcoal">{item.title}</h3>
+            <p className="mt-1 text-sm text-charcoal/80">{item.caption}</p>
+            <div className="mt-3 flex items-center gap-2">
+              <span className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-lavender px-3 font-display text-xs text-charcoal">
+                <Play aria-hidden className="h-3.5 w-3.5" />
+                {item.videoUrl ? "Play" : "Awaiting video"}
+              </span>
+              <span className="text-xs text-charcoal/70">{item.category}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
     </Section>
   );
 }
 
-/* ---------------- Hall of Fame ---------------- */
+/* ----------------------------------------------------------- Hall of Fame */
 
 export function HallOfFame() {
-  const items = [
-    { label: "Community fan art slot", caption: "Fan art — credit pending", rotate: -3, tone: "pink" as const },
-    { label: "Meme submission slot", caption: "Meme of the month", rotate: 2, tone: "yellow" as const },
-    { label: "Ivy cosplay slot", caption: "Cosplay division", rotate: -1, tone: "lavender" as const },
-    { label: "Sticker design slot", caption: "Sticker pack draft", rotate: 3, tone: "leaf" as const },
-    { label: "Community photo slot", caption: "Clubhouse meetup", rotate: -2, tone: "cream" as const },
-    { label: "Doodle slot", caption: "Napkin doodle award", rotate: 1, tone: "pink" as const },
-  ];
   return (
     <Section
       id="hall-of-fame"
-      eyebrow="Hall of Fame"
-      title="The scrapbook"
-      intro="Community submissions live here once approved by Ivy's owner. Every entry keeps its original creator credit."
-      tone="cream"
+      eyebrow="Scrapbook"
+      title="The Ivy Hall of Fame"
+      intro="A community scrapbook wall. Every frame is reserved for an owner-approved photograph of the real Ivy."
+      tone="lavender"
     >
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => (
-          <Polaroid key={item.label} label={item.label} caption={item.caption} rotate={item.rotate} tone={item.tone} />
+      <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 [&>*]:mb-4">
+        {hallOfFameCaptions.map((caption, index) => (
+          <Polaroid
+            key={caption}
+            label={`Approved Ivy photo ${index + 1}`}
+            caption={caption}
+            rotate={index % 3 === 0 ? -2.5 : index % 3 === 1 ? 1.5 : -1}
+            tone={(["leaf", "cream", "yellow", "pink"] as const)[index % 4]}
+            aspect={index % 4 === 0 ? "portrait" : "square"}
+            className="break-inside-avoid"
+          />
         ))}
       </div>
+      <p className="mt-8 text-sm text-charcoal/80">
+        A moderated community submission form will open once moderation is in place.
+      </p>
     </Section>
   );
 }
 
-/* ---------------- The Lore ---------------- */
+/* --------------------------------------------------------------- The Lore */
 
 export function TheLore() {
-  const beats = [
-    { title: "A short spine enters the chat", body: "Ivy is born with a shorter spine and immediately decides it is a feature." },
-    { title: "The frog-sit is discovered", body: "Back legs out, front paws forward. The internet loses its mind. Frog Queen is crowned." },
-    { title: "The clubhouse forms", body: "Fans start swapping memes, doodles and captions faster than anyone can moderate." },
-    { title: "$IVY appears", body: "A community coin as a membership card for the clubhouse. Details: Coming Soon." },
-    { title: "What's next", body: "Whatever Ivy naps her way into. Announcements only when they're verified." },
-  ];
   return (
-    <Section id="lore" eyebrow="The Lore" title="How we got here" tone="leaf">
-      <ol className="relative space-y-6 border-l-[3px] border-charcoal pl-6 sm:pl-8">
-        {beats.map((beat, i) => (
-          <li key={beat.title} className="relative">
+    <Section
+      id="the-lore"
+      eyebrow="The Lore"
+      title="The Legend of the Short Spine Queen"
+      intro="Ivy's story, told as chapters. Exact dates are omitted until Ivy's family confirms them."
+      tone="cream"
+    >
+      <ol className="relative space-y-6 border-l-[3px] border-charcoal/80 pl-6">
+        {loreChapters.map((chapter, index) => (
+          <li key={chapter} className="relative">
             <span
-              aria-hidden="true"
-              className="absolute -left-[2.15rem] grid h-8 w-8 place-items-center rounded-full bg-frog font-display text-sm pop-static sm:-left-[2.65rem]"
+              aria-hidden
+              className="absolute -left-[2.15rem] flex h-7 w-7 items-center justify-center rounded-full bg-frog ink-border"
             >
-              {i + 1}
+              <PawDoodle className="h-3.5 w-3.5 text-charcoal" />
             </span>
-            <div className="rounded-2xl bg-card p-5 pop-static">
-              <h3 className="text-xl">{beat.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{beat.body}</p>
+            <div className="rounded-2xl bg-card p-4 pop-static">
+              <p className="font-display text-xs tracking-[0.2em] text-charcoal/60 uppercase">
+                Chapter {index + 1} · date {COMING_SOON}
+              </p>
+              <h3 className="mt-1 font-display text-lg text-charcoal">{chapter}</h3>
             </div>
           </li>
         ))}
@@ -303,98 +355,81 @@ export function TheLore() {
   );
 }
 
-/* ---------------- Why $IVY ---------------- */
+/* --------------------------------------------------------------- Why $IVY */
 
 export function WhyIvy() {
-  const reasons = [
-    { emoji: "🫶", title: "Community first", body: "A place for people who like a dog and a decent joke. That's the whole pitch." },
-    { emoji: "🧾", title: "No made-up numbers", body: "We publish nothing we can't verify. Unconfirmed fields say Coming Soon." },
-    { emoji: "🐾", title: "Owner-approved media", body: "Only Ivy's family supplies her photos and clips. No stock dogs, ever." },
-    { emoji: "🎨", title: "Meme-powered", body: "Make things, share things, credit people. The Meme Machine does the rest." },
-  ];
   return (
-    <Section
-      id="why-ivy"
-      eyebrow={`Why ${projectConfig.token.ticker}`}
-      title="Reasons that aren't a price chart"
-      intro={`${projectConfig.token.ticker} is a meme coin with no intrinsic value and no expectation of financial return.`}
-      tone="cream"
-    >
-      <div className="grid gap-5 sm:grid-cols-2">
-        {reasons.map((r) => (
-          <article key={r.title} className="rounded-2xl bg-card p-6 pop-static">
-            <span aria-hidden="true" className="text-3xl">
-              {r.emoji}
-            </span>
-            <h3 className="mt-3 text-xl">{r.title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">{r.body}</p>
-          </article>
+    <Section id="why-ivy" eyebrow="Why $IVY" title={whyIvy.heading} intro={whyIvy.body} tone="leaf">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {whyIvy.cards.map((card) => (
+          <InfoCard key={card.title} title={card.title} body={card.body} tone={card.tone} />
         ))}
+      </div>
+      <div className="mt-8 rounded-2xl bg-cream p-5 pop-static">
+        <h3 className="font-display text-lg text-charcoal">Transparency</h3>
+        <p className="mt-2 text-sm leading-relaxed text-charcoal/85">{whyIvy.transparencyPanel}</p>
       </div>
     </Section>
   );
 }
 
-/* ---------------- Token record ---------------- */
+/* ---------------------------------------------------------- Token record */
 
 export function TokenRecord() {
-  const t = projectConfig.token;
-  const rows: Array<[string, string | null]> = [
-    ["Token name", t.name],
-    ["Ticker", t.ticker],
-    ["Blockchain", t.blockchain],
-    ["Contract address", t.contractAddress],
-    ["Total supply", t.totalSupply],
-    ["Buy / sell tax", t.taxes],
-    ["Liquidity", t.liquidity],
-    ["Launch date", t.launchDate],
-    ["Block explorer", t.explorerUrl],
-    ["Audit status", t.auditStatus],
-    ["Exchange listings", t.exchanges.length ? t.exchanges.join(", ") : null],
-    ["Partnerships", t.partnerships.length ? t.partnerships.join(", ") : null],
+  const verified = hasVerifiedContract();
+  const rows = [
+    { label: "Token name", value: projectConfig.projectName },
+    { label: "Ticker", value: projectConfig.ticker },
+    { label: "Blockchain", value: displayValue(projectConfig.blockchain) },
+    { label: "Contract address", value: shortenAddress(projectConfig.contractAddress) },
+    { label: "Total supply", value: displayValue(projectConfig.tokenSupply) },
+    { label: "Launch date", value: displayValue(projectConfig.launchDate) },
+    { label: "Tokenomics", value: displayValue(projectConfig.tokenomicsUrl) },
+    { label: "Record last updated", value: displayValue(projectConfig.tokenRecordUpdatedAt) },
   ];
 
   return (
     <Section
       id="token-record"
-      eyebrow="Token record"
-      title="Everything we can actually confirm"
-      intro="This table is the single source of truth. If a field says Coming Soon, it is not confirmed — treat any other source claiming otherwise as unofficial."
-      tone="ivy"
+      eyebrow="$IVY"
+      title={tokenRecord.heading}
+      intro="Nothing here is estimated. Every unverified field stays marked Coming Soon."
+      tone="white"
     >
-      <div className="overflow-hidden rounded-3xl bg-cream pop-static">
-        <table className="w-full text-left text-sm">
-          <caption className="sr-only">Verified {projectConfig.token.ticker} token details</caption>
-          <thead className="bg-frog">
-            <tr>
-              <th scope="col" className="px-4 py-3 font-display text-charcoal sm:px-6">
-                Field
-              </th>
-              <th scope="col" className="px-4 py-3 font-display text-charcoal sm:px-6">
-                Value
-              </th>
-            </tr>
-          </thead>
+      <div className="overflow-hidden rounded-2xl bg-cream pop-static">
+        <table className="w-full text-left">
+          <caption className="sr-only">Official $IVY token record</caption>
           <tbody>
-            {rows.map(([label, value]) => (
-              <tr key={label} className="border-t-2 border-charcoal/15">
-                <th scope="row" className="px-4 py-3 font-semibold text-charcoal sm:px-6">
-                  {label}
+            {rows.map((row) => (
+              <tr key={row.label} className="border-b border-charcoal/10 last:border-0">
+                <th scope="row" className="w-1/2 p-4 font-display text-sm text-charcoal sm:text-base">
+                  {row.label}
                 </th>
-                <td className="px-4 py-3 text-charcoal sm:px-6">
-                  {isConfigured(value) ? (
-                    <span className="break-all">{displayValue(value)}</span>
-                  ) : (
-                    <ComingSoon />
-                  )}
+                <td className="p-4 text-sm text-charcoal/90 sm:text-base">
+                  {row.value === COMING_SOON ? <ComingSoonPill /> : row.value}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="mt-4 text-sm text-cream/80">
-        No purchase links are shown because no contract address or exchange has been verified.
+
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <StatusChip
+          status={verified ? "ok" : "pending"}
+          label={verified ? "Contract published" : "Contract not published yet"}
+        />
+        <Button
+          disabled={!verified}
+          className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog disabled:opacity-70"
+        >
+          <ExternalLinkIcon aria-hidden className="h-4 w-4" />
+          {verified ? "View on explorer" : "Explorer link coming soon"}
+        </Button>
+      </div>
+
+      <p className="mt-5 rounded-xl bg-pink p-4 font-display text-sm text-charcoal pop-static">
+        {tokenRecord.warning}
       </p>
     </Section>
   );

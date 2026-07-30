@@ -1,64 +1,79 @@
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
+import { CrownDoodle, PawDoodle, Tape } from "./doodles";
 
-/** Labelled, owner-approved-media placeholder. Never a stock dog photo. */
+export type Tone = "leaf" | "cream" | "lavender" | "yellow" | "pink" | "frog";
+
+const toneBg: Record<Tone, string> = {
+  leaf: "bg-leaf",
+  cream: "bg-cream",
+  lavender: "bg-lavender",
+  yellow: "bg-yellow",
+  pink: "bg-pink",
+  frog: "bg-frog",
+};
+
+const aspectMap = {
+  square: "aspect-square",
+  video: "aspect-video",
+  portrait: "aspect-[3/4]",
+  wide: "aspect-[21/9]",
+  tall: "aspect-[9/16]",
+} as const;
+
+/**
+ * Labelled owner-approved-media placeholder.
+ * Never a stock dog photo and never an artificial Ivy.
+ */
 export function MediaPlaceholder({
   label,
   hint,
   aspect = "square",
   tone = "leaf",
   className,
+  compact = false,
 }: {
   label: string;
   hint?: string;
-  aspect?: "square" | "video" | "portrait" | "wide";
-  tone?: "leaf" | "cream" | "lavender" | "yellow" | "pink";
+  aspect?: keyof typeof aspectMap;
+  tone?: Tone;
   className?: string;
+  compact?: boolean;
 }) {
-  const aspectClass = {
-    square: "aspect-square",
-    video: "aspect-video",
-    portrait: "aspect-[3/4]",
-    wide: "aspect-[21/9]",
-  }[aspect];
-
-  const toneClass = {
-    leaf: "bg-leaf",
-    cream: "bg-cream",
-    lavender: "bg-lavender",
-    yellow: "bg-yellow",
-    pink: "bg-pink",
-  }[tone];
-
   return (
     <div
       role="img"
-      aria-label={`Media placeholder: ${label}`}
+      aria-label={`Owner-approved media placeholder — ${label}`}
       className={cn(
-        "relative flex w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl p-4 text-center ink-border",
-        aspectClass,
-        toneClass,
+        "relative flex w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl p-3 text-center ink-border",
+        aspectMap[aspect],
+        toneBg[tone],
         className,
       )}
       style={{
         backgroundImage:
-          "repeating-linear-gradient(45deg, rgba(21,21,21,0.06) 0 10px, transparent 10px 20px)",
+          "repeating-linear-gradient(45deg, rgba(21,21,21,0.07) 0 10px, transparent 10px 20px)",
       }}
     >
-      <span className="rounded-full bg-charcoal px-3 py-1 font-display text-[0.65rem] tracking-widest text-cream uppercase">
-        Owner media slot
+      <PawDoodle className="h-6 w-6 text-cream/80" />
+      {!compact && (
+        <span className="rounded-full bg-charcoal px-2.5 py-1 font-display text-[0.6rem] tracking-[0.15em] text-cream uppercase">
+          Owner media slot
+        </span>
+      )}
+      <span className="max-w-[22ch] font-display text-xs leading-tight text-charcoal sm:text-sm">
+        {label}
       </span>
-      <span className="font-display text-sm leading-tight text-charcoal sm:text-base">{label}</span>
-      {hint ? <span className="text-xs text-charcoal/70">{hint}</span> : null}
+      {hint ? <span className="text-[0.7rem] text-charcoal/70">{hint}</span> : null}
     </div>
   );
 }
 
-export function ComingSoon({ className }: { className?: string }) {
+export function ComingSoonPill({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full bg-yellow px-2.5 py-1 font-display text-xs tracking-wide text-charcoal uppercase ink-border",
+        "inline-flex items-center gap-1 rounded-full bg-yellow px-2.5 py-1 font-display text-xs tracking-wide text-charcoal uppercase pop-static",
         className,
       )}
     >
@@ -71,24 +86,19 @@ export function Sticker({
   children,
   tone = "pink",
   className,
+  float = false,
 }: {
   children: ReactNode;
-  tone?: "pink" | "lavender" | "yellow" | "frog" | "leaf" | "cream";
+  tone?: Tone;
   className?: string;
+  float?: boolean;
 }) {
-  const toneClass = {
-    pink: "bg-pink",
-    lavender: "bg-lavender",
-    yellow: "bg-yellow",
-    frog: "bg-frog",
-    leaf: "bg-leaf",
-    cream: "bg-cream",
-  }[tone];
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-display text-xs tracking-wide text-charcoal uppercase pop-static",
-        toneClass,
+        "inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 py-1 font-display text-xs tracking-wide text-charcoal uppercase pop-static",
+        toneBg[tone],
+        float && "float-slow",
         className,
       )}
     >
@@ -105,6 +115,7 @@ export function Section({
   children,
   className,
   tone = "cream",
+  headingClassName,
 }: {
   id: string;
   eyebrow?: string;
@@ -112,21 +123,35 @@ export function Section({
   intro?: string;
   children: ReactNode;
   className?: string;
-  tone?: "cream" | "leaf" | "ivy" | "white";
+  tone?: "cream" | "leaf" | "ivy" | "white" | "lavender";
+  headingClassName?: string;
 }) {
   const toneClass = {
     cream: "bg-cream text-charcoal",
     leaf: "bg-leaf text-charcoal",
     ivy: "night text-cream",
     white: "bg-card text-card-foreground",
+    lavender: "bg-lavender text-charcoal",
   }[tone];
 
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className={cn("scroll-mt-28 py-16 sm:py-24", toneClass, className)}>
+    <section
+      id={id}
+      aria-labelledby={`${id}-title`}
+      className={cn("scroll-mt-32 py-16 sm:py-24", toneClass, className)}
+    >
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         <header className="mb-10 max-w-3xl">
-          {eyebrow ? <Sticker tone="yellow">{eyebrow}</Sticker> : null}
-          <h2 id={`${id}-title`} className="mt-4 text-3xl leading-[1.05] sm:text-5xl">
+          {eyebrow ? (
+            <Sticker tone="yellow">
+              <CrownDoodle className="h-3.5 w-5 text-frog" />
+              {eyebrow}
+            </Sticker>
+          ) : null}
+          <h2
+            id={`${id}-title`}
+            className={cn("mt-4 text-3xl leading-[1.05] sm:text-5xl", headingClassName)}
+          >
             {title}
           </h2>
           {intro ? <p className="mt-4 text-base opacity-90 sm:text-lg">{intro}</p> : null}
@@ -142,16 +167,104 @@ export function Polaroid({
   caption,
   rotate = 0,
   tone = "leaf",
+  aspect = "square",
+  tape = true,
+  className,
 }: {
   label: string;
   caption: string;
   rotate?: number;
-  tone?: "leaf" | "cream" | "lavender" | "yellow" | "pink";
+  tone?: Tone;
+  aspect?: keyof typeof aspectMap;
+  tape?: boolean;
+  className?: string;
 }) {
   return (
-    <figure className="polaroid w-full" style={{ transform: `rotate(${rotate}deg)` }}>
-      <MediaPlaceholder label={label} aspect="square" tone={tone} />
+    <figure
+      className={cn("polaroid relative w-full transition-transform hover:-rotate-1", className)}
+      style={{ transform: `rotate(${rotate}deg)` }}
+    >
+      {tape ? <Tape className="-top-3 left-1/2 -translate-x-1/2" rotate={rotate > 0 ? -8 : 7} /> : null}
+      <MediaPlaceholder label={label} aspect={aspect} tone={tone} compact />
       <figcaption className="mt-3 text-center font-display text-sm text-charcoal">{caption}</figcaption>
     </figure>
+  );
+}
+
+export function InfoCard({
+  title,
+  body,
+  tone = "cream",
+  icon,
+  className,
+}: {
+  title: string;
+  body: string;
+  tone?: Tone;
+  icon?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn("rounded-2xl p-5 pop-static", toneBg[tone], className)}>
+      {icon ? <div className="mb-3">{icon}</div> : null}
+      <h3 className="font-display text-lg text-charcoal">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-charcoal/85">{body}</p>
+    </div>
+  );
+}
+
+/** Honest status chip. Never colour-only: always carries text. */
+export function StatusChip({
+  status,
+  label,
+  className,
+}: {
+  status: "ok" | "pending" | "off";
+  label: string;
+  className?: string;
+}) {
+  const map = {
+    ok: "bg-frog text-charcoal",
+    pending: "bg-yellow text-charcoal",
+    off: "bg-muted text-charcoal",
+  }[status];
+  const symbol = { ok: "●", pending: "◐", off: "○" }[status];
+  return (
+    <span
+      className={cn(
+        "inline-flex min-h-7 items-center gap-1.5 rounded-full px-2.5 py-1 font-display text-[0.7rem] tracking-wide uppercase pop-static",
+        map,
+        className,
+      )}
+    >
+      <span aria-hidden>{symbol}</span>
+      {label}
+    </span>
+  );
+}
+
+export function ExternalLink({
+  href,
+  children,
+  className,
+}: {
+  href: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        "inline-flex min-h-11 items-center gap-1 font-display text-sm underline underline-offset-4",
+        className,
+      )}
+    >
+      {children}
+      <span className="sr-only"> (opens in a new tab)</span>
+      <span aria-hidden>↗</span>
+    </a>
   );
 }

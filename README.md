@@ -1,93 +1,168 @@
-# IvyVibing
+# IvyVibing — $IVY
 
-The internet clubhouse of **Ivy** — the Short Spine Queen and Frog Queen — and her community meme coin **$IVY**.
+The official clubhouse for **$IVY**, the community meme coin inspired by **Ivy**, the
+Short Spine Queen and Frog Queen. Ivy comes first; crypto comes second.
 
-Built with TanStack Start (React 19 + Vite 7) and Tailwind CSS v4.
+Built with TanStack Start (React 19 + Vite 7), Tailwind CSS v4 and Lovable Cloud
+(PostgreSQL + auth).
 
 ---
 
-## Ground rules baked into this codebase
+## Honesty rules baked into the code
 
-1. **No invented facts.** Token name, contract address, blockchain, supply, taxes, liquidity, launch date, exchanges, partnerships, audits and social handles all live in `src/config/project.ts` and default to `null`, which renders as **Coming Soon**.
-2. **No stock or generated dogs.** Every image slot is an explicitly labelled *owner media placeholder*. Only Ivy's family supplies real media.
-3. **Nothing is pretended live.** Social sync, OAuth, auth, and the database are scaffolds that report their own unconfigured state.
-4. **The public feed never calls a social platform.** `GET /api/social-feed` reads only the local cache / database.
+These are enforced by the code, not just by convention:
+
+1. **No invented facts.** Blockchain, contract address, supply, launch date,
+   tokenomics, price, exchanges, partnerships and audits live in
+   `src/config/project.ts` and are all `null`. Any `null` field renders a
+   **Coming Soon** pill. Never hardcode a value into a component.
+2. **No stock dogs and no AI-generated Ivy.** Every image slot is a clearly
+   labelled `MediaPlaceholder` reading "Owner media slot". Replace them only
+   with media Ivy's owner has approved.
+3. **No pretend connections.** Instagram and TikTok are shown as *Not
+   connected* until real credentials exist. The site never scrapes.
+4. **No invented social links.** The Royal Court lists channels with
+   *Coming Soon* until a URL is added to `projectConfig.socials`.
+5. **Legal pages are drafts.** Each one is labelled as requiring professional
+   review.
+
+---
 
 ## Getting started
 
 ```bash
-bun install
-bun run dev     # http://localhost:8080
+npm install
+npm run dev     # http://localhost:8080
 ```
 
-## Project map
+Backend environment variables are injected automatically by Lovable Cloud
+(`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and their server-side
+`SUPABASE_*` counterparts).
 
-| Path | Purpose |
-| --- | --- |
-| `src/config/project.ts` | Unified config: token record, socials, feature flags, sync interval |
-| `src/data/social.ts` | Normalized `SocialPost` / `SocialMedia` models + manual fallback feed |
-| `src/data/content.ts` | Editable content & legal page seeds |
-| `src/routes/index.tsx` | Homepage (all sections) |
-| `src/routes/api/social-feed.ts` | Public read-only `GET /api/social-feed` |
-| `src/routes/legal.$slug.tsx` | `/legal/terms`, `/privacy`, `/disclaimer`, `/cookies` |
-| `src/routes/admin.tsx` | Protected admin dashboard scaffold |
-| `src/lib/social-sync.functions.ts` | Instagram/TikTok OAuth + 12-hour sync stubs |
-| `src/lib/auth.ts` | Roles, permissions, audit-log types |
-| `src/components/ivy/*` | Design-system primitives and homepage sections |
-| `db/migrations/` | PostgreSQL schema with RLS + grants |
+---
 
-## Design system
+## Project structure
 
-All colors, shadows and type live in `src/styles.css` — never hardcode a color in a component.
-
-| Token | Value |
-| --- | --- |
-| Frog green | `#83D94E` |
-| Deep ivy | `#174F36` |
-| Cream | `#FFF8E7` |
-| Charcoal | `#151515` |
-| Pink | `#FF8EAE` |
-| Light leaf | `#C9F39B` |
-| Lavender | `#C7B8FF` |
-| Yellow | `#FFD86B` |
-
-Display type: Bricolage Grotesque. Body: Nunito. Utilities: `pop`, `pop-static`, `polaroid`, `meadow`, `night`, `wiggle`, `float-slow` — all reduced-motion safe.
-
-## Turning the scaffolds on
-
-### 1. Database + auth
-Enable Lovable Cloud, then apply `db/migrations/0001_ivy_init.sql`. Set `features.databaseConnected` and `features.authConfigured` to `true` in `src/config/project.ts` and swap `readCachedFeed()` in `src/data/social.ts` for a database read.
-
-Grant yourself the owner role:
-
-```sql
-insert into public.user_roles (user_id, role)
-values ('<your-auth-user-id>', 'owner');
+```
+src/
+  config/project.ts          single source of truth for token + social facts
+  data/site-content.ts       editable public copy (mirrors content tables)
+  data/legal.ts              seven draft legal pages
+  types/social.ts            normalized SocialPost / MediaItem contract
+  components/ivy/
+    doodles.tsx              original SVG crowns, paws, frogs, vines, grass
+    primitives.tsx           MediaPlaceholder, Polaroid, Section, StatusChip…
+    cookie-consent.tsx       consent provider + settings dialog
+    header.tsx               announcement bar, sticky nav, Join the Vibe
+    sections.tsx             Hero, Meet Ivy, Fresh Posts, Ivy TV, Hall of Fame,
+                             The Lore, Why $IVY, Token Record
+    sections-b.tsx           Meme Machine, Owner's Corner, Royal Court, FAQ, Footer
+  lib/
+    social-feed.server.ts    reads ONLY the local cache table
+    social-sync.server.ts    12-hour sync algorithm + guarded stub
+    social-oauth.server.ts   credential guards, sanitized errors
+    admin.functions.ts       protected server functions (role-checked)
+  routes/
+    index.tsx                homepage
+    legal.$slug.tsx          /legal/terms, /legal/privacy, …
+    auth.tsx                 team sign in
+    _authenticated/          route gate + /admin dashboard
+    api/social-feed.ts               public GET, cache-only
+    api/public/oauth/$provider.$action.ts   OAuth stubs
+    api/public/hooks/social-sync.ts         scheduled sync hook
 ```
 
-Roles are stored **only** in `user_roles` — never on a profile row.
+---
 
-### 2. Instagram
-Add `INSTAGRAM_CLIENT_ID` and `INSTAGRAM_CLIENT_SECRET` as project secrets, implement `startOAuthConnect` in `src/lib/social-sync.functions.ts`, then set `features.instagramOAuthConfigured = true`.
+## Database
 
-### 3. TikTok
-Add `TIKTOK_CLIENT_KEY` and `TIKTOK_CLIENT_SECRET`, then set `features.tiktokOAuthConfigured = true`.
+The schema lives in Lovable Cloud and covers: `profiles`, `user_roles`,
+`project_config`, `content_blocks`, `media_items`, `social_posts`,
+`social_connections`, `sync_runs`, `admin_audit_logs`, `faq_entries`,
+`timeline_chapters`, `ivy_tv_items`, `gallery_items`, `meme_captions` and
+`legal_pages`.
 
-### 4. 12-hour sync
-Implement `runScheduledSync`, expose it behind a verified `/api/public/*` route, and schedule it every 12 hours (pg_cron or an external scheduler). The sync writes into `social_posts` / `social_media`; the public API only ever reads.
+Row-Level Security is on for every table. Public visitors can read only
+approved, visible content. Writes require an `admin` or `editor` role stored in
+`user_roles` — never on the profile row, to avoid privilege escalation.
 
-### 5. Token record
-Fill `projectConfig.token` **only** with details that are officially confirmed. Leave everything else `null`.
+### Granting the first admin
 
-## Accessibility & performance
+1. Sign up at `/auth`.
+2. Insert a row into `user_roles` with your user id and the `admin` role.
+3. Reload `/admin`; the dashboard unlocks.
 
-- Skip link, landmark regions, single `h1`, labelled sections.
-- Radix dialog + accordion for modal and FAQ patterns; the Ivy TV carousel exposes `aria-roledescription`, slide labels and tab dots.
-- Visible focus rings on all interactive elements; 44px minimum tap targets on mobile controls.
-- Global `prefers-reduced-motion` guard disables every animation.
-- No third-party embed loads until the visitor grants consent.
-- Fonts preconnected and `display=swap`; no heavy image payloads (placeholders are pure CSS).
+---
 
-## Legal
+## Social feed
 
-`/legal/*` pages are seed drafts. Have a qualified legal professional review them before launch.
+**Read path (public).** `GET /api/social-feed` returns:
+
+```json
+{ "instagram": [], "tiktok": [], "lastUpdated": null,
+  "status": { "instagram": "not_configured", "tiktok": "not_configured" } }
+```
+
+It reads only from the `social_posts` cache table. It never calls Instagram or
+TikTok, and it never returns provider payloads or credentials.
+
+**Write path (scheduled).** `POST /api/public/hooks/social-sync` with header
+`x-sync-secret: $SOCIAL_SYNC_SECRET`, roughly every 12 hours. For each enabled,
+credentialed platform it fetches the newest posts from the official API,
+normalizes, dedupes on `(platform, platform_post_id)`, sorts by publish time and
+upserts — **preserving administrator overrides**: `custom_caption`, `alt_text`,
+`is_visible`, `is_pinned`, `is_featured`, `allow_autoplay`,
+`fallback_thumbnail_url` and `approval_status`. Posts that disappear are marked
+unavailable, never deleted. Failures are logged with sanitized messages and the
+last good feed is retained, so the public page never goes blank.
+
+### Connecting an account
+
+Add these in **Project Settings → Secrets**, then complete the OAuth flow from
+`/admin`:
+
+| Platform  | Required secrets |
+|-----------|------------------|
+| Instagram | `INSTAGRAM_CLIENT_ID`, `INSTAGRAM_CLIENT_SECRET`, `INSTAGRAM_REDIRECT_URI` |
+| TikTok    | `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, `TIKTOK_REDIRECT_URI` |
+| Sync hook | `SOCIAL_SYNC_SECRET` |
+
+Until they exist, every OAuth endpoint returns an honest `503 not_configured`
+listing the missing variables. Access tokens are never stored in application
+tables — `social_connections` holds only an opaque `token_ref`.
+
+---
+
+## Replacing the media placeholders
+
+1. Collect owner-approved photos and videos.
+2. Upload them through **Admin → Media** (or add rows to `media_items`).
+3. Give every item descriptive alt text — it is required, not optional.
+4. Placeholders disappear automatically once a slot has real media.
+
+Do not substitute stock photography, another dog, or a generated image.
+
+---
+
+## Accessibility and performance
+
+- Single `<main>` per page, one `<h1>`, semantic landmarks and skip link.
+- Keyboard-operable nav, tabs, accordion and dialogs (Radix primitives).
+- 44px minimum tap targets; status is never conveyed by colour alone.
+- All animation is subtle and respects `prefers-reduced-motion`.
+- Third-party embeds are consent-gated and load only after an explicit play.
+
+## SEO
+
+Per-route `head()` metadata with unique titles, descriptions and Open Graph
+tags. Admin and auth routes are `noindex`. Add `og:image` only once a real
+brand image with an absolute URL exists.
+
+---
+
+## Disclaimer
+
+$IVY is a community meme project. Digital assets are highly speculative and may
+lose all value. Nothing in this repository or on the website is financial,
+legal or tax advice. Instagram, TikTok and other platforms do not sponsor or
+endorse this project.

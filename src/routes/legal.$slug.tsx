@@ -1,5 +1,9 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { getLegalPage } from "@/data/content";
+import { createFileRoute, notFound, Link } from "@tanstack/react-router";
+import { SiteNav } from "@/components/ivy/header";
+import { SiteFooter } from "@/components/ivy/sections-b";
+import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
+import { Sticker } from "@/components/ivy/primitives";
+import { getLegalPage, legalPages, type LegalPage } from "@/data/legal";
 
 export const Route = createFileRoute("/legal/$slug")({
   loader: ({ params }) => {
@@ -9,49 +13,126 @@ export const Route = createFileRoute("/legal/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Unavailable — IvyVibing" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [
+          { title: "Page unavailable — IvyVibing" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
     }
     const title = `${loaderData.page.title} — IvyVibing`;
     return {
       meta: [
         { title },
-        { name: "description", content: loaderData.page.description },
+        { name: "description", content: loaderData.page.summary },
         { property: "og:title", content: title },
-        { property: "og:description", content: loaderData.page.description },
+        { property: "og:description", content: loaderData.page.summary },
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary" },
       ],
     };
   },
-  errorComponent: () => <LegalShell title="This page didn't load" body={["Try again shortly."]} />,
-  notFoundComponent: () => <LegalShell title="Page not found" body={["That legal page doesn't exist."]} />,
-  component: LegalPage,
+  errorComponent: () => <LegalMissing message="This policy could not be loaded." />,
+  notFoundComponent: () => <LegalMissing message="That policy page does not exist." />,
+  component: LegalPageView,
 });
 
-function LegalShell({ title, body, updatedAt }: { title: string; body: string[]; updatedAt?: string | null }) {
+function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-dvh bg-cream py-16">
-      <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
-        <Link to="/" className="inline-flex rounded-full bg-frog px-4 py-2 font-display text-sm pop">
-          ← Back to the clubhouse
-        </Link>
-        <h1 className="mt-8 text-4xl sm:text-5xl">{title}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Last updated: {updatedAt ?? "Coming Soon"}
-        </p>
-        <div className="mt-8 space-y-5 rounded-3xl bg-card p-6 pop-static sm:p-8">
-          {body.map((paragraph) => (
-            <p key={paragraph} className="text-sm leading-relaxed sm:text-base">
-              {paragraph}
-            </p>
-          ))}
-        </div>
-      </div>
-    </main>
+    <CookieConsentProvider>
+      <SiteNav isHome={false} />
+      <main id="main" className="bg-cream">
+        {children}
+      </main>
+      <SiteFooter />
+    </CookieConsentProvider>
   );
 }
 
-function LegalPage() {
-  const { page } = Route.useLoaderData();
-  return <LegalShell title={page.title} body={page.body} updatedAt={page.updatedAt} />;
+function LegalMissing({ message }: { message: string }) {
+  return (
+    <Shell>
+      <div className="mx-auto max-w-3xl px-4 py-20 sm:px-6">
+        <h1 className="text-3xl text-charcoal sm:text-4xl">Policy unavailable</h1>
+        <p className="mt-3 text-charcoal/85">{message}</p>
+        <ul className="mt-6 space-y-2">
+          {legalPages.map((page) => (
+            <li key={page.slug}>
+              <Link
+                to="/legal/$slug"
+                params={{ slug: page.slug }}
+                className="font-display text-charcoal underline underline-offset-4"
+              >
+                {page.title}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Shell>
+  );
+}
+
+function LegalPageView() {
+  const { page } = Route.useLoaderData() as { page: LegalPage };
+
+  return (
+    <Shell>
+      <article className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
+        {page.needsLegalReview ? (
+          <Sticker tone="yellow">Draft — requires professional legal review</Sticker>
+        ) : null}
+        <h1 className="mt-4 text-4xl leading-tight text-charcoal sm:text-5xl">{page.title}</h1>
+        <p className="mt-3 text-lg text-charcoal/85">{page.summary}</p>
+
+        <nav aria-label="On this page" className="mt-8 rounded-2xl bg-card p-5 pop-static">
+          <h2 className="font-display text-base text-charcoal">On this page</h2>
+          <ol className="mt-2 space-y-1">
+            {page.sections.map((section, index) => (
+              <li key={section.heading}>
+                <a
+                  href={`#section-${index}`}
+                  className="inline-flex min-h-9 items-center text-sm text-charcoal/85 underline-offset-4 hover:underline"
+                >
+                  {section.heading}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        <div className="mt-10 space-y-8">
+          {page.sections.map((section, index) => (
+            <section key={section.heading} id={`section-${index}`} className="scroll-mt-32">
+              <h2 className="font-display text-2xl text-charcoal">{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph} className="mt-3 leading-relaxed text-charcoal/85">
+                  {paragraph}
+                </p>
+              ))}
+            </section>
+          ))}
+        </div>
+
+        <nav aria-label="Other policies" className="mt-14 border-t-[3px] border-charcoal pt-6">
+          <h2 className="font-display text-base text-charcoal">Other policies</h2>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {legalPages
+              .filter((other) => other.slug !== page.slug)
+              .map((other) => (
+                <li key={other.slug}>
+                  <Link
+                    to="/legal/$slug"
+                    params={{ slug: other.slug }}
+                    className="inline-flex min-h-11 items-center rounded-full bg-leaf px-4 font-display text-sm text-charcoal pop-static"
+                  >
+                    {other.title}
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        </nav>
+      </article>
+    </Shell>
+  );
 }
