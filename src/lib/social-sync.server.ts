@@ -305,7 +305,7 @@ export async function syncPlatform(platform: SocialPlatform): Promise<SyncOutcom
         is_active: true,
         unavailable_at: null,
         last_synced_at: new Date().toISOString(),
-        sync_source: "api",
+        sync_source: "api" as const,
         updated_at: new Date().toISOString(),
       };
 
@@ -341,7 +341,7 @@ export async function syncPlatform(platform: SocialPlatform): Promise<SyncOutcom
 
       if (settings.autoCategorizeVerifiedPosts && verified) {
         const placements = defaultPlacements(post.mediaType).map((placement) => ({
-          source_type: "social",
+          source_type: "social" as const,
           source_id: (inserted as { id: string }).id,
           placement,
           is_auto: true,
