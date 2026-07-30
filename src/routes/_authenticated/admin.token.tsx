@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/admin/token")({
       {
         name: "description",
         content:
-          "Publish the verified $IVY mint address and creator wallet, and switch on live Dexscreener market data.",
+          "Publish the verified $ivy mint address and creator wallet, and switch on live Dexscreener market data.",
       },
       { name: "robots", content: "noindex" },
     ],
@@ -67,7 +67,7 @@ const FIELDS: Array<{ key: keyof TokenRecordSettings; label: string; help: strin
     key: "tokenSupply",
     label: "Total supply",
     help: "Shown verbatim on the token record.",
-    placeholder: "1,000,000,000 $IVY",
+    placeholder: "1,000,000,000 $ivy",
   },
 ];
 

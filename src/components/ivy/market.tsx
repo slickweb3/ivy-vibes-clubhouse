@@ -1,5 +1,5 @@
 /**
- * $IVY live market board.
+ * $ivy live market board.
  *
  * Honest by construction: every figure comes from Dexscreener for the exact
  * mint stored in the clubhouse database. Until a contract address exists,
@@ -64,7 +64,7 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
     <Section
       id="live-chart"
       eyebrow="Chart & market"
-      title="The $IVY tracker"
+      title="The $ivy tracker"
       intro="When the coin exists, this board reads straight from the on-chain pair — price, market cap, liquidity and volume. Until then, nothing here is guessed."
       tone="white"
     >
@@ -154,7 +154,7 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
           <div className="mt-3 aspect-[4/5] w-full overflow-hidden rounded-xl sm:aspect-[16/9]">
             <iframe
               src={snapshot.chartEmbedUrl}
-              title="$IVY live price chart on Dexscreener"
+              title="$ivy live price chart on Dexscreener"
               loading="lazy"
               className="h-full w-full border-0"
               allow="clipboard-write"
@@ -165,7 +165,7 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
 
       <p className="mt-5 rounded-xl bg-pink p-4 font-display text-sm text-charcoal pop-static">
         Market data is informational only, not financial advice. Always verify the mint address on
-        this page before trading anything called $IVY.
+        this page before trading anything called $ivy.
       </p>
     </Section>
   );

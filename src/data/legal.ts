@@ -31,7 +31,7 @@ export const legalPages: LegalPage[] = [
       {
         heading: "About this website",
         paragraphs: [
-          "ivy vibing is the website for $IVY, a community meme project inspired by Ivy, affectionately known as the Short Spine Queen and Frog Queen. The site is provided for entertainment, community and information purposes.",
+          "ivy vibing is the website for $ivy, a community meme project inspired by Ivy, affectionately known as the Short Spine Queen and Frog Queen. The site is provided for entertainment, community and information purposes.",
           "By using this website you accept these terms. If you do not accept them, please do not use the site.",
         ],
       },
@@ -146,13 +146,13 @@ export const legalPages: LegalPage[] = [
   {
     slug: "risk-disclosure",
     title: "Risk Disclosure",
-    summary: "Important risk information about $IVY.",
+    summary: "Important risk information about $ivy.",
     needsLegalReview: true,
     sections: [
       {
         heading: "Meme coins are speculative",
         paragraphs: [
-          "$IVY is a meme project. Digital assets and meme coins are highly speculative and may lose some or all of their value.",
+          "$ivy is a meme project. Digital assets and meme coins are highly speculative and may lose some or all of their value.",
           "Never spend more than you can afford to lose entirely.",
         ],
       },
@@ -172,7 +172,7 @@ export const legalPages: LegalPage[] = [
       {
         heading: "Impersonation risk",
         paragraphs: [
-          "Fake $IVY tokens, copycat websites and impersonator social accounts may exist. Always verify the contract address and links directly on this website before interacting with anything.",
+          "Fake $ivy tokens, copycat websites and impersonator social accounts may exist. Always verify the contract address and links directly on this website before interacting with anything.",
         ],
       },
       {
