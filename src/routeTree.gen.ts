@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiSocialFeedRouteImport } from './routes/api/social-feed'
+import { Route as ApiPublicOauthProviderActionRouteImport } from './routes/api/public/oauth/$provider.$action'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,45 @@ const ApiSocialFeedRoute = ApiSocialFeedRouteImport.update({
   path: '/api/social-feed',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicOauthProviderActionRoute =
+  ApiPublicOauthProviderActionRouteImport.update({
+    id: '/api/public/oauth/$provider/$action',
+    path: '/api/public/oauth/$provider/$action',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
+  '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
+  '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
+  '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/social-feed'
+  fullPaths: '/' | '/api/social-feed' | '/api/public/oauth/$provider/$action'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/social-feed'
-  id: '__root__' | '/' | '/api/social-feed'
+  to: '/' | '/api/social-feed' | '/api/public/oauth/$provider/$action'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/social-feed'
+    | '/api/public/oauth/$provider/$action'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiSocialFeedRoute: typeof ApiSocialFeedRoute
+  ApiPublicOauthProviderActionRoute: typeof ApiPublicOauthProviderActionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +80,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSocialFeedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/oauth/$provider/$action': {
+      id: '/api/public/oauth/$provider/$action'
+      path: '/api/public/oauth/$provider/$action'
+      fullPath: '/api/public/oauth/$provider/$action'
+      preLoaderRoute: typeof ApiPublicOauthProviderActionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiSocialFeedRoute: ApiSocialFeedRoute,
+  ApiPublicOauthProviderActionRoute: ApiPublicOauthProviderActionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
