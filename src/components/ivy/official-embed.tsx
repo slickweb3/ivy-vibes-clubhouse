@@ -78,7 +78,10 @@ export function OfficialSocialEmbed({
     activePlayerListeners.forEach((other) => {
       if (other !== listener) other(id);
     });
-    return () => activePlayerListeners.delete(listener);
+    return () => {
+      activePlayerListeners.delete(listener);
+    };
+
   }, [playing, post.id]);
 
 
