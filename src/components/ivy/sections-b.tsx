@@ -237,14 +237,25 @@ export function RoyalCourt() {
                 <StatusChip status={url ? "ok" : "pending"} label={url ? "Official" : COMING_SOON} />
               </div>
               <p className="mt-2 text-sm text-charcoal/80">
-                {url ?? "No official channel has been published yet."}
-              </p>
-              <Button
-                disabled={!url}
-                aria-disabled={!url}
-                asChild={false}
-                className="mt-4 min-h-11 w-full rounded-full bg-card px-4 font-display text-sm text-charcoal pop-static hover:bg-card disabled:opacity-70"
-              >
+              {url ? (
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="mt-4 flex min-h-11 w-full items-center justify-center rounded-full bg-card px-4 font-display text-sm text-charcoal pop-static"
+                >
+                  Visit official channel
+                </a>
+              ) : (
+                <Button
+                  disabled
+                  aria-disabled
+                  asChild={false}
+                  className="mt-4 min-h-11 w-full rounded-full bg-card px-4 font-display text-sm text-charcoal pop-static hover:bg-card disabled:opacity-70"
+                >
+                  {`${channel.label} — ${COMING_SOON}`}
+                </Button>
+              )}
                 {url ? "Visit official channel" : `${channel.label} — ${COMING_SOON}`}
               </Button>
             </li>
