@@ -620,13 +620,33 @@ export function TokenRecord({ market }: { market?: MarketSnapshot }) {
           status={verified ? "ok" : "pending"}
           label={verified ? "Contract published" : "Contract not published yet"}
         />
-        <Button
-          disabled={!verified}
-          className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog disabled:opacity-70"
-        >
-          <ExternalLinkIcon aria-hidden className="h-4 w-4" />
-          {verified ? "View on explorer" : "Contract Coming Soon"}
-        </Button>
+        {verified && explorer ? (
+          <a
+            href={explorer}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-frog px-5 font-display text-sm text-charcoal pop"
+          >
+            <ExternalLinkIcon aria-hidden className="h-4 w-4" />
+            View on explorer
+          </a>
+        ) : (
+          <Button
+            disabled
+            className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog disabled:opacity-70"
+          >
+            <ExternalLinkIcon aria-hidden className="h-4 w-4" />
+            Contract Coming Soon
+          </Button>
+        )}
+        {market?.pairUrl ? (
+          <a
+            href="#live-chart"
+            className="inline-flex min-h-11 items-center rounded-full bg-yellow px-5 font-display text-sm text-charcoal pop"
+          >
+            See the live chart
+          </a>
+        ) : null}
       </div>
 
       <div className="mt-8">
