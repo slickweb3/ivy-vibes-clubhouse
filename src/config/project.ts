@@ -60,7 +60,7 @@ export const projectConfig: ProjectConfig = {
     instagram: "https://www.instagram.com/frogqueenivy/",
     tiktok: "https://www.tiktok.com/@ivyvibing",
     x: "https://x.com/ivyvibing",
-    telegram: "https://t.me/IvyVibing",
+    telegram: "https://t.me/frogqueenivy",
   },
   socialFeed: {
     instagramEnabled: false,
