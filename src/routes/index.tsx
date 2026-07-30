@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getSiteMedia } from "@/lib/site-media.functions";
 import { getMarketSnapshot } from "@/lib/market.functions";
 import { getCuratedFeed } from "@/lib/curated.functions";
-import { EMPTY_CURATED_FEED, type CuratedFeed } from "@/types/curated";
+import { EMPTY_CURATED_FEED, type CuratedFeed, type CuratedPost } from "@/types/curated";
 import type { MarketSnapshot } from "@/lib/market.server";
 import { EMPTY_SITE_MEDIA, type SiteMedia } from "@/types/media";
 import { SiteNav } from "@/components/ivy/header";
@@ -67,11 +67,76 @@ interface HomeData {
   curated: CuratedFeed;
 }
 
+interface HomeCuratedSections {
+  hero: CuratedPost | null;
+  meetIvy: CuratedPost[];
+  freshPosts: CuratedPost[];
+  ivyTv: CuratedPost[];
+  hallOfFame: CuratedPost[];
+  memeMachine: CuratedPost[];
+  ownerCorner: CuratedPost | null;
+}
+
+function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
+  const used = new Set<string>();
+  const isInstagramPhoto = (post: CuratedPost) =>
+    post.platform === "instagram" && post.originalPostUrl.includes("/p/");
+  const isVideoPost = (post: CuratedPost) =>
+    post.platform === "tiktok" || post.originalPostUrl.includes("/reel/");
+  const sortPinned = (posts: CuratedPost[]) =>
+    [...posts].sort((a, b) => {
+      if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
+      if (a.isFeatured !== b.isFeatured) return a.isFeatured ? -1 : 1;
+      return a.displayOrder - b.displayOrder;
+    });
+  const take = (posts: CuratedPost[], limit: number) => {
+    const picked: CuratedPost[] = [];
+    for (const post of posts) {
+      if (used.has(post.id)) continue;
+      picked.push(post);
+      used.add(post.id);
+      if (picked.length >= limit) break;
+    }
+    return picked;
+  };
+
+  const photoPosts = sortPinned(feed.all.filter(isInstagramPhoto));
+  const videoPosts = sortPinned(feed.all.filter(isVideoPost));
+  const hero =
+    (feed.hero && isInstagramPhoto(feed.hero) ? feed.hero : null) ??
+    photoPosts.find((post) => post.placements.includes("hero")) ??
+    photoPosts[0] ??
+    null;
+
+  if (hero) used.add(hero.id);
+
+  const meetIvy = take(photoPosts, 3);
+  const freshPhotoPosts = take(
+    photoPosts.filter((post) => post.placements.includes("fresh_posts")),
+    2,
+  );
+  const freshVideoPosts = take(
+    videoPosts.filter((post) => post.placements.includes("fresh_posts")),
+    6,
+  );
+  const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
+  const ivyTv = take(videoPosts.filter((post) => post.placements.includes("ivy_tv")), 12);
+  const hallOfFame = take(
+    photoPosts.filter((post) => post.placements.includes("hall_of_fame")),
+    8,
+  );
+  const memeMachine = take([...photoPosts, ...videoPosts], 4);
+  const ownerCorner = take([...photoPosts, ...videoPosts], 1)[0] ?? null;
+
+  return { hero, meetIvy, freshPosts, ivyTv, hallOfFame, memeMachine, ownerCorner };
+}
+
 function Home() {
   const data = Route.useLoaderData();
   const media = data?.media ?? EMPTY_SITE_MEDIA;
   const market = data?.market ?? null;
   const curated = data?.curated ?? EMPTY_CURATED_FEED;
+  const homeCurated = buildHomeCuratedSections(curated);
   return (
     <CookieConsentProvider>
       <a
@@ -82,17 +147,17 @@ function Home() {
       </a>
       <SiteNav />
       <main id="main">
-        <Hero media={media.hero} market={market} curatedHero={curated.hero} />
-        <MeetIvy curated={curated.hallOfFame.slice(0, 3)} />
-        <FreshFromTheFrogQueen media={media} curated={curated.freshPosts} />
-        <IvyTV items={media.ivyTv} curated={curated.ivyTv} />
-        <HallOfFame items={media.hallOfFame} curated={curated.hallOfFame} />
+        <Hero media={media.hero} market={market} curatedHero={homeCurated.hero} />
+        <MeetIvy curated={homeCurated.meetIvy} />
+        <FreshFromTheFrogQueen media={media} curated={homeCurated.freshPosts} />
+        <IvyTV items={media.ivyTv} curated={homeCurated.ivyTv} />
+        <HallOfFame items={media.hallOfFame} curated={homeCurated.hallOfFame} />
         <TheLore />
         <WhyIvy />
         <TokenRecord market={market ?? undefined} />
         {market ? <LiveMarket snapshot={market} /> : null}
-        <MemeMachine items={media.memeMachine} />
-        <OwnerCorner />
+        <MemeMachine items={media.memeMachine} curated={homeCurated.memeMachine} />
+        <OwnerCorner curatedPost={homeCurated.ownerCorner} />
         <RoyalCourt />
         <FAQ />
       </main>

@@ -9,6 +9,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Section, MediaPlaceholder, ApprovedMedia, InfoCard, Sticker, StatusChip } from "./primitives";
 import type { UnifiedMediaItem } from "@/types/media";
+import { curatedFallbackLabel, type CuratedPost } from "@/types/curated";
+import { OfficialSocialEmbed } from "./official-embed";
 import { CrownDoodle, FrogDoodle, IvyWordmark, PawDoodle, VineDivider } from "./doodles";
 import { useEmbedConsent } from "./cookie-consent";
 import {
@@ -34,12 +36,44 @@ const MEME_PHOTOS = [
   "Approved meme photo 6",
 ];
 
-export function MemeMachine({ items = [] }: { items?: UnifiedMediaItem[] }) {
+export function MemeMachine({
+  items = [],
+  curated = [],
+}: {
+  items?: UnifiedMediaItem[];
+  curated?: CuratedPost[];
+}) {
   const [photo, setPhoto] = useState(0);
   const [topCaption, setTopCaption] = useState(memeMachine.captions[0]);
   const [bottomCaption, setBottomCaption] = useState(memeMachine.captions[1]);
 
   const captions = useMemo(() => memeMachine.captions, []);
+
+  if (items.length === 0 && curated.length > 0) {
+    return (
+      <Section
+        id="meme-machine"
+        eyebrow="Make something silly"
+        title={memeMachine.heading}
+        intro={memeMachine.body}
+        tone="cream"
+      >
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {curated.map((post, index) => (
+            <OfficialSocialEmbed
+              key={post.id}
+              post={post}
+              tone={(index % 2 === 0 ? "leaf" : "lavender")}
+              compact
+            />
+          ))}
+        </div>
+        <p className="mt-6 rounded-xl bg-yellow p-4 text-sm text-charcoal pop-static">
+          Official embeds only: these posts stay hosted by Instagram/TikTok, and meme export stays locked until Ivy has reusable media approved for community use.
+        </p>
+      </Section>
+    );
+  }
 
   return (
     <Section
@@ -75,7 +109,9 @@ export function MemeMachine({ items = [] }: { items?: UnifiedMediaItem[] }) {
             <div className="mt-3 grid grid-cols-3 gap-3">
               {(items.length > 0
                 ? items.map((item, index) => item.altText || `Approved meme photo ${index + 1}`)
-                : MEME_PHOTOS
+                : curated.length > 0
+                  ? curated.map(curatedFallbackLabel)
+                  : MEME_PHOTOS
               ).map((label, index) => (
                 <button
                   key={label}
@@ -146,7 +182,7 @@ export function MemeMachine({ items = [] }: { items?: UnifiedMediaItem[] }) {
                         type="button"
                         disabled
                         aria-disabled="true"
-                        title="Unlocks when approved Ivy photos are supplied"
+                        title="Direct meme editing is not enabled for platform embeds"
                         className="min-h-11 rounded-full bg-card px-3 font-display text-xs text-charcoal pop-static disabled:opacity-70"
                       >
                         {option}
@@ -166,7 +202,7 @@ export function MemeMachine({ items = [] }: { items?: UnifiedMediaItem[] }) {
                   key={action}
                   disabled
                   aria-disabled="true"
-                  title="Export unlocks when approved Ivy photos are supplied"
+                  title="Export is not enabled for platform embeds"
                   className="min-h-11 rounded-full bg-card px-4 font-display text-sm text-charcoal pop-static hover:bg-card disabled:opacity-70"
                 >
                   {action} — {COMING_SOON}
@@ -176,8 +212,8 @@ export function MemeMachine({ items = [] }: { items?: UnifiedMediaItem[] }) {
           </fieldset>
 
           <p className="rounded-xl bg-yellow p-4 text-sm text-charcoal pop-static">
-            Downloading and sharing open once Ivy's family supplies the approved photo set. No
-            uploads and no free-text captions — ever.
+            Downloading and sharing stay locked until a reusable photo set is approved. No uploads
+            and no free-text captions — ever.
           </p>
         </div>
       </div>
@@ -187,7 +223,7 @@ export function MemeMachine({ items = [] }: { items?: UnifiedMediaItem[] }) {
 
 /* --------------------------------------------------------- Owner's Corner */
 
-export function OwnerCorner() {
+export function OwnerCorner({ curatedPost = null }: { curatedPost?: CuratedPost | null }) {
   return (
     <Section
       id="owner-corner"
@@ -197,12 +233,16 @@ export function OwnerCorner() {
       tone="lavender"
     >
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-        <MediaPlaceholder
-          label={ownerCorner.mediaLabel}
-          aspect="portrait"
-          tone="cream"
-          hint="Shared only with the owner's permission"
-        />
+        {curatedPost ? (
+          <OfficialSocialEmbed post={curatedPost} tone="cream" />
+        ) : (
+          <MediaPlaceholder
+            label={ownerCorner.mediaLabel}
+            aspect="portrait"
+            tone="cream"
+            hint="Shared only with the owner's permission"
+          />
+        )}
         <div className="grid gap-4 sm:grid-cols-2">
           {ownerCorner.cards.map((card) => (
             <InfoCard key={card.title} title={card.title} body={card.body} tone="cream" />

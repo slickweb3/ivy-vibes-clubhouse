@@ -16,7 +16,7 @@ export const heroCopy = {
   headlineLine1: "SHORT SPINE.",
   headlineLine2: "BIG VIBES.",
   body: "Meet Ivy—the internet's beloved Frog Queen, professional grass roller and undisputed master of doing everything her own way. $IVY is a community meme coin celebrating the dog who proved that being built different is a superpower.",
-  mediaLabel: "Add official Ivy photo or hero video here",
+  mediaLabel: "Official Ivy portrait",
   stickers: ["Frog Mode", "Certified Queen", "Built Different", "Main Character", "Internet Royalty"],
 };
 
@@ -42,17 +42,17 @@ export const meetIvy = {
   ],
   editorial: [
     {
-      mediaLabel: "Add an approved portrait of Ivy",
+      mediaLabel: "Ivy portrait",
       heading: "The rotation is a technique",
       body: "Ivy has her own way of getting from A to B, and it works perfectly for her. Her family films it because it is delightful, not because it is unusual.",
     },
     {
-      mediaLabel: "Add an approved grass-rolling photo",
+      mediaLabel: "Grass-rolling Ivy moment",
       heading: "Grass is a full-body experience",
       body: "Fresh lawn, warm sun, zero hesitation. The Queen inspects, commits and rolls with total confidence.",
     },
     {
-      mediaLabel: "Add an approved close-up of Ivy's face",
+      mediaLabel: "Ivy close-up",
       heading: "Direct eye contact, every time",
       body: "Ivy knows exactly where the camera is. That stare has ended more arguments than any comment section ever could.",
     },
@@ -100,7 +100,7 @@ export const ivyTvItems: IvyTvItem[] = [
     title: "The featured Ivy episode",
     category: "Queen Behaviour",
     caption: "Reserved for the owner's chosen headline clip.",
-    mediaLabel: "Add the featured approved Ivy video here",
+    mediaLabel: "Featured Ivy video",
     isFeatured: true,
     videoUrl: null,
     permalink: null,
@@ -110,7 +110,7 @@ export const ivyTvItems: IvyTvItem[] = [
     title: "Frog hop compilation",
     category: "Frog Mode",
     caption: "Slot reserved for approved frog-hop footage.",
-    mediaLabel: "Add an approved frog-hop clip",
+    mediaLabel: "Frog-hop Ivy clip",
     isFeatured: false,
     videoUrl: null,
     permalink: null,
@@ -120,7 +120,7 @@ export const ivyTvItems: IvyTvItem[] = [
     title: "Croak of approval",
     category: "Frog Mode",
     caption: "Slot reserved for approved sound-on footage.",
-    mediaLabel: "Add an approved sound-on clip",
+    mediaLabel: "Sound-on Ivy clip",
     isFeatured: false,
     videoUrl: null,
     permalink: null,
@@ -130,7 +130,7 @@ export const ivyTvItems: IvyTvItem[] = [
     title: "Garden patrol",
     category: "Outside Adventures",
     caption: "Slot reserved for approved outdoor footage.",
-    mediaLabel: "Add an approved outdoor clip",
+    mediaLabel: "Outdoor Ivy clip",
     isFeatured: false,
     videoUrl: null,
     permalink: null,
@@ -140,7 +140,7 @@ export const ivyTvItems: IvyTvItem[] = [
     title: "Grass inspection",
     category: "Outside Adventures",
     caption: "Slot reserved for approved grass-rolling footage.",
-    mediaLabel: "Add an approved grass-rolling clip",
+    mediaLabel: "Grass-rolling Ivy clip",
     isFeatured: false,
     videoUrl: null,
     permalink: null,
@@ -150,7 +150,7 @@ export const ivyTvItems: IvyTvItem[] = [
     title: "Royal nap protocol",
     category: "Queen Behaviour",
     caption: "Slot reserved for approved nap footage.",
-    mediaLabel: "Add an approved nap clip",
+    mediaLabel: "Nap-time Ivy clip",
     isFeatured: false,
     videoUrl: null,
     permalink: null,
@@ -160,7 +160,7 @@ export const ivyTvItems: IvyTvItem[] = [
     title: "An Ivy classic",
     category: "Ivy Classics",
     caption: "Slot reserved for a community-favourite clip.",
-    mediaLabel: "Add an approved classic clip",
+    mediaLabel: "Classic Ivy clip",
     isFeatured: false,
     videoUrl: null,
     permalink: null,
@@ -170,7 +170,7 @@ export const ivyTvItems: IvyTvItem[] = [
     title: "Straight from the feed",
     category: "Latest Posts",
     caption: "This shelf fills automatically once official accounts are connected.",
-    mediaLabel: "Awaiting connected social accounts",
+    mediaLabel: "Official Ivy clip",
     isFeatured: false,
     videoUrl: null,
     permalink: null,
@@ -271,7 +271,7 @@ export const memeMachine = {
   heading: "Ivy Meme Machine",
   body: "Build a royal meme from approved Ivy photographs. No uploads, no free text—only owner-approved images and pre-written captions.",
   note: "Only use photographs approved for community sharing.",
-  emptyState: "Approved meme photos coming soon.",
+  emptyState: "Reusable meme photos are not enabled yet.",
   captions: [
     "Frog Mode Activated",
     "Short Spine Long Legacy",
@@ -293,7 +293,7 @@ export const memeMachine = {
 export const ownerCorner = {
   heading: "Behind Every Queen Is a Very Dedicated Human",
   body: "Ivy's online story exists because someone has cared for her, understood her needs and shared her personality with the world. $IVY should always respect the bond at the centre of the project.",
-  mediaLabel: "Add approved owner photograph here",
+  mediaLabel: "Ivy and her human",
   cards: [
     { title: "A message from Ivy's owner", body: "A personal note will be published here." },
     { title: "A day in Ivy's routine", body: "Ivy's human will share what a normal day looks like." },
@@ -360,7 +360,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "Are the Instagram and TikTok posts updated automatically?",
     answer:
-      "When Ivy's official accounts are connected, the website retrieves and displays the three most recent approved posts from each platform through a secure server-side synchronization system.",
+      "No. The website uses manually curated official Instagram and TikTok post embeds. New posts are added by URL, and the original media and captions stay hosted by the platforms.",
   },
   {
     question: "Why is a recent post missing?",

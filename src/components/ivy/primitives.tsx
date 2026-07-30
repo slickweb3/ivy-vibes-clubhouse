@@ -60,7 +60,7 @@ export function MediaPlaceholder({
       <PawDoodle className="h-6 w-6 text-cream/80" />
       {!compact && (
         <span className="rounded-full bg-charcoal px-2.5 py-1 font-display text-[0.6rem] tracking-[0.15em] text-cream uppercase">
-          Owner media slot
+          Official Ivy media
         </span>
       )}
       <span className="max-w-[22ch] font-display text-xs leading-tight text-charcoal sm:text-sm">
