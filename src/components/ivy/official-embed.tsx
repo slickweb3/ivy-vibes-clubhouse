@@ -10,6 +10,9 @@ import {
 } from "@/types/curated";
 import { cn } from "@/lib/utils";
 
+/** Keeps at most one TikTok player mounted at a time (mobile performance). */
+const activePlayerListeners = new Set<(id: string) => void>();
+
 /**
  * Renders one curated post using the platform's OWN official embed.
  *
