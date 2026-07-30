@@ -199,6 +199,14 @@ export function RoyalCourt() {
               <p className="mt-2 text-sm text-charcoal/80">
                 {url ?? "No official channel has been published yet."}
               </p>
+              <Button
+                disabled={!url}
+                aria-disabled={!url}
+                asChild={false}
+                className="mt-4 min-h-11 w-full rounded-full bg-card px-4 font-display text-sm text-charcoal pop-static hover:bg-card disabled:opacity-70"
+              >
+                {url ? "Visit official channel" : `${channel.label} — ${COMING_SOON}`}
+              </Button>
             </li>
           );
         })}
