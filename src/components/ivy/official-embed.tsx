@@ -31,6 +31,31 @@ export function OfficialSocialEmbed({
 }) {
   const { embedsAllowed, openSettings } = useEmbedConsent();
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  // Only mount the third-party iframe once the card is near the viewport, so a
+  // page with many embeds stays smooth instead of loading everything at once.
+  const [inView, setInView] = useState(false);
+  const frameRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const node = frameRef.current;
+    if (!node || inView) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [inView]);
 
   const label = platformLabel(post.platform);
   const fallbackLabel = curatedFallbackLabel(post);
@@ -45,6 +70,7 @@ export function OfficialSocialEmbed({
       )}
     >
       <div
+        ref={frameRef}
         className={cn(
           "relative w-full overflow-hidden rounded-xl ink-border",
           aspect,
@@ -52,19 +78,36 @@ export function OfficialSocialEmbed({
         )}
       >
         {showEmbed ? (
-          <iframe
-            src={post.officialEmbedUrl}
-            title={`Official ${label} post from @${post.sourceAccountHandle}${
-              post.adminLabel ? ` — ${post.adminLabel}` : ""
-            }`}
-            loading="lazy"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allow="encrypted-media; picture-in-picture; fullscreen"
-            allowFullScreen
-            scrolling="no"
-            onError={() => setFailed(true)}
-            className="absolute inset-0 h-full w-full border-0 bg-card"
-          />
+          <>
+            {!loaded ? (
+              <div
+                aria-hidden
+                className="absolute inset-0 flex items-center justify-center gap-2 motion-safe:animate-pulse"
+              >
+                <CrownDoodle className="h-5 w-8 text-ivy/60" />
+                <PawDoodle className="h-5 w-5 text-charcoal/40" />
+              </div>
+            ) : null}
+            {inView ? (
+              <iframe
+                src={post.officialEmbedUrl}
+                title={`Official ${label} post from @${post.sourceAccountHandle}${
+                  post.adminLabel ? ` — ${post.adminLabel}` : ""
+                }`}
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allow="encrypted-media; picture-in-picture; fullscreen"
+                allowFullScreen
+                scrolling="no"
+                onLoad={() => setLoaded(true)}
+                onError={() => setFailed(true)}
+                className={cn(
+                  "absolute inset-0 h-full w-full border-0 bg-card transition-opacity duration-300",
+                  loaded ? "opacity-100" : "opacity-0",
+                )}
+              />
+            ) : null}
+          </>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center">
             <span aria-hidden className="flex items-center gap-2">
