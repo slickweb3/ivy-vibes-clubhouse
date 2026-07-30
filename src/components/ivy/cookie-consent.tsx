@@ -71,13 +71,23 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
   const deny = useCallback(() => persist("denied"), [persist]);
 
   const openSettings = useCallback(() => {
-    setDraftAllowed(consent === "granted");
+    setDraftAllowed(consent !== "denied");
     setSettingsOpen(true);
   }, [consent]);
 
+  // Official Instagram/TikTok embeds load by default so Ivy's posts appear
+  // straight away; visitors can switch them off in the banner or settings.
+  // Gated on `hydrated` so a stored "denied" choice is respected before any
+  // third-party request is made.
   const value = useMemo<ConsentContextValue>(
-    () => ({ consent, embedsAllowed: consent === "granted", grant, deny, openSettings }),
-    [consent, grant, deny, openSettings],
+    () => ({
+      consent,
+      embedsAllowed: hydrated && consent !== "denied",
+      grant,
+      deny,
+      openSettings,
+    }),
+    [consent, hydrated, grant, deny, openSettings],
   );
 
   const showBanner = hydrated && consent === "unknown";
