@@ -120,6 +120,12 @@
 @layer base {
   * {
     border-color: var(--color-border);
+    min-width: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
@@ -127,7 +133,27 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
   }
+
+  img,
+  iframe,
+  video {
+    max-width: 100%;
+  }
+
+  /* Long single-word captions from Instagram must never widen a card. */
+  p,
+  h1,
+  h2,
+  h3,
+  figcaption {
+    overflow-wrap: anywhere;
+  }
+
 
   h1,
   h2,
