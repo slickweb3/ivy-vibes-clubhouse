@@ -236,7 +236,9 @@ export function RoyalCourt() {
                 <h3 className="font-display text-lg text-charcoal">{channel.label}</h3>
                 <StatusChip status={url ? "ok" : "pending"} label={url ? "Official" : COMING_SOON} />
               </div>
-              <p className="mt-2 text-sm text-charcoal/80">
+              <p className="mt-2 break-all text-sm text-charcoal/80">
+                {url ?? "No official channel has been published yet."}
+              </p>
               {url ? (
                 <a
                   href={url}
@@ -256,8 +258,6 @@ export function RoyalCourt() {
                   {`${channel.label} — ${COMING_SOON}`}
                 </Button>
               )}
-                {url ? "Visit official channel" : `${channel.label} — ${COMING_SOON}`}
-              </Button>
             </li>
           );
         })}
