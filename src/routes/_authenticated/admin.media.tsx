@@ -42,7 +42,7 @@ function MediaPage() {
   return (
     <AdminShell
       title="Media library"
-      intro="One library powers Hero, Fresh Posts, Ivy TV, Hall of Fame and the Meme Machine. Edits here change only how an item appears on this website — the original platform post is never modified."
+      intro="One library powers Hero, Fresh Posts, Ivy TV and the Hall of Fame. Edits here change only how an item appears on this website — the original platform post is never modified."
     >
       {mediaQuery.isError ? (
         <div className="rounded-2xl bg-yellow p-5 pop-static text-sm text-charcoal">
