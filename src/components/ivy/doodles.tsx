@@ -1,5 +1,5 @@
 /**
- * Original CSS/SVG doodles for IvyVibing.
+ * Original CSS/SVG doodles for ivy vibing.
  * Hand-drawn crowns, paws, frogs, leaves, vines and tape — never fake Ivy imagery.
  */
 import { cn } from "@/lib/utils";

@@ -17,7 +17,7 @@ import { PLACEMENTS, PLACEMENT_LABELS, type Placement } from "@/types/media";
 export const Route = createFileRoute("/_authenticated/admin/media")({
   head: () => ({
     meta: [
-      { title: "Media library — IvyVibing admin" },
+      { title: "Media library — ivy vibing admin" },
       {
         name: "description",
         content: "Moderate imported posts and owner uploads across the whole website.",

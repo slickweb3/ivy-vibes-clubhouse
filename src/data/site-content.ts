@@ -12,7 +12,7 @@ export const announcement =
   "$IVY is getting ready to hop online. Official links and contract address coming soon.";
 
 export const heroCopy = {
-  badge: "Official IvyVibing Project",
+  badge: "Official ivy vibing Project",
   headlineLine1: "SHORT SPINE.",
   headlineLine2: "BIG VIBES.",
   body: "Meet Ivy—the internet's beloved Frog Queen, professional grass roller and undisputed master of doing everything her own way. $IVY is a community meme coin celebrating the dog who proved that being built different is a superpower.",
@@ -197,7 +197,7 @@ export const loreChapters = [
   "The Frog Queen personality emerges",
   "Ivy's unusual movement captures the internet",
   "Grass rolling becomes a royal tradition",
-  "The IvyVibing community grows",
+  "The ivy vibing community grows",
   "The Short Spine Queen becomes an internet favourite",
   "$IVY begins its next chapter",
 ];
@@ -228,7 +228,7 @@ export const whyIvy = {
     },
   ],
   transparencyPanel:
-    "Complete allocation, tokenomics and proceeds information will be published before launch. IvyVibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner.",
+    "Complete allocation, tokenomics and proceeds information will be published before launch. ivy vibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner.",
 };
 
 export const tokenRecord = {
@@ -264,7 +264,7 @@ export const tokenRecord = {
   purposeBody:
     "pump.fun pays creator rewards from trading activity to the coin's creator wallet. For $IVY those rewards are intended for Ivy and her owner — her care, her comfort and her ongoing adventures. That is the ultimate purpose of this project.",
   purposeDisclaimer:
-    "IvyVibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner. Full allocation and proceeds details will be published before launch.",
+    "ivy vibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner. Full allocation and proceeds details will be published before launch.",
 };
 
 export const ownerCorner = {
@@ -277,15 +277,15 @@ export const ownerCorner = {
     { title: "Creator rewards", body: "pump.fun creator rewards from $IVY trading are intended for Ivy and her owner." },
     { title: "No private details", body: "Nothing about Ivy's household, location or medical records is published here." },
     { title: "Transparent proceeds", body: "Full allocation and proceeds information will be published before launch." },
-    { title: "Community, not charity", body: "IvyVibing is not a registered charity — it is a community meme project built around Ivy." },
+    { title: "Community, not charity", body: "ivy vibing is not a registered charity — it is a community meme project built around Ivy." },
   ],
 };
 
 
 export const royalCourt = {
   heading: "The Royal Court",
-  body: "Every official IvyVibing channel is listed here—and only here.",
-  safety: "Only trust accounts linked directly from IvyVibing's official website.",
+  body: "Every official ivy vibing channel is listed here—and only here.",
+  safety: "Only trust accounts linked directly from ivy vibing's official website.",
   channels: [
     { id: "instagram", label: "Instagram" },
     { id: "tiktok", label: "TikTok" },
@@ -305,7 +305,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "What is $IVY?",
     answer:
-      "$IVY is a community meme coin inspired by IvyVibing and created to celebrate Ivy, her owner and the community surrounding her.",
+      "$IVY is a community meme coin inspired by ivy vibing and created to celebrate Ivy, her owner and the community surrounding her.",
   },
   {
     question: "Is the token live?",
@@ -348,7 +348,7 @@ export const faqEntries: FaqEntry[] = [
 ];
 
 export const footerDisclaimer =
-  "$IVY is a community meme project inspired by IvyVibing. Digital assets and meme coins are highly speculative and may lose all value. Nothing on this website constitutes financial, legal or tax advice. Always verify official links and the contract address before interacting with any token. Instagram, TikTok and other social platforms do not sponsor or endorse this project.";
+  "$IVY is a community meme project inspired by ivy vibing. Digital assets and meme coins are highly speculative and may lose all value. Nothing on this website constitutes financial, legal or tax advice. Always verify official links and the contract address before interacting with any token. Instagram, TikTok and other social platforms do not sponsor or endorse this project.";
 
 export const joinTheVibeMessage =
   "Ivy's official channels are listed below. Only trust links published directly on this website.";

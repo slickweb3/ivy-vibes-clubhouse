@@ -25,13 +25,13 @@ export const legalPages: LegalPage[] = [
   {
     slug: "terms",
     title: "Terms of Use",
-    summary: "The rules for using the IvyVibing website.",
+    summary: "The rules for using the ivy vibing website.",
     needsLegalReview: true,
     sections: [
       {
         heading: "About this website",
         paragraphs: [
-          "IvyVibing is the website for $IVY, a community meme project inspired by Ivy, affectionately known as the Short Spine Queen and Frog Queen. The site is provided for entertainment, community and information purposes.",
+          "ivy vibing is the website for $IVY, a community meme project inspired by Ivy, affectionately known as the Short Spine Queen and Frog Queen. The site is provided for entertainment, community and information purposes.",
           "By using this website you accept these terms. If you do not accept them, please do not use the site.",
         ],
       },
@@ -53,7 +53,7 @@ export const legalPages: LegalPage[] = [
         heading: "Intellectual property",
         paragraphs: [
           "Photographs and videos of Ivy belong to Ivy's family and are used with permission. See the Media Usage Policy for what may be reused.",
-          "The IvyVibing name, wordmark, illustrations and site design may not be used to imply endorsement of another project.",
+          "The ivy vibing name, wordmark, illustrations and site design may not be used to imply endorsement of another project.",
         ],
       },
       {
@@ -73,7 +73,7 @@ export const legalPages: LegalPage[] = [
   {
     slug: "privacy",
     title: "Privacy Policy",
-    summary: "What IvyVibing does and does not collect.",
+    summary: "What ivy vibing does and does not collect.",
     needsLegalReview: true,
     sections: [
       {
@@ -178,7 +178,7 @@ export const legalPages: LegalPage[] = [
       {
         heading: "Proceeds",
         paragraphs: [
-          "IvyVibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner. Complete allocation, tokenomics and proceeds information will be published before launch.",
+          "ivy vibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner. Complete allocation, tokenomics and proceeds information will be published before launch.",
         ],
       },
     ],
@@ -226,7 +226,7 @@ export const legalPages: LegalPage[] = [
   {
     slug: "community-guidelines",
     title: "Community Guidelines",
-    summary: "How the IvyVibing community treats Ivy and each other.",
+    summary: "How the ivy vibing community treats Ivy and each other.",
     needsLegalReview: false,
     sections: [
       {
@@ -274,7 +274,7 @@ export const legalPages: LegalPage[] = [
       {
         heading: "Our target",
         paragraphs: [
-          "IvyVibing aims to meet WCAG 2.1 Level AA. Accessibility is treated as a build requirement, not an afterthought.",
+          "ivy vibing aims to meet WCAG 2.1 Level AA. Accessibility is treated as a build requirement, not an afterthought.",
         ],
       },
       {

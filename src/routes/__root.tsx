@@ -77,18 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "$IVY — The Official IvyVibing Meme Coin" },
+      { title: "$IVY — The Official ivy vibing Meme Coin" },
       {
         name: "description",
         content:
           "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $IVY community project.",
       },
       { name: "theme-color", content: "#83D94E" },
-      { property: "og:site_name", content: "IvyVibing" },
+      { property: "og:site_name", content: "ivy vibing" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:title", content: "$IVY — The Official IvyVibing Meme Coin" },
-      { name: "twitter:title", content: "$IVY — The Official IvyVibing Meme Coin" },
+      { property: "og:title", content: "$IVY — The Official ivy vibing Meme Coin" },
+      { name: "twitter:title", content: "$IVY — The Official ivy vibing Meme Coin" },
       { property: "og:description", content: "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $IVY community project." },
       { name: "twitter:description", content: "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $IVY community project." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41c25704-61f3-450c-8529-61b43b1e3809/id-preview-7b226fe4--ae92a54f-76f5-4c2b-9762-2e06f523c495.lovable.app-1785391145344.png" },

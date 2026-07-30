@@ -74,7 +74,7 @@ function JoinTheVibeDialog({
           </ul>
         ) : null}
         <p className="rounded-xl bg-yellow p-3 text-sm text-charcoal pop-static">
-          These are the only official IvyVibing channels. Anything else claiming to be us is not us.
+          These are the only official ivy vibing channels. Anything else claiming to be us is not us.
         </p>
       </DialogContent>
     </Dialog>
@@ -101,7 +101,7 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
       <AnnouncementBar />
       <header className="sticky top-0 z-40 border-b-[3px] border-charcoal bg-card/95 backdrop-blur">
         <nav aria-label="Main" className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
-          <Link to="/" className="shrink-0" aria-label="IvyVibing home">
+          <Link to="/" className="shrink-0" aria-label="ivy vibing home">
             <IvyWordmark />
           </Link>
 

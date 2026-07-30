@@ -17,7 +17,7 @@ import {
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   head: () => ({
     meta: [
-      { title: "Automation — IvyVibing admin" },
+      { title: "Automation — ivy vibing admin" },
       {
         name: "description",
         content: "Control automatic publication of verified Ivy posts and review the audit log.",
