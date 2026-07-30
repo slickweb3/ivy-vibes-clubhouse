@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiSocialFeedRouteImport } from './routes/api/social-feed'
+import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
 import { Route as ApiPublicOauthProviderActionRouteImport } from './routes/api/public/oauth/$provider.$action'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,12 @@ const ApiSocialFeedRoute = ApiSocialFeedRouteImport.update({
   path: '/api/social-feed',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksSocialSyncRoute =
+  ApiPublicHooksSocialSyncRouteImport.update({
+    id: '/api/public/hooks/social-sync',
+    path: '/api/public/hooks/social-sync',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicOauthProviderActionRoute =
   ApiPublicOauthProviderActionRouteImport.update({
     id: '/api/public/oauth/$provider/$action',
@@ -33,34 +40,47 @@ const ApiPublicOauthProviderActionRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
+  '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
+  '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
+  '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/social-feed' | '/api/public/oauth/$provider/$action'
+  fullPaths:
+    | '/'
+    | '/api/social-feed'
+    | '/api/public/hooks/social-sync'
+    | '/api/public/oauth/$provider/$action'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/social-feed' | '/api/public/oauth/$provider/$action'
+  to:
+    | '/'
+    | '/api/social-feed'
+    | '/api/public/hooks/social-sync'
+    | '/api/public/oauth/$provider/$action'
   id:
     | '__root__'
     | '/'
     | '/api/social-feed'
+    | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiSocialFeedRoute: typeof ApiSocialFeedRoute
+  ApiPublicHooksSocialSyncRoute: typeof ApiPublicHooksSocialSyncRoute
   ApiPublicOauthProviderActionRoute: typeof ApiPublicOauthProviderActionRoute
 }
 
@@ -80,6 +100,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSocialFeedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/social-sync': {
+      id: '/api/public/hooks/social-sync'
+      path: '/api/public/hooks/social-sync'
+      fullPath: '/api/public/hooks/social-sync'
+      preLoaderRoute: typeof ApiPublicHooksSocialSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/oauth/$provider/$action': {
       id: '/api/public/oauth/$provider/$action'
       path: '/api/public/oauth/$provider/$action'
@@ -93,6 +120,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiSocialFeedRoute: ApiSocialFeedRoute,
+  ApiPublicHooksSocialSyncRoute: ApiPublicHooksSocialSyncRoute,
   ApiPublicOauthProviderActionRoute: ApiPublicOauthProviderActionRoute,
 }
 export const routeTree = rootRouteImport
