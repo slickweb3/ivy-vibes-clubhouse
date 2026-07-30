@@ -614,6 +614,26 @@ export function TokenRecord() {
         </Button>
       </div>
 
+      <div className="mt-8">
+        <h3 className="font-display text-xl text-charcoal sm:text-2xl">{tokenRecord.planHeading}</h3>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-charcoal/85">
+          {tokenRecord.planNote}
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {tokenRecord.plan.map((card) => (
+            <InfoCard key={card.title} title={card.title} body={card.body} tone={card.tone} />
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-2xl bg-leaf p-5 pop-static">
+        <h3 className="font-display text-lg text-charcoal">{tokenRecord.purposeHeading}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-charcoal/85">{tokenRecord.purposeBody}</p>
+        <p className="mt-3 text-xs leading-relaxed text-charcoal/70">
+          {tokenRecord.purposeDisclaimer}
+        </p>
+      </div>
+
       <p className="mt-5 rounded-xl bg-pink p-4 font-display text-sm text-charcoal pop-static">
         {tokenRecord.warning}
       </p>
