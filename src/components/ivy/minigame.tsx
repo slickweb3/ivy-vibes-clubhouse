@@ -121,11 +121,13 @@ function shortWallet(address: string) {
 
 export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leaderboard }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const spriteRef = useRef<HTMLImageElement | null>(null);
   const runRef = useRef<RunState>(freshRun());
   const rafRef = useRef<number | null>(null);
   const lastRef = useRef<number>(0);
   const nonceRef = useRef<string | null>(null);
   const jumpRef = useRef<() => void>(() => {});
+  const stepRef = useRef<(now: number) => void>(() => {});
 
   const [phase, setPhase] = useState<"idle" | "playing" | "over">("idle");
   const [score, setScore] = useState(0);
