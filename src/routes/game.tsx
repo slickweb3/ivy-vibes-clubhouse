@@ -69,6 +69,7 @@ function GamePage() {
           title="Lily Pad Leap"
           intro="One button, one very good dog, one very determined pond. Sign your best run to your Solana wallet and you are on the monthly board — first place gets a 50,000 $ivy airdrop."
           tone="leaf"
+          headingLevel={1}
         >
           <LilyPadLeap initialLeaderboard={board} />
 
