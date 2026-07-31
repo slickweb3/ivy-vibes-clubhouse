@@ -27,6 +27,7 @@ import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminConnectionsRouteImport } from './routes/_authenticated/admin.connections'
 import { Route as AuthenticatedAdminCuratedRouteImport } from './routes/_authenticated/admin.curated'
+import { Route as AuthenticatedAdminLeaderboardRouteImport } from './routes/_authenticated/admin.leaderboard'
 import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminTokenRouteImport } from './routes/_authenticated/admin.token'
@@ -126,6 +127,12 @@ const AuthenticatedAdminCuratedRoute =
     path: '/admin/curated',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminLeaderboardRoute =
+  AuthenticatedAdminLeaderboardRouteImport.update({
+    id: '/admin/leaderboard',
+    path: '/admin/leaderboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminMediaRoute = AuthenticatedAdminMediaRouteImport.update({
   id: '/admin/media',
   path: '/admin/media',
@@ -182,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/legal/$slug': typeof LegalSlugRoute
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/admin/curated': typeof AuthenticatedAdminCuratedRoute
+  '/admin/leaderboard': typeof AuthenticatedAdminLeaderboardRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/token': typeof AuthenticatedAdminTokenRoute
@@ -208,6 +216,7 @@ export interface FileRoutesByTo {
   '/legal/$slug': typeof LegalSlugRoute
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/admin/curated': typeof AuthenticatedAdminCuratedRoute
+  '/admin/leaderboard': typeof AuthenticatedAdminLeaderboardRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/token': typeof AuthenticatedAdminTokenRoute
@@ -236,6 +245,7 @@ export interface FileRoutesById {
   '/legal/$slug': typeof LegalSlugRoute
   '/_authenticated/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/_authenticated/admin/curated': typeof AuthenticatedAdminCuratedRoute
+  '/_authenticated/admin/leaderboard': typeof AuthenticatedAdminLeaderboardRoute
   '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/token': typeof AuthenticatedAdminTokenRoute
@@ -264,6 +274,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/admin/connections'
     | '/admin/curated'
+    | '/admin/leaderboard'
     | '/admin/media'
     | '/admin/settings'
     | '/admin/token'
@@ -290,6 +301,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/admin/connections'
     | '/admin/curated'
+    | '/admin/leaderboard'
     | '/admin/media'
     | '/admin/settings'
     | '/admin/token'
@@ -317,6 +329,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/_authenticated/admin/connections'
     | '/_authenticated/admin/curated'
+    | '/_authenticated/admin/leaderboard'
     | '/_authenticated/admin/media'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/token'
@@ -477,6 +490,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCuratedRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/leaderboard': {
+      id: '/_authenticated/admin/leaderboard'
+      path: '/admin/leaderboard'
+      fullPath: '/admin/leaderboard'
+      preLoaderRoute: typeof AuthenticatedAdminLeaderboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/media': {
       id: '/_authenticated/admin/media'
       path: '/admin/media'
@@ -532,6 +552,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminConnectionsRoute: typeof AuthenticatedAdminConnectionsRoute
   AuthenticatedAdminCuratedRoute: typeof AuthenticatedAdminCuratedRoute
+  AuthenticatedAdminLeaderboardRoute: typeof AuthenticatedAdminLeaderboardRoute
   AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminTokenRoute: typeof AuthenticatedAdminTokenRoute
@@ -541,6 +562,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminConnectionsRoute: AuthenticatedAdminConnectionsRoute,
   AuthenticatedAdminCuratedRoute: AuthenticatedAdminCuratedRoute,
+  AuthenticatedAdminLeaderboardRoute: AuthenticatedAdminLeaderboardRoute,
   AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminTokenRoute: AuthenticatedAdminTokenRoute,
