@@ -56,7 +56,7 @@ export const projectConfig: ProjectConfig = {
   // pump.fun standard fixed supply.
   tokenSupply: "1,000,000,000 $ivy",
   tokenomicsUrl: null,
-  tokenRecordUpdatedAt: null,
+  tokenRecordUpdatedAt: "2026-07-31T01:27:00Z",
   socials: {
     instagram: "https://www.instagram.com/frogqueenivy/",
     tiktok: "https://www.tiktok.com/@ivyvibing",
