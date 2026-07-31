@@ -167,7 +167,7 @@ export function OfficialSocialEmbed({
                 title={`Official ${label} post from @${post.sourceAccountHandle}${
                   post.adminLabel ? ` — ${post.adminLabel}` : ""
                 }`}
-                loading="lazy"
+                loading="eager"
                 referrerPolicy="strict-origin-when-cross-origin"
                 allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                 allowFullScreen
