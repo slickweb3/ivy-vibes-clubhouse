@@ -608,7 +608,7 @@ export function MemeMachine({ templates }: { templates: MemeTemplate[] }) {
   return (
     <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
       {/* Canvas */}
-      <div className="rounded-2xl bg-card p-4 pop-static">
+      <div className="self-start rounded-2xl bg-card p-4 pop-static">
         <div className="relative overflow-hidden rounded-xl ink-border bg-ivy">
           <canvas
             ref={canvasRef}
