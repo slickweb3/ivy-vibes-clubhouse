@@ -21,8 +21,9 @@ const H = 270;
 const GROUND_Y = 214;
 const GRAVITY = 2000;
 const JUMP_V = -620;
-const START_SPEED = 190;
-const MAX_SPEED = 470;
+const START_SPEED = 205;
+/** No ceiling: the pond keeps accelerating at a constant rate until it beats you. */
+const SPEED_RAMP = 19;
 /** Max backing-store multiplier — 3x of a 1440px-wide canvas is ~4K wide. */
 const MAX_PIXEL_RATIO = 3;
 const PLAYER_X = 76;
@@ -415,7 +416,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       lastRef.current = now;
 
       run.t += dt;
-      run.speed = Math.min(MAX_SPEED, START_SPEED + run.t * 11);
+      run.speed = START_SPEED + run.t * SPEED_RAMP;
       const dx = run.speed * dt;
       run.distance += dx;
 
@@ -441,8 +442,9 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
             ? { x: W + 20, w: 34, h: 22, kind: "rock" }
             : { x: W + 20, w: 16, h: 34 + Math.random() * 24, kind: "reed" },
         );
-        // Gap scales with speed so late-game spacing stays clearable with one hop.
-        run.nextObstacle = run.speed * (1.15 + Math.random() * 0.7);
+        // Gap scales with speed so it stays clearable, but tightens as the run drags on.
+        const tighten = Math.max(0.62, 1 - run.t * 0.006);
+        run.nextObstacle = run.speed * tighten * (1.05 + Math.random() * 0.6);
       }
 
       run.nextCoin -= dx;
