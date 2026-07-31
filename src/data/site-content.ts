@@ -9,7 +9,7 @@
  */
 
 export const announcement =
-  "$ivy is getting ready to hop online. Official links and contract address coming soon.";
+  "$ivy is live on pump.fun. Contract: 9m63AW5py9AQK218vxX4zEXp8gyFT2Cc9ZMnt6Fppump. Always verify before buying.";
 
 export const heroCopy = {
   badge: "Official ivy vibing Project",
@@ -235,9 +235,9 @@ export const tokenRecord = {
   heading: "The Official Frog Queen Token Record",
   warning:
     "Always verify the contract address on this website. Fake $ivy tokens and impersonator accounts may exist.",
-  planHeading: "Planned launch & tokenomics",
+  planHeading: "Launch & tokenomics",
   planNote:
-    "$ivy will launch on pump.fun on Solana as a standard fair launch. These are the pump.fun defaults, published in advance. The mint address and launch date appear here the moment they exist.",
+    "$ivy is now live on pump.fun on Solana as a standard fair launch. The verified mint address is published below — always double-check before trading.",
   plan: [
     {
       title: "Fair launch on pump.fun",
@@ -311,7 +311,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "Is the token live?",
     answer:
-      "Not yet. $ivy will launch on pump.fun on Solana with the standard pump.fun fair-launch setup. The launch date and the verified mint address will be published on this website — until they appear here, nothing is live.",
+      "Yes. $ivy is live on pump.fun on Solana. The verified mint address is 9m63AW5py9AQK218vxX4zEXp8gyFT2Cc9ZMnt6Fppump. Always verify it on this website before trading.",
   },
   {
     question: "Where can I find official links?",
@@ -326,7 +326,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "Does the project support Ivy?",
     answer:
-      "The project states that creator rewards and specified proceeds are intended to benefit Ivy and her owner. Detailed allocation information should be published before launch.",
+      "The project states that creator rewards and specified proceeds are intended to benefit Ivy and her owner. Detailed allocation information is published on this website.",
   },
   {
     question: "Is short spine syndrome a dog breed?",
