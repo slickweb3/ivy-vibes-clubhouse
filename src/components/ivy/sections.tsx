@@ -625,9 +625,10 @@ export function HallOfFame({
         ))}
 
       </div>
-      <p className="mt-8 text-sm text-charcoal/80">
+      <p className="mt-8 text-sm text-cream/85">
         A moderated community submission form will open once moderation is in place.
       </p>
+
     </Section>
   );
 }
