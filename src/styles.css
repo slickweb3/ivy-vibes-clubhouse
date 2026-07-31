@@ -283,7 +283,13 @@
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+  .pop:hover,
+  .pop:focus-visible,
+  .pop:active {
+    transform: none !important;
+  }
 }
+
 
 @utility ivy-drift {
   animation: ivy-drift 30s linear infinite;
