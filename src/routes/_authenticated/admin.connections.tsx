@@ -10,6 +10,7 @@ import {
   getConnectionCards,
   listSyncRuns,
   refreshSocialFeed,
+  startPlatformAuthorize,
   type ConnectionCard,
 } from "@/lib/admin.functions";
 import { countCuratedPosts } from "@/lib/curated-admin.functions";
@@ -31,6 +32,7 @@ function ConnectionsPage() {
   const fetchRuns = useServerFn(listSyncRuns);
   const runRefresh = useServerFn(refreshSocialFeed);
   const runDisconnect = useServerFn(disconnectPlatform);
+  const runAuthorize = useServerFn(startPlatformAuthorize);
   const fetchCuratedCount = useServerFn(countCuratedPosts);
 
   const statusQuery = useQuery({ queryKey: ["admin", "status"], queryFn: () => fetchStatus() });
