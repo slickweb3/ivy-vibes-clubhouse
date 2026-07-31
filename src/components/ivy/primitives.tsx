@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import { CrownDoodle, PawDoodle, Tape } from "./doodles";
+import { Reveal } from "./reveal";
+
 import { displayCaption, posterUrl, type UnifiedMediaItem } from "@/types/media";
 
 
