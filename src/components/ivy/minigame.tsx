@@ -749,12 +749,12 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
                     {phase === "idle" ? "Lily Pad Leap" : "Splash!"}
                   </p>
                   <p className="max-w-xs text-[11px] leading-snug opacity-90 sm:text-sm">
-
                     {phase === "idle"
                       ? "Hop across the pond. Dodge the reeds, scoop the $ivy coins."
                       : `You scored ${score}. Best this visit: ${best}.`}
                   </p>
-                  <span className="rounded-full bg-frog px-4 py-2 font-display text-sm text-charcoal pop-static">
+                  <span className="rounded-full bg-frog px-3 py-1.5 font-display text-[11px] text-charcoal pop-static sm:px-4 sm:py-2 sm:text-sm">
+
                     {phase === "idle" ? "Tap / press space to start" : "Tap to hop again"}
                   </span>
                 </div>
