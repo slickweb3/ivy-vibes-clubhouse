@@ -19,6 +19,7 @@ import {
 } from "@/components/ivy/sections";
 import { LiveMarket } from "@/components/ivy/market";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
+import { MemeTeaser } from "@/components/ivy/meme-teaser";
 import {
   OwnerCorner,
   RoyalCourt,
