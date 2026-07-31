@@ -13,6 +13,8 @@ import { StatusChip } from "@/components/ivy/primitives";
 import { getLeaderboard, startRun, submitScore } from "@/lib/game.functions";
 import type { Leaderboard } from "@/lib/game.server";
 import runnerSprite from "@/assets/ivy-runner.png";
+import gameFrame from "@/assets/game-frame.png";
+
 
 const W = 480;
 const H = 270;
