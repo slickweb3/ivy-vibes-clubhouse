@@ -691,7 +691,14 @@ export function TokenRecord({ market }: { market?: MarketSnapshot }) {
     ...projectConfig,
     blockchain: live?.blockchain ?? projectConfig.blockchain,
     contractAddress: live?.contractAddress ?? projectConfig.contractAddress,
-    launchDate: live?.launchDate ?? projectConfig.launchDate,
+    launchDate: (() => {
+      const raw = live?.launchDate ?? projectConfig.launchDate;
+      if (!raw) return raw;
+      const iso = /^\d{4}-\d{2}-\d{2}$/.test(raw) ? new Date(`${raw}T00:00:00Z`) : null;
+      return iso
+        ? iso.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
+        : raw;
+    })(),
     tokenSupply: live?.tokenSupply ?? projectConfig.tokenSupply,
     launchPlatform: live?.launchPlatform ?? projectConfig.launchPlatform,
   };
