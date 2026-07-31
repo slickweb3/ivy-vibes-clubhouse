@@ -477,16 +477,17 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
 
       run.nextObstacle -= dx;
       if (run.nextObstacle <= 0) {
-        const isRock = Math.random() < 0.4;
+        const lying = Math.random() < 0.45;
         run.obstacles.push(
-          isRock
-            ? { x: W + 20, w: 34, h: 22, kind: "rock" }
-            : { x: W + 20, w: 16, h: 34 + Math.random() * 24, kind: "reed" },
+          lying
+            ? { x: W + 20, w: 40, h: 24, kind: "log" }
+            : { x: W + 20, w: 20, h: 34 + Math.random() * 24, kind: "stump" },
         );
         // Gap scales with speed so it stays clearable, but tightens as the run drags on.
-        const tighten = Math.max(0.62, 1 - run.t * 0.006);
-        run.nextObstacle = run.speed * tighten * (1.05 + Math.random() * 0.6);
+        const tighten = Math.max(0.56, 1 - run.t * 0.007);
+        run.nextObstacle = run.speed * tighten * (0.88 + Math.random() * 0.52);
       }
+
 
       run.nextCoin -= dx;
       if (run.nextCoin <= 0) {
