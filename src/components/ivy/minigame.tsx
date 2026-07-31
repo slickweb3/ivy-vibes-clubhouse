@@ -647,44 +647,53 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
       <div className="rounded-2xl bg-card p-4 pop-static">
         <div
-          role="button"
-          tabIndex={0}
-          aria-label="Play Lily Pad Leap. Tap or press space to hop."
-          onPointerDown={(event) => {
-            event.preventDefault();
-            jump();
-          }}
-          onKeyDown={(event) => {
-            if (event.key === " " || event.key === "Enter") {
-              event.preventDefault();
-              jump();
-            }
-          }}
-          className="relative block w-full touch-none select-none overflow-hidden rounded-xl border-[3px] border-charcoal"
+          className="game-frame"
+          style={{ ["--game-frame-src" as string]: `url(${gameFrame})` }}
         >
-          <canvas
-            ref={canvasRef}
-            width={W}
-            height={H}
-            className="block h-auto w-full bg-ivy"
-            style={{ aspectRatio: `${W} / ${H}`, imageRendering: "auto" }}
-          />
-          {phase !== "playing" ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-ivy/80 p-4 text-center text-cream">
-              <p className="font-display text-2xl">
-                {phase === "idle" ? "Lily Pad Leap" : "Splash!"}
-              </p>
-              <p className="max-w-xs text-sm opacity-90">
-                {phase === "idle"
-                  ? "Hop across the pond. Dodge the reeds, scoop the $ivy coins."
-                  : `You scored ${score}. Best this visit: ${best}.`}
-              </p>
-              <span className="rounded-full bg-frog px-4 py-2 font-display text-sm text-charcoal pop-static">
-                {phase === "idle" ? "Tap / press space to start" : "Tap to hop again"}
-              </span>
+          <div className="game-frame-screen">
+            <div
+              role="button"
+              tabIndex={0}
+              aria-label="Play Lily Pad Leap. Tap or press space to hop."
+              onPointerDown={(event) => {
+                event.preventDefault();
+                jump();
+              }}
+              onKeyDown={(event) => {
+                if (event.key === " " || event.key === "Enter") {
+                  event.preventDefault();
+                  jump();
+                }
+              }}
+              className="relative block h-full w-auto max-w-full touch-none select-none overflow-hidden rounded-xl border-[3px] border-charcoal max-sm:h-auto max-sm:w-full"
+              style={{ aspectRatio: `${W} / ${H}` }}
+            >
+              <canvas
+                ref={canvasRef}
+                width={W}
+                height={H}
+                className="block h-full w-full bg-ivy"
+                style={{ imageRendering: "auto" }}
+              />
+              {phase !== "playing" ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-ivy/80 p-3 text-center text-cream">
+                  <p className="font-display text-2xl">
+                    {phase === "idle" ? "Lily Pad Leap" : "Splash!"}
+                  </p>
+                  <p className="max-w-xs text-sm opacity-90">
+                    {phase === "idle"
+                      ? "Hop across the pond. Dodge the reeds, scoop the $ivy coins."
+                      : `You scored ${score}. Best this visit: ${best}.`}
+                  </p>
+                  <span className="rounded-full bg-frog px-4 py-2 font-display text-sm text-charcoal pop-static">
+                    {phase === "idle" ? "Tap / press space to start" : "Tap to hop again"}
+                  </span>
+                </div>
+              ) : null}
             </div>
-          ) : null}
+          </div>
         </div>
+
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {wallet ? (
