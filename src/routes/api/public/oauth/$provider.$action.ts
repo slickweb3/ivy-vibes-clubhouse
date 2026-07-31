@@ -41,20 +41,24 @@ async function handle(provider: string, action: string, request: Request): Promi
   if (!ACTIONS.has(action)) return sanitizedError("Unknown action.", 404);
 
   const platform = provider as SocialPlatform;
+
+  if (action === "authorize") {
+    // Authorization may only be started by a signed-in admin, through the
+    // protected admin server function. A public visitor must never be able to
+    // connect their own account in place of Ivy's official one. This check runs
+    // before any provider-configuration lookup so the public endpoint always
+    // answers 401 instead of leaking configuration state (or a 503).
+    return jsonResponse(
+      { ok: false, error: "unauthorized", hint: "Start the connection from the admin area." },
+      401,
+    );
+  }
+
   const status = providerStatus(platform);
   if (!status.configured) return notConfiguredResponse(status);
 
   try {
-    if (action === "authorize") {
-      // Authorization may only be started by a signed-in admin, through the
-      // protected admin server function (or a trusted service call carrying
-      // the sync secret). A public visitor must never be able to connect
-      // their own account in place of Ivy's official one.
-      return jsonResponse(
-        { ok: false, error: "unauthorized", hint: "Start the connection from the admin area." },
-        401,
-      );
-    }
+
 
 
     if (action === "callback") {
