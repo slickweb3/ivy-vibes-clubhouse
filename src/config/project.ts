@@ -50,13 +50,13 @@ export const projectConfig: ProjectConfig = {
   launchPlatform: "pump.fun",
   launchPlatformUrl: "https://pump.fun",
   blockchain: "Solana",
-  contractAddress: null,
+  contractAddress: "9m63AW5py9AQK218vxX4zEXp8gyFT2Cc9ZMnt6Fppump",
   explorerBaseUrl: "https://solscan.io/token",
   launchDate: null,
   // pump.fun standard fixed supply.
   tokenSupply: "1,000,000,000 $ivy",
   tokenomicsUrl: null,
-  tokenRecordUpdatedAt: null,
+  tokenRecordUpdatedAt: "2026-07-31T01:27:00Z",
   socials: {
     instagram: "https://www.instagram.com/frogqueenivy/",
     tiktok: "https://www.tiktok.com/@ivyvibing",
