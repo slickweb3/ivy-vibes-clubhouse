@@ -101,10 +101,16 @@ async function admin() {
 
 /* ------------------------------------------------------------ CSRF state */
 
-export async function createState(platform: SocialPlatform, redirectUri: string): Promise<string> {
+export async function createState(
+  platform: SocialPlatform,
+  redirectUri: string,
+  createdBy: string,
+): Promise<string> {
   const db = await admin();
   const state = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");
-  await db.from("oauth_states").insert({ state, platform, redirect_uri: redirectUri });
+  await db
+    .from("oauth_states")
+    .insert({ state, platform, redirect_uri: redirectUri, created_by: createdBy });
   return state;
 }
 
@@ -116,19 +122,28 @@ export async function consumeState(
   const db = await admin();
   const { data } = await db
     .from("oauth_states")
-    .select("id, platform, expires_at, consumed_at")
+    .select("id, platform, expires_at, consumed_at, created_by")
     .eq("state", state)
     .maybeSingle();
 
   const row = data as
-    | { id: string; platform: string; expires_at: string; consumed_at: string | null }
+    | {
+        id: string;
+        platform: string;
+        expires_at: string;
+        consumed_at: string | null;
+        created_by: string | null;
+      }
     | null;
   if (!row || row.platform !== platform || row.consumed_at) return false;
+  // The handshake must have been started by a signed-in admin.
+  if (!row.created_by) return false;
   if (Date.parse(row.expires_at) < Date.now()) return false;
 
   await db.from("oauth_states").update({ consumed_at: new Date().toISOString() }).eq("id", row.id);
   return true;
 }
+
 
 /* ------------------------------------------------------- token storage */
 
