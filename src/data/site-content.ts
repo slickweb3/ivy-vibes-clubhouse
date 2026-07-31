@@ -276,7 +276,7 @@ export const ownerCorner = {
     { title: "Only official content", body: "Every clip and photo on this site is an official Instagram or TikTok post, hosted by the platform." },
     { title: "Creator rewards", body: "pump.fun creator rewards from $ivy trading are intended for Ivy and her owner." },
     { title: "No private details", body: "Nothing about Ivy's household, location or medical records is published here." },
-    { title: "Transparent proceeds", body: "Full allocation and proceeds information will be published before launch." },
+    { title: "Transparent proceeds", body: "Full allocation and proceeds information is published on this website." },
     { title: "Community, not charity", body: "ivy vibing is not a registered charity — it is a community meme project built around Ivy." },
   ],
 };
