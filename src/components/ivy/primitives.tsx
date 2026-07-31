@@ -189,6 +189,7 @@ export function Section({
   className,
   tone = "cream",
   headingClassName,
+  headingLevel = 2,
 }: {
   id: string;
   eyebrow?: string;
@@ -198,6 +199,8 @@ export function Section({
   className?: string;
   tone?: "cream" | "leaf" | "ivy" | "white" | "lavender";
   headingClassName?: string;
+  /** Use 1 on pages where this section is the page's primary heading. */
+  headingLevel?: 1 | 2;
 }) {
   const toneClass = {
     cream: "bg-background text-foreground",
@@ -206,6 +209,8 @@ export function Section({
     white: "bg-card text-card-foreground",
     lavender: "bg-lavender text-charcoal",
   }[tone];
+
+  const Heading = (headingLevel === 1 ? "h1" : "h2") as "h1" | "h2";
 
   return (
     <section
@@ -221,12 +226,12 @@ export function Section({
               {eyebrow}
             </Sticker>
           ) : null}
-          <h2
+          <Heading
             id={`${id}-title`}
             className={cn("mt-4 text-3xl leading-[1.05] sm:text-5xl", headingClassName)}
           >
             {title}
-          </h2>
+          </Heading>
           {intro ? <p className="mt-4 text-base opacity-90 sm:text-lg">{intro}</p> : null}
         </header>
         {children}
@@ -234,6 +239,8 @@ export function Section({
     </section>
   );
 }
+
+
 
 export function Polaroid({
   item,
