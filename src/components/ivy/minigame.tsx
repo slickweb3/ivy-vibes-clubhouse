@@ -40,7 +40,8 @@ const COLORS = {
 };
 
 type Obstacle = { x: number; w: number; h: number; kind: "reed" | "rock" };
-type Coin = { x: number; y: number; taken: boolean };
+type Coin = { x: number; y: number; taken: boolean; spin: number };
+type Splash = { x: number; y: number; vx: number; vy: number; life: number; hue: string };
 
 interface RunState {
   t: number;
@@ -53,6 +54,8 @@ interface RunState {
   obstacles: Obstacle[];
   coinsList: Coin[];
   pads: number[];
+  splashes: Splash[];
+  shake: number;
   nextObstacle: number;
   nextCoin: number;
   over: boolean;
@@ -70,11 +73,27 @@ function freshRun(): RunState {
     obstacles: [],
     coinsList: [],
     pads: [60, 200, 340, 460],
+    splashes: [],
+    shake: 0,
     nextObstacle: 260,
     nextCoin: 180,
     over: false,
   };
 }
+
+function burst(run: RunState, x: number, y: number, count: number, hue: string) {
+  for (let i = 0; i < count; i += 1) {
+    run.splashes.push({
+      x,
+      y,
+      vx: (Math.random() - 0.5) * 150,
+      vy: -60 - Math.random() * 150,
+      life: 0.45 + Math.random() * 0.35,
+      hue,
+    });
+  }
+}
+
 
 const scoreOf = (run: RunState) => Math.floor(run.distance / 8) + run.coins * 15;
 
