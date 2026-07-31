@@ -290,6 +290,47 @@
   }
 }
 
+/* Every interactive control gets tactile press feedback, even the plain
+   text links and icon buttons that don't carry the chunky `pop` treatment. */
+button:not(.pop),
+a[role="button"]:not(.pop),
+[role="button"]:not(.pop),
+summary {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    transform 180ms cubic-bezier(0.34, 1.6, 0.5, 1),
+    opacity 150ms ease;
+}
+
+button:not(.pop):active,
+a[role="button"]:not(.pop):active,
+[role="button"]:not(.pop):active,
+summary:active {
+  transform: scale(0.94) rotate(-0.6deg);
+  opacity: 0.9;
+  transition:
+    transform 80ms ease-out,
+    opacity 80ms ease-out;
+}
+
+button:disabled:active,
+button[aria-disabled="true"]:active {
+  transform: none;
+  opacity: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:active,
+  a[role="button"]:active,
+  [role="button"]:active,
+  summary:active {
+    transform: none !important;
+  }
+}
+
+
+
 
 @utility ivy-drift {
   animation: ivy-drift 30s linear infinite;
