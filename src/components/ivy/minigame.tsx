@@ -712,7 +712,8 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
-      <div className="rounded-2xl bg-card p-4 pop-static">
+      <div className="rounded-2xl bg-card p-2 pop-static sm:p-4">
+
         <div
           className="game-frame"
           style={{ ["--game-frame-src" as string]: `url(${gameFrame})` }}
