@@ -455,7 +455,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
           taken: false,
           spin: Math.random() * Math.PI,
         });
-        run.nextCoin = 220 + Math.random() * 240;
+        run.nextCoin = 163 + Math.random() * 178;
       }
 
       run.obstacles = run.obstacles.filter((ob) => {
