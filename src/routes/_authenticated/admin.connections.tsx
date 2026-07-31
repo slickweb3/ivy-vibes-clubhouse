@@ -148,16 +148,16 @@ function ConnectionsPage() {
 
             <div className="mt-5 flex flex-wrap gap-2">
               <Button
-                asChild={card.credentialsConfigured && isAdmin}
                 disabled={!card.credentialsConfigured || !isAdmin}
+                onClick={async () => {
+                  const result = await runAuthorize({ data: { platform: card.platform } });
+                  if (result.ok && result.url) window.location.href = result.url;
+                }}
                 className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog disabled:opacity-70"
               >
-                {card.credentialsConfigured && isAdmin ? (
-                  <a href={card.authorizeUrl}>{card.connected ? "Re-authorize" : "Connect"}</a>
-                ) : (
-                  <span>Connect</span>
-                )}
+                {card.connected ? "Re-authorize" : "Connect"}
               </Button>
+
               <Button
                 disabled={!card.connected || !isAdmin}
                 onClick={async () => {
