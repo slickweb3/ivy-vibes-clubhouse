@@ -78,12 +78,16 @@ export function Hero({
               <a href="#meet-ivy">Meet the Queen</a>
             </Button>
             <Button
-              disabled
-              aria-disabled="true"
-              title="Token details are not confirmed yet"
-              className="min-h-12 rounded-full bg-card px-6 font-display text-base text-charcoal pop-static hover:bg-card disabled:opacity-80"
+              asChild
+              className="min-h-12 rounded-full bg-yellow px-6 font-display text-base text-charcoal pop hover:bg-yellow"
             >
-              $ivy Coming Soon
+              <a
+                href="https://pump.fun/coin/9m63AW5py9AQK218vxX4zEXp8gyFT2Cc9ZMnt6Fppump"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Buy $ivy on pump.fun
+              </a>
             </Button>
           </div>
 
