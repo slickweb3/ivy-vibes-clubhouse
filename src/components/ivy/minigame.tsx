@@ -21,9 +21,9 @@ const H = 270;
 const GROUND_Y = 214;
 const GRAVITY = 2000;
 const JUMP_V = -620;
-const START_SPEED = 250;
+const START_SPEED = 338;
 /** No ceiling: the pond keeps accelerating at a constant rate until it beats you. */
-const SPEED_RAMP = 28;
+const SPEED_RAMP = 38;
 /** Max backing-store multiplier — 3x of a 1440px-wide canvas is ~4K wide. */
 const MAX_PIXEL_RATIO = 3;
 const PLAYER_X = 76;
@@ -78,8 +78,8 @@ function freshRun(): RunState {
     pads: [60, 200, 340, 460],
     splashes: [],
     shake: 0,
-    nextObstacle: 260,
-    nextCoin: 180,
+    nextObstacle: 193,
+    nextCoin: 133,
     over: false,
   };
 }
@@ -455,7 +455,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
           taken: false,
           spin: Math.random() * Math.PI,
         });
-        run.nextCoin = 220 + Math.random() * 240;
+        run.nextCoin = 163 + Math.random() * 178;
       }
 
       run.obstacles = run.obstacles.filter((ob) => {
