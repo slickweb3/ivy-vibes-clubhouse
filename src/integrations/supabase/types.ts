@@ -550,6 +550,7 @@ export type Database = {
           code_verifier: string | null
           consumed_at: string | null
           created_at: string
+          created_by: string | null
           expires_at: string
           id: string
           platform: Database["public"]["Enums"]["social_platform"]
@@ -560,6 +561,7 @@ export type Database = {
           code_verifier?: string | null
           consumed_at?: string | null
           created_at?: string
+          created_by?: string | null
           expires_at?: string
           id?: string
           platform: Database["public"]["Enums"]["social_platform"]
@@ -570,6 +572,7 @@ export type Database = {
           code_verifier?: string | null
           consumed_at?: string | null
           created_at?: string
+          created_by?: string | null
           expires_at?: string
           id?: string
           platform?: Database["public"]["Enums"]["social_platform"]
@@ -1037,6 +1040,15 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      leaderboard_top: {
+        Args: { _limit?: number; _season?: string }
+        Returns: {
+          best_score: number
+          last_played_at: string
+          plays: number
+          wallet_masked: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "editor" | "viewer"

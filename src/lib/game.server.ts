@@ -95,7 +95,7 @@ function publicClient() {
 }
 
 type ScoreRow = {
-  wallet_address: string;
+  wallet_masked: string;
   best_score: number;
   plays: number;
   last_played_at: string;
@@ -104,7 +104,7 @@ type ScoreRow = {
 function toEntries(rows: ScoreRow[]): LeaderboardEntry[] {
   return rows.map((row, index) => ({
     rank: index + 1,
-    wallet: row.wallet_address,
+    wallet: row.wallet_masked,
     score: row.best_score,
     plays: row.plays,
     lastPlayedAt: row.last_played_at,
@@ -124,19 +124,11 @@ export async function readLeaderboard(): Promise<Leaderboard> {
 
   try {
     const supabase = publicClient();
+    // Public reads go through a capped, wallet-masked function; the raw
+    // game_scores table is not readable by anon/authenticated visitors.
     const [monthly, allTime] = await Promise.all([
-      supabase
-        .from("game_scores")
-        .select("wallet_address, best_score, plays, last_played_at")
-        .eq("season", season)
-        .order("best_score", { ascending: false })
-        .order("last_played_at", { ascending: true })
-        .limit(20),
-      supabase
-        .from("game_scores")
-        .select("wallet_address, best_score, plays, last_played_at")
-        .order("best_score", { ascending: false })
-        .limit(10),
+      supabase.rpc("leaderboard_top", { _season: season, _limit: 20 }),
+      supabase.rpc("leaderboard_top", { _limit: 10 }),
     ]);
 
     return {
@@ -149,6 +141,7 @@ export async function readLeaderboard(): Promise<Leaderboard> {
     return empty;
   }
 }
+
 
 export async function issueNonce(): Promise<{ nonce: string; issuedAt: string }> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
