@@ -149,6 +149,7 @@ function Home() {
         <TokenRecord market={market ?? undefined} />
         {market ? <LiveMarket snapshot={market} /> : null}
         <ArcadeTeaser />
+        <MemeTeaser />
         <OwnerCorner curatedPost={homeCurated.ownerCorner} />
         <RoyalCourt />
         <FAQ />
