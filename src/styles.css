@@ -317,3 +317,36 @@
 @utility rail-item {
   scroll-snap-align: center;
 }
+
+/* Retro toy-cartridge frame around the arcade viewport. The artwork's empty
+   screen sits at these insets; the game is absolutely placed inside it. */
+.game-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1536 / 1024;
+  background-image: var(--game-frame-src);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.game-frame-screen {
+  position: absolute;
+  left: 20.57%;
+  right: 21.42%;
+  top: 24.6%;
+  bottom: 29.88%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 639px) {
+  .game-frame {
+    aspect-ratio: auto;
+    background-image: none;
+  }
+  .game-frame-screen {
+    position: static;
+    display: block;
+  }
+}
