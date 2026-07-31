@@ -43,23 +43,28 @@ export function IvyHopSticker() {
     setCheer(CHEERS[Math.floor(Math.random() * CHEERS.length)]);
     timers.current.push(
       window.setTimeout(() => setLeaping(false), 1300),
-      window.setTimeout(() => setCheer(null), 2200),
+      window.setTimeout(() => setCheer(null), 2800),
     );
   };
+
+  // Only show the bubble once she has landed, so the caption never trails
+  // alongside the airborne sticker as a second floating label.
+  const showCheer = Boolean(cheer) && !leaping;
 
   return (
     <div className="pointer-events-none fixed bottom-0 left-2 z-40 select-none sm:left-4">
       <div className="relative flex flex-col items-center">
-        {/* Cheer bubble */}
+        {/* Cheer bubble — absolutely placed so it never nudges the sticker */}
         <span
           aria-hidden
           className={cn(
-            "mb-1 rounded-full bg-cream px-3 py-1 font-display text-xs whitespace-nowrap text-ivy ink-border transition-all duration-200",
-            cheer ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-1 opacity-0",
+            "absolute bottom-full left-1/2 mb-1 -translate-x-1/2 rounded-full bg-cream px-3 py-1 font-display text-xs whitespace-nowrap text-ivy ink-border transition-all duration-200",
+            showCheer ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-1 opacity-0",
           )}
         >
           {cheer ?? "ribbit!"}
         </span>
+
 
         <button
           type="button"
