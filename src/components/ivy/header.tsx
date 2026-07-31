@@ -85,6 +85,9 @@ function JoinTheVibeDialog({
 export function SiteNav({ isHome = true }: { isHome?: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [joinOpen, setJoinOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -95,13 +98,64 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [mobileOpen]);
 
+  // One rAF-throttled scroll listener drives both the nav elevation and the
+  // reading-progress hairline, and writes the bar through a CSS variable so
+  // React never re-renders while scrolling.
+  useEffect(() => {
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        const y = window.scrollY;
+        setScrolled((was) => (was === y > 8 ? was : y > 8));
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const ratio = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
+        progressRef.current?.style.setProperty("--progress", String(ratio));
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  // Highlight the section currently in view.
+  useEffect(() => {
+    if (!isHome || typeof IntersectionObserver === "undefined") return;
+    const ids = navLinks.map((link) => link.hash.replace("#", ""));
+    const nodes = ids
+      .map((id) => document.getElementById(id))
+      .filter((node): node is HTMLElement => Boolean(node));
+    if (nodes.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(`#${visible.target.id}`);
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.5] },
+    );
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, [isHome]);
+
   const href = (hash: string) => (isHome ? hash : `/${hash}`);
 
   return (
     <>
       <AnnouncementBar />
-      <header className="sticky top-0 z-40 border-b-[3px] border-charcoal bg-card/95 backdrop-blur">
-        <nav aria-label="Main" className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
+      <header
+        data-scrolled={scrolled ? "true" : "false"}
+        className="site-nav sticky top-0 z-40 border-b-[3px] border-charcoal glass"
+      >
+        <nav
+          aria-label="Main"
+          className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8"
+        >
           <Link to="/" className="shrink-0" aria-label="ivy vibing home">
             <IvyWordmark />
           </Link>
@@ -111,7 +165,8 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
               <li key={link.hash}>
                 <a
                   href={href(link.hash)}
-                  className="inline-flex min-h-11 items-center rounded-full px-3 font-display text-sm text-charcoal transition-colors hover:bg-leaf"
+                  aria-current={active === link.hash ? "true" : undefined}
+                  className="nav-pill inline-flex min-h-11 items-center rounded-full px-3 font-display text-sm text-charcoal transition-colors hover:bg-leaf"
                 >
                   {link.label}
                 </a>
@@ -137,6 +192,9 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
             <span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
           </button>
         </nav>
+
+        <div ref={progressRef} aria-hidden className="scroll-progress h-[3px] w-full" />
+
 
         <div
           id="mobile-menu"
