@@ -78,8 +78,8 @@ function freshRun(): RunState {
     pads: [60, 200, 340, 460],
     splashes: [],
     shake: 0,
-    nextObstacle: 260,
-    nextCoin: 180,
+    nextObstacle: 193,
+    nextCoin: 133,
     over: false,
   };
 }
