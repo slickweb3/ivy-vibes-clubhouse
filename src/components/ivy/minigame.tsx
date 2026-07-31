@@ -733,7 +733,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
                   jump();
                 }
               }}
-              className="relative block h-full w-auto max-w-full touch-none select-none overflow-hidden rounded-xl border-[3px] border-charcoal max-sm:h-auto max-sm:w-full"
+              className="relative block h-full max-h-full w-auto max-w-full touch-none select-none overflow-hidden rounded-md border-2 border-charcoal sm:rounded-xl sm:border-[3px]"
               style={{ aspectRatio: `${W} / ${H}` }}
             >
               <canvas
