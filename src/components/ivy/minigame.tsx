@@ -477,20 +477,79 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
 
   jumpRef.current = jump;
 
+  /* ---- crisp canvas: match the backing store to the real device pixels ---- */
   useEffect(() => {
-    draw(runRef.current);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const resize = () => {
+      const cssWidth = canvas.clientWidth || W;
+      const ratio = Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
+      const backingWidth = Math.round(cssWidth * ratio);
+      const backingHeight = Math.round((backingWidth * H) / W);
+      if (canvas.width !== backingWidth || canvas.height !== backingHeight) {
+        canvas.width = backingWidth;
+        canvas.height = backingHeight;
+      }
+      draw(runRef.current);
+    };
+
+    resize();
+    const observer = new ResizeObserver(resize);
+    observer.observe(canvas);
+    window.addEventListener("resize", resize);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", resize);
+    };
+  }, [draw]);
+
+  /* ---- sprite ---- */
+  useEffect(() => {
+    const image = new Image();
+    image.decoding = "async";
+    image.src = runnerSprite;
+    image.onload = () => {
+      spriteRef.current = image;
+      draw(runRef.current);
+    };
+    return () => {
+      image.onload = null;
+    };
   }, [draw]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.code === "Space" || event.code === "ArrowUp" || event.code === "Enter") {
-        event.preventDefault();
-        jumpRef.current();
-      }
+      if (event.code !== "Space" && event.code !== "ArrowUp" && event.code !== "Enter") return;
+      const target = event.target as HTMLElement | null;
+      // Never hijack space from buttons, inputs or the rest of the page.
+      if (target && target.closest("input, textarea, select, button, a, [contenteditable]")) return;
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const box = canvas.getBoundingClientRect();
+      const visible = box.bottom > 0 && box.top < window.innerHeight;
+      if (!visible) return;
+      event.preventDefault();
+      jumpRef.current();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  /* ---- pause when the tab is hidden so nothing runs off-screen ---- */
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      } else if (!runRef.current.over && rafRef.current === null && phase === "playing") {
+        lastRef.current = performance.now();
+        rafRef.current = requestAnimationFrame(stepRef.current);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, [phase]);
 
   useEffect(
     () => () => {
@@ -498,6 +557,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     },
     [],
   );
+
 
   /* ---- wallet ---- */
   useEffect(() => {
