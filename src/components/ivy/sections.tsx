@@ -49,31 +49,30 @@ export function Hero({
 }) {
 
   return (
-    <section aria-labelledby="hero-title" className="relative overflow-hidden bg-leaf">
+    <section aria-labelledby="hero-title" className="relative overflow-hidden bg-leaf band-leaf">
       <div className="pointer-events-none absolute -top-10 -right-8 hidden opacity-70 sm:block">
         <LeafDoodle className="h-40 w-40 text-frog float-slow" />
       </div>
 
-      <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-2">
-        <div>
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:px-8">
+        <Reveal>
           <Sticker tone="yellow">
             <CrownDoodle className="h-3.5 w-5 text-frog" />
             {heroCopy.badge}
           </Sticker>
 
-          <h1
-            id="hero-title"
-            className="mt-5 text-[3rem] leading-[0.9] text-charcoal sm:text-[4.5rem] lg:text-[5.25rem]"
-          >
+          <h1 id="hero-title" className="mt-5 text-fluid-hero text-balance text-charcoal">
             <span className="block">{heroCopy.headlineLine1}</span>
             <span className="block text-ivy">{heroCopy.headlineLine2}</span>
           </h1>
 
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-charcoal/90 sm:text-lg">
+          <div aria-hidden className="brand-rule mt-6 w-32" />
+
+          <p className="measure mt-5 text-base leading-relaxed text-charcoal/90 sm:text-lg">
             {heroCopy.body}
           </p>
 
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild className="min-h-12 rounded-full bg-frog px-6 font-display text-base text-charcoal pop hover:bg-frog">
               <a href="#meet-ivy">Meet the Queen</a>
             </Button>
@@ -91,7 +90,7 @@ export function Hero({
             </Button>
           </div>
 
-          <ul className="mt-7 flex flex-wrap gap-2">
+          <ul className="mt-8 flex flex-wrap gap-2">
             {heroCopy.stickers.map((sticker, index) => (
               <li key={sticker}>
                 <Sticker tone={(["pink", "lavender", "yellow", "cream", "frog"] as const)[index % 5]} float>
@@ -100,9 +99,9 @@ export function Hero({
               </li>
             ))}
           </ul>
-        </div>
+        </Reveal>
 
-        <div className="relative">
+        <Reveal variant="zoom" delay={120} className="relative">
           <div className="relative rotate-1">
             {curatedHero ? (
               <OfficialSocialEmbed post={curatedHero} tone="cream" className="mx-auto max-w-md" />
@@ -130,13 +129,14 @@ export function Hero({
               <MiniChart snapshot={market} />
             </div>
           ) : null}
-        </div>
+        </Reveal>
       </div>
 
       <GrassStrip />
     </section>
   );
 }
+
 
 /* -------------------------------------------------------------- Meet Ivy */
 
