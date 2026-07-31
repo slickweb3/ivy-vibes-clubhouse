@@ -264,7 +264,7 @@ export const tokenRecord = {
   purposeBody:
     "pump.fun pays creator rewards from trading activity to the coin's creator wallet. For $ivy those rewards are intended for Ivy and her owner — her care, her comfort and her ongoing adventures. That is the ultimate purpose of this project.",
   purposeDisclaimer:
-    "ivy vibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner. Full allocation and proceeds details will be published before launch.",
+    "ivy vibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner. Full allocation and proceeds details are published on this website.",
 };
 
 export const ownerCorner = {
