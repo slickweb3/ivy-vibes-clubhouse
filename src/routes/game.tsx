@@ -75,7 +75,7 @@ function GamePage() {
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             {[
-              ["How to play", "Tap, click or press space to hop. Tap again mid-air for a second hop. Reeds and rocks end the run, coins are worth 15."],
+              ["How to play", "Tap, click or press space to hop. Tap again mid-air for a second hop. Logs and stumps end the run, coins are worth 15."],
               ["How scores count", "Every run gets a one-time code from the server. Your wallet signs the code and the score together, so only you can post your score."],
               ["The airdrop", "Board resets on the 1st of each month (UTC). The highest verified score that month is airdropped 50,000 $ivy to the wallet that signed it."],
             ].map(([heading, body]) => (

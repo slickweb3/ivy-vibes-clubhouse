@@ -20,7 +20,7 @@ export function ArcadeTeaser() {
         <div className="min-w-0">
           <p className="font-display text-lg text-charcoal">Hop the pond, take the crown</p>
           <p className="mt-1 text-sm text-charcoal/85">
-            Dodge the reeds, scoop the coins, sign your best run to your wallet. Monthly board
+            Dodge the logs, scoop the coins, sign your best run to your wallet. Monthly board
             resets on the 1st.
           </p>
         </div>
