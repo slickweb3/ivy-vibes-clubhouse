@@ -286,6 +286,22 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       ctx.moveTo(padX + 4, GROUND_Y + 22 + bob);
       ctx.lineTo(padX + 32, GROUND_Y + 20 + bob);
       ctx.stroke();
+      if (i % 3 === 0) {
+        // pink lotus, matching the frame stickers
+        const fx = padX - 14;
+        const fy = GROUND_Y + 17 + bob;
+        ctx.fillStyle = COLORS.pink;
+        for (let p = 0; p < 6; p += 1) {
+          const a = (p / 6) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.ellipse(fx + Math.cos(a) * 4, fy + Math.sin(a) * 2.4, 4, 2.6, a, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = COLORS.yellow;
+        ctx.beginPath();
+        ctx.arc(fx, fy, 2.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
     });
 
     // coins
