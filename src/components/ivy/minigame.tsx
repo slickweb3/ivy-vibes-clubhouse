@@ -416,7 +416,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       lastRef.current = now;
 
       run.t += dt;
-      run.speed = Math.min(MAX_SPEED, START_SPEED + run.t * 11);
+      run.speed = START_SPEED + run.t * SPEED_RAMP;
       const dx = run.speed * dt;
       run.distance += dx;
 
