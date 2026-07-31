@@ -17,6 +17,7 @@ import { Route as CommunityGuidelinesRouteImport } from './routes/community-guid
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as GameRouteImport } from './routes/game'
 import { Route as MediaUsageRouteImport } from './routes/media-usage'
+import { Route as MemesRouteImport } from './routes/memes'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RiskDisclosureRouteImport } from './routes/risk-disclosure'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -33,6 +34,7 @@ import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminTokenRouteImport } from './routes/_authenticated/admin.token'
 import { Route as ApiPublicCuratedPostsRouteImport } from './routes/api/public/curated-posts'
 import { Route as ApiPublicMarketRouteImport } from './routes/api/public/market'
+import { Route as ApiPublicMemeImageRouteImport } from './routes/api/public/meme-image'
 import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
 import { Route as ApiPublicOauthProviderActionRouteImport } from './routes/api/public/oauth/$provider.$action'
 
@@ -73,6 +75,11 @@ const GameRoute = GameRouteImport.update({
 const MediaUsageRoute = MediaUsageRouteImport.update({
   id: '/media-usage',
   path: '/media-usage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MemesRoute = MemesRouteImport.update({
+  id: '/memes',
+  path: '/memes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -159,6 +166,11 @@ const ApiPublicMarketRoute = ApiPublicMarketRouteImport.update({
   path: '/api/public/market',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMemeImageRoute = ApiPublicMemeImageRouteImport.update({
+  id: '/api/public/meme-image',
+  path: '/api/public/meme-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksSocialSyncRoute =
   ApiPublicHooksSocialSyncRouteImport.update({
     id: '/api/public/hooks/social-sync',
@@ -180,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/game': typeof GameRoute
   '/media-usage': typeof MediaUsageRoute
+  '/memes': typeof MemesRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -195,6 +208,7 @@ export interface FileRoutesByFullPath {
   '/admin/token': typeof AuthenticatedAdminTokenRoute
   '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
+  '/api/public/meme-image': typeof ApiPublicMemeImageRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
@@ -207,6 +221,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/game': typeof GameRoute
   '/media-usage': typeof MediaUsageRoute
+  '/memes': typeof MemesRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -222,6 +237,7 @@ export interface FileRoutesByTo {
   '/admin/token': typeof AuthenticatedAdminTokenRoute
   '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
+  '/api/public/meme-image': typeof ApiPublicMemeImageRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
@@ -236,6 +252,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/game': typeof GameRoute
   '/media-usage': typeof MediaUsageRoute
+  '/memes': typeof MemesRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -251,6 +268,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/token': typeof AuthenticatedAdminTokenRoute
   '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
+  '/api/public/meme-image': typeof ApiPublicMemeImageRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
@@ -265,6 +283,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/game'
     | '/media-usage'
+    | '/memes'
     | '/privacy'
     | '/risk-disclosure'
     | '/sitemap.xml'
@@ -280,6 +299,7 @@ export interface FileRouteTypes {
     | '/admin/token'
     | '/api/public/curated-posts'
     | '/api/public/market'
+    | '/api/public/meme-image'
     | '/admin/'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
@@ -292,6 +312,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/game'
     | '/media-usage'
+    | '/memes'
     | '/privacy'
     | '/risk-disclosure'
     | '/sitemap.xml'
@@ -307,6 +328,7 @@ export interface FileRouteTypes {
     | '/admin/token'
     | '/api/public/curated-posts'
     | '/api/public/market'
+    | '/api/public/meme-image'
     | '/admin'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
@@ -320,6 +342,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/game'
     | '/media-usage'
+    | '/memes'
     | '/privacy'
     | '/risk-disclosure'
     | '/sitemap.xml'
@@ -335,6 +358,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/token'
     | '/api/public/curated-posts'
     | '/api/public/market'
+    | '/api/public/meme-image'
     | '/_authenticated/admin/'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
@@ -349,6 +373,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   GameRoute: typeof GameRoute
   MediaUsageRoute: typeof MediaUsageRoute
+  MemesRoute: typeof MemesRoute
   PrivacyRoute: typeof PrivacyRoute
   RiskDisclosureRoute: typeof RiskDisclosureRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -358,6 +383,7 @@ export interface RootRouteChildren {
   LegalSlugRoute: typeof LegalSlugRoute
   ApiPublicCuratedPostsRoute: typeof ApiPublicCuratedPostsRoute
   ApiPublicMarketRoute: typeof ApiPublicMarketRoute
+  ApiPublicMemeImageRoute: typeof ApiPublicMemeImageRoute
   ApiPublicHooksSocialSyncRoute: typeof ApiPublicHooksSocialSyncRoute
   ApiPublicOauthProviderActionRoute: typeof ApiPublicOauthProviderActionRoute
 }
@@ -418,6 +444,13 @@ declare module '@tanstack/react-router' {
       path: '/media-usage'
       fullPath: '/media-usage'
       preLoaderRoute: typeof MediaUsageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/memes': {
+      id: '/memes'
+      path: '/memes'
+      fullPath: '/memes'
+      preLoaderRoute: typeof MemesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -532,6 +565,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMarketRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/meme-image': {
+      id: '/api/public/meme-image'
+      path: '/api/public/meme-image'
+      fullPath: '/api/public/meme-image'
+      preLoaderRoute: typeof ApiPublicMemeImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/social-sync': {
       id: '/api/public/hooks/social-sync'
       path: '/api/public/hooks/social-sync'
@@ -581,6 +621,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   GameRoute: GameRoute,
   MediaUsageRoute: MediaUsageRoute,
+  MemesRoute: MemesRoute,
   PrivacyRoute: PrivacyRoute,
   RiskDisclosureRoute: RiskDisclosureRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
@@ -590,6 +631,7 @@ const rootRouteChildren: RootRouteChildren = {
   LegalSlugRoute: LegalSlugRoute,
   ApiPublicCuratedPostsRoute: ApiPublicCuratedPostsRoute,
   ApiPublicMarketRoute: ApiPublicMarketRoute,
+  ApiPublicMemeImageRoute: ApiPublicMemeImageRoute,
   ApiPublicHooksSocialSyncRoute: ApiPublicHooksSocialSyncRoute,
   ApiPublicOauthProviderActionRoute: ApiPublicOauthProviderActionRoute,
 }

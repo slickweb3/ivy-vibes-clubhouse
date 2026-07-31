@@ -19,6 +19,7 @@ import {
 } from "@/components/ivy/sections";
 import { LiveMarket } from "@/components/ivy/market";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
+import { MemeTeaser } from "@/components/ivy/meme-teaser";
 import {
   OwnerCorner,
   RoyalCourt,
@@ -148,6 +149,7 @@ function Home() {
         <TokenRecord market={market ?? undefined} />
         {market ? <LiveMarket snapshot={market} /> : null}
         <ArcadeTeaser />
+        <MemeTeaser />
         <OwnerCorner curatedPost={homeCurated.ownerCorner} />
         <RoyalCourt />
         <FAQ />
