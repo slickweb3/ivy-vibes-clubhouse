@@ -54,7 +54,8 @@ export function OfficialSocialEmbed({
           observer.disconnect();
         }
       },
-      { rootMargin: "200px 0px" },
+      // Mount well before the card is visible so the player is ready on arrival.
+      { rootMargin: "800px 0px" },
     );
     observer.observe(node);
     return () => observer.disconnect();
@@ -126,7 +127,8 @@ export function OfficialSocialEmbed({
                   post.originalCaption ??
                   `Ivy in an official ${label} video from @${post.sourceAccountHandle}`
                 }
-                loading="lazy"
+                loading="eager"
+                fetchPriority="high"
                 decoding="async"
                 referrerPolicy="no-referrer"
                 onError={() => setPosterBroken(true)}
@@ -165,7 +167,7 @@ export function OfficialSocialEmbed({
                 title={`Official ${label} post from @${post.sourceAccountHandle}${
                   post.adminLabel ? ` — ${post.adminLabel}` : ""
                 }`}
-                loading="lazy"
+                loading="eager"
                 referrerPolicy="strict-origin-when-cross-origin"
                 allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                 allowFullScreen

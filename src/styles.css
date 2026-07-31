@@ -364,10 +364,11 @@ button[aria-disabled="true"]:active {
   }
 }
 
-/* Offscreen embed cards skip layout/paint work until they scroll near. */
+/* Embed cards keep their own layout box. `content-visibility` used to resize
+   cards as they entered view, which fought scroll anchoring and yanked the page
+   back up, so only paint/layout containment is used now. */
 @utility embed-perf {
-  content-visibility: auto;
-  contain-intrinsic-size: 520px;
+  contain: layout paint;
 }
 
 /* Horizontal rails: momentum scrolling with snap and no visible scrollbar. */
