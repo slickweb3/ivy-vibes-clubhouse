@@ -42,6 +42,10 @@ const COLORS = {
   lavender: "#C7B8FF",
 };
 
+/** Log obstacle wood tones (bark + sawn end grain). */
+const BARK = "#6B4A2B";
+const WOOD = "#C68B4C";
+
 type Obstacle = { x: number; w: number; h: number; kind: "stump" | "log" };
 type Coin = { x: number; y: number; taken: boolean; spin: number };
 type Splash = { x: number; y: number; vx: number; vy: number; life: number; hue: string };
