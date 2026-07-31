@@ -21,9 +21,9 @@ const H = 270;
 const GROUND_Y = 214;
 const GRAVITY = 2000;
 const JUMP_V = -620;
-const START_SPEED = 205;
+const START_SPEED = 250;
 /** No ceiling: the pond keeps accelerating at a constant rate until it beats you. */
-const SPEED_RAMP = 19;
+const SPEED_RAMP = 28;
 /** Max backing-store multiplier — 3x of a 1440px-wide canvas is ~4K wide. */
 const MAX_PIXEL_RATIO = 3;
 const PLAYER_X = 76;
