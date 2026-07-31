@@ -141,7 +141,38 @@ export const refreshSocialFeed = createServerFn({ method: "POST" })
     return { ranAt: new Date().toISOString(), results };
   });
 
+/**
+ * Starts a platform OAuth handshake. Only an authenticated admin may mint the
+ * CSRF state row, so no anonymous visitor can connect their own account in
+ * place of Ivy's official one.
+ */
+export const startPlatformAuthorize = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { platform: "instagram" | "tiktok" }) => input)
+  .handler(async ({ context, data }): Promise<{ ok: boolean; url?: string; error?: string }> => {
+    const { supabase, userId } = context;
+    const { requireAdmin, audit } = await import("@/lib/admin-guard.server");
+    await requireAdmin(supabase, userId);
+
+    const oauth = await import("@/lib/social-oauth.server");
+    const status = oauth.providerStatus(data.platform);
+    if (!status.configured) return { ok: false, error: "not_configured" };
+
+    const state = await oauth.createState(data.platform, status.redirectUri!, userId);
+    const url = oauth.authorizeUrl(data.platform, state);
+    if (!url) return { ok: false, error: "not_configured" };
+
+    await audit(supabase, userId, {
+      action: "start_platform_authorize",
+      entityType: "social_connections",
+      entityId: data.platform,
+      summary: `Started an ${data.platform} authorization handshake.`,
+    });
+    return { ok: true, url };
+  });
+
 /** Disconnect a platform: revokes local storage of the token reference. */
+
 export const disconnectPlatform = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { platform: "instagram" | "tiktok" }) => input)
