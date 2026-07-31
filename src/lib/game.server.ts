@@ -128,7 +128,7 @@ export async function readLeaderboard(): Promise<Leaderboard> {
     // game_scores table is not readable by anon/authenticated visitors.
     const [monthly, allTime] = await Promise.all([
       supabase.rpc("leaderboard_top", { _season: season, _limit: 20 }),
-      supabase.rpc("leaderboard_top", { _season: null, _limit: 10 }),
+      supabase.rpc("leaderboard_top", { _limit: 10 }),
     ]);
 
     return {
