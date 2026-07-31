@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
+import { IvyHopSticker } from "@/components/ivy/hop-sticker";
   Outlet,
   Link,
   createRootRouteWithContext,
