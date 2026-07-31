@@ -442,8 +442,9 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
             ? { x: W + 20, w: 34, h: 22, kind: "rock" }
             : { x: W + 20, w: 16, h: 34 + Math.random() * 24, kind: "reed" },
         );
-        // Gap scales with speed so late-game spacing stays clearable with one hop.
-        run.nextObstacle = run.speed * (1.15 + Math.random() * 0.7);
+        // Gap scales with speed so it stays clearable, but tightens as the run drags on.
+        const tighten = Math.max(0.62, 1 - run.t * 0.006);
+        run.nextObstacle = run.speed * tighten * (1.05 + Math.random() * 0.6);
       }
 
       run.nextCoin -= dx;
