@@ -1,9 +1,9 @@
 /**
- * Lily Pad Leap — Ivy's frog hat hops the pond.
+ * Lily Pad Leap — Ivy's pond dash.
  *
- * Design note: the player sprite is Ivy's frog hat, never Ivy herself.
- * Canvas only, no assets, reduced-motion friendly (the game only animates
- * once the player starts a run).
+ * The runner is the owner-supplied character sprite. Everything else is drawn
+ * on canvas at device resolution (up to 3x, so it stays crisp on 4K and
+ * high-DPI phones). Reduced-motion friendly: nothing animates until a run starts.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { StatusChip } from "@/components/ivy/primitives";
 import { getLeaderboard, startRun, submitScore } from "@/lib/game.functions";
 import type { Leaderboard } from "@/lib/game.server";
+import runnerSprite from "@/assets/ivy-runner.png";
 
 const W = 480;
 const H = 270;
@@ -20,6 +21,11 @@ const GRAVITY = 2000;
 const JUMP_V = -620;
 const START_SPEED = 190;
 const MAX_SPEED = 470;
+/** Max backing-store multiplier — 3x of a 1440px-wide canvas is ~4K wide. */
+const MAX_PIXEL_RATIO = 3;
+const PLAYER_X = 76;
+const PLAYER_H = 58;
+
 
 const COLORS = {
   pond: "#174F36",
