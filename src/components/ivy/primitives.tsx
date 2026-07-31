@@ -203,11 +203,11 @@ export function Section({
   headingLevel?: 1 | 2;
 }) {
   const toneClass = {
-    cream: "bg-background text-foreground",
-    leaf: "bg-leaf text-charcoal",
-    ivy: "night text-cream",
-    white: "bg-card text-card-foreground",
-    lavender: "bg-lavender text-charcoal",
+    cream: "bg-background text-foreground band-cream",
+    leaf: "bg-leaf text-charcoal band-leaf",
+    ivy: "night text-cream band-ivy",
+    white: "bg-card text-card-foreground band-cream",
+    lavender: "bg-lavender text-charcoal band-lavender",
   }[tone];
 
   const Heading = (headingLevel === 1 ? "h1" : "h2") as "h1" | "h2";
@@ -216,10 +216,14 @@ export function Section({
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className={cn("scroll-mt-28 py-10 sm:py-14", toneClass, className)}
+      className={cn(
+        "relative scroll-mt-28 py-14 sm:py-20 lg:py-24",
+        toneClass,
+        className,
+      )}
     >
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-        <header className="mb-6 max-w-3xl">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+        <Reveal as="header" className="mb-8 max-w-3xl sm:mb-10">
           {eyebrow ? (
             <Sticker tone="yellow">
               <CrownDoodle className="h-3.5 w-5 text-frog" />
@@ -228,17 +232,21 @@ export function Section({
           ) : null}
           <Heading
             id={`${id}-title`}
-            className={cn("mt-4 text-3xl leading-[1.05] sm:text-5xl", headingClassName)}
+            className={cn("mt-4 text-fluid-title text-balance", headingClassName)}
           >
             {title}
           </Heading>
-          {intro ? <p className="mt-4 text-base opacity-90 sm:text-lg">{intro}</p> : null}
-        </header>
-        {children}
+          <div aria-hidden className="brand-rule mt-5 w-24" />
+          {intro ? (
+            <p className="measure mt-4 text-base leading-relaxed opacity-90 sm:text-lg">{intro}</p>
+          ) : null}
+        </Reveal>
+        <Reveal delay={90}>{children}</Reveal>
       </div>
     </section>
   );
 }
+
 
 
 
