@@ -240,11 +240,7 @@ export function Section({
   );
 }
 
-        {children}
-      </div>
-    </section>
-  );
-}
+
 
 export function Polaroid({
   item,
