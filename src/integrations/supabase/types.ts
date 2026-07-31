@@ -550,6 +550,7 @@ export type Database = {
           code_verifier: string | null
           consumed_at: string | null
           created_at: string
+          created_by: string | null
           expires_at: string
           id: string
           platform: Database["public"]["Enums"]["social_platform"]
@@ -560,6 +561,7 @@ export type Database = {
           code_verifier?: string | null
           consumed_at?: string | null
           created_at?: string
+          created_by?: string | null
           expires_at?: string
           id?: string
           platform: Database["public"]["Enums"]["social_platform"]
@@ -570,6 +572,7 @@ export type Database = {
           code_verifier?: string | null
           consumed_at?: string | null
           created_at?: string
+          created_by?: string | null
           expires_at?: string
           id?: string
           platform?: Database["public"]["Enums"]["social_platform"]
