@@ -8,6 +8,7 @@ const LINKS = [
 
   { to: "/admin/media", label: "Media library" },
   { to: "/admin/token", label: "Token & chart" },
+  { to: "/admin/leaderboard", label: "Game leaderboard" },
   { to: "/admin/settings", label: "Automation" },
 ] as const;
 

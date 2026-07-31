@@ -220,6 +220,66 @@ export type Database = {
           },
         ]
       }
+      game_nonces: {
+        Row: {
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          nonce: string
+          wallet_address: string | null
+        }
+        Insert: {
+          consumed_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          nonce: string
+          wallet_address?: string | null
+        }
+        Update: {
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          nonce?: string
+          wallet_address?: string | null
+        }
+        Relationships: []
+      }
+      game_scores: {
+        Row: {
+          best_score: number
+          created_at: string
+          id: string
+          last_played_at: string
+          plays: number
+          season: string
+          updated_at: string
+          wallet_address: string
+        }
+        Insert: {
+          best_score?: number
+          created_at?: string
+          id?: string
+          last_played_at?: string
+          plays?: number
+          season: string
+          updated_at?: string
+          wallet_address: string
+        }
+        Update: {
+          best_score?: number
+          created_at?: string
+          id?: string
+          last_played_at?: string
+          plays?: number
+          season?: string
+          updated_at?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       ivy_tv_items: {
         Row: {
           caption: string | null

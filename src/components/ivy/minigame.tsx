@@ -1,0 +1,581 @@
+/**
+ * Lily Pad Leap — Ivy's frog hat hops the pond.
+ *
+ * Design note: the player sprite is Ivy's frog hat, never Ivy herself.
+ * Canvas only, no assets, reduced-motion friendly (the game only animates
+ * once the player starts a run).
+ */
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import bs58 from "bs58";
+import { Button } from "@/components/ui/button";
+import { StatusChip } from "@/components/ivy/primitives";
+import { getLeaderboard, startRun, submitScore } from "@/lib/game.functions";
+import type { Leaderboard } from "@/lib/game.server";
+
+const W = 480;
+const H = 270;
+const GROUND_Y = 214;
+const GRAVITY = 2000;
+const JUMP_V = -620;
+const START_SPEED = 190;
+const MAX_SPEED = 470;
+
+const COLORS = {
+  pond: "#174F36",
+  pondDeep: "#0f3826",
+  frog: "#83D94E",
+  leaf: "#C9F39B",
+  cream: "#FFF8E7",
+  charcoal: "#151515",
+  pink: "#FF8EAE",
+  yellow: "#FFD86B",
+  lavender: "#C7B8FF",
+};
+
+type Obstacle = { x: number; w: number; h: number; kind: "reed" | "rock" };
+type Coin = { x: number; y: number; taken: boolean };
+
+interface RunState {
+  t: number;
+  speed: number;
+  distance: number;
+  coins: number;
+  y: number;
+  vy: number;
+  jumps: number;
+  obstacles: Obstacle[];
+  coinsList: Coin[];
+  pads: number[];
+  nextObstacle: number;
+  nextCoin: number;
+  over: boolean;
+}
+
+function freshRun(): RunState {
+  return {
+    t: 0,
+    speed: START_SPEED,
+    distance: 0,
+    coins: 0,
+    y: GROUND_Y,
+    vy: 0,
+    jumps: 0,
+    obstacles: [],
+    coinsList: [],
+    pads: [60, 200, 340, 460],
+    nextObstacle: 260,
+    nextCoin: 180,
+    over: false,
+  };
+}
+
+const scoreOf = (run: RunState) => Math.floor(run.distance / 8) + run.coins * 15;
+
+/* ---------------------------------- wallet --------------------------------- */
+
+interface SolanaProvider {
+  isPhantom?: boolean;
+  publicKey?: { toString(): string } | null;
+  connect(opts?: { onlyIfTrusted?: boolean }): Promise<{ publicKey: { toString(): string } }>;
+  disconnect(): Promise<void>;
+  signMessage(message: Uint8Array, encoding?: string): Promise<{ signature: Uint8Array }>;
+}
+
+function getProvider(): SolanaProvider | null {
+  if (typeof window === "undefined") return null;
+  const w = window as unknown as { solana?: SolanaProvider; solflare?: SolanaProvider };
+  return w.solana ?? w.solflare ?? null;
+}
+
+function shortWallet(address: string) {
+  return `${address.slice(0, 4)}…${address.slice(-4)}`;
+}
+
+/* ----------------------------------- game ---------------------------------- */
+
+export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leaderboard }) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const runRef = useRef<RunState>(freshRun());
+  const rafRef = useRef<number | null>(null);
+  const lastRef = useRef<number>(0);
+  const nonceRef = useRef<string | null>(null);
+  const jumpRef = useRef<() => void>(() => {});
+
+  const [phase, setPhase] = useState<"idle" | "playing" | "over">("idle");
+  const [score, setScore] = useState(0);
+  const [best, setBest] = useState(0);
+  const [wallet, setWallet] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [board, setBoard] = useState<Leaderboard>(initialLeaderboard);
+
+  const beginRun = useServerFn(startRun);
+  const sendScore = useServerFn(submitScore);
+  const refreshBoard = useServerFn(getLeaderboard);
+
+  /* ---- draw ---- */
+  const draw = useCallback((run: RunState) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+
+    ctx.clearRect(0, 0, W, H);
+
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, COLORS.pond);
+    sky.addColorStop(1, COLORS.pondDeep);
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, H);
+
+    // drifting bubbles
+    ctx.globalAlpha = 0.16;
+    ctx.fillStyle = COLORS.leaf;
+    for (let i = 0; i < 9; i += 1) {
+      const bx = (i * 71 - run.distance * 0.25) % (W + 60);
+      const x = bx < 0 ? bx + W + 60 : bx;
+      const y = 40 + ((i * 37 + run.t * 14) % 120);
+      ctx.beginPath();
+      ctx.arc(x, y, 4 + (i % 3) * 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // water line + lily pads
+    ctx.fillStyle = "rgba(131, 217, 78, 0.18)";
+    ctx.fillRect(0, GROUND_Y + 10, W, H - GROUND_Y - 10);
+    ctx.strokeStyle = COLORS.frog;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, GROUND_Y + 10);
+    ctx.lineTo(W, GROUND_Y + 10);
+    ctx.stroke();
+
+    run.pads.forEach((padX) => {
+      ctx.fillStyle = COLORS.leaf;
+      ctx.beginPath();
+      ctx.ellipse(padX, GROUND_Y + 22, 34, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // coins
+    run.coinsList.forEach((coin) => {
+      if (coin.taken) return;
+      ctx.fillStyle = COLORS.yellow;
+      ctx.strokeStyle = COLORS.charcoal;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(coin.x, coin.y, 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = COLORS.charcoal;
+      ctx.font = "bold 10px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("i", coin.x, coin.y + 3.5);
+    });
+
+    // obstacles
+    run.obstacles.forEach((ob) => {
+      ctx.strokeStyle = COLORS.charcoal;
+      ctx.lineWidth = 2.5;
+      if (ob.kind === "reed") {
+        ctx.fillStyle = COLORS.pink;
+        ctx.beginPath();
+        ctx.roundRect(ob.x, GROUND_Y + 10 - ob.h, ob.w, ob.h, 6);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = COLORS.lavender;
+        ctx.beginPath();
+        ctx.roundRect(ob.x, GROUND_Y + 10 - ob.h, ob.w, ob.h, 10);
+        ctx.fill();
+        ctx.stroke();
+      }
+    });
+
+    // player: Ivy's frog hat
+    const px = 70;
+    const py = run.y;
+    ctx.save();
+    ctx.translate(px, py);
+    const squash = run.vy !== 0 ? 1.06 : 1;
+    ctx.scale(1, squash);
+    ctx.fillStyle = COLORS.frog;
+    ctx.strokeStyle = COLORS.charcoal;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.roundRect(-18, -22, 36, 24, 12);
+    ctx.fill();
+    ctx.stroke();
+    // eyes
+    [-9, 9].forEach((ex) => {
+      ctx.fillStyle = COLORS.cream;
+      ctx.beginPath();
+      ctx.arc(ex, -26, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = COLORS.charcoal;
+      ctx.beginPath();
+      ctx.arc(ex + 1.5, -26, 3.4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+
+    // hud
+    ctx.fillStyle = COLORS.cream;
+    ctx.font = "bold 16px system-ui, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(`${scoreOf(run)}`, 14, 26);
+    ctx.font = "bold 10px system-ui, sans-serif";
+    ctx.fillText("SCORE", 14, 38);
+  }, []);
+
+  /* ---- loop ---- */
+  const step = useCallback(
+    (now: number) => {
+      const run = runRef.current;
+      const dt = Math.min((now - lastRef.current) / 1000, 0.05);
+      lastRef.current = now;
+
+      run.t += dt;
+      run.speed = Math.min(MAX_SPEED, START_SPEED + run.t * 11);
+      const dx = run.speed * dt;
+      run.distance += dx;
+
+      run.vy += GRAVITY * dt;
+      run.y += run.vy * dt;
+      if (run.y >= GROUND_Y) {
+        run.y = GROUND_Y;
+        run.vy = 0;
+        run.jumps = 0;
+      }
+
+      run.pads = run.pads.map((p) => (p - dx * 0.6 < -40 ? p + W + 60 : p - dx * 0.6));
+
+      run.nextObstacle -= dx;
+      if (run.nextObstacle <= 0) {
+        const isRock = Math.random() < 0.4;
+        run.obstacles.push(
+          isRock
+            ? { x: W + 20, w: 34, h: 22, kind: "rock" }
+            : { x: W + 20, w: 16, h: 34 + Math.random() * 26, kind: "reed" },
+        );
+        run.nextObstacle = 210 + Math.random() * 190 + Math.max(0, 320 - run.speed);
+      }
+
+      run.nextCoin -= dx;
+      if (run.nextCoin <= 0) {
+        run.coinsList.push({ x: W + 20, y: GROUND_Y - 40 - Math.random() * 60, taken: false });
+        run.nextCoin = 220 + Math.random() * 240;
+      }
+
+      run.obstacles = run.obstacles.filter((ob) => {
+        ob.x -= dx;
+        return ob.x + ob.w > -20;
+      });
+      run.coinsList = run.coinsList.filter((coin) => {
+        coin.x -= dx;
+        return coin.x > -20;
+      });
+
+      // collisions
+      const pl = { x: 70 - 18, y: run.y - 34, w: 36, h: 36 };
+      for (const ob of run.obstacles) {
+        const oy = GROUND_Y + 10 - ob.h;
+        if (pl.x < ob.x + ob.w && pl.x + pl.w > ob.x && pl.y + pl.h > oy) {
+          run.over = true;
+          break;
+        }
+      }
+      for (const coin of run.coinsList) {
+        if (coin.taken) continue;
+        if (Math.hypot(coin.x - 70, coin.y - (run.y - 12)) < 26) {
+          coin.taken = true;
+          run.coins += 1;
+        }
+      }
+
+      draw(run);
+      setScore(scoreOf(run));
+
+      if (run.over) {
+        const finalScore = scoreOf(run);
+        setPhase("over");
+        setBest((prev) => Math.max(prev, finalScore));
+        rafRef.current = null;
+        return;
+      }
+      rafRef.current = requestAnimationFrame(step);
+    },
+    [draw],
+  );
+
+  const start = useCallback(async () => {
+    runRef.current = freshRun();
+    setScore(0);
+    setStatus(null);
+    setPhase("playing");
+    lastRef.current = performance.now();
+    rafRef.current = requestAnimationFrame(step);
+    try {
+      const { nonce } = await beginRun({});
+      nonceRef.current = nonce;
+    } catch {
+      nonceRef.current = null;
+    }
+  }, [beginRun, step]);
+
+  const jump = useCallback(() => {
+    const run = runRef.current;
+    if (phase === "idle" || phase === "over") {
+      void start();
+      return;
+    }
+    if (run.jumps < 2) {
+      run.vy = JUMP_V * (run.jumps === 0 ? 1 : 0.86);
+      run.jumps += 1;
+    }
+  }, [phase, start]);
+
+  jumpRef.current = jump;
+
+  useEffect(() => {
+    draw(runRef.current);
+  }, [draw]);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.code === "Space" || event.code === "ArrowUp" || event.code === "Enter") {
+        event.preventDefault();
+        jumpRef.current();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    },
+    [],
+  );
+
+  /* ---- wallet ---- */
+  useEffect(() => {
+    const provider = getProvider();
+    if (!provider) return;
+    provider
+      .connect({ onlyIfTrusted: true })
+      .then((res) => setWallet(res.publicKey.toString()))
+      .catch(() => undefined);
+  }, []);
+
+  const connect = useCallback(async () => {
+    const provider = getProvider();
+    if (!provider) {
+      setStatus("No Solana wallet found in this browser. Phantom or Solflare works.");
+      return;
+    }
+    try {
+      const res = await provider.connect();
+      setWallet(res.publicKey.toString());
+      setStatus(null);
+    } catch {
+      setStatus("Wallet connection was cancelled.");
+    }
+  }, []);
+
+  const submit = useCallback(async () => {
+    const provider = getProvider();
+    const nonce = nonceRef.current;
+    const finalScore = scoreOf(runRef.current);
+    if (!wallet || !provider) {
+      setStatus("Connect a Solana wallet first so the score can be paid out to it.");
+      return;
+    }
+    if (!nonce) {
+      setStatus("That run was not tracked. Play one more and it will be.");
+      return;
+    }
+    setBusy(true);
+    setStatus(null);
+    try {
+      const message = [
+        "ivy vibing — Lily Pad Leap",
+        "Signing this only proves you own this wallet. It never moves funds.",
+        `Wallet: ${wallet}`,
+        `Score: ${finalScore}`,
+        `Nonce: ${nonce}`,
+      ].join("\n");
+      const signed = await provider.signMessage(new TextEncoder().encode(message), "utf8");
+      const result = await sendScore({
+        data: {
+          wallet,
+          score: finalScore,
+          nonce,
+          signature: bs58.encode(signed.signature),
+        },
+      });
+      if (!result.accepted) {
+        setStatus(result.reason ?? "Score was not accepted.");
+      } else {
+        nonceRef.current = null;
+        setStatus(
+          result.rank
+            ? `Locked in. Season best ${result.bestScore} — currently #${result.rank}.`
+            : `Locked in. Season best ${result.bestScore}.`,
+        );
+        setBoard(await refreshBoard({}));
+      }
+    } catch {
+      setStatus("Signing was cancelled or failed.");
+    } finally {
+      setBusy(false);
+    }
+  }, [refreshBoard, sendScore, wallet]);
+
+  const resetDate = useMemo(
+    () =>
+      new Date(board.nextResetIso).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        timeZone: "UTC",
+      }),
+    [board.nextResetIso],
+  );
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+      <div className="rounded-2xl bg-card p-4 pop-static">
+        <div
+          role="button"
+          tabIndex={0}
+          aria-label="Play Lily Pad Leap. Tap or press space to hop."
+          onPointerDown={(event) => {
+            event.preventDefault();
+            jump();
+          }}
+          onKeyDown={(event) => {
+            if (event.key === " " || event.key === "Enter") {
+              event.preventDefault();
+              jump();
+            }
+          }}
+          className="relative block w-full touch-none select-none overflow-hidden rounded-xl border-[3px] border-charcoal"
+        >
+          <canvas
+            ref={canvasRef}
+            width={W}
+            height={H}
+            className="block h-auto w-full bg-ivy"
+            style={{ aspectRatio: `${W} / ${H}`, imageRendering: "auto" }}
+          />
+          {phase !== "playing" ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-ivy/80 p-4 text-center text-cream">
+              <p className="font-display text-2xl">
+                {phase === "idle" ? "Lily Pad Leap" : "Splash!"}
+              </p>
+              <p className="max-w-xs text-sm opacity-90">
+                {phase === "idle"
+                  ? "Hop Ivy's frog hat across the pond. Dodge the reeds, scoop the $ivy coins."
+                  : `You scored ${score}. Best this visit: ${best}.`}
+              </p>
+              <span className="rounded-full bg-frog px-4 py-2 font-display text-sm text-charcoal pop-static">
+                {phase === "idle" ? "Tap / press space to start" : "Tap to hop again"}
+              </span>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {wallet ? (
+            <span className="inline-flex min-h-7 items-center gap-1.5 rounded-full bg-frog px-2.5 py-1 font-mono text-xs text-charcoal pop-static">
+              ● {shortWallet(wallet)}
+            </span>
+          ) : (
+            <StatusChip status="pending" label="No wallet linked" />
+          )}
+          {wallet ? null : (
+            <Button
+              onClick={connect}
+              className="min-h-11 rounded-full bg-lavender px-4 font-display text-charcoal pop hover:bg-lavender"
+            >
+              Connect Solana wallet
+            </Button>
+          )}
+          <Button
+            onClick={submit}
+            disabled={busy || phase !== "over" || score <= 0}
+            className="min-h-11 rounded-full bg-frog px-4 font-display text-charcoal pop hover:bg-frog"
+          >
+            {busy ? "Signing…" : "Submit score to leaderboard"}
+          </Button>
+          <Button
+            onClick={() => void start()}
+            variant="outline"
+            className="min-h-11 rounded-full border-[3px] border-charcoal bg-card px-4 font-display text-charcoal"
+          >
+            {phase === "playing" ? "Restart" : "Play"}
+          </Button>
+        </div>
+        {status ? <p className="mt-2 text-sm text-charcoal/85">{status}</p> : null}
+        <p className="mt-2 text-xs text-charcoal/70">
+          Signing is a free, read-only message. It proves the wallet is yours — it never approves a
+          transaction and never touches your funds.
+        </p>
+      </div>
+
+      <div className="rounded-2xl bg-card p-4 pop-static">
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="font-display text-xl text-charcoal">Pond Court · {board.seasonLabel}</h3>
+          <span className="inline-flex items-center rounded-full bg-yellow px-3 py-1 text-xs font-bold normal-case text-charcoal pop-static">
+            #1 wins {board.prizeTokens.toLocaleString("en-US")} $ivy
+          </span>
+        </div>
+        <p className="mt-1 text-sm text-charcoal/80">
+          Monthly board. It resets on {resetDate} (UTC) and the top wallet is airdropped 50,000 $ivy.
+        </p>
+
+        <ol className="mt-4 space-y-2">
+          {board.monthly.length === 0 ? (
+            <li className="rounded-xl bg-leaf p-3 text-sm text-charcoal">
+              Nobody has posted a score this month. First hop takes the crown.
+            </li>
+          ) : (
+            board.monthly.map((entry) => (
+              <li
+                key={entry.wallet}
+                className="flex items-center gap-3 rounded-xl border-2 border-charcoal/15 bg-background px-3 py-2"
+              >
+                <span
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display text-sm text-charcoal ${
+                    entry.rank === 1 ? "bg-yellow" : entry.rank <= 3 ? "bg-leaf" : "bg-card"
+                  }`}
+                >
+                  {entry.rank}
+                </span>
+                <span className="font-mono text-sm text-charcoal">{shortWallet(entry.wallet)}</span>
+                <span className="ml-auto font-display text-base text-charcoal">{entry.score}</span>
+              </li>
+            ))
+          )}
+        </ol>
+
+        {board.allTime.length > 0 ? (
+          <div className="mt-5">
+            <h4 className="font-display text-sm uppercase text-charcoal/70">All-time hall of hops</h4>
+            <ul className="mt-2 space-y-1">
+              {board.allTime.slice(0, 5).map((entry) => (
+                <li key={`all-${entry.wallet}`} className="flex justify-between text-sm text-charcoal/85">
+                  <span className="font-mono">{shortWallet(entry.wallet)}</span>
+                  <span className="font-display">{entry.score}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}

@@ -15,6 +15,7 @@ import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CommunityGuidelinesRouteImport } from './routes/community-guidelines'
 import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as GameRouteImport } from './routes/game'
 import { Route as MediaUsageRouteImport } from './routes/media-usage'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RiskDisclosureRouteImport } from './routes/risk-disclosure'
@@ -26,6 +27,7 @@ import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminConnectionsRouteImport } from './routes/_authenticated/admin.connections'
 import { Route as AuthenticatedAdminCuratedRouteImport } from './routes/_authenticated/admin.curated'
+import { Route as AuthenticatedAdminLeaderboardRouteImport } from './routes/_authenticated/admin.leaderboard'
 import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminTokenRouteImport } from './routes/_authenticated/admin.token'
@@ -61,6 +63,11 @@ const CommunityGuidelinesRoute = CommunityGuidelinesRouteImport.update({
 const CookiesRoute = CookiesRouteImport.update({
   id: '/cookies',
   path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GameRoute = GameRouteImport.update({
+  id: '/game',
+  path: '/game',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MediaUsageRoute = MediaUsageRouteImport.update({
@@ -120,6 +127,12 @@ const AuthenticatedAdminCuratedRoute =
     path: '/admin/curated',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminLeaderboardRoute =
+  AuthenticatedAdminLeaderboardRouteImport.update({
+    id: '/admin/leaderboard',
+    path: '/admin/leaderboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminMediaRoute = AuthenticatedAdminMediaRouteImport.update({
   id: '/admin/media',
   path: '/admin/media',
@@ -165,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/cookies': typeof CookiesRoute
+  '/game': typeof GameRoute
   '/media-usage': typeof MediaUsageRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
@@ -175,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/legal/$slug': typeof LegalSlugRoute
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/admin/curated': typeof AuthenticatedAdminCuratedRoute
+  '/admin/leaderboard': typeof AuthenticatedAdminLeaderboardRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/token': typeof AuthenticatedAdminTokenRoute
@@ -190,6 +205,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/cookies': typeof CookiesRoute
+  '/game': typeof GameRoute
   '/media-usage': typeof MediaUsageRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
@@ -200,6 +216,7 @@ export interface FileRoutesByTo {
   '/legal/$slug': typeof LegalSlugRoute
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/admin/curated': typeof AuthenticatedAdminCuratedRoute
+  '/admin/leaderboard': typeof AuthenticatedAdminLeaderboardRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/token': typeof AuthenticatedAdminTokenRoute
@@ -217,6 +234,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/cookies': typeof CookiesRoute
+  '/game': typeof GameRoute
   '/media-usage': typeof MediaUsageRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
@@ -227,6 +245,7 @@ export interface FileRoutesById {
   '/legal/$slug': typeof LegalSlugRoute
   '/_authenticated/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/_authenticated/admin/curated': typeof AuthenticatedAdminCuratedRoute
+  '/_authenticated/admin/leaderboard': typeof AuthenticatedAdminLeaderboardRoute
   '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/token': typeof AuthenticatedAdminTokenRoute
@@ -244,6 +263,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/community-guidelines'
     | '/cookies'
+    | '/game'
     | '/media-usage'
     | '/privacy'
     | '/risk-disclosure'
@@ -254,6 +274,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/admin/connections'
     | '/admin/curated'
+    | '/admin/leaderboard'
     | '/admin/media'
     | '/admin/settings'
     | '/admin/token'
@@ -269,6 +290,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/community-guidelines'
     | '/cookies'
+    | '/game'
     | '/media-usage'
     | '/privacy'
     | '/risk-disclosure'
@@ -279,6 +301,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/admin/connections'
     | '/admin/curated'
+    | '/admin/leaderboard'
     | '/admin/media'
     | '/admin/settings'
     | '/admin/token'
@@ -295,6 +318,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/community-guidelines'
     | '/cookies'
+    | '/game'
     | '/media-usage'
     | '/privacy'
     | '/risk-disclosure'
@@ -305,6 +329,7 @@ export interface FileRouteTypes {
     | '/legal/$slug'
     | '/_authenticated/admin/connections'
     | '/_authenticated/admin/curated'
+    | '/_authenticated/admin/leaderboard'
     | '/_authenticated/admin/media'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/token'
@@ -322,6 +347,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CommunityGuidelinesRoute: typeof CommunityGuidelinesRoute
   CookiesRoute: typeof CookiesRoute
+  GameRoute: typeof GameRoute
   MediaUsageRoute: typeof MediaUsageRoute
   PrivacyRoute: typeof PrivacyRoute
   RiskDisclosureRoute: typeof RiskDisclosureRoute
@@ -378,6 +404,13 @@ declare module '@tanstack/react-router' {
       path: '/cookies'
       fullPath: '/cookies'
       preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/game': {
+      id: '/game'
+      path: '/game'
+      fullPath: '/game'
+      preLoaderRoute: typeof GameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/media-usage': {
@@ -457,6 +490,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCuratedRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/leaderboard': {
+      id: '/_authenticated/admin/leaderboard'
+      path: '/admin/leaderboard'
+      fullPath: '/admin/leaderboard'
+      preLoaderRoute: typeof AuthenticatedAdminLeaderboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/media': {
       id: '/_authenticated/admin/media'
       path: '/admin/media'
@@ -512,6 +552,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminConnectionsRoute: typeof AuthenticatedAdminConnectionsRoute
   AuthenticatedAdminCuratedRoute: typeof AuthenticatedAdminCuratedRoute
+  AuthenticatedAdminLeaderboardRoute: typeof AuthenticatedAdminLeaderboardRoute
   AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminTokenRoute: typeof AuthenticatedAdminTokenRoute
@@ -521,6 +562,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminConnectionsRoute: AuthenticatedAdminConnectionsRoute,
   AuthenticatedAdminCuratedRoute: AuthenticatedAdminCuratedRoute,
+  AuthenticatedAdminLeaderboardRoute: AuthenticatedAdminLeaderboardRoute,
   AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminTokenRoute: AuthenticatedAdminTokenRoute,
@@ -537,6 +579,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CommunityGuidelinesRoute: CommunityGuidelinesRoute,
   CookiesRoute: CookiesRoute,
+  GameRoute: GameRoute,
   MediaUsageRoute: MediaUsageRoute,
   PrivacyRoute: PrivacyRoute,
   RiskDisclosureRoute: RiskDisclosureRoute,
