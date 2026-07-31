@@ -218,7 +218,7 @@ export const whyIvy = {
     },
     {
       title: "Transparent",
-      body: "Official contract, allocation and launch information will be published here before release.",
+      body: "The official mint, chain, supply and launch date are published on this page and verifiable on-chain.",
       tone: "yellow" as const,
     },
     {
@@ -228,7 +228,7 @@ export const whyIvy = {
     },
   ],
   transparencyPanel:
-    "Complete allocation, tokenomics and proceeds information will be published before launch. ivy vibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner.",
+    "$ivy launched on pump.fun on 31 July 2026 as a standard fair launch: 1,000,000,000 supply, no presale, no team allocation, 0% buy/sell tax. ivy vibing is not a registered charity. Creator rewards and specified project proceeds are intended to benefit Ivy and her owner.",
 };
 
 export const tokenRecord = {
