@@ -11,6 +11,8 @@ import {
 import { CrownDoodle, FrogDoodle, GrassStrip, LeafDoodle, PawDoodle, VineDivider } from "./doodles";
 import { useEmbedConsent } from "./cookie-consent";
 import { OfficialSocialEmbed, CuratedNote } from "./official-embed";
+import { Reveal } from "./reveal";
+
 import { platformLabel, type CuratedPost } from "@/types/curated";
 
 import {
