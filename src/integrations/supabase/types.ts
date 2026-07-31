@@ -1037,6 +1037,15 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      leaderboard_top: {
+        Args: { _limit?: number; _season?: string }
+        Returns: {
+          best_score: number
+          last_played_at: string
+          plays: number
+          wallet_masked: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "editor" | "viewer"
