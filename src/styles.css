@@ -323,9 +323,12 @@
 .game-frame {
   position: relative;
   width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
   aspect-ratio: 1536 / 1024;
   background-image: var(--game-frame-src);
-  background-size: 100% 100%;
+  background-size: contain;
+  background-position: center;
   background-repeat: no-repeat;
 }
 
@@ -338,15 +341,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
-@media (max-width: 639px) {
-  .game-frame {
-    aspect-ratio: auto;
-    background-image: none;
-  }
-  .game-frame-screen {
-    position: static;
-    display: block;
-  }
-}

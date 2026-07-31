@@ -182,6 +182,55 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       ctx.fill();
     }
 
+    // hanging ivy garland — echoes the toy frame artwork
+    const drawLeaf = (lx: number, ly: number, size: number, tilt: number, fill: string) => {
+      ctx.save();
+      ctx.translate(lx, ly);
+      ctx.rotate(tilt);
+      ctx.fillStyle = fill;
+      ctx.beginPath();
+      ctx.moveTo(0, -size);
+      ctx.bezierCurveTo(size, -size * 0.6, size * 0.8, size * 0.6, 0, size);
+      ctx.bezierCurveTo(-size * 0.8, size * 0.6, -size, -size * 0.6, 0, -size);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(21, 21, 21, 0.25)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, -size);
+      ctx.lineTo(0, size);
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    ctx.save();
+    ctx.globalAlpha = 0.85;
+    ctx.strokeStyle = "rgba(90, 62, 34, 0.75)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (let x = -10; x <= W + 10; x += 10) {
+      const y = 8 + Math.sin((x + run.distance * 0.18) * 0.03) * 5;
+      if (x === -10) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    for (let i = 0; i < 16; i += 1) {
+      const raw = (i * 41 - run.distance * 0.18) % (W + 60);
+      const x = raw < 0 ? raw + W + 60 : raw;
+      const base = 8 + Math.sin((x + run.distance * 0.18) * 0.03) * 5;
+      const drop = 12 + ((i * 17) % 26);
+      ctx.strokeStyle = "rgba(90, 62, 34, 0.6)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x, base);
+      ctx.quadraticCurveTo(x + 4, base + drop * 0.6, x + 1, base + drop);
+      ctx.stroke();
+      const sway = Math.sin(run.t * 1.4 + i) * 0.18;
+      drawLeaf(x + 1, base + drop + 5, 6 + (i % 3), sway, i % 2 ? COLORS.frog : COLORS.leaf);
+      drawLeaf(x - 5, base + drop * 0.5, 5, sway - 0.6, COLORS.frog);
+    }
+    ctx.restore();
+
+
     // drifting bubbles
     ctx.globalAlpha = 0.14;
     ctx.fillStyle = COLORS.leaf;
@@ -237,6 +286,22 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       ctx.moveTo(padX + 4, GROUND_Y + 22 + bob);
       ctx.lineTo(padX + 32, GROUND_Y + 20 + bob);
       ctx.stroke();
+      if (i % 3 === 0) {
+        // pink lotus, matching the frame stickers
+        const fx = padX - 14;
+        const fy = GROUND_Y + 17 + bob;
+        ctx.fillStyle = COLORS.pink;
+        for (let p = 0; p < 6; p += 1) {
+          const a = (p / 6) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.ellipse(fx + Math.cos(a) * 4, fy + Math.sin(a) * 2.4, 4, 2.6, a, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = COLORS.yellow;
+        ctx.beginPath();
+        ctx.arc(fx, fy, 2.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
     });
 
     // coins
@@ -647,7 +712,8 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
-      <div className="rounded-2xl bg-card p-4 pop-static">
+      <div className="rounded-2xl bg-card p-2 pop-static sm:p-4">
+
         <div
           className="game-frame"
           style={{ ["--game-frame-src" as string]: `url(${gameFrame})` }}
@@ -667,7 +733,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
                   jump();
                 }
               }}
-              className="relative block h-full w-auto max-w-full touch-none select-none overflow-hidden rounded-xl border-[3px] border-charcoal max-sm:h-auto max-sm:w-full"
+              className="relative block h-full max-h-full w-auto max-w-full touch-none select-none overflow-hidden rounded-md border-2 border-charcoal sm:rounded-xl sm:border-[3px]"
               style={{ aspectRatio: `${W} / ${H}` }}
             >
               <canvas
@@ -678,16 +744,17 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
                 style={{ imageRendering: "auto" }}
               />
               {phase !== "playing" ? (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-ivy/80 p-3 text-center text-cream">
-                  <p className="font-display text-2xl">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-ivy/80 p-2 text-center text-cream sm:gap-2 sm:p-3">
+                  <p className="font-display text-lg sm:text-2xl">
                     {phase === "idle" ? "Lily Pad Leap" : "Splash!"}
                   </p>
-                  <p className="max-w-xs text-sm opacity-90">
+                  <p className="max-w-xs text-[11px] leading-snug opacity-90 sm:text-sm">
                     {phase === "idle"
                       ? "Hop across the pond. Dodge the reeds, scoop the $ivy coins."
                       : `You scored ${score}. Best this visit: ${best}.`}
                   </p>
-                  <span className="rounded-full bg-frog px-4 py-2 font-display text-sm text-charcoal pop-static">
+                  <span className="rounded-full bg-frog px-3 py-1.5 font-display text-[11px] text-charcoal pop-static sm:px-4 sm:py-2 sm:text-sm">
+
                     {phase === "idle" ? "Tap / press space to start" : "Tap to hop again"}
                   </span>
                 </div>
