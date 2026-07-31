@@ -54,7 +54,8 @@ export function OfficialSocialEmbed({
           observer.disconnect();
         }
       },
-      { rootMargin: "200px 0px" },
+      // Mount well before the card is visible so the player is ready on arrival.
+      { rootMargin: "800px 0px" },
     );
     observer.observe(node);
     return () => observer.disconnect();
