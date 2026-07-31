@@ -182,6 +182,55 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       ctx.fill();
     }
 
+    // hanging ivy garland — echoes the toy frame artwork
+    const drawLeaf = (lx: number, ly: number, size: number, tilt: number, fill: string) => {
+      ctx.save();
+      ctx.translate(lx, ly);
+      ctx.rotate(tilt);
+      ctx.fillStyle = fill;
+      ctx.beginPath();
+      ctx.moveTo(0, -size);
+      ctx.bezierCurveTo(size, -size * 0.6, size * 0.8, size * 0.6, 0, size);
+      ctx.bezierCurveTo(-size * 0.8, size * 0.6, -size, -size * 0.6, 0, -size);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(21, 21, 21, 0.25)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, -size);
+      ctx.lineTo(0, size);
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    ctx.save();
+    ctx.globalAlpha = 0.85;
+    ctx.strokeStyle = "rgba(90, 62, 34, 0.75)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (let x = -10; x <= W + 10; x += 10) {
+      const y = 8 + Math.sin((x + run.distance * 0.18) * 0.03) * 5;
+      if (x === -10) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    for (let i = 0; i < 16; i += 1) {
+      const raw = (i * 41 - run.distance * 0.18) % (W + 60);
+      const x = raw < 0 ? raw + W + 60 : raw;
+      const base = 8 + Math.sin((x + run.distance * 0.18) * 0.03) * 5;
+      const drop = 12 + ((i * 17) % 26);
+      ctx.strokeStyle = "rgba(90, 62, 34, 0.6)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x, base);
+      ctx.quadraticCurveTo(x + 4, base + drop * 0.6, x + 1, base + drop);
+      ctx.stroke();
+      const sway = Math.sin(run.t * 1.4 + i) * 0.18;
+      drawLeaf(x + 1, base + drop + 5, 6 + (i % 3), sway, i % 2 ? COLORS.frog : COLORS.leaf);
+      drawLeaf(x - 5, base + drop * 0.5, 5, sway - 0.6, COLORS.frog);
+    }
+    ctx.restore();
+
+
     // drifting bubbles
     ctx.globalAlpha = 0.14;
     ctx.fillStyle = COLORS.leaf;
