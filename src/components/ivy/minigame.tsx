@@ -744,11 +744,12 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
                 style={{ imageRendering: "auto" }}
               />
               {phase !== "playing" ? (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-ivy/80 p-3 text-center text-cream">
-                  <p className="font-display text-2xl">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-ivy/80 p-2 text-center text-cream sm:gap-2 sm:p-3">
+                  <p className="font-display text-lg sm:text-2xl">
                     {phase === "idle" ? "Lily Pad Leap" : "Splash!"}
                   </p>
-                  <p className="max-w-xs text-sm opacity-90">
+                  <p className="max-w-xs text-[11px] leading-snug opacity-90 sm:text-sm">
+
                     {phase === "idle"
                       ? "Hop across the pond. Dodge the reeds, scoop the $ivy coins."
                       : `You scored ${score}. Best this visit: ${best}.`}
