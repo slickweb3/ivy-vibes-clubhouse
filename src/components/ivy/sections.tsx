@@ -180,7 +180,7 @@ export function MeetIvy({ curated = [] }: { curated?: CuratedPost[] }) {
                   tone={index === 1 ? "lavender" : "leaf"}
                 />
               )}
-              <p className="text-sm leading-relaxed text-charcoal/85">{item.body}</p>
+              <p className="text-sm leading-relaxed text-cream/90">{item.body}</p>
             </article>
           );
         })}
