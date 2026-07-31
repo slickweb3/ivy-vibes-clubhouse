@@ -178,20 +178,37 @@
 }
 
 @utility pop {
+  position: relative;
   border: 3px solid var(--charcoal);
   box-shadow: 0 6px 0 0 var(--charcoal);
+  transform-origin: center bottom;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   transition:
-    transform 150ms ease,
-    box-shadow 150ms ease;
+    transform 220ms cubic-bezier(0.34, 1.8, 0.5, 1),
+    box-shadow 180ms cubic-bezier(0.34, 1.6, 0.5, 1),
+    filter 180ms ease;
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 0 0 var(--charcoal);
+    transform: translateY(-3px) rotate(-1.2deg) scale(1.03);
+    box-shadow: 0 10px 0 0 var(--charcoal);
+    filter: saturate(1.08);
+  }
+  &:focus-visible {
+    outline: none;
+    transform: translateY(-3px) scale(1.03);
+    box-shadow:
+      0 10px 0 0 var(--charcoal),
+      0 0 0 4px var(--frog);
   }
   &:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 0 var(--charcoal);
+    transform: translateY(5px) rotate(0.6deg) scale(0.96);
+    box-shadow: 0 1px 0 0 var(--charcoal);
+    transition:
+      transform 90ms ease-out,
+      box-shadow 90ms ease-out;
   }
 }
+
 
 @utility pop-static {
   border: 3px solid var(--charcoal);
@@ -266,7 +283,13 @@
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+  .pop:hover,
+  .pop:focus-visible,
+  .pop:active {
+    transform: none !important;
+  }
 }
+
 
 @utility ivy-drift {
   animation: ivy-drift 30s linear infinite;
