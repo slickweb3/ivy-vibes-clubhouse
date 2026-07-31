@@ -83,7 +83,7 @@ export function IvyHopSticker() {
             className={cn(
               "relative h-24 w-auto drop-shadow-[0_6px_0_rgba(21,21,21,0.35)] transition-transform duration-200 sm:h-28",
               "group-hover:-translate-y-1 group-hover:scale-105 group-active:scale-95",
-              leaping ? "motion-safe:ivy-sticker-leap" : "motion-safe:ivy-sticker-idle",
+              move ? MOVE_CLASS[move] : "motion-safe:ivy-sticker-idle",
             )}
           />
         </button>
