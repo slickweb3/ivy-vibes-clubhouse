@@ -46,11 +46,16 @@ async function handle(provider: string, action: string, request: Request): Promi
 
   try {
     if (action === "authorize") {
-      const state = await oauth.createState(platform, status.redirectUri!);
-      const url = oauth.authorizeUrl(platform, state);
-      if (!url) return notConfiguredResponse(status);
-      return new Response(null, { status: 302, headers: { location: url } });
+      // Authorization may only be started by a signed-in admin, through the
+      // protected admin server function (or a trusted service call carrying
+      // the sync secret). A public visitor must never be able to connect
+      // their own account in place of Ivy's official one.
+      return jsonResponse(
+        { ok: false, error: "unauthorized", hint: "Start the connection from the admin area." },
+        401,
+      );
     }
+
 
     if (action === "callback") {
       const url = new URL(request.url);
