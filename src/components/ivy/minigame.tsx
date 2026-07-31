@@ -145,29 +145,57 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
+    // Render at the canvas' real backing resolution, then work in world units.
+    const scale = canvas.width / W;
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
     ctx.clearRect(0, 0, W, H);
 
+    const shake = run.shake;
+    if (shake > 0) {
+      ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
+    }
+
     const sky = ctx.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, COLORS.pond);
+    sky.addColorStop(0, "#1c6244");
+    sky.addColorStop(0.55, COLORS.pond);
     sky.addColorStop(1, COLORS.pondDeep);
     ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(-20, -20, W + 40, H + 40);
+
+    // far parallax reed silhouettes
+    ctx.fillStyle = "rgba(15, 56, 38, 0.55)";
+    for (let i = 0; i < 14; i += 1) {
+      const raw = (i * 63 - run.distance * 0.12) % (W + 80);
+      const x = raw < 0 ? raw + W + 80 : raw;
+      const h = 40 + ((i * 29) % 46);
+      ctx.beginPath();
+      ctx.moveTo(x, GROUND_Y + 12);
+      ctx.quadraticCurveTo(x + 6, GROUND_Y + 12 - h * 0.6, x + 2, GROUND_Y + 12 - h);
+      ctx.quadraticCurveTo(x + 10, GROUND_Y + 12 - h * 0.5, x + 12, GROUND_Y + 12);
+      ctx.closePath();
+      ctx.fill();
+    }
 
     // drifting bubbles
-    ctx.globalAlpha = 0.16;
+    ctx.globalAlpha = 0.14;
     ctx.fillStyle = COLORS.leaf;
-    for (let i = 0; i < 9; i += 1) {
-      const bx = (i * 71 - run.distance * 0.25) % (W + 60);
-      const x = bx < 0 ? bx + W + 60 : bx;
-      const y = 40 + ((i * 37 + run.t * 14) % 120);
+    for (let i = 0; i < 11; i += 1) {
+      const raw = (i * 71 - run.distance * 0.25) % (W + 60);
+      const x = raw < 0 ? raw + W + 60 : raw;
+      const y = 34 + ((i * 37 + run.t * 14) % 130);
       ctx.beginPath();
-      ctx.arc(x, y, 4 + (i % 3) * 3, 0, Math.PI * 2);
+      ctx.arc(x, y, 3 + (i % 3) * 3, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
 
-    // water line + lily pads
-    ctx.fillStyle = "rgba(131, 217, 78, 0.18)";
+    // water surface
+    const water = ctx.createLinearGradient(0, GROUND_Y + 10, 0, H);
+    water.addColorStop(0, "rgba(131, 217, 78, 0.26)");
+    water.addColorStop(1, "rgba(131, 217, 78, 0.08)");
+    ctx.fillStyle = water;
     ctx.fillRect(0, GROUND_Y + 10, W, H - GROUND_Y - 10);
     ctx.strokeStyle = COLORS.frog;
     ctx.lineWidth = 3;
@@ -176,84 +204,138 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     ctx.lineTo(W, GROUND_Y + 10);
     ctx.stroke();
 
-    run.pads.forEach((padX) => {
+    // ripples
+    ctx.strokeStyle = "rgba(255, 248, 231, 0.18)";
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 5; i += 1) {
+      const raw = (i * 121 - run.distance * 0.8) % (W + 120);
+      const x = raw < 0 ? raw + W + 120 : raw;
+      const y = GROUND_Y + 22 + i * 9;
+      ctx.beginPath();
+      ctx.ellipse(x, y, 26, 3, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // lily pads
+    run.pads.forEach((padX, i) => {
+      const bob = Math.sin(run.t * 1.6 + i) * 1.6;
+      ctx.fillStyle = "rgba(21, 21, 21, 0.18)";
+      ctx.beginPath();
+      ctx.ellipse(padX, GROUND_Y + 26 + bob, 34, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
       ctx.fillStyle = COLORS.leaf;
       ctx.beginPath();
-      ctx.ellipse(padX, GROUND_Y + 22, 34, 9, 0, 0, Math.PI * 2);
+      ctx.ellipse(padX, GROUND_Y + 22 + bob, 34, 9, 0, 0, Math.PI * 2);
       ctx.fill();
+      ctx.strokeStyle = "rgba(21, 21, 21, 0.35)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(padX + 4, GROUND_Y + 22 + bob);
+      ctx.lineTo(padX + 32, GROUND_Y + 20 + bob);
+      ctx.stroke();
     });
 
     // coins
     run.coinsList.forEach((coin) => {
       if (coin.taken) return;
+      const wobble = Math.abs(Math.cos(coin.spin));
+      ctx.save();
+      ctx.translate(coin.x, coin.y + Math.sin(run.t * 3 + coin.x * 0.05) * 2);
+      ctx.scale(Math.max(0.2, wobble), 1);
       ctx.fillStyle = COLORS.yellow;
       ctx.strokeStyle = COLORS.charcoal;
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(coin.x, coin.y, 9, 0, Math.PI * 2);
+      ctx.arc(0, 0, 9, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
-      ctx.fillStyle = COLORS.charcoal;
-      ctx.font = "bold 10px system-ui, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("i", coin.x, coin.y + 3.5);
+      if (wobble > 0.55) {
+        ctx.fillStyle = COLORS.charcoal;
+        ctx.font = "bold 10px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("i", 0, 3.5);
+      }
+      ctx.restore();
     });
 
     // obstacles
     run.obstacles.forEach((ob) => {
+      const top = GROUND_Y + 10 - ob.h;
+      ctx.fillStyle = "rgba(21, 21, 21, 0.22)";
+      ctx.beginPath();
+      ctx.ellipse(ob.x + ob.w / 2, GROUND_Y + 14, ob.w * 0.7, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
       ctx.strokeStyle = COLORS.charcoal;
       ctx.lineWidth = 2.5;
-      if (ob.kind === "reed") {
-        ctx.fillStyle = COLORS.pink;
-        ctx.beginPath();
-        ctx.roundRect(ob.x, GROUND_Y + 10 - ob.h, ob.w, ob.h, 6);
-        ctx.fill();
-        ctx.stroke();
-      } else {
-        ctx.fillStyle = COLORS.lavender;
-        ctx.beginPath();
-        ctx.roundRect(ob.x, GROUND_Y + 10 - ob.h, ob.w, ob.h, 10);
-        ctx.fill();
-        ctx.stroke();
-      }
-    });
-
-    // player: Ivy's frog hat
-    const px = 70;
-    const py = run.y;
-    ctx.save();
-    ctx.translate(px, py);
-    const squash = run.vy !== 0 ? 1.06 : 1;
-    ctx.scale(1, squash);
-    ctx.fillStyle = COLORS.frog;
-    ctx.strokeStyle = COLORS.charcoal;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.roundRect(-18, -22, 36, 24, 12);
-    ctx.fill();
-    ctx.stroke();
-    // eyes
-    [-9, 9].forEach((ex) => {
-      ctx.fillStyle = COLORS.cream;
+      ctx.fillStyle = ob.kind === "reed" ? COLORS.pink : COLORS.lavender;
       ctx.beginPath();
-      ctx.arc(ex, -26, 8, 0, Math.PI * 2);
+      ctx.roundRect(ob.x, top, ob.w, ob.h, ob.kind === "reed" ? 6 : 10);
       ctx.fill();
       ctx.stroke();
-      ctx.fillStyle = COLORS.charcoal;
+      ctx.fillStyle = "rgba(255, 248, 231, 0.35)";
       ctx.beginPath();
-      ctx.arc(ex + 1.5, -26, 3.4, 0, Math.PI * 2);
+      ctx.roundRect(ob.x + 3, top + 4, Math.max(2, ob.w * 0.22), Math.max(4, ob.h - 10), 3);
       ctx.fill();
     });
-    ctx.restore();
+
+    // splashes
+    run.splashes.forEach((p) => {
+      ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 2));
+      ctx.fillStyle = p.hue;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    // player
+    const sprite = spriteRef.current;
+    const airborne = run.y < GROUND_Y - 0.5;
+    const bob = airborne ? 0 : Math.sin(run.t * 14) * 1.8;
+    const py = run.y + bob;
+
+    ctx.fillStyle = "rgba(21, 21, 21, 0.28)";
+    const shadowScale = Math.max(0.35, 1 - (GROUND_Y - run.y) / 130);
+    ctx.beginPath();
+    ctx.ellipse(PLAYER_X, GROUND_Y + 14, 26 * shadowScale, 6 * shadowScale, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (sprite && sprite.complete && sprite.naturalWidth > 0) {
+      const h = PLAYER_H;
+      const w = (sprite.naturalWidth / sprite.naturalHeight) * h;
+      ctx.save();
+      ctx.translate(PLAYER_X, py + 10);
+      const tilt = Math.max(-0.22, Math.min(0.22, run.vy / 3600));
+      ctx.rotate(tilt);
+      const squash = airborne ? 1.04 : 1 - Math.abs(Math.sin(run.t * 14)) * 0.03;
+      ctx.drawImage(sprite, -w / 2, -h * squash, w, h * squash);
+      ctx.restore();
+    } else {
+      ctx.fillStyle = COLORS.leaf;
+      ctx.beginPath();
+      ctx.roundRect(PLAYER_X - 22, py - 34, 44, 44, 14);
+      ctx.fill();
+    }
 
     // hud
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.35)";
+    ctx.shadowBlur = 6;
     ctx.fillStyle = COLORS.cream;
-    ctx.font = "bold 16px system-ui, sans-serif";
+    ctx.font = "bold 18px system-ui, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(`${scoreOf(run)}`, 14, 26);
+    ctx.fillText(`${scoreOf(run)}`, 14, 28);
     ctx.font = "bold 10px system-ui, sans-serif";
-    ctx.fillText("SCORE", 14, 38);
+    ctx.fillText("SCORE", 14, 40);
+    if (run.coins > 0) {
+      ctx.textAlign = "right";
+      ctx.fillStyle = COLORS.yellow;
+      ctx.font = "bold 14px system-ui, sans-serif";
+      ctx.fillText(`◎ ${run.coins}`, W - 14, 28);
+    }
+    ctx.restore();
   }, []);
+
 
   /* ---- loop ---- */
   const step = useCallback(
