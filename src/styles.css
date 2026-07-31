@@ -344,3 +344,97 @@
   overflow: hidden;
 }
 
+
+/* ------------------------------------------------------------------ */
+/* Clickable Ivy sticker: idle "tap me" bob + the leap itself           */
+/* ------------------------------------------------------------------ */
+
+@keyframes ivy-sticker-idle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(2deg);
+  }
+}
+
+@keyframes ivy-sticker-leap {
+  0% {
+    transform: translateY(0) scaleY(1) scaleX(1) rotate(0deg);
+  }
+  12% {
+    transform: translateY(6px) scaleY(0.78) scaleX(1.2) rotate(0deg);
+  }
+  32% {
+    transform: translateY(-46vh) scaleY(1.18) scaleX(0.88) rotate(-14deg);
+  }
+  50% {
+    transform: translateY(-58vh) scaleY(1.02) scaleX(1) rotate(8deg);
+  }
+  72% {
+    transform: translateY(-24vh) scaleY(1.1) scaleX(0.94) rotate(-6deg);
+  }
+  88% {
+    transform: translateY(4px) scaleY(0.8) scaleX(1.18) rotate(0deg);
+  }
+  96% {
+    transform: translateY(-8px) scaleY(1.04) scaleX(0.98) rotate(0deg);
+  }
+  100% {
+    transform: translateY(0) scaleY(1) scaleX(1) rotate(0deg);
+  }
+}
+
+@keyframes ivy-sticker-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@keyframes ivy-sticker-puff {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.75;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@utility ivy-sticker-idle {
+  transform-origin: 50% 100%;
+  animation: ivy-sticker-idle 3.4s ease-in-out infinite;
+}
+
+@utility ivy-sticker-leap {
+  transform-origin: 50% 100%;
+  animation: ivy-sticker-leap 1.25s cubic-bezier(0.3, 0.9, 0.35, 1) 1;
+}
+
+@utility ivy-sticker-ring {
+  animation: ivy-sticker-ring 2.4s ease-out infinite;
+}
+
+@utility ivy-sticker-puff {
+  animation: ivy-sticker-puff 0.55s ease-out 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ivy-sticker-idle,
+  .ivy-sticker-leap,
+  .ivy-sticker-ring,
+  .ivy-sticker-puff {
+    animation: none !important;
+  }
+}
