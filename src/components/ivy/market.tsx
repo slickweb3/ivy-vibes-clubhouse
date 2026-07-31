@@ -65,7 +65,8 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
       id="live-chart"
       eyebrow="Chart & market"
       title="The $ivy tracker"
-      intro="When the coin exists, this board reads straight from the on-chain pair — price, market cap, liquidity and volume. Until then, nothing here is guessed."
+      intro="This board reads straight from the on-chain pair — price, market cap, liquidity and volume. Nothing here is guessed."
+
       tone="white"
     >
       <div className="flex flex-wrap items-center gap-3">
