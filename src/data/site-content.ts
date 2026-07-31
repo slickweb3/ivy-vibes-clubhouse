@@ -361,6 +361,5 @@ export const navLinks = [
   { label: "$ivy", hash: "#token-record" },
   { label: "Chart", hash: "#live-chart" },
   { label: "Game", hash: "#arcade" },
-  { label: "Memes", hash: "#meme-machine" },
   { label: "FAQ", hash: "#faq" },
 ];
