@@ -9,7 +9,7 @@ export function ArcadeTeaser() {
       id="arcade"
       eyebrow="Ivy's arcade"
       title="Lily Pad Leap"
-      intro="One button, one frog hat, one very determined pond. Post a verified score with your Solana wallet — the top wallet each month is airdropped 50,000 $ivy."
+      intro="One button, one very good dog, one very determined pond. Post a verified score with your Solana wallet — the top wallet each month is airdropped 50,000 $ivy."
       tone="lavender"
     >
       <div className="flex flex-col items-start gap-4 rounded-2xl bg-card p-5 pop-static sm:flex-row sm:items-center">
