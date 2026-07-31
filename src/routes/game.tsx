@@ -10,7 +10,7 @@ import type { Leaderboard } from "@/lib/game.server";
 
 const TITLE = "Lily Pad Leap — the $ivy minigame & monthly leaderboard";
 const DESCRIPTION =
-  "Hop Ivy's frog hat across the pond, scoop $ivy coins and sign your score to a Solana wallet. Top wallet each month gets a 50,000 $ivy airdrop.";
+  "Hop across the pond, scoop $ivy coins and sign your score to a Solana wallet. Top wallet each month gets a 50,000 $ivy airdrop.";
 
 function emptyBoard(): Leaderboard {
   const now = new Date();
@@ -67,7 +67,7 @@ function GamePage() {
           id="lily-pad-leap"
           eyebrow="Ivy's arcade"
           title="Lily Pad Leap"
-          intro="One button, one frog hat, one very determined pond. Sign your best run to your Solana wallet and you are on the monthly board — first place gets a 50,000 $ivy airdrop."
+          intro="One button, one very good dog, one very determined pond. Sign your best run to your Solana wallet and you are on the monthly board — first place gets a 50,000 $ivy airdrop."
           tone="leaf"
         >
           <LilyPadLeap initialLeaderboard={board} />

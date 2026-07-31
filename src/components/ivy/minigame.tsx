@@ -676,7 +676,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
               </p>
               <p className="max-w-xs text-sm opacity-90">
                 {phase === "idle"
-                  ? "Hop Ivy's frog hat across the pond. Dodge the reeds, scoop the $ivy coins."
+                  ? "Hop across the pond. Dodge the reeds, scoop the $ivy coins."
                   : `You scored ${score}. Best this visit: ${best}.`}
               </p>
               <span className="rounded-full bg-frog px-4 py-2 font-display text-sm text-charcoal pop-static">
