@@ -42,7 +42,7 @@ const COLORS = {
   lavender: "#C7B8FF",
 };
 
-type Obstacle = { x: number; w: number; h: number; kind: "reed" | "rock" };
+type Obstacle = { x: number; w: number; h: number; kind: "stump" | "log" };
 type Coin = { x: number; y: number; taken: boolean; spin: number };
 type Splash = { x: number; y: number; vx: number; vy: number; life: number; hue: string };
 
