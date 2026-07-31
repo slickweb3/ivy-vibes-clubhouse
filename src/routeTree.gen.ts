@@ -15,6 +15,7 @@ import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CommunityGuidelinesRouteImport } from './routes/community-guidelines'
 import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as GameRouteImport } from './routes/game'
 import { Route as MediaUsageRouteImport } from './routes/media-usage'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RiskDisclosureRouteImport } from './routes/risk-disclosure'
@@ -61,6 +62,11 @@ const CommunityGuidelinesRoute = CommunityGuidelinesRouteImport.update({
 const CookiesRoute = CookiesRouteImport.update({
   id: '/cookies',
   path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GameRoute = GameRouteImport.update({
+  id: '/game',
+  path: '/game',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MediaUsageRoute = MediaUsageRouteImport.update({
@@ -165,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/cookies': typeof CookiesRoute
+  '/game': typeof GameRoute
   '/media-usage': typeof MediaUsageRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/cookies': typeof CookiesRoute
+  '/game': typeof GameRoute
   '/media-usage': typeof MediaUsageRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
@@ -217,6 +225,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/community-guidelines': typeof CommunityGuidelinesRoute
   '/cookies': typeof CookiesRoute
+  '/game': typeof GameRoute
   '/media-usage': typeof MediaUsageRoute
   '/privacy': typeof PrivacyRoute
   '/risk-disclosure': typeof RiskDisclosureRoute
@@ -244,6 +253,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/community-guidelines'
     | '/cookies'
+    | '/game'
     | '/media-usage'
     | '/privacy'
     | '/risk-disclosure'
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/community-guidelines'
     | '/cookies'
+    | '/game'
     | '/media-usage'
     | '/privacy'
     | '/risk-disclosure'
@@ -295,6 +306,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/community-guidelines'
     | '/cookies'
+    | '/game'
     | '/media-usage'
     | '/privacy'
     | '/risk-disclosure'
@@ -322,6 +334,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CommunityGuidelinesRoute: typeof CommunityGuidelinesRoute
   CookiesRoute: typeof CookiesRoute
+  GameRoute: typeof GameRoute
   MediaUsageRoute: typeof MediaUsageRoute
   PrivacyRoute: typeof PrivacyRoute
   RiskDisclosureRoute: typeof RiskDisclosureRoute
@@ -378,6 +391,13 @@ declare module '@tanstack/react-router' {
       path: '/cookies'
       fullPath: '/cookies'
       preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/game': {
+      id: '/game'
+      path: '/game'
+      fullPath: '/game'
+      preLoaderRoute: typeof GameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/media-usage': {
@@ -537,6 +557,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CommunityGuidelinesRoute: CommunityGuidelinesRoute,
   CookiesRoute: CookiesRoute,
+  GameRoute: GameRoute,
   MediaUsageRoute: MediaUsageRoute,
   PrivacyRoute: PrivacyRoute,
   RiskDisclosureRoute: RiskDisclosureRoute,

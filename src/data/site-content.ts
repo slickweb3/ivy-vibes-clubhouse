@@ -360,5 +360,6 @@ export const navLinks = [
   { label: "The Lore", hash: "#the-lore" },
   { label: "$ivy", hash: "#token-record" },
   { label: "Chart", hash: "#live-chart" },
+  { label: "Game", hash: "#arcade" },
   { label: "FAQ", hash: "#faq" },
 ];
