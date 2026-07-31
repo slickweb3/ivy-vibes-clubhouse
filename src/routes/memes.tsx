@@ -58,7 +58,7 @@ function MemePage() {
           eyebrow="Ivy's meme lab"
           title="Ivy Meme Machine"
           intro="Ivy's most famous frames, a pile of frog fits and one big download button. Pick a photo, dress her up, caption it, post it."
-          tone="pink"
+          tone="lavender"
         >
           <MemeMachine templates={templates} />
 
