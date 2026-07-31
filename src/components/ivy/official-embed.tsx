@@ -127,7 +127,8 @@ export function OfficialSocialEmbed({
                   post.originalCaption ??
                   `Ivy in an official ${label} video from @${post.sourceAccountHandle}`
                 }
-                loading="lazy"
+                loading="eager"
+                fetchPriority="high"
                 decoding="async"
                 referrerPolicy="no-referrer"
                 onError={() => setPosterBroken(true)}
