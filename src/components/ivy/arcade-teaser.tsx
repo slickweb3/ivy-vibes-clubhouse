@@ -26,7 +26,7 @@ export function ArcadeTeaser() {
         </div>
         <Link
           to="/game"
-          className="ml-auto inline-flex min-h-11 shrink-0 items-center rounded-full bg-frog px-5 font-display text-charcoal pop-static transition-transform hover:-translate-y-0.5"
+          className="ml-auto inline-flex min-h-11 shrink-0 items-center rounded-full bg-frog px-5 font-display text-charcoal pop"
         >
           Play Lily Pad Leap
         </Link>
