@@ -343,7 +343,8 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   const step = useCallback(
     (now: number) => {
       const run = runRef.current;
-      const dt = Math.min((now - lastRef.current) / 1000, 0.05);
+      // Clamp dt so a backgrounded tab can never teleport the player into a reed.
+      const dt = Math.min((now - lastRef.current) / 1000, 1 / 30);
       lastRef.current = now;
 
       run.t += dt;
@@ -351,13 +352,17 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       const dx = run.speed * dt;
       run.distance += dx;
 
+      const wasAirborne = run.y < GROUND_Y - 0.5;
       run.vy += GRAVITY * dt;
       run.y += run.vy * dt;
       if (run.y >= GROUND_Y) {
+        if (wasAirborne && run.vy > 260) burst(run, PLAYER_X, GROUND_Y + 10, 6, COLORS.cream);
         run.y = GROUND_Y;
         run.vy = 0;
         run.jumps = 0;
       }
+
+      run.shake = Math.max(0, run.shake - dt * 22);
 
       run.pads = run.pads.map((p) => (p - dx * 0.6 < -40 ? p + W + 60 : p - dx * 0.6));
 
@@ -367,14 +372,20 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
         run.obstacles.push(
           isRock
             ? { x: W + 20, w: 34, h: 22, kind: "rock" }
-            : { x: W + 20, w: 16, h: 34 + Math.random() * 26, kind: "reed" },
+            : { x: W + 20, w: 16, h: 34 + Math.random() * 24, kind: "reed" },
         );
-        run.nextObstacle = 210 + Math.random() * 190 + Math.max(0, 320 - run.speed);
+        // Gap scales with speed so late-game spacing stays clearable with one hop.
+        run.nextObstacle = run.speed * (1.15 + Math.random() * 0.7);
       }
 
       run.nextCoin -= dx;
       if (run.nextCoin <= 0) {
-        run.coinsList.push({ x: W + 20, y: GROUND_Y - 40 - Math.random() * 60, taken: false });
+        run.coinsList.push({
+          x: W + 20,
+          y: GROUND_Y - 42 - Math.random() * 56,
+          taken: false,
+          spin: Math.random() * Math.PI,
+        });
         run.nextCoin = 220 + Math.random() * 240;
       }
 
@@ -384,23 +395,34 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       });
       run.coinsList = run.coinsList.filter((coin) => {
         coin.x -= dx;
+        coin.spin += dt * 4;
         return coin.x > -20;
       });
+      run.splashes = run.splashes.filter((p) => {
+        p.life -= dt;
+        p.vy += GRAVITY * 0.35 * dt;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        return p.life > 0;
+      });
 
-      // collisions
-      const pl = { x: 70 - 18, y: run.y - 34, w: 36, h: 36 };
+      // collisions — a forgiving box tucked inside the sprite
+      const pl = { x: PLAYER_X - 17, y: run.y - 34, w: 34, h: 40 };
       for (const ob of run.obstacles) {
         const oy = GROUND_Y + 10 - ob.h;
-        if (pl.x < ob.x + ob.w && pl.x + pl.w > ob.x && pl.y + pl.h > oy) {
+        if (pl.x < ob.x + ob.w - 3 && pl.x + pl.w > ob.x + 3 && pl.y + pl.h > oy + 3) {
           run.over = true;
+          run.shake = 12;
+          burst(run, PLAYER_X + 10, run.y - 12, 16, COLORS.pink);
           break;
         }
       }
       for (const coin of run.coinsList) {
         if (coin.taken) continue;
-        if (Math.hypot(coin.x - 70, coin.y - (run.y - 12)) < 26) {
+        if (Math.hypot(coin.x - PLAYER_X, coin.y - (run.y - 16)) < 28) {
           coin.taken = true;
           run.coins += 1;
+          burst(run, coin.x, coin.y, 8, COLORS.yellow);
         }
       }
 
@@ -414,25 +436,30 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
         rafRef.current = null;
         return;
       }
-      rafRef.current = requestAnimationFrame(step);
+      rafRef.current = requestAnimationFrame(stepRef.current);
     },
     [draw],
   );
 
+  stepRef.current = step;
+
   const start = useCallback(async () => {
+    // Never leave a second loop running — that used to double the game speed.
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
     runRef.current = freshRun();
     setScore(0);
     setStatus(null);
     setPhase("playing");
+    nonceRef.current = null;
     lastRef.current = performance.now();
-    rafRef.current = requestAnimationFrame(step);
+    rafRef.current = requestAnimationFrame(stepRef.current);
     try {
       const { nonce } = await beginRun({});
       nonceRef.current = nonce;
     } catch {
       nonceRef.current = null;
     }
-  }, [beginRun, step]);
+  }, [beginRun]);
 
   const jump = useCallback(() => {
     const run = runRef.current;
@@ -443,8 +470,10 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     if (run.jumps < 2) {
       run.vy = JUMP_V * (run.jumps === 0 ? 1 : 0.86);
       run.jumps += 1;
+      burst(run, PLAYER_X - 8, run.y + 6, run.jumps === 1 ? 5 : 8, COLORS.leaf);
     }
   }, [phase, start]);
+
 
   jumpRef.current = jump;
 
