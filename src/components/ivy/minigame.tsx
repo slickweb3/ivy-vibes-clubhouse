@@ -328,25 +328,66 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       ctx.restore();
     });
 
-    // obstacles
+    // obstacles — weathered pond logs
     run.obstacles.forEach((ob) => {
       const top = GROUND_Y + 10 - ob.h;
       ctx.fillStyle = "rgba(21, 21, 21, 0.22)";
       ctx.beginPath();
       ctx.ellipse(ob.x + ob.w / 2, GROUND_Y + 14, ob.w * 0.7, 5, 0, 0, Math.PI * 2);
       ctx.fill();
+
       ctx.strokeStyle = COLORS.charcoal;
       ctx.lineWidth = 2.5;
-      ctx.fillStyle = ob.kind === "reed" ? COLORS.pink : COLORS.lavender;
+      // bark body
+      ctx.fillStyle = BARK;
       ctx.beginPath();
-      ctx.roundRect(ob.x, top, ob.w, ob.h, ob.kind === "reed" ? 6 : 10);
+      ctx.roundRect(ob.x, top, ob.w, ob.h, Math.min(10, ob.w * 0.4));
       ctx.fill();
       ctx.stroke();
-      ctx.fillStyle = "rgba(255, 248, 231, 0.35)";
-      ctx.beginPath();
-      ctx.roundRect(ob.x + 3, top + 4, Math.max(2, ob.w * 0.22), Math.max(4, ob.h - 10), 3);
-      ctx.fill();
+
+      if (ob.kind === "log") {
+        // lying log: sawn end-grain circle on the left, bark grain lines across
+        const cy = top + ob.h / 2;
+        const r = Math.min(ob.h / 2 - 2, 9);
+        ctx.fillStyle = WOOD;
+        ctx.beginPath();
+        ctx.ellipse(ob.x + r + 2, cy, r * 0.62, r, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.lineWidth = 1.4;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(ob.x + r + 2, cy, r * 0.3, r * 0.5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.strokeStyle = "rgba(21, 21, 21, 0.28)";
+        ctx.lineWidth = 1.6;
+        for (let i = 1; i <= 2; i += 1) {
+          const gy = top + (ob.h * i) / 3;
+          ctx.beginPath();
+          ctx.moveTo(ob.x + r * 1.9, gy);
+          ctx.lineTo(ob.x + ob.w - 4, gy);
+          ctx.stroke();
+        }
+      } else {
+        // upright stump: sawn top, vertical bark strips, little moss cap
+        ctx.fillStyle = WOOD;
+        ctx.beginPath();
+        ctx.ellipse(ob.x + ob.w / 2, top + 3, ob.w / 2 - 1, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        ctx.strokeStyle = "rgba(21, 21, 21, 0.25)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(ob.x + ob.w * 0.5, top + 8);
+        ctx.lineTo(ob.x + ob.w * 0.5, top + ob.h - 4);
+        ctx.stroke();
+        ctx.fillStyle = COLORS.frog;
+        ctx.beginPath();
+        ctx.ellipse(ob.x + ob.w * 0.28, top + 4, 3.5, 2.2, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
     });
+
 
     // splashes
     run.splashes.forEach((p) => {
