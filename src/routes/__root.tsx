@@ -101,6 +101,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/favicon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      // Warm up the official embed hosts so TikTok/Instagram players start faster.
+      { rel: "preconnect", href: "https://www.tiktok.com", crossOrigin: "anonymous" },
+      { rel: "preconnect", href: "https://www.instagram.com", crossOrigin: "anonymous" },
+      { rel: "dns-prefetch", href: "https://p16-sign-va.tiktokcdn.com" },
+      { rel: "dns-prefetch", href: "https://lf16-tiktok-web.tiktokcdn-us.com" },
+      { rel: "dns-prefetch", href: "https://scontent.cdninstagram.com" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;800&display=swap",
