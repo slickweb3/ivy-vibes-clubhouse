@@ -706,7 +706,12 @@ export function TokenRecord({ market }: { market?: MarketSnapshot }) {
     { label: "Total supply", value: displayValue(config.tokenSupply) },
     { label: "Buy / sell tax", value: "0% / 0%" },
     { label: "Launch date", value: displayValue(config.launchDate) },
-    { label: "Tokenomics", value: displayValue(config.tokenomicsUrl) },
+    {
+      label: "Tokenomics",
+      value: config.tokenomicsUrl
+        ? "Fair launch · no presale · no team allocation · 0% tax"
+        : COMING_SOON,
+    },
     { label: "Record last updated", value: displayValue(config.tokenRecordUpdatedAt) },
   ];
 
