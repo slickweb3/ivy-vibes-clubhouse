@@ -297,13 +297,24 @@ export function InfoCard({
   className?: string;
 }) {
   return (
-    <div className={cn("rounded-2xl p-5 pop-static", toneBg[tone], className)}>
+    <div
+      className={cn(
+        "group relative h-full overflow-hidden rounded-2xl p-5 pop-static transition-transform duration-300 ease-out hover:-translate-y-1 sm:p-6",
+        toneBg[tone],
+        className,
+      )}
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -top-10 -right-10 h-28 w-28 rounded-full bg-charcoal/5 transition-transform duration-500 group-hover:scale-125"
+      />
       {icon ? <div className="mb-3">{icon}</div> : null}
-      <h3 className="font-display text-lg text-charcoal">{title}</h3>
+      <h3 className="font-display text-lg text-charcoal sm:text-xl">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-charcoal/85">{body}</p>
     </div>
   );
 }
+
 
 /** Honest status chip. Never colour-only: always carries text. */
 export function StatusChip({
