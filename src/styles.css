@@ -494,11 +494,79 @@ button[aria-disabled="true"]:active {
   animation: ivy-sticker-puff 0.55s ease-out 1;
 }
 
+/* Every 4th hop she throws a backflip, every 8th a double. */
+@keyframes ivy-sticker-flip {
+  0% {
+    transform: translateY(0) scaleY(1) scaleX(1) rotate(0deg);
+  }
+  10% {
+    transform: translateY(7px) scaleY(0.74) scaleX(1.24) rotate(0deg);
+  }
+  30% {
+    transform: translateY(-48vh) scaleY(1.12) scaleX(0.92) rotate(-140deg);
+  }
+  52% {
+    transform: translateY(-62vh) scaleY(1) scaleX(1) rotate(-260deg);
+  }
+  76% {
+    transform: translateY(-22vh) scaleY(1.06) scaleX(0.96) rotate(-360deg);
+  }
+  90% {
+    transform: translateY(5px) scaleY(0.78) scaleX(1.2) rotate(-360deg);
+  }
+  96% {
+    transform: translateY(-9px) scaleY(1.05) scaleX(0.97) rotate(-360deg);
+  }
+  100% {
+    transform: translateY(0) scaleY(1) scaleX(1) rotate(-360deg);
+  }
+}
+
+@keyframes ivy-sticker-double-flip {
+  0% {
+    transform: translateY(0) scaleY(1) scaleX(1) rotate(0deg);
+  }
+  9% {
+    transform: translateY(8px) scaleY(0.7) scaleX(1.28) rotate(0deg);
+  }
+  28% {
+    transform: translateY(-56vh) scaleY(1.12) scaleX(0.92) rotate(-240deg);
+  }
+  50% {
+    transform: translateY(-72vh) scaleY(1) scaleX(1) rotate(-480deg);
+  }
+  78% {
+    transform: translateY(-20vh) scaleY(1.05) scaleX(0.97) rotate(-680deg);
+  }
+  90% {
+    transform: translateY(6px) scaleY(0.74) scaleX(1.24) rotate(-720deg);
+  }
+  96% {
+    transform: translateY(-11px) scaleY(1.06) scaleX(0.96) rotate(-720deg);
+  }
+  100% {
+    transform: translateY(0) scaleY(1) scaleX(1) rotate(-720deg);
+  }
+}
+
+@utility ivy-sticker-flip {
+  transform-origin: 50% 60%;
+  animation: ivy-sticker-flip 1.45s cubic-bezier(0.3, 0.9, 0.35, 1) 1;
+}
+
+@utility ivy-sticker-double-flip {
+  transform-origin: 50% 60%;
+  animation: ivy-sticker-double-flip 1.7s cubic-bezier(0.28, 0.9, 0.35, 1) 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ivy-sticker-idle,
   .ivy-sticker-leap,
+  .ivy-sticker-flip,
+  .ivy-sticker-double-flip,
   .ivy-sticker-ring,
   .ivy-sticker-puff {
     animation: none !important;
   }
 }
+

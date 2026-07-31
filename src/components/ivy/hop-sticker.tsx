@@ -10,8 +10,22 @@ import ivySticker from "@/assets/ivy-hop-sticker.png.asset.json";
  * as very clickable. No captions: the hop itself is the whole joke.
  */
 
+type Move = "leap" | "flip" | "double";
+
+const MOVE_CLASS: Record<Move, string> = {
+  leap: "motion-safe:ivy-sticker-leap",
+  flip: "motion-safe:ivy-sticker-flip",
+  double: "motion-safe:ivy-sticker-double-flip",
+};
+
+const MOVE_DURATION: Record<Move, number> = {
+  leap: 1300,
+  flip: 1500,
+  double: 1750,
+};
+
 export function IvyHopSticker() {
-  const [leaping, setLeaping] = useState(false);
+  const [move, setMove] = useState<Move | null>(null);
   const [puffKey, setPuffKey] = useState(0);
   const [hops, setHops] = useState(0);
   const timers = useRef<number[]>([]);
@@ -24,12 +38,16 @@ export function IvyHopSticker() {
   );
 
   const hop = () => {
-    if (leaping) return;
-    setLeaping(true);
+    if (move) return;
+    const next = hops + 1;
+    // Every 8th hop is a double backflip, every other 4th is a single.
+    const nextMove: Move = next % 8 === 0 ? "double" : next % 4 === 0 ? "flip" : "leap";
+    setMove(nextMove);
     setPuffKey((key) => key + 1);
-    setHops((count) => count + 1);
-    timers.current.push(window.setTimeout(() => setLeaping(false), 1300));
+    setHops(next);
+    timers.current.push(window.setTimeout(() => setMove(null), MOVE_DURATION[nextMove]));
   };
+
 
   return (
     <div className="pointer-events-none fixed bottom-0 left-2 z-40 select-none sm:left-4">
@@ -65,7 +83,7 @@ export function IvyHopSticker() {
             className={cn(
               "relative h-24 w-auto drop-shadow-[0_6px_0_rgba(21,21,21,0.35)] transition-transform duration-200 sm:h-28",
               "group-hover:-translate-y-1 group-hover:scale-105 group-active:scale-95",
-              leaping ? "motion-safe:ivy-sticker-leap" : "motion-safe:ivy-sticker-idle",
+              move ? MOVE_CLASS[move] : "motion-safe:ivy-sticker-idle",
             )}
           />
         </button>
