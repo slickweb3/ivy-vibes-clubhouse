@@ -52,11 +52,12 @@ export const projectConfig: ProjectConfig = {
   blockchain: "Solana",
   contractAddress: "9m63AW5py9AQK218vxX4zEXp8gyFT2Cc9ZMnt6Fppump",
   explorerBaseUrl: "https://solscan.io/token",
-  launchDate: null,
+  // Mint went live on pump.fun 31 July 2026 (01:08 UTC, first pair block).
+  launchDate: "31 July 2026",
   // pump.fun standard fixed supply.
   tokenSupply: "1,000,000,000 $ivy",
-  tokenomicsUrl: null,
-  tokenRecordUpdatedAt: "2026-07-31T01:27:00Z",
+  tokenomicsUrl: "https://pump.fun/coin/9m63AW5py9AQK218vxX4zEXp8gyFT2Cc9ZMnt6Fppump",
+  tokenRecordUpdatedAt: "2026-07-31T02:45:00Z",
   socials: {
     instagram: "https://www.instagram.com/frogqueenivy/",
     tiktok: "https://www.tiktok.com/@ivyvibing",
