@@ -16,7 +16,6 @@ const RAIL_SECTIONS: { id: string; label: string }[] = [
   { id: "main", label: "Top of the pond" },
   { id: "ivy-photos", label: "Frame by frame" },
   { id: "meet-ivy", label: "Meet Ivy" },
-  { id: "familiar", label: "Frog familiar" },
   { id: "daily-ribbit", label: "Daily ribbit" },
   { id: "chorus-pond", label: "Chorus pond" },
   { id: "pond-chat", label: "Pond chat" },
