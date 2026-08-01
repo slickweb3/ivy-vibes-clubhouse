@@ -18,7 +18,7 @@ import {
   TokenRecord,
 } from "@/components/ivy/sections";
 import { SocialWindows } from "@/components/ivy/social-windows";
-import { IvyPhotoRow } from "@/components/ivy/photo-row";
+import { IvyPhotoRow, heroPhotoUrl } from "@/components/ivy/photo-row";
 import { LiveMarket } from "@/components/ivy/market";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
 import {
@@ -42,8 +42,14 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:url", content: "/" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41c25704-61f3-450c-8529-61b43b1e3809/id-preview-7b226fe4--ae92a54f-76f5-4c2b-9762-2e06f523c495.lovable.app-1785391145344.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41c25704-61f3-450c-8529-61b43b1e3809/id-preview-7b226fe4--ae92a54f-76f5-4c2b-9762-2e06f523c495.lovable.app-1785391145344.png" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [
+      { rel: "canonical", href: "/" },
+      // The first frame-by-frame photo is the LCP candidate on the homepage.
+      { rel: "preload", as: "image", href: heroPhotoUrl, fetchpriority: "high" },
+    ],
     scripts: [
       {
         type: "application/ld+json",

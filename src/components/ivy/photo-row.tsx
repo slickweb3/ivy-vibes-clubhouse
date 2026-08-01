@@ -20,6 +20,9 @@ const PHOTOS: { src: string; alt: string }[] = [
   { src: photo7.url, alt: "Puppy Ivy being held up by her owner on her birthday" },
 ];
 
+/** The first photo doubles as the homepage LCP image, so routes can preload it. */
+export const heroPhotoUrl = PHOTOS[0].src;
+
 /**
  * A simple owner-provided photo row — framed to match the clubhouse, no
  * platform chrome, no watermarks.
