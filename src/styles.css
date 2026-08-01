@@ -1631,28 +1631,28 @@ html.dark body {
   color: var(--foreground);
 }
 
-/* ...except on the bright brand chips, which stay light: their ink must stay
-   dark. Re-asserted after the flip, and it wins on descendants too. */
+/* ...except on the solid bright brand chips, which stay light after dark: their
+   ink must stay charcoal. Exact class tokens only — translucent variants like
+   `bg-frog/20` read as dark surfaces and keep the moonlight ink. */
 .dark
   :is(
-    [class*="bg-frog"],
-    [class*="bg-yellow"],
-    [class*="bg-pink"],
-    [class*="bg-lavender"],
-    [class*="bg-primary"]
+    [class~="bg-frog"],
+    [class~="bg-yellow"],
+    [class~="bg-pink"],
+    [class~="bg-lavender"],
+    [class~="bg-primary"]
   ):is([class*="text-charcoal"], [class*="text-ink"]),
 .dark
   :is(
-    [class*="bg-frog"],
-    [class*="bg-yellow"],
-    [class*="bg-pink"],
-    [class*="bg-lavender"],
-    [class*="bg-primary"]
+    [class~="bg-frog"],
+    [class~="bg-yellow"],
+    [class~="bg-pink"],
+    [class~="bg-lavender"],
+    [class~="bg-primary"]
   )
   :is([class*="text-charcoal"], [class*="text-ink"]) {
   color: var(--charcoal);
 }
-
 
 .dark :is([class*="border-charcoal"], .ink-border) {
   border-color: color-mix(in oklab, var(--lavender) 55%, #0b1620);
