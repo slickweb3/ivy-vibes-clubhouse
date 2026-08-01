@@ -501,15 +501,15 @@ export const gameAudio = {
     if (!enabled) return;
     switch (cue) {
       case "jump":
-        // A single soft ocarina fourth with a tiny wooden take-off tick.
-        ocarinaCue(523.25, 698.46, 0.14, 0.085);
-        tone({ freq: 260, to: 190, dur: 0.07, type: "triangle", gain: 0.045 });
+        // A soft, low ocarina lift — gentle enough to hop hundreds of times.
+        ocarinaCue(392, 466.16, 0.11, 0.03);
+        tone({ freq: 200, to: 160, dur: 0.05, type: "triangle", gain: 0.014 });
         break;
       case "double":
-        // The same motif one fifth higher, still one voice—not a flourish pile.
-        ocarinaCue(698.46, 880, 0.15, 0.075);
-        tone({ freq: 330, to: 230, dur: 0.06, type: "triangle", gain: 0.035 });
+        // The same motif a step higher, still whisper-quiet.
+        ocarinaCue(523.25, 622.25, 0.12, 0.026);
         break;
+
       case "coin":
         // Rupee-style two-tone chime, rising with the combo.
         tone({ freq: 987.77 + Math.min(level, 5) * 70, dur: 0.07, type: "triangle", gain: 0.18 });
@@ -527,7 +527,7 @@ export const gameAudio = {
         break;
       case "near":
         // Close call: a low frog gulp rather than a buzz.
-        tone({ freq: 210, to: 130, dur: 0.13, type: "sawtooth", gain: 0.14 });
+        tone({ freq: 300, to: 220, dur: 0.1, type: "triangle", gain: 0.08 });
         break;
       case "milestone":
         // Secret-found fanfare, ending on the octave, with Ivy's woof under it.
@@ -544,7 +544,7 @@ export const gameAudio = {
         break;
       case "death":
         // The gentle "quest paused" fall: descending ocarina, soft splash, woof.
-        noise(0.4, 0.24, 200);
+        noise(0.3, 0.14, 420);
         [12, 10, 7, 3].forEach((semi, i) =>
           tone({
             freq: 587.33 * Math.pow(2, semi / 12),

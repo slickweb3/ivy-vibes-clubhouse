@@ -103,18 +103,19 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     creature: 0.28,
   },
   hush: {
-    bpm: 66,
-    // Slow lantern-light: F – Dm – C – Dm.
-    chords: [53, 50, 48, 50],
-    pad: 0.3,
-    melody: 0.14,
-    pluck: 0.14,
+    bpm: 68,
+    // Calm but sunny: F – C – Dm – C, kept in the friendly register.
+    chords: [53, 48, 50, 48],
+    pad: 0.18,
+    melody: 0.16,
+    pluck: 0.18,
     perc: 0,
-    bell: 0.05,
-    crystal: 0.04,
-    register: -12,
-    creature: 0.16,
+    bell: 0.06,
+    crystal: 0.05,
+    register: 0,
+    creature: 0.2,
   },
+
 };
 
 const pick = <T>(items: readonly T[]) => items[Math.floor(Math.random() * items.length)]!;
@@ -157,21 +158,11 @@ export class IvyAudio {
     this.duck = ctx.createGain();
     this.duck.connect(this.master);
 
-    // Day / night variation: after dusk the pond gets darker and dreamier.
-    const hour = new Date().getHours();
-    const night = hour < 6 || hour >= 21;
+    // One bright, friendly pond mix at every hour — no dusk/night darkening.
     this.air = ctx.createBiquadFilter();
     this.air.type = "lowpass";
-    this.air.frequency.value = night ? 3400 : 5200;
-    if (night) {
-      for (const scene of Object.values(SCENES)) {
-        scene.register -= 12;
-        scene.pad = Math.min(1, scene.pad * 1.25);
-        scene.crystal = Math.min(1, scene.crystal * 1.3);
-        scene.perc *= 0.6;
-      }
-      this.levels = { ...SCENES.landing };
-    }
+    this.air.frequency.value = 5400;
+
     this.air.Q.value = 0.4;
     this.air.connect(this.duck);
 
@@ -732,14 +723,14 @@ export class IvyAudio {
         const osc = ctx.createOscillator();
         osc.type = "triangle";
         osc.frequency.setValueAtTime(300, now);
-        osc.frequency.exponentialRampToValueAtTime(760, now + 0.12);
+        osc.frequency.exponentialRampToValueAtTime(560, now + 0.1);
         const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.05, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+        gain.gain.setValueAtTime(0.024, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
         osc.connect(gain).connect(this.fx);
         osc.start(now);
         osc.stop(now + 0.18);
-        this.pluck(midi(86), now + 0.06, 0.022, this.fx);
+        this.pluck(midi(86), now + 0.06, 0.01, this.fx);
         return;
       }
       case "land": {
@@ -751,8 +742,8 @@ export class IvyAudio {
         this.duckFor(0.4, 1.2);
         // The gentle "puzzle failed" sigh: a descending harp fall, a low
         // ocarina, and a sympathetic woof. Sad, never punishing.
-        this.harp(74, now, 0.055, 6, true);
-        this.ocarina(midi(56), now + 0.35, 0.7, 0.045);
+        this.harp(74, now, 0.045, 5, true);
+        this.ocarina(midi(69), now + 0.35, 0.6, 0.04);
         this.woof(now + 0.7, 0.055);
         return;
       }
