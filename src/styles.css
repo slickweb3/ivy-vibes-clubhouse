@@ -1666,3 +1666,16 @@ html.dark body {
   --shadow-pop: 0 6px 0 0 #06121a;
   --shadow-pop-sm: 0 4px 0 0 #06121a;
 }
+
+/* Deep-ivy ink and frosted glass both need to invert after dark. */
+.dark [class*="text-ivy"] {
+  color: var(--frog);
+}
+
+.dark .glass {
+  background-color: color-mix(in oklab, #12242f 80%, transparent);
+}
+
+.dark .glass-dark {
+  background-color: color-mix(in oklab, #0c1a24 82%, transparent);
+}
