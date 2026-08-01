@@ -20,7 +20,8 @@ import type { AudioScene, IvyAudio } from "@/lib/audio/engine";
  *    never fire hover cues.
  */
 
-const ON_KEY = "ivy-sound";
+// Versioned so the previous, busier soundtrack never resumes automatically.
+const ON_KEY = "ivy-sound-calm-v2";
 const VOL_KEY = "ivy-sound-volume";
 
 const SCENE_LABEL: Record<AudioScene, string> = {
@@ -36,7 +37,7 @@ function readVolume(): number {
 }
 
 /** Gentle by design: the slider's 100% is still a background level. */
-const toGain = (volume: number) => volume * 0.34;
+const toGain = (volume: number) => volume * 0.2;
 
 export function IvySoundscape() {
   const [on, setOn] = useState(false);
@@ -142,18 +143,12 @@ export function IvySoundscape() {
     const onPress = (event: Event) => {
       if (isControl(event.target)) engineRef.current?.cue("press");
     };
-    const onHover = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return;
-      if (isControl(event.target)) engineRef.current?.cue("hover");
-    };
     const onDiscovery = () => engineRef.current?.cue("discovery");
 
     document.addEventListener("pointerdown", onPress);
-    document.addEventListener("pointerover", onHover);
     window.addEventListener(DISCOVERY_EVENT, onDiscovery);
     return () => {
       document.removeEventListener("pointerdown", onPress);
-      document.removeEventListener("pointerover", onHover);
       window.removeEventListener(DISCOVERY_EVENT, onDiscovery);
     };
   }, [on]);

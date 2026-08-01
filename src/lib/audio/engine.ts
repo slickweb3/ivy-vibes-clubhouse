@@ -64,56 +64,56 @@ interface SceneConfig {
 
 const SCENES: Record<AudioScene, SceneConfig> = {
   landing: {
-    bpm: 74,
+    bpm: 70,
     // Dm – C – F – C: the modal overworld cadence, stated slowly.
     chords: [50, 48, 53, 48],
-    pad: 0.5,
-    melody: 0.3,
-    pluck: 0.32,
-    perc: 0.06,
-    bell: 0.18,
-    crystal: 0.3,
+    pad: 0.28,
+    melody: 0.22,
+    pluck: 0.2,
+    perc: 0,
+    bell: 0.06,
+    crystal: 0.05,
     register: 0,
-    creature: 0.45,
+    creature: 0.24,
   },
   explore: {
-    bpm: 88,
+    bpm: 78,
     // Dm – C – Gm – F: walking-the-trail progression.
     chords: [50, 48, 55, 53],
-    pad: 0.34,
-    melody: 0.5,
-    pluck: 0.55,
-    perc: 0.3,
-    bell: 0.14,
-    crystal: 0.18,
+    pad: 0.24,
+    melody: 0.32,
+    pluck: 0.34,
+    perc: 0.1,
+    bell: 0.06,
+    crystal: 0.05,
     register: 0,
-    creature: 0.72,
+    creature: 0.34,
   },
   game: {
-    bpm: 116,
+    bpm: 96,
     // Dm – F – C – Gm: the chase harmonies.
     chords: [50, 53, 48, 55],
-    pad: 0.22,
-    melody: 0.62,
-    pluck: 0.7,
-    perc: 0.62,
-    bell: 0.1,
-    crystal: 0.12,
+    pad: 0.16,
+    melody: 0.38,
+    pluck: 0.4,
+    perc: 0.24,
+    bell: 0.05,
+    crystal: 0.04,
     register: 12,
-    creature: 0.5,
+    creature: 0.28,
   },
   hush: {
     bpm: 66,
     // Slow lantern-light: F – Dm – C – Dm.
     chords: [53, 50, 48, 50],
-    pad: 0.55,
-    melody: 0.2,
-    pluck: 0.2,
+    pad: 0.3,
+    melody: 0.14,
+    pluck: 0.14,
     perc: 0,
-    bell: 0.2,
-    crystal: 0.34,
+    bell: 0.05,
+    crystal: 0.04,
     register: -12,
-    creature: 0.3,
+    creature: 0.16,
   },
 };
 
@@ -604,23 +604,20 @@ export class IvyAudio {
         if (!this.lean) this.pad(hz * 1.5, at + dur * 2, dur * 12, 0.03 * L.pad);
       }
 
-      // Percussion: a walking adventurer's pulse — frame drum on the beat, a
-      // tambourine-ish skin tap answering, and a marching triplet pickup.
+      // Sparse walking pulse: enough movement to feel alive, never a drum loop.
       if (L.perc > 0.05) {
         if (beat === 0 || beat === 8) this.hand(at, 0.16 * L.perc, true);
-        if (beat === 4 || beat === 12) this.hand(at, 0.07 * L.perc, false);
-        if (beat === 6 || beat === 14) this.hand(at, 0.09 * L.perc, false);
-        if (beat === 11 && Math.random() < L.perc * 0.6) this.hand(at, 0.06 * L.perc, false);
+        if (beat === 12) this.hand(at, 0.05 * L.perc, false);
       }
 
       // Harp/kalimba accompaniment: rolling chord tones in thirds, the way an
       // overworld theme keeps moving under the tune.
-      if (L.pluck > 0.05 && beat % 2 === 0 && Math.random() < L.pluck) {
+      if (L.pluck > 0.05 && beat % 4 === 0 && Math.random() < L.pluck) {
         const shape = pick([0, 2, 4, 6, 7, 9]);
         this.pluck(
           midi(50 + this.levels.register + (SCALE[(base + shape) % SCALE.length] ?? 0)),
           at,
-          0.05 + 0.05 * L.pluck,
+          0.035 + 0.025 * L.pluck,
         );
       }
 
@@ -630,17 +627,13 @@ export class IvyAudio {
       if (L.melody > 0.05) {
         if (bar === 0 && beat % 4 === 0) {
           const degree = base + (MOTIF[beat / 4] ?? 0);
-          this.note("ocarina", degree, 1, at, dur * 3.6, 0.075 * L.melody);
-          // A distant horn shadows the signature an octave down: heroic weight.
-          if (beat === 0 && L.melody > 0.4) {
-            this.note("horn", degree, 0, at, dur * 6, 0.03 * L.melody);
-          }
+          this.note("ocarina", degree, 1, at, dur * 3.6, 0.055 * L.melody);
         } else if (bar > 0) {
           const phrase = PHRASES[(Math.floor(this.step / 64) * 3 + bar) % PHRASES.length]!;
           const step = phrase[beat];
           if (step !== null && step !== undefined) {
             const long = beat >= 12;
-            this.note("ocarina", base + step, 1, at, dur * (long ? 4.2 : 2.1), 0.06 * L.melody);
+            this.note("ocarina", base + step, 1, at, dur * (long ? 4.2 : 2.1), 0.045 * L.melody);
           }
         }
       }
@@ -655,11 +648,10 @@ export class IvyAudio {
 
       // Inhabitants: the pond answers the tune. Frogs take the phrase-ends,
       // Ivy signs off the cycle, and every so often her tail keeps the beat.
-      if (beat === 15 && Math.random() < L.creature * 0.6) this.ribbit(at + dur * 0.5, 0.055);
-      if (beat === 7 && Math.random() < L.creature * 0.3) this.ribbit(at + dur * 0.5, 0.03);
-      if (bar === 3 && beat === 14 && Math.random() < L.creature * 0.7) this.woof(at, 0.075);
-      if (bar === 1 && beat === 0 && Math.random() < L.creature * 0.25) {
-        this.tailThump(at, 0.045);
+      if (beat === 15 && Math.random() < L.creature * 0.35) this.ribbit(at + dur * 0.5, 0.032);
+      if (bar === 3 && beat === 14 && Math.random() < L.creature * 0.45) this.woof(at, 0.04);
+      if (bar === 1 && beat === 0 && Math.random() < L.creature * 0.12) {
+        this.tailThump(at, 0.025);
       }
 
 
