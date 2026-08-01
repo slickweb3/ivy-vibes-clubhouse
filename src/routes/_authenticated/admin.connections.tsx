@@ -99,91 +99,94 @@ function ConnectionsPage() {
       <section className="rounded-2xl border-[3px] border-dashed border-charcoal/40 bg-leaf/40 p-5">
         <h2 className="font-display text-lg text-charcoal">Optional future automation</h2>
         <p className="mt-1 max-w-3xl text-sm text-charcoal/80">
-          Nothing below is required. These platform API connections would only be used if Ivy&rsquo;s
-          owner later chooses an automatic feed. Leaving them unconfigured is a perfectly valid,
-          fully working setup.
+          Nothing below is required. These platform API connections would only be used if
+          Ivy&rsquo;s owner later chooses an automatic feed. Leaving them unconfigured is a
+          perfectly valid, fully working setup.
         </p>
 
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        {(cardsQuery.data ?? placeholderCards()).map((card) => (
-          <article key={card.platform} className="rounded-2xl bg-card p-5 pop-static">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="font-display text-xl text-charcoal capitalize">{card.platform}</h2>
-              <StatusChip
-                status={card.connected ? "ok" : "off"}
-                label={card.connected ? "Connected" : "Disconnected"}
-              />
-            </div>
-
-            <dl className="mt-4 space-y-1.5 text-sm">
-              <Row label="Official account" value={`@${card.officialHandle}`} />
-              <Row label="Connected account" value={card.accountName ? `@${card.accountName}` : "—"} />
-              <Row label="External account ID" value={card.externalAccountId ?? "—"} />
-              <Row
-                label="Auto-publish eligible"
-                value={card.verified ? "Yes — verified account ID matched" : "No"}
-              />
-              <Row label="Last successful sync" value={formatDate(card.lastSyncAt) ?? "Never"} />
-              <Row label="Renewal" value={card.tokenRenewal} />
-              <Row label="Scopes" value={card.scopes.join(", ")} />
-              <Row label="Redirect URI" value={card.redirectUri ?? "Not configured"} />
-            </dl>
-
-            {!card.credentialsConfigured ? (
-              <div className="mt-4 rounded-xl bg-yellow p-4 text-sm text-charcoal">
-                <p className="font-display">Optional API credentials not configured</p>
-                <p className="mt-1">
-                  Not needed for the curated embed workflow. If automation is ever enabled, these
-                  environment variables would be required:{" "}
-                  {card.missingEnvVars.join(", ") || "none"}.
-                </p>
-                <a
-                  className="mt-2 inline-flex min-h-11 items-center underline underline-offset-4"
-                  href={card.setupUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Platform setup documentation
-                </a>
+          {(cardsQuery.data ?? placeholderCards()).map((card) => (
+            <article key={card.platform} className="rounded-2xl bg-card p-5 pop-static">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="font-display text-xl text-charcoal capitalize">{card.platform}</h2>
+                <StatusChip
+                  status={card.connected ? "ok" : "off"}
+                  label={card.connected ? "Connected" : "Disconnected"}
+                />
               </div>
-            ) : null}
 
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Button
-                disabled={!card.credentialsConfigured || !isAdmin}
-                onClick={async () => {
-                  const result = await runAuthorize({ data: { platform: card.platform } });
-                  if (result.ok && result.url) window.location.href = result.url;
-                }}
-                className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog disabled:opacity-70"
-              >
-                {card.connected ? "Re-authorize" : "Connect"}
-              </Button>
+              <dl className="mt-4 space-y-1.5 text-sm">
+                <Row label="Official account" value={`@${card.officialHandle}`} />
+                <Row
+                  label="Connected account"
+                  value={card.accountName ? `@${card.accountName}` : "—"}
+                />
+                <Row label="External account ID" value={card.externalAccountId ?? "—"} />
+                <Row
+                  label="Auto-publish eligible"
+                  value={card.verified ? "Yes — verified account ID matched" : "No"}
+                />
+                <Row label="Last successful sync" value={formatDate(card.lastSyncAt) ?? "Never"} />
+                <Row label="Renewal" value={card.tokenRenewal} />
+                <Row label="Scopes" value={card.scopes.join(", ")} />
+                <Row label="Redirect URI" value={card.redirectUri ?? "Not configured"} />
+              </dl>
 
-              <Button
-                disabled={!card.connected || !isAdmin}
-                onClick={async () => {
-                  await runRefresh();
-                  cardsQuery.refetch();
-                  runsQuery.refetch();
-                }}
-                className="min-h-11 rounded-full bg-card px-5 font-display text-charcoal pop hover:bg-card disabled:opacity-70"
-              >
-                Refresh now
-              </Button>
-              <Button
-                disabled={!card.connected || !isAdmin}
-                onClick={async () => {
-                  await runDisconnect({ data: { platform: card.platform } });
-                  cardsQuery.refetch();
-                }}
-                className="min-h-11 rounded-full bg-pink px-5 font-display text-charcoal pop hover:bg-pink disabled:opacity-70"
-              >
-                Disconnect
-              </Button>
-            </div>
-          </article>
-        ))}
+              {!card.credentialsConfigured ? (
+                <div className="mt-4 rounded-xl bg-yellow p-4 text-sm text-charcoal">
+                  <p className="font-display">Optional API credentials not configured</p>
+                  <p className="mt-1">
+                    Not needed for the curated embed workflow. If automation is ever enabled, these
+                    environment variables would be required:{" "}
+                    {card.missingEnvVars.join(", ") || "none"}.
+                  </p>
+                  <a
+                    className="mt-2 inline-flex min-h-11 items-center underline underline-offset-4"
+                    href={card.setupUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Platform setup documentation
+                  </a>
+                </div>
+              ) : null}
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Button
+                  disabled={!card.credentialsConfigured || !isAdmin}
+                  onClick={async () => {
+                    const result = await runAuthorize({ data: { platform: card.platform } });
+                    if (result.ok && result.url) window.location.href = result.url;
+                  }}
+                  className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog disabled:opacity-70"
+                >
+                  {card.connected ? "Re-authorize" : "Connect"}
+                </Button>
+
+                <Button
+                  disabled={!card.connected || !isAdmin}
+                  onClick={async () => {
+                    await runRefresh();
+                    cardsQuery.refetch();
+                    runsQuery.refetch();
+                  }}
+                  className="min-h-11 rounded-full bg-card px-5 font-display text-charcoal pop hover:bg-card disabled:opacity-70"
+                >
+                  Refresh now
+                </Button>
+                <Button
+                  disabled={!card.connected || !isAdmin}
+                  onClick={async () => {
+                    await runDisconnect({ data: { platform: card.platform } });
+                    cardsQuery.refetch();
+                  }}
+                  className="min-h-11 rounded-full bg-pink px-5 font-display text-charcoal pop hover:bg-pink disabled:opacity-70"
+                >
+                  Disconnect
+                </Button>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 

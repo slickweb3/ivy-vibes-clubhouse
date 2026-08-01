@@ -154,7 +154,6 @@
     overflow-wrap: anywhere;
   }
 
-
   h1,
   h2,
   h3,
@@ -209,7 +208,6 @@
   }
 }
 
-
 @utility pop-static {
   border: 3px solid var(--charcoal);
   box-shadow: 0 6px 0 0 var(--charcoal);
@@ -230,7 +228,6 @@
     box-shadow: 0 12px 0 0 var(--charcoal);
   }
 }
-
 
 @utility meadow {
   background-image: var(--gradient-meadow);
@@ -346,9 +343,6 @@ button[aria-disabled="true"]:active {
   }
 }
 
-
-
-
 @utility ivy-drift {
   animation: ivy-drift 30s linear infinite;
 }
@@ -372,7 +366,6 @@ button[aria-disabled="true"]:active {
 @utility ivy-glow {
   animation: ivy-glow 12s ease-in-out infinite;
 }
-
 
 @keyframes ivy-drift {
   0% {
@@ -442,7 +435,6 @@ button[aria-disabled="true"]:active {
   justify-content: center;
   overflow: hidden;
 }
-
 
 /* ------------------------------------------------------------------ */
 /* Clickable Ivy sticker: idle "tap me" bob + the leap itself           */
@@ -605,7 +597,6 @@ button[aria-disabled="true"]:active {
   }
 }
 
-
 /* ------------------------------------------------------------------ */
 /* Premium polish layer: reveals, glass, colour bands, fluid type      */
 /* ------------------------------------------------------------------ */
@@ -656,39 +647,59 @@ button[aria-disabled="true"]:active {
 
 /* Soft colour washes so every band feels different without new hues. */
 @utility band-cream {
-  background-image: radial-gradient(
+  background-image:
+    radial-gradient(
       120% 80% at 8% 0%,
       color-mix(in oklab, var(--frog) 18%, transparent) 0%,
       transparent 60%
     ),
-    radial-gradient(90% 70% at 100% 100%, color-mix(in oklab, var(--yellow) 22%, transparent) 0%, transparent 65%);
+    radial-gradient(
+      90% 70% at 100% 100%,
+      color-mix(in oklab, var(--yellow) 22%, transparent) 0%,
+      transparent 65%
+    );
 }
 
 @utility band-leaf {
-  background-image: radial-gradient(
+  background-image:
+    radial-gradient(
       110% 80% at 100% 0%,
       color-mix(in oklab, var(--lavender) 45%, transparent) 0%,
       transparent 62%
     ),
-    radial-gradient(100% 80% at 0% 100%, color-mix(in oklab, var(--yellow) 40%, transparent) 0%, transparent 60%);
+    radial-gradient(
+      100% 80% at 0% 100%,
+      color-mix(in oklab, var(--yellow) 40%, transparent) 0%,
+      transparent 60%
+    );
 }
 
 @utility band-ivy {
-  background-image: radial-gradient(
+  background-image:
+    radial-gradient(
       100% 70% at 0% 0%,
       color-mix(in oklab, var(--frog) 26%, transparent) 0%,
       transparent 58%
     ),
-    radial-gradient(90% 70% at 100% 100%, color-mix(in oklab, var(--pink) 20%, transparent) 0%, transparent 62%);
+    radial-gradient(
+      90% 70% at 100% 100%,
+      color-mix(in oklab, var(--pink) 20%, transparent) 0%,
+      transparent 62%
+    );
 }
 
 @utility band-lavender {
-  background-image: radial-gradient(
+  background-image:
+    radial-gradient(
       110% 80% at 0% 0%,
       color-mix(in oklab, var(--pink) 40%, transparent) 0%,
       transparent 60%
     ),
-    radial-gradient(90% 70% at 100% 100%, color-mix(in oklab, var(--leaf) 55%, transparent) 0%, transparent 62%);
+    radial-gradient(
+      90% 70% at 100% 100%,
+      color-mix(in oklab, var(--leaf) 55%, transparent) 0%,
+      transparent 62%
+    );
 }
 
 /* Chunky rainbow rule used under section eyebrows. */
@@ -847,8 +858,9 @@ figcaption {
    ========================================================================== */
 :root {
   /* Idle / active geometry, tuned against the chunky 3px ink borders. */
-  --sb-size: 10px;
-  --sb-size-live: 14px;
+  /* One fixed gutter width: animating the scrollbar width would reflow the
+     whole page on every scroll, so only the thumb's paint changes. */
+  --sb-size: 14px;
   --sb-radius: 999px;
   --sb-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --sb-thumb-idle: color-mix(in oklab, var(--frog) 46%, var(--ivy) 54%);
@@ -873,24 +885,16 @@ html[data-scrolling="true"] {
 html::-webkit-scrollbar {
   width: var(--sb-size);
   height: var(--sb-size);
-  transition: width 320ms var(--sb-ease), height 320ms var(--sb-ease);
-}
-
-html[data-scrolling="true"]::-webkit-scrollbar,
-html[data-sb-grab="true"]::-webkit-scrollbar {
-  width: var(--sb-size-live);
-  height: var(--sb-size-live);
 }
 
 html::-webkit-scrollbar-track {
   /* A faint stem the thumb travels along, magnetised to the viewport edge. */
-  background:
-    linear-gradient(
-      to right,
-      transparent 0,
-      color-mix(in oklab, var(--sb-track) 70%, transparent) 35%,
-      color-mix(in oklab, var(--sb-track) 92%, transparent) 100%
-    );
+  background: linear-gradient(
+    to right,
+    transparent 0,
+    color-mix(in oklab, var(--sb-track) 70%, transparent) 35%,
+    color-mix(in oklab, var(--sb-track) 92%, transparent) 100%
+  );
   border: 0;
 }
 
@@ -903,7 +907,11 @@ html::-webkit-scrollbar-thumb {
       transparent 42%,
       color-mix(in oklab, var(--ivy) 30%, transparent) 100%
     ),
-    linear-gradient(180deg, var(--sb-thumb-idle), color-mix(in oklab, var(--sb-thumb-idle) 78%, var(--ivy)));
+    linear-gradient(
+      180deg,
+      var(--sb-thumb-idle),
+      color-mix(in oklab, var(--sb-thumb-idle) 78%, var(--ivy))
+    );
   border-radius: var(--sb-radius);
   border: 3px solid transparent;
   background-clip: padding-box;
@@ -924,7 +932,11 @@ html[data-scrolling="true"]::-webkit-scrollbar-thumb {
       transparent 46%,
       color-mix(in oklab, var(--ivy) 24%, transparent) 100%
     ),
-    linear-gradient(180deg, var(--sb-thumb-live), color-mix(in oklab, var(--sb-thumb-live) 74%, var(--ivy)));
+    linear-gradient(
+      180deg,
+      var(--sb-thumb-live),
+      color-mix(in oklab, var(--sb-thumb-live) 74%, var(--ivy))
+    );
   border-width: 2px;
   box-shadow:
     inset 0 1px 0 color-mix(in oklab, var(--cream) 46%, transparent),
@@ -948,7 +960,11 @@ html::-webkit-scrollbar-thumb:active,
 html[data-sb-grab="true"]::-webkit-scrollbar-thumb {
   background-image:
     linear-gradient(180deg, color-mix(in oklab, var(--cream) 42%, transparent) 0%, transparent 52%),
-    linear-gradient(180deg, var(--sb-thumb-grab), color-mix(in oklab, var(--yellow) 34%, var(--frog)));
+    linear-gradient(
+      180deg,
+      var(--sb-thumb-grab),
+      color-mix(in oklab, var(--yellow) 34%, var(--frog))
+    );
   box-shadow:
     inset 0 1px 0 color-mix(in oklab, var(--cream) 60%, transparent),
     0 0 18px -2px color-mix(in oklab, var(--frog) 70%, transparent);
@@ -1094,7 +1110,9 @@ html[data-scrolling="true"] .scroll-depth {
       transparent 72%
     );
   /* Colour changes ease so the environment breathes between sections. */
-  transition: opacity 600ms ease, background 1400ms ease;
+  transition:
+    opacity 600ms ease,
+    background 1400ms ease;
   animation: ivy-atmosphere-breathe 14s ease-in-out infinite;
 }
 
@@ -1107,7 +1125,6 @@ html[data-scrolling="true"] .scroll-depth {
     filter: saturate(1.18) brightness(1.06);
   }
 }
-
 
 /* First-visit curtain: a single cinematic lift, once per session. */
 .ivy-curtain {
@@ -1173,7 +1190,6 @@ html[data-scrolling="true"] .scroll-depth {
   }
 }
 
-
 @media (forced-colors: active) {
   .ivy-atmosphere {
     display: none;
@@ -1197,13 +1213,24 @@ html[data-scrolling="true"] .scroll-depth {
   padding: 0.5rem;
   border: 3px solid var(--charcoal);
   background:
-    radial-gradient(120% 90% at 50% -10%, color-mix(in oklab, var(--frog) 26%, transparent), transparent 60%),
-    linear-gradient(180deg, color-mix(in oklab, var(--cream) 96%, var(--frog)), var(--cream) 55%, color-mix(in oklab, var(--cream) 88%, var(--lavender)));
+    radial-gradient(
+      120% 90% at 50% -10%,
+      color-mix(in oklab, var(--frog) 26%, transparent),
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--cream) 96%, var(--frog)),
+      var(--cream) 55%,
+      color-mix(in oklab, var(--cream) 88%, var(--lavender))
+    );
   box-shadow:
     0 6px 0 0 var(--charcoal),
     inset 0 1px 0 0 color-mix(in oklab, white 70%, transparent),
     0 24px 60px -32px color-mix(in oklab, var(--frog) 60%, transparent);
-  transition: box-shadow 400ms ease, transform 400ms cubic-bezier(0.34, 1.4, 0.5, 1);
+  transition:
+    box-shadow 400ms ease,
+    transform 400ms cubic-bezier(0.34, 1.4, 0.5, 1);
 }
 
 @media (min-width: 640px) {
@@ -1381,7 +1408,9 @@ html[data-scrolling="true"] .scroll-depth {
     border-radius: 0.9rem;
     overflow: hidden;
     background-color: color-mix(in oklab, var(--deep-ivy) 92%, var(--charcoal));
-    box-shadow: inset 0 0 0 3px var(--charcoal), inset 0 0 30px -6px color-mix(in oklab, black 60%, transparent);
+    box-shadow:
+      inset 0 0 0 3px var(--charcoal),
+      inset 0 0 30px -6px color-mix(in oklab, black 60%, transparent);
   }
 
   .game-frame-screen {
@@ -1516,4 +1545,3 @@ html[data-scrolling="true"] .scroll-depth {
     animation: none;
   }
 }
-

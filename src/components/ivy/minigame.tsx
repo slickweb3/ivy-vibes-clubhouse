@@ -199,7 +199,13 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   const [phase, setPhase] = useState<"idle" | "playing" | "paused" | "over">("idle");
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(0);
-  const [summary, setSummary] = useState({ score: 0, coins: 0, combo: 0, seconds: 0, record: false });
+  const [summary, setSummary] = useState({
+    score: 0,
+    coins: 0,
+    combo: 0,
+    seconds: 0,
+    record: false,
+  });
   const [soundOn, setSoundOn] = useState(true);
   const [wallet, setWallet] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
@@ -1073,7 +1079,9 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
           bits.push(`${result.streakDays}-day streak.`);
         }
         if (result.flagged) {
-          bits.push("This run looked automated, so it earned no XP and reward eligibility is paused.");
+          bits.push(
+            "This run looked automated, so it earned no XP and reward eligibility is paused.",
+          );
         }
         setStatus(bits.join(" "));
         setCardKey((key) => key + 1);
@@ -1132,104 +1140,108 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
             style={{ ["--game-frame-src" as string]: `url(${gameFrame})` }}
           >
             <div className="game-frame-screen">
-
-            <div
-              role="button"
-              tabIndex={0}
-              aria-label="Play Lily Pad Leap. Tap or press space to hop, hold for a higher hop, press P to pause."
-              onPointerDown={(event) => {
-                event.preventDefault();
-                // Native-handheld feel: a 8ms tick where the platform supports it.
-                navigator.vibrate?.(8);
-                jump();
-              }}
-
-              onPointerUp={release}
-              onPointerCancel={release}
-              onPointerLeave={release}
-              onKeyDown={(event) => {
-                if (event.key === " " || event.key === "Enter") {
+              <div
+                role="button"
+                tabIndex={0}
+                aria-label="Play Lily Pad Leap. Tap or press space to hop, hold for a higher hop, press P to pause."
+                onPointerDown={(event) => {
                   event.preventDefault();
-                  if (!event.repeat) jump();
-                }
-              }}
-              onKeyUp={release}
-              className="relative block h-full max-h-full w-auto max-w-full touch-none select-none overflow-hidden rounded-md border-2 border-charcoal sm:rounded-xl sm:border-[3px]"
-              style={{ aspectRatio: `${W} / ${H}` }}
-            >
-              <canvas
-                ref={canvasRef}
-                width={W}
-                height={H}
-                className="block h-full w-full bg-ivy"
-                style={{ imageRendering: "auto" }}
-              />
+                  // Native-handheld feel: a 8ms tick where the platform supports it.
+                  navigator.vibrate?.(8);
+                  jump();
+                }}
 
-              {phase === "playing" ? (
-                <button
-                  type="button"
-                  aria-label="Pause game"
-                  onPointerDown={(event) => {
-                    event.stopPropagation();
+                onPointerUp={release}
+                onPointerCancel={release}
+                onPointerLeave={release}
+                onKeyDown={(event) => {
+                  if (event.key === " " || event.key === "Enter") {
                     event.preventDefault();
-                    pause();
-                  }}
-                  className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-charcoal bg-cream/90 text-charcoal transition-transform hover:scale-110 active:scale-95"
-                >
-                  <Pause className="h-4 w-4" aria-hidden />
-                </button>
-              ) : null}
+                    if (!event.repeat) jump();
+                  }
+                }}
+                onKeyUp={release}
+                className="relative block h-full max-h-full w-auto max-w-full touch-none select-none overflow-hidden rounded-md border-2 border-charcoal sm:rounded-xl sm:border-[3px]"
+                style={{ aspectRatio: `${W} / ${H}` }}
+              >
+                <canvas
+                  ref={canvasRef}
+                  width={W}
+                  height={H}
+                  className="block h-full w-full bg-ivy"
+                  style={{ imageRendering: "auto" }}
+                />
 
-              {phase !== "playing" ? (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-ivy/85 p-2 text-center text-cream backdrop-blur-[2px] duration-200 animate-in fade-in sm:gap-2 sm:p-3">
-                  <p className="font-display text-lg sm:text-2xl">
-                    {phase === "idle" ? "Lily Pad Leap" : phase === "paused" ? "Paused" : "Splash!"}
-                  </p>
+                {phase === "playing" ? (
+                  <button
+                    type="button"
+                    aria-label="Pause game"
+                    onPointerDown={(event) => {
+                      event.stopPropagation();
+                      event.preventDefault();
+                      pause();
+                    }}
+                    className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-charcoal bg-cream/90 text-charcoal transition-transform hover:scale-110 active:scale-95"
+                  >
+                    <Pause className="h-4 w-4" aria-hidden />
+                  </button>
+                ) : null}
 
-                  {phase === "over" ? (
-                    <div className="flex flex-wrap items-center justify-center gap-1.5 text-[10px] sm:text-xs">
-                      <span className="rounded-full bg-cream/15 px-2 py-0.5">
-                        Score <b className="tabular-nums">{summary.score}</b>
-                      </span>
-                      <span className="rounded-full bg-cream/15 px-2 py-0.5">
-                        ◎ <b className="tabular-nums">{summary.coins}</b>
-                      </span>
-                      {summary.combo > 1 ? (
-                        <span className="rounded-full bg-cream/15 px-2 py-0.5">
-                          Best combo x{summary.combo}
-                        </span>
-                      ) : null}
-                      <span className="rounded-full bg-cream/15 px-2 py-0.5">{summary.seconds}s</span>
-                      {summary.record ? (
-                        <span className="rounded-full bg-yellow px-2 py-0.5 font-bold text-charcoal">
-                          New best!
-                        </span>
-                      ) : (
-                        <span className="rounded-full bg-cream/15 px-2 py-0.5">Best {best}</span>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="max-w-xs text-[11px] leading-snug opacity-90 sm:text-sm">
+                {phase !== "playing" ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-ivy/85 p-2 text-center text-cream backdrop-blur-[2px] duration-200 animate-in fade-in sm:gap-2 sm:p-3">
+                    <p className="font-display text-lg sm:text-2xl">
                       {phase === "idle"
-                        ? "Hop the logs, scoop the $ivy coins. Tap twice to double-hop, hold for height."
-                        : "Take your time. Nothing moves until you do."}
+                        ? "Lily Pad Leap"
+                        : phase === "paused"
+                          ? "Paused"
+                          : "Splash!"}
                     </p>
-                  )}
 
-                  <span className="rounded-full bg-frog px-3 py-1.5 font-display text-[11px] text-charcoal pop-static sm:px-4 sm:py-2 sm:text-sm">
-                    {phase === "idle"
-                      ? "Tap / press space to start"
-                      : phase === "paused"
-                        ? "Tap or press P to resume"
-                        : "Tap to hop again"}
-                  </span>
-                </div>
-              ) : null}
+                    {phase === "over" ? (
+                      <div className="flex flex-wrap items-center justify-center gap-1.5 text-[10px] sm:text-xs">
+                        <span className="rounded-full bg-cream/15 px-2 py-0.5">
+                          Score <b className="tabular-nums">{summary.score}</b>
+                        </span>
+                        <span className="rounded-full bg-cream/15 px-2 py-0.5">
+                          ◎ <b className="tabular-nums">{summary.coins}</b>
+                        </span>
+                        {summary.combo > 1 ? (
+                          <span className="rounded-full bg-cream/15 px-2 py-0.5">
+                            Best combo x{summary.combo}
+                          </span>
+                        ) : null}
+                        <span className="rounded-full bg-cream/15 px-2 py-0.5">
+                          {summary.seconds}s
+                        </span>
+                        {summary.record ? (
+                          <span className="rounded-full bg-yellow px-2 py-0.5 font-bold text-charcoal">
+                            New best!
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-cream/15 px-2 py-0.5">Best {best}</span>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="max-w-xs text-[11px] leading-snug opacity-90 sm:text-sm">
+                        {phase === "idle"
+                          ? "Hop the logs, scoop the $ivy coins. Tap twice to double-hop, hold for height."
+                          : "Take your time. Nothing moves until you do."}
+                      </p>
+                    )}
+
+                    <span className="rounded-full bg-frog px-3 py-1.5 font-display text-[11px] text-charcoal pop-static sm:px-4 sm:py-2 sm:text-sm">
+                      {phase === "idle"
+                        ? "Tap / press space to start"
+                        : phase === "paused"
+                          ? "Tap or press P to resume"
+                          : "Tap to hop again"}
+                    </span>
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
-          </div>
         </div>
-
 
         {/* Accessible mirror of the canvas HUD for screen readers. */}
         <p className="sr-only" aria-live="polite">
@@ -1306,7 +1318,8 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
           </span>
         </div>
         <p className="mt-1 text-sm text-charcoal/80">
-          Monthly board. It resets on {resetDate} (UTC) and the top wallet is airdropped 50,000 $ivy.
+          Monthly board. It resets on {resetDate} (UTC) and the top wallet is airdropped 50,000
+          $ivy.
         </p>
 
         <ol className="mt-4 space-y-2">
@@ -1356,10 +1369,15 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
 
         {board.allTime.length > 0 ? (
           <div className="mt-5">
-            <h4 className="font-display text-sm uppercase text-charcoal/70">All-time hall of hops</h4>
+            <h4 className="font-display text-sm uppercase text-charcoal/70">
+              All-time hall of hops
+            </h4>
             <ul className="mt-2 space-y-1">
               {board.allTime.slice(0, 5).map((entry) => (
-                <li key={`all-${entry.wallet}`} className="flex justify-between text-sm text-charcoal/85">
+                <li
+                  key={`all-${entry.wallet}`}
+                  className="flex justify-between text-sm text-charcoal/85"
+                >
                   <span className="font-mono">{shortWallet(entry.wallet)}</span>
                   <span className="font-display">{entry.score}</span>
                 </li>

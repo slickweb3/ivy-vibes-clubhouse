@@ -75,7 +75,6 @@ export function IvyPresence() {
     };
   }, []);
 
-
   useEffect(() => {
     const root = document.documentElement;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -223,4 +222,3 @@ export function IvyPresence() {
     </>
   );
 }
-

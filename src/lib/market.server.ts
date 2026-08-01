@@ -42,7 +42,12 @@ export interface MarketSnapshot {
   priceUsd: number | null;
   priceChange24h: number | null;
   /** % change over 5m / 1h / 6h / 24h windows (Dexscreener). Used for the mini sparkline. */
-  priceChanges: { m5: number | null; h1: number | null; h6: number | null; h24: number | null } | null;
+  priceChanges: {
+    m5: number | null;
+    h1: number | null;
+    h6: number | null;
+    h24: number | null;
+  } | null;
   marketCapUsd: number | null;
   fdvUsd: number | null;
   liquidityUsd: number | null;
@@ -143,10 +148,13 @@ interface DexPair {
 
 async function fetchDexscreener(mint: string): Promise<DexPair[] | null> {
   try {
-    const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${encodeURIComponent(mint)}`, {
-      headers: { accept: "application/json" },
-      signal: AbortSignal.timeout(8000),
-    });
+    const res = await fetch(
+      `https://api.dexscreener.com/latest/dex/tokens/${encodeURIComponent(mint)}`,
+      {
+        headers: { accept: "application/json" },
+        signal: AbortSignal.timeout(8000),
+      },
+    );
     if (!res.ok) return null;
     const json = (await res.json()) as { pairs?: DexPair[] | null };
     return Array.isArray(json.pairs) ? json.pairs : [];
@@ -180,7 +188,11 @@ export async function readMarketSnapshot(): Promise<MarketSnapshot> {
 
   const pairs = await fetchDexscreener(config.contractAddress);
   if (pairs === null) {
-    return emptySnapshot("unavailable", config, "The market data provider is unreachable right now.");
+    return emptySnapshot(
+      "unavailable",
+      config,
+      "The market data provider is unreachable right now.",
+    );
   }
   if (pairs.length === 0) {
     return emptySnapshot(
@@ -194,8 +206,7 @@ export async function readMarketSnapshot(): Promise<MarketSnapshot> {
     ? pairs.find((p) => p.pairAddress?.toLowerCase() === config.pairAddress?.toLowerCase())
     : undefined;
   const best =
-    preferred ??
-    [...pairs].sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0];
+    preferred ?? [...pairs].sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0];
 
   const chain = best.chainId ?? "solana";
   const pairAddress = best.pairAddress ?? null;

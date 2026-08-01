@@ -168,7 +168,9 @@ function SettingsPage() {
             {(auditQuery.data ?? []).map((entry) => (
               <li key={entry.id} className="rounded-xl bg-card p-3">
                 <span className="font-display">{entry.action}</span>
-                {entry.summary ? <span className="block text-charcoal/85">{entry.summary}</span> : null}
+                {entry.summary ? (
+                  <span className="block text-charcoal/85">{entry.summary}</span>
+                ) : null}
                 <span className="block text-charcoal/60">
                   {new Date(entry.created_at).toLocaleString()}
                 </span>

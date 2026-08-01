@@ -19,10 +19,10 @@ These are enforced by the code, not just by convention:
 2. **No stock dogs and no AI-generated Ivy.** Every image slot is a clearly
    labelled `MediaPlaceholder` reading "Owner media slot". Replace them only
    with media Ivy's owner has approved.
-3. **No pretend connections.** Instagram and TikTok are shown as *Not
-   connected* until real credentials exist. The site never scrapes.
+3. **No pretend connections.** Instagram and TikTok are shown as _Not
+   connected_ until real credentials exist. The site never scrapes.
 4. **No invented social links.** The Royal Court lists channels with
-   *Coming Soon* until a URL is added to `projectConfig.socials`.
+   _Coming Soon_ until a URL is added to `projectConfig.socials`.
 5. **Legal pages are drafts.** Each one is labelled as requiring professional
    review.
 
@@ -99,8 +99,12 @@ approved, visible content. Writes require an `admin` or `editor` role stored in
 **Read path (public).** `GET /api/social-feed` returns:
 
 ```json
-{ "instagram": [], "tiktok": [], "lastUpdated": null,
-  "status": { "instagram": "not_configured", "tiktok": "not_configured" } }
+{
+  "instagram": [],
+  "tiktok": [],
+  "lastUpdated": null,
+  "status": { "instagram": "not_configured", "tiktok": "not_configured" }
+}
 ```
 
 It reads only from the `social_posts` cache table. It never calls Instagram or
@@ -121,11 +125,11 @@ last good feed is retained, so the public page never goes blank.
 Add these in **Project Settings → Secrets**, then complete the OAuth flow from
 `/admin`:
 
-| Platform  | Required secrets |
-|-----------|------------------|
+| Platform  | Required secrets                                                           |
+| --------- | -------------------------------------------------------------------------- |
 | Instagram | `INSTAGRAM_CLIENT_ID`, `INSTAGRAM_CLIENT_SECRET`, `INSTAGRAM_REDIRECT_URI` |
-| TikTok    | `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, `TIKTOK_REDIRECT_URI` |
-| Sync hook | `SOCIAL_SYNC_SECRET` |
+| TikTok    | `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, `TIKTOK_REDIRECT_URI`         |
+| Sync hook | `SOCIAL_SYNC_SECRET`                                                       |
 
 Until they exist, every OAuth endpoint returns an honest `503 not_configured`
 listing the missing variables. Access tokens are never stored in application
@@ -207,12 +211,12 @@ website-only caption override is optional and never overwrites the source.
 
 ### Placement defaults
 
-| Media | Placements |
-| --- | --- |
-| video / reel | Fresh Posts + Ivy TV |
-| image / carousel | Fresh Posts + Hall of Fame |
-| Hero | newest approved image, unless an owner-pinned hero exists |
-| Meme Machine | only items with community reuse enabled (off by default) |
+| Media            | Placements                                                |
+| ---------------- | --------------------------------------------------------- |
+| video / reel     | Fresh Posts + Ivy TV                                      |
+| image / carousel | Fresh Posts + Hall of Fame                                |
+| Hero             | newest approved image, unless an owner-pinned hero exists |
+| Meme Machine     | only items with community reuse enabled (off by default)  |
 
 Manual pinned/featured and manual placements always win over automation.
 

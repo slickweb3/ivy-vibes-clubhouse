@@ -5,7 +5,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import type { SiteMedia } from "@/types/media";
 
-export const getSiteMedia = createServerFn({ method: "GET" }).handler(async (): Promise<SiteMedia> => {
-  const { readSiteMedia } = await import("@/lib/media-read.server");
-  return readSiteMedia();
-});
+export const getSiteMedia = createServerFn({ method: "GET" }).handler(
+  async (): Promise<SiteMedia> => {
+    const { readSiteMedia } = await import("@/lib/media-read.server");
+    return readSiteMedia();
+  },
+);

@@ -65,10 +65,7 @@ const INSTAGRAM: ProfileMeta = {
 
 export function SocialWindows({ posts }: { posts: CuratedPost[] }) {
   const tiktok = useMemo(() => posts.filter((post) => post.platform === "tiktok"), [posts]);
-  const instagram = useMemo(
-    () => posts.filter((post) => post.platform === "instagram"),
-    [posts],
-  );
+  const instagram = useMemo(() => posts.filter((post) => post.platform === "instagram"), [posts]);
 
   if (tiktok.length === 0 && instagram.length === 0) return null;
 
@@ -180,15 +177,14 @@ function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[
               href={meta.profileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="truncate text-sm text-ivy underline underline-offset-4"
+              className="inline-flex min-h-11 max-w-full items-center truncate text-sm text-ivy underline underline-offset-4"
             >
               @{meta.handle}
             </a>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
               {meta.stats.map((stat) => (
                 <span key={stat.label} className="text-sm text-charcoal/80">
-                  <strong className="font-display text-charcoal">{stat.value}</strong>{" "}
-                  {stat.label}
+                  <strong className="font-display text-charcoal">{stat.value}</strong> {stat.label}
                 </span>
               ))}
             </div>
@@ -255,11 +251,7 @@ function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[
                 }}
                 className="social-window-item"
               >
-                <OfficialSocialEmbed
-                  post={post}
-                  tone={meta.tone}
-                  className="w-full"
-                />
+                <OfficialSocialEmbed post={post} tone={meta.tone} className="w-full" />
               </li>
             ))}
           </ul>
@@ -291,7 +283,7 @@ function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[
           href={meta.profileUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="pop inline-flex min-h-9 items-center gap-1 rounded-full bg-frog px-3 font-display text-charcoal"
+          className="pop inline-flex min-h-11 items-center gap-1 rounded-full bg-frog px-3 font-display text-charcoal"
         >
           Open profile
           <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />

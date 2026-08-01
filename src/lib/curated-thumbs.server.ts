@@ -57,9 +57,7 @@ export function isPosterStale(fetchedAt: string | null): boolean {
  * Refreshes stale TikTok posters and writes them back to the cache.
  * Never throws: a TikTok outage simply leaves the previous poster in place.
  */
-export async function refreshTikTokPosters(
-  rows: StaleRow[],
-): Promise<Map<string, TikTokPoster>> {
+export async function refreshTikTokPosters(rows: StaleRow[]): Promise<Map<string, TikTokPoster>> {
   const results = new Map<string, TikTokPoster>();
   if (rows.length === 0) return results;
 

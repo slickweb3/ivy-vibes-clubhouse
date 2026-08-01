@@ -29,7 +29,10 @@ function compactUsd(value: number | null): string | null {
   return `$${value.toLocaleString("en-US", { notation: "compact", maximumFractionDigits: 2 })}`;
 }
 
-const STATUS_LABEL: Record<MarketSnapshot["status"], { status: "ok" | "pending" | "off"; label: string }> = {
+const STATUS_LABEL: Record<
+  MarketSnapshot["status"],
+  { status: "ok" | "pending" | "off"; label: string }
+> = {
   live: { status: "ok", label: "Live market data" },
   awaiting_contract: { status: "pending", label: "Not launched yet" },
   awaiting_pair: { status: "pending", label: "Waiting for the first pair" },
@@ -51,7 +54,9 @@ function Stat({
 }) {
   return (
     <div className="rounded-2xl bg-card p-4 pop-static">
-      <p className="font-display text-[0.7rem] tracking-wide text-charcoal/70 uppercase">{keepTickerCase(label)}</p>
+      <p className="font-display text-[0.7rem] tracking-wide text-charcoal/70 uppercase">
+        {keepTickerCase(label)}
+      </p>
       <div className="mt-2 font-display text-xl text-charcoal sm:text-2xl">
         {value === null ? (
           <ComingSoonPill />
@@ -140,7 +145,8 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
           ) : null}
           {snapshot.txns24h ? (
             <span className="text-sm text-charcoal/80">
-              {snapshot.txns24h.buys.toLocaleString()} buys · {snapshot.txns24h.sells.toLocaleString()} sells (24h)
+              {snapshot.txns24h.buys.toLocaleString()} buys ·{" "}
+              {snapshot.txns24h.sells.toLocaleString()} sells (24h)
             </span>
           ) : null}
           {snapshot.dexId ? (

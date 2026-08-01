@@ -5,7 +5,6 @@ import { Reveal } from "./reveal";
 
 import { displayCaption, posterUrl, type UnifiedMediaItem } from "@/types/media";
 
-
 export type Tone = "leaf" | "cream" | "lavender" | "yellow" | "pink" | "frog";
 
 const toneBg: Record<Tone, string> = {
@@ -128,7 +127,6 @@ export function ApprovedMedia({
 }
 
 export function ComingSoonPill({ className }: { className?: string }) {
-
   return (
     <span
       className={cn(
@@ -218,11 +216,7 @@ export function Section({
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className={cn(
-        "relative scroll-mt-28 py-14 sm:py-20 lg:py-24",
-        toneClass,
-        className,
-      )}
+      className={cn("relative scroll-mt-28 py-14 sm:py-20 lg:py-24", toneClass, className)}
     >
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
         <Reveal as="header" className="mb-8 max-w-3xl sm:mb-10">
@@ -249,9 +243,6 @@ export function Section({
   );
 }
 
-
-
-
 export function Polaroid({
   item,
   label,
@@ -276,9 +267,13 @@ export function Polaroid({
       className={cn("polaroid relative w-full transition-transform hover:-rotate-1", className)}
       style={{ transform: `rotate(${rotate}deg)` }}
     >
-      {tape ? <Tape className="-top-3 left-1/2 -translate-x-1/2" rotate={rotate > 0 ? -8 : 7} /> : null}
+      {tape ? (
+        <Tape className="-top-3 left-1/2 -translate-x-1/2" rotate={rotate > 0 ? -8 : 7} />
+      ) : null}
       <ApprovedMedia item={item} label={label} aspect={aspect} tone={tone} compact />
-      <figcaption className="mt-3 text-center font-display text-sm text-charcoal">{caption}</figcaption>
+      <figcaption className="mt-3 text-center font-display text-sm text-charcoal">
+        {caption}
+      </figcaption>
     </figure>
   );
 }
@@ -314,7 +309,6 @@ export function InfoCard({
     </div>
   );
 }
-
 
 /** Honest status chip. Never colour-only: always carries text. */
 export function StatusChip({

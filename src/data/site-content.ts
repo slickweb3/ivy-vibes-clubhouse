@@ -17,7 +17,13 @@ export const heroCopy = {
   headlineLine2: "BIG VIBES.",
   body: "Meet Ivy—the internet's beloved Frog Queen, professional grass roller and undisputed master of doing everything her own way. $ivy is a community meme coin celebrating the dog who proved that being built different is a superpower.",
   mediaLabel: "Official Ivy portrait",
-  stickers: ["Frog Mode", "Certified Queen", "Built Different", "Main Character", "Internet Royalty"],
+  stickers: [
+    "Frog Mode",
+    "Certified Queen",
+    "Built Different",
+    "Main Character",
+    "Internet Royalty",
+  ],
 };
 
 export const meetIvy = {
@@ -272,15 +278,32 @@ export const ownerCorner = {
   body: "Ivy's online story exists because someone has cared for her, understood her needs and shared her personality with the world. $ivy should always respect the bond at the centre of the project.",
   mediaLabel: "Ivy and her human",
   cards: [
-    { title: "Ivy comes first", body: "Her care, comfort and routine always outrank anything happening on-chain." },
-    { title: "Only official content", body: "Every clip and photo on this site is an official Instagram or TikTok post, hosted by the platform." },
-    { title: "Creator rewards", body: "pump.fun creator rewards from $ivy trading are intended for Ivy and her owner." },
-    { title: "No private details", body: "Nothing about Ivy's household, location or medical records is published here." },
-    { title: "Transparent proceeds", body: "Full allocation and proceeds information is published on this website." },
-    { title: "Community, not charity", body: "ivy vibing is not a registered charity — it is a community meme project built around Ivy." },
+    {
+      title: "Ivy comes first",
+      body: "Her care, comfort and routine always outrank anything happening on-chain.",
+    },
+    {
+      title: "Only official content",
+      body: "Every clip and photo on this site is an official Instagram or TikTok post, hosted by the platform.",
+    },
+    {
+      title: "Creator rewards",
+      body: "pump.fun creator rewards from $ivy trading are intended for Ivy and her owner.",
+    },
+    {
+      title: "No private details",
+      body: "Nothing about Ivy's household, location or medical records is published here.",
+    },
+    {
+      title: "Transparent proceeds",
+      body: "Full allocation and proceeds information is published on this website.",
+    },
+    {
+      title: "Community, not charity",
+      body: "ivy vibing is not a registered charity — it is a community meme project built around Ivy.",
+    },
   ],
 };
-
 
 export const royalCourt = {
   heading: "The Royal Court",

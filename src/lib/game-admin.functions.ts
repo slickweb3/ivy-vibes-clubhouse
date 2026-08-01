@@ -24,7 +24,14 @@ export interface AdminLeaderboard {
 export const getAdminLeaderboard = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
-    z.object({ season: z.string().regex(/^\d{4}-\d{2}$/).optional() }).parse(data ?? {}),
+    z
+      .object({
+        season: z
+          .string()
+          .regex(/^\d{4}-\d{2}$/)
+          .optional(),
+      })
+      .parse(data ?? {}),
   )
   .handler(async ({ data, context }): Promise<AdminLeaderboard> => {
     const { requireStaff } = await import("@/lib/admin-guard.server");
@@ -34,7 +41,9 @@ export const getAdminLeaderboard = createServerFn({ method: "POST" })
     const season = data.season ?? currentSeason();
 
     const { data: all } = await context.supabase.from("game_scores").select("season");
-    const seasons = Array.from(new Set((all ?? []).map((row) => row.season as string))).sort().reverse();
+    const seasons = Array.from(new Set((all ?? []).map((row) => row.season as string)))
+      .sort()
+      .reverse();
 
     const { data: rows } = await context.supabase
       .from("game_scores")

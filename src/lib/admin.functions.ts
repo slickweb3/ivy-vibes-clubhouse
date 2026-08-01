@@ -112,7 +112,9 @@ export const getConnectionCards = createServerFn({ method: "GET" })
           accountName?.toLowerCase() === official.handle.toLowerCase(),
         lastSyncAt: (row?.last_sync_at as string | null) ?? null,
         lastSyncStatus: (row?.last_sync_status as string | null) ?? null,
-        tokenRenewal: expires ? `Renews ${new Date(expires).toLocaleDateString()}` : "Not configured",
+        tokenRenewal: expires
+          ? `Renews ${new Date(expires).toLocaleDateString()}`
+          : "Not configured",
         credentialsConfigured: status.configured,
         missingEnvVars: status.missing,
         setupUrl: status.setupUrl,
@@ -362,10 +364,10 @@ export const listAdminMedia = createServerFn({ method: "GET" })
         sourceAccountId: null,
         accountName: null,
         mediaKind: (row.kind as string) ?? "image",
-        originalCaption: ((row.caption as string) ?? (row.title as string)) ?? null,
+        originalCaption: (row.caption as string) ?? (row.title as string) ?? null,
         websiteCaption: null,
         permalink: (row.permalink as string) ?? null,
-        thumbnailUrl: ((row.thumbnail_url as string) ?? (row.external_url as string)) ?? null,
+        thumbnailUrl: (row.thumbnail_url as string) ?? (row.external_url as string) ?? null,
         fallbackThumbnailUrl: (row.thumbnail_url as string) ?? null,
         altText: (row.alt_text as string) ?? "",
         approvalStatus: (row.approval_status as string) ?? "pending",
@@ -433,13 +435,19 @@ export const updateMediaItem = createServerFn({ method: "POST" })
       if (data.allowCommunityReuse !== undefined)
         patch.allow_community_reuse = data.allowCommunityReuse;
       if (Object.keys(patch).length > 0) {
-        await supabase.from("social_posts").update(patch as never).eq("id", data.sourceId);
+        await supabase
+          .from("social_posts")
+          .update(patch as never)
+          .eq("id", data.sourceId);
       }
     } else {
       if (data.allowCommunityReuse !== undefined) patch.usable_in_memes = data.allowCommunityReuse;
       delete patch.fallback_thumbnail_url;
       if (Object.keys(patch).length > 0) {
-        await supabase.from("media_items").update(patch as never).eq("id", data.sourceId);
+        await supabase
+          .from("media_items")
+          .update(patch as never)
+          .eq("id", data.sourceId);
       }
     }
 

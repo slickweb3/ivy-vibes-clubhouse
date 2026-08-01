@@ -177,10 +177,7 @@ export const updateCuratedPost = createServerFn({ method: "POST" })
     if (data.isFeatured !== undefined) patch.is_featured = data.isFeatured;
     if (data.displayOrder !== undefined) patch.display_order = Number(data.displayOrder) || 0;
 
-    const { error } = await supabase
-      .from("curated_social_posts")
-      .update(patch)
-      .eq("id", data.id);
+    const { error } = await supabase.from("curated_social_posts").update(patch).eq("id", data.id);
     if (error) throw new Error("Could not update this curated post.");
 
     await audit(supabase, userId, {

@@ -58,9 +58,6 @@ async function handle(provider: string, action: string, request: Request): Promi
   if (!status.configured) return notConfiguredResponse(status);
 
   try {
-
-
-
     if (action === "callback") {
       const url = new URL(request.url);
       const error = url.searchParams.get("error");

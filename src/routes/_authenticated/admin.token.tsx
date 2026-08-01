@@ -7,7 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { AdminShell } from "@/components/admin/admin-nav";
 import { StatusChip } from "@/components/ivy/primitives";
-import { getTokenSettings, updateTokenSettings, type TokenRecordSettings } from "@/lib/admin.functions";
+import {
+  getTokenSettings,
+  updateTokenSettings,
+  type TokenRecordSettings,
+} from "@/lib/admin.functions";
 import { getMarketSnapshot } from "@/lib/market.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/token")({
@@ -25,7 +29,12 @@ export const Route = createFileRoute("/_authenticated/admin/token")({
   component: TokenPage,
 });
 
-const FIELDS: Array<{ key: keyof TokenRecordSettings; label: string; help: string; placeholder: string }> = [
+const FIELDS: Array<{
+  key: keyof TokenRecordSettings;
+  label: string;
+  help: string;
+  placeholder: string;
+}> = [
   {
     key: "contractAddress",
     label: "Contract / mint address",
@@ -119,7 +128,13 @@ function TokenPage() {
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="font-display text-lg text-charcoal">Live feed status</h2>
           <StatusChip
-            status={snapshot?.status === "live" ? "ok" : snapshot?.status === "disabled" ? "off" : "pending"}
+            status={
+              snapshot?.status === "live"
+                ? "ok"
+                : snapshot?.status === "disabled"
+                  ? "off"
+                  : "pending"
+            }
             label={snapshot?.status ? snapshot.status.replace(/_/g, " ") : "checking"}
           />
         </div>

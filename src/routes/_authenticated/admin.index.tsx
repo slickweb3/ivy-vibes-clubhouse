@@ -2,14 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Button } from "@/components/ui/button";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatusChip, Sticker, MediaPlaceholder } from "@/components/ivy/primitives";
 import { IvyWordmark } from "@/components/ivy/doodles";
 import { AdminNav } from "@/components/admin/admin-nav";
@@ -65,6 +60,7 @@ function AdminDashboard() {
   async function signOut() {
     await queryClient.cancelQueries();
     queryClient.clear();
+    const supabase = await getSupabaseBrowserClient();
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
@@ -204,10 +200,7 @@ function AdminDashboard() {
                         status={card.connected ? "ok" : "pending"}
                         label={card.connected ? "Connected" : "Not connected"}
                       />
-                      <StatusChip
-                        status="off"
-                        label={`Last sync: ${card.lastSyncAt ?? "never"}`}
-                      />
+                      <StatusChip status="off" label={`Last sync: ${card.lastSyncAt ?? "never"}`} />
                       <StatusChip status="off" label={card.tokenRenewal} />
                     </div>
                   </Panel>
@@ -245,7 +238,10 @@ function AdminDashboard() {
 
           <TabsContent value="content" className="mt-6 grid gap-4 md:grid-cols-2">
             <Panel title="FAQ entries" description={`${faqEntries.length} published questions.`} />
-            <Panel title="Lore chapters" description={`${loreChapters.length} chapters, dates unconfirmed.`} />
+            <Panel
+              title="Lore chapters"
+              description={`${loreChapters.length} chapters, dates unconfirmed.`}
+            />
           </TabsContent>
 
           <TabsContent value="legal" className="mt-6 grid gap-4 md:grid-cols-2">

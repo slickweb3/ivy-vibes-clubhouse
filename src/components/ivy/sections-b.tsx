@@ -19,7 +19,6 @@ import {
 import { legalPages } from "@/data/legal";
 import { COMING_SOON, projectConfig } from "@/config/project";
 
-
 /* --------------------------------------------------------- Owner's Corner */
 
 export function OwnerCorner() {
@@ -61,7 +60,10 @@ export function RoyalCourt() {
             <li key={channel.id} data-tilt className="rounded-2xl bg-card p-5 pop-static">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="font-display text-lg text-charcoal">{channel.label}</h3>
-                <StatusChip status={url ? "ok" : "pending"} label={url ? "Official" : COMING_SOON} />
+                <StatusChip
+                  status={url ? "ok" : "pending"}
+                  label={url ? "Official" : COMING_SOON}
+                />
               </div>
               <p className="mt-2 break-all text-sm text-charcoal/80">
                 {url ?? "No official channel has been published yet."}
@@ -167,7 +169,7 @@ export function SiteFooter() {
               <li key={link.hash}>
                 <a
                   href={link.hash}
-                  className="inline-flex min-h-9 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
+                  className="inline-flex min-h-11 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
                 >
                   {link.label}
                 </a>
@@ -184,7 +186,7 @@ export function SiteFooter() {
                 <Link
                   to="/legal/$slug"
                   params={{ slug: page.slug }}
-                  className="inline-flex min-h-9 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
+                  className="inline-flex min-h-11 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
                 >
                   {page.title}
                 </Link>
@@ -194,7 +196,7 @@ export function SiteFooter() {
               <button
                 type="button"
                 onClick={openSettings}
-                className="inline-flex min-h-9 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
+                className="inline-flex min-h-11 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
               >
                 Cookie settings
               </button>

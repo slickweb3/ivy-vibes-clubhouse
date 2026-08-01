@@ -3,11 +3,7 @@ import { ExternalLinkIcon, Play } from "lucide-react";
 import { useEmbedConsent } from "./cookie-consent";
 import { Sticker } from "./primitives";
 import { CrownDoodle, FrogDoodle, PawDoodle } from "./doodles";
-import {
-  curatedFallbackLabel,
-  platformLabel,
-  type CuratedPost,
-} from "@/types/curated";
+import { curatedFallbackLabel, platformLabel, type CuratedPost } from "@/types/curated";
 import { cn } from "@/lib/utils";
 
 /** Keeps at most one TikTok player mounted at a time (mobile performance). */
@@ -82,9 +78,7 @@ export function OfficialSocialEmbed({
     return () => {
       activePlayerListeners.delete(listener);
     };
-
   }, [playing, post.id]);
-
 
   // TikTok gives us its own official poster image, so the card shows a real
   // picture straight away and the video opens in TikTok's player on tap.
@@ -96,7 +90,6 @@ export function OfficialSocialEmbed({
     isTikTok && playing
       ? `${post.officialEmbedUrl}${post.officialEmbedUrl.includes("?") ? "&" : "?"}autoplay=1`
       : post.officialEmbedUrl;
-
 
   return (
     <figure
@@ -149,7 +142,6 @@ export function OfficialSocialEmbed({
             </span>
           </button>
         ) : showEmbed ? (
-
           <>
             {!loaded ? (
               <div
@@ -202,31 +194,30 @@ export function OfficialSocialEmbed({
                 This post can&apos;t be shown here right now — open it on {label}.
               </p>
             ) : null}
-            {!failed ? <span className="text-xs text-charcoal/70">Open the original post from the link below.</span> : null}
+            {!failed ? (
+              <span className="text-xs text-charcoal/70">
+                Open the original post from the link below.
+              </span>
+            ) : null}
           </div>
         )}
       </div>
 
       {post.originalCaption && !compact ? (
-        <p className="line-clamp-2 text-xs leading-snug text-charcoal/80">
-          {post.originalCaption}
-        </p>
+        <p className="line-clamp-2 text-xs leading-snug text-charcoal/80">{post.originalCaption}</p>
       ) : null}
-
 
       <figcaption className="flex flex-wrap items-center justify-between gap-2 text-xs">
         <a
           href={post.originalPostUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-9 items-center gap-1 font-display text-ivy underline underline-offset-4"
+          className="inline-flex min-h-11 items-center gap-1 font-display text-ivy underline underline-offset-4"
         >
           View original post
           <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />
         </a>
-        {!compact ? (
-          <span className="text-charcoal/70">@{post.sourceAccountHandle}</span>
-        ) : null}
+        {!compact ? <span className="text-charcoal/70">@{post.sourceAccountHandle}</span> : null}
       </figcaption>
 
       {!embedsAllowed && !compact ? (
@@ -254,10 +245,10 @@ const toneBg = {
 export function CuratedNote({ className }: { className?: string }) {
   return (
     <p className={cn("rounded-xl bg-yellow p-4 text-sm text-charcoal pop-static", className)}>
-      These posts are hand-picked from Ivy&apos;s official public accounts and shown with
-      Instagram and TikTok&apos;s own embeds, so her original captions stay exactly as she wrote
-      them. Nothing is copied or re-hosted here, and this is not a live automatic feed.
-      Instagram and TikTok do not sponsor or endorse this project.
+      These posts are hand-picked from Ivy&apos;s official public accounts and shown with Instagram
+      and TikTok&apos;s own embeds, so her original captions stay exactly as she wrote them. Nothing
+      is copied or re-hosted here, and this is not a live automatic feed. Instagram and TikTok do
+      not sponsor or endorse this project.
     </p>
   );
 }

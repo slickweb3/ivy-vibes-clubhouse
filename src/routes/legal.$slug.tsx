@@ -14,10 +14,7 @@ export const Route = createFileRoute("/legal/$slug")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [
-          { title: "Page unavailable — ivy vibing" },
-          { name: "robots", content: "noindex" },
-        ],
+        meta: [{ title: "Page unavailable — ivy vibing" }, { name: "robots", content: "noindex" }],
       };
     }
     const title = `${loaderData.page.title} — ivy vibing`;
@@ -92,7 +89,7 @@ function LegalPageView() {
               <li key={section.heading}>
                 <a
                   href={`#section-${index}`}
-                  className="inline-flex min-h-9 items-center text-sm text-charcoal/85 underline-offset-4 hover:underline"
+                  className="inline-flex min-h-11 items-center text-sm text-charcoal/85 underline-offset-4 hover:underline"
                 >
                   {section.heading}
                 </a>

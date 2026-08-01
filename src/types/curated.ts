@@ -101,7 +101,6 @@ export function tiktokEmbedUrl(videoId: string): string {
  * of an explicit admin confirmation in the admin UI, not an automatic check.
  */
 export function parseCuratedUrl(input: string): ParsedCuratedUrl | { error: string } {
-
   let url: URL;
   try {
     url = new URL(input.trim());

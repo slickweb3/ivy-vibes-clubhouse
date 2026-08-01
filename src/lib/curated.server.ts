@@ -98,8 +98,7 @@ export async function readCuratedFeed(): Promise<CuratedFeed> {
       all.filter((post) => post.placements.includes(placement));
 
     const heroCandidates = inPlacement("hero");
-    const hero =
-      heroCandidates.find((post) => post.isPinned) ?? heroCandidates[0] ?? null;
+    const hero = heroCandidates.find((post) => post.isPinned) ?? heroCandidates[0] ?? null;
 
     return {
       all,

@@ -34,7 +34,8 @@ const PROVIDER_ENV: Record<
 > = {
   instagram: {
     vars: ["INSTAGRAM_CLIENT_ID", "INSTAGRAM_CLIENT_SECRET", "INSTAGRAM_REDIRECT_URI"],
-    setupUrl: "https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login",
+    setupUrl:
+      "https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login",
     redirectVar: "INSTAGRAM_REDIRECT_URI",
     scopes: ["instagram_business_basic"],
   },
@@ -126,15 +127,13 @@ export async function consumeState(
     .eq("state", state)
     .maybeSingle();
 
-  const row = data as
-    | {
-        id: string;
-        platform: string;
-        expires_at: string;
-        consumed_at: string | null;
-        created_by: string | null;
-      }
-    | null;
+  const row = data as {
+    id: string;
+    platform: string;
+    expires_at: string;
+    consumed_at: string | null;
+    created_by: string | null;
+  } | null;
   if (!row || row.platform !== platform || row.consumed_at) return false;
   // The handshake must have been started by a signed-in admin.
   if (!row.created_by) return false;
@@ -143,7 +142,6 @@ export async function consumeState(
   await db.from("oauth_states").update({ consumed_at: new Date().toISOString() }).eq("id", row.id);
   return true;
 }
-
 
 /* ------------------------------------------------------- token storage */
 
@@ -171,7 +169,9 @@ export async function loadAccessToken(platform: SocialPlatform): Promise<string 
     .select("access_token_cipher")
     .eq("platform", platform)
     .maybeSingle();
-  return decryptSecret((data as { access_token_cipher: string | null } | null)?.access_token_cipher ?? null);
+  return decryptSecret(
+    (data as { access_token_cipher: string | null } | null)?.access_token_cipher ?? null,
+  );
 }
 
 export async function loadRefreshToken(platform: SocialPlatform): Promise<string | null> {
@@ -198,7 +198,10 @@ export async function upsertConnection(
   const db = await admin();
   await db
     .from("social_connections")
-    .upsert({ platform, ...patch, updated_at: new Date().toISOString() }, { onConflict: "platform" });
+    .upsert(
+      { platform, ...patch, updated_at: new Date().toISOString() },
+      { onConflict: "platform" },
+    );
 }
 
 /* ---------------------------------------------------------- authorize */
@@ -239,9 +242,7 @@ export interface ExchangeResult {
 }
 
 function expiryFromSeconds(seconds: unknown): string | null {
-  return typeof seconds === "number"
-    ? new Date(Date.now() + seconds * 1000).toISOString()
-    : null;
+  return typeof seconds === "number" ? new Date(Date.now() + seconds * 1000).toISOString() : null;
 }
 
 export async function exchangeCode(
@@ -402,7 +403,10 @@ export async function fetchTikTokProfile(
       data?: { user?: { open_id?: string; username?: string; display_name?: string } };
     };
     const user = json.data?.user;
-    return { openId: user?.open_id ?? null, username: user?.username ?? user?.display_name ?? null };
+    return {
+      openId: user?.open_id ?? null,
+      username: user?.username ?? user?.display_name ?? null,
+    };
   } catch {
     return { openId: null, username: null };
   }

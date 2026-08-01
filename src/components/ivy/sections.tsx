@@ -1,13 +1,17 @@
 import { useMemo, useRef } from "react";
 import { ExternalLinkIcon, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Section, MediaPlaceholder, ApprovedMedia, Polaroid, InfoCard, Sticker, StatusChip, ComingSoonPill } from "./primitives";
 import {
-  displayCaption,
-  isVideoLike,
-  type SiteMedia,
-  type UnifiedMediaItem,
-} from "@/types/media";
+  Section,
+  MediaPlaceholder,
+  ApprovedMedia,
+  Polaroid,
+  InfoCard,
+  Sticker,
+  StatusChip,
+  ComingSoonPill,
+} from "./primitives";
+import { displayCaption, isVideoLike, type SiteMedia, type UnifiedMediaItem } from "@/types/media";
 import { CrownDoodle, FrogDoodle, GrassStrip, LeafDoodle, PawDoodle } from "./doodles";
 import { useEmbedConsent } from "./cookie-consent";
 import { OfficialSocialEmbed, CuratedNote } from "./official-embed";
@@ -49,7 +53,6 @@ export function Hero({
   market?: MarketSnapshot | null;
   curatedHero?: CuratedPost | null;
 }) {
-
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden bg-leaf band-leaf">
       <div className="pointer-events-none absolute -top-10 -right-8 hidden opacity-70 sm:block">
@@ -75,7 +78,10 @@ export function Hero({
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild className="min-h-12 rounded-full bg-frog px-6 font-display text-base text-charcoal pop hover:bg-frog">
+            <Button
+              asChild
+              className="min-h-12 rounded-full bg-frog px-6 font-display text-base text-charcoal pop hover:bg-frog"
+            >
               <a href="#meet-ivy">Meet the Queen</a>
             </Button>
             <Button
@@ -95,7 +101,10 @@ export function Hero({
           <ul className="mt-8 flex flex-wrap gap-2">
             {heroCopy.stickers.map((sticker, index) => (
               <li key={sticker}>
-                <Sticker tone={(["pink", "lavender", "yellow", "cream", "frog"] as const)[index % 5]} float>
+                <Sticker
+                  tone={(["pink", "lavender", "yellow", "cream", "frog"] as const)[index % 5]}
+                  float
+                >
                   {sticker}
                 </Sticker>
               </li>
@@ -117,7 +126,6 @@ export function Hero({
             </li>
           </ul>
 
-
           {market ? (
             <div className="mt-8 -rotate-1">
               <MiniChart snapshot={market} />
@@ -130,7 +138,6 @@ export function Hero({
     </section>
   );
 }
-
 
 /* -------------------------------------------------------------- Meet Ivy */
 
@@ -206,7 +213,10 @@ export function FreshFromTheFrogQueen({
           >
             {curated.map((post) => (
               <li key={post.id} className="rail-item w-[80%] min-w-0 shrink-0 sm:w-auto">
-                <OfficialSocialEmbed post={post} tone={post.platform === "tiktok" ? "lavender" : "leaf"} />
+                <OfficialSocialEmbed
+                  post={post}
+                  tone={post.platform === "tiktok" ? "lavender" : "leaf"}
+                />
               </li>
             ))}
           </ul>
@@ -253,7 +263,6 @@ export function FreshFromTheFrogQueen({
     </Section>
   );
 }
-
 
 function PlatformFeed({
   label,
@@ -321,7 +330,7 @@ function PlatformFeed({
         ))}
         {Array.from({ length: slots }).map((_, index) => (
           <li key={`slot-${index}`} className="rail-item w-[72%] min-w-0 shrink-0 sm:w-auto">
-              <MediaPlaceholder
+            <MediaPlaceholder
               label={slotLabel}
               aspect="square"
               tone={index === 1 ? "lavender" : "leaf"}
@@ -397,7 +406,6 @@ export function IvyTV({
   const curatedFeatured = curated.find((post) => post.isFeatured) ?? curated[0] ?? null;
   const curatedRest = curated.filter((post) => post.id !== curatedFeatured?.id);
 
-
   const approvedVideos = useMemo(
     () => approved.filter((item) => isVideoLike(item) || item.mediaKind === "image"),
     [approved],
@@ -408,7 +416,6 @@ export function IvyTV({
   const featuredApproved =
     approvedVideos.find((item) => item.isFeatured) ?? approvedVideos[0] ?? null;
   const featured = ivyTvItems.find((item) => item.isFeatured);
-
 
   return (
     <Section
@@ -422,7 +429,11 @@ export function IvyTV({
       {featured ? (
         <div className="mb-10 grid gap-6 rounded-2xl bg-card p-5 pop-static lg:grid-cols-[1.4fr_1fr]">
           {curatedFeatured ? (
-            <OfficialSocialEmbed post={curatedFeatured} tone="lavender" className="mx-auto w-full max-w-sm" />
+            <OfficialSocialEmbed
+              post={curatedFeatured}
+              tone="lavender"
+              className="mx-auto w-full max-w-sm"
+            />
           ) : (
             <ApprovedMedia
               item={featuredApproved}
@@ -435,7 +446,9 @@ export function IvyTV({
           <div className="flex flex-col justify-center gap-3">
             <Sticker tone="yellow">Featured episode</Sticker>
             <h3 className="font-display text-2xl text-charcoal">
-              {curatedFeatured || featuredApproved ? "Straight from the Frog Queen" : featured.title}
+              {curatedFeatured || featuredApproved
+                ? "Straight from the Frog Queen"
+                : featured.title}
             </h3>
             <p className="text-sm text-charcoal/85">
               {curatedFeatured
@@ -471,15 +484,17 @@ export function IvyTV({
         </ul>
       ) : null}
 
-
-
-
-
       {curated.length === 0 && approvedVideos.length > 0 ? (
         <ul className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {approvedVideos.map((item) => (
             <li key={item.key} data-tilt className="rounded-2xl bg-card p-4 pop-static">
-              <ApprovedMedia item={item} label="Approved Ivy video" aspect="tall" tone="leaf" compact />
+              <ApprovedMedia
+                item={item}
+                label="Approved Ivy video"
+                aspect="tall"
+                tone="leaf"
+                compact
+              />
               <p className="mt-3 line-clamp-3 text-sm text-charcoal/85">{displayCaption(item)}</p>
               <div className="mt-3 flex items-center gap-2">
                 {item.permalink ? (
@@ -487,7 +502,7 @@ export function IvyTV({
                     href={item.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-lavender px-3 font-display text-xs text-charcoal"
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-lavender px-3 font-display text-xs text-charcoal"
                   >
                     <Play aria-hidden className="h-3.5 w-3.5" />
                     Watch on {item.platform === "tiktok" ? "TikTok" : "Instagram"}
@@ -514,7 +529,7 @@ export function IvyTV({
               <div className="mt-3 flex items-center gap-2">
                 <span className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-lavender px-3 font-display text-xs text-charcoal">
                   <Play aria-hidden className="h-3.5 w-3.5" />
-                {item.videoUrl ? "Play" : "Official clip"}
+                  {item.videoUrl ? "Play" : "Official clip"}
                 </span>
                 <span className="text-xs text-charcoal/70">{item.category}</span>
               </div>
@@ -522,7 +537,6 @@ export function IvyTV({
           ))}
         </ul>
       ) : null}
-
     </Section>
   );
 }
@@ -549,7 +563,9 @@ export function HallOfFame({
           {curated.map((post, index) => (
             <li
               key={post.id}
-              style={{ transform: `rotate(${index % 3 === 0 ? -1.5 : index % 3 === 1 ? 1.5 : -0.5}deg)` }}
+              style={{
+                transform: `rotate(${index % 3 === 0 ? -1.5 : index % 3 === 1 ? 1.5 : -0.5}deg)`,
+              }}
             >
               <OfficialSocialEmbed post={post} tone={index % 2 === 0 ? "cream" : "yellow"} />
             </li>
@@ -558,7 +574,6 @@ export function HallOfFame({
       ) : null}
 
       <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 [&>*]:mb-4">
-
         {items.map((item, index) => (
           <Polaroid
             key={item.key}
@@ -585,12 +600,10 @@ export function HallOfFame({
             className="break-inside-avoid"
           />
         ))}
-
       </div>
       <p className="mt-8 text-sm text-cream/85">
         A moderated community submission form will open once moderation is in place.
       </p>
-
     </Section>
   );
 }
@@ -661,7 +674,12 @@ export function TokenRecord({ market }: { market?: MarketSnapshot }) {
       if (!raw) return raw;
       const iso = /^\d{4}-\d{2}-\d{2}$/.test(raw) ? new Date(`${raw}T00:00:00Z`) : null;
       return iso
-        ? iso.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
+        ? iso.toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            timeZone: "UTC",
+          })
         : raw;
     })(),
     tokenSupply: live?.tokenSupply ?? projectConfig.tokenSupply,
@@ -687,7 +705,6 @@ export function TokenRecord({ market }: { market?: MarketSnapshot }) {
     { label: "Record last updated", value: displayValue(config.tokenRecordUpdatedAt) },
   ];
 
-
   return (
     <Section
       id="token-record"
@@ -702,7 +719,10 @@ export function TokenRecord({ market }: { market?: MarketSnapshot }) {
           <tbody>
             {rows.map((row) => (
               <tr key={row.label} className="border-b border-charcoal/10 last:border-0">
-                <th scope="row" className="w-1/2 p-4 font-display text-sm text-charcoal sm:text-base">
+                <th
+                  scope="row"
+                  className="w-1/2 p-4 font-display text-sm text-charcoal sm:text-base"
+                >
                   {row.label}
                 </th>
                 <td className="p-4 text-sm text-charcoal/90 sm:text-base">
@@ -749,7 +769,9 @@ export function TokenRecord({ market }: { market?: MarketSnapshot }) {
       </div>
 
       <div className="mt-8">
-        <h3 className="font-display text-xl text-charcoal sm:text-2xl">{tokenRecord.planHeading}</h3>
+        <h3 className="font-display text-xl text-charcoal sm:text-2xl">
+          {tokenRecord.planHeading}
+        </h3>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-charcoal/85">
           {tokenRecord.planNote}
         </p>

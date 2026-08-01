@@ -171,11 +171,7 @@ export function isSolanaAddress(value: string): boolean {
   }
 }
 
-export function challengeMessage(input: {
-  wallet: string;
-  score: number;
-  nonce: string;
-}): string {
+export function challengeMessage(input: { wallet: string; score: number; nonce: string }): string {
   return [
     "ivy vibing — Lily Pad Leap",
     "Signing this only proves you own this wallet. It never moves funds.",
@@ -259,7 +255,6 @@ export async function readLeaderboard(): Promise<Leaderboard> {
     return empty;
   }
 }
-
 
 export async function readPlayerCard(wallet: string): Promise<PlayerCard | null> {
   if (!isSolanaAddress(wallet)) return null;
@@ -437,9 +432,7 @@ export async function recordScore(input: {
   if (existing) {
     await supabaseAdmin.from("game_scores").update(shared).eq("id", existing.id);
   } else {
-    await supabaseAdmin
-      .from("game_scores")
-      .insert({ wallet_address: wallet, season, ...shared });
+    await supabaseAdmin.from("game_scores").insert({ wallet_address: wallet, season, ...shared });
   }
 
   // Audit trail for live-ops review. Staff-readable only.

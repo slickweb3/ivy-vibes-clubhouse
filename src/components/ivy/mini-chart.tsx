@@ -48,7 +48,9 @@ function Sparkline({ points, up }: { points: number[]; up: boolean }) {
     const y = h - 4 - ((p - min) / span) * (h - 12);
     return [x, y] as const;
   });
-  const line = coords.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+  const line = coords
+    .map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`)
+    .join(" ");
   const area = `${line} L${w},${h} L0,${h} Z`;
   const stroke = up ? "var(--color-deep-ivy, #174F36)" : "#B3315A";
   const fill = up ? "#83D94E" : "#FF8EAE";
@@ -63,7 +65,14 @@ function Sparkline({ points, up }: { points: number[]; up: boolean }) {
       preserveAspectRatio="none"
     >
       <path d={area} fill={fill} fillOpacity="0.35" />
-      <path d={line} fill="none" stroke={stroke} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d={line}
+        fill="none"
+        stroke={stroke}
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
       <circle cx={last[0]} cy={last[1]} r="4" fill={stroke} />
     </svg>
   );
@@ -99,7 +108,9 @@ export function MiniChart({ snapshot }: { snapshot: MarketSnapshot }) {
       {live ? (
         <>
           <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className="font-display text-2xl text-charcoal">{money(snapshot.priceUsd) ?? "—"}</span>
+            <span className="font-display text-2xl text-charcoal">
+              {money(snapshot.priceUsd) ?? "—"}
+            </span>
             {compact(snapshot.marketCapUsd ?? snapshot.fdvUsd) ? (
               <span className="text-xs text-charcoal/70">
                 MC {compact(snapshot.marketCapUsd ?? snapshot.fdvUsd)}
@@ -114,13 +125,15 @@ export function MiniChart({ snapshot }: { snapshot: MarketSnapshot }) {
               </p>
             </div>
           ) : (
-            <p className="mt-3 text-xs text-charcoal/70">Trend data arrives with the first trades.</p>
+            <p className="mt-3 text-xs text-charcoal/70">
+              Trend data arrives with the first trades.
+            </p>
           )}
         </>
       ) : (
         <p className="mt-2 text-sm leading-relaxed text-charcoal/80">
-          The moment the official mint is published, the price, market cap and trend line light up here.
-          Nothing is guessed before then.
+          The moment the official mint is published, the price, market cap and trend line light up
+          here. Nothing is guessed before then.
         </p>
       )}
 
@@ -128,7 +141,7 @@ export function MiniChart({ snapshot }: { snapshot: MarketSnapshot }) {
         <Link
           to="/"
           hash="live-chart"
-          className="inline-flex min-h-9 items-center rounded-full bg-frog px-4 font-display text-xs text-charcoal pop"
+          className="inline-flex min-h-11 items-center rounded-full bg-frog px-4 font-display text-xs text-charcoal pop"
         >
           Full chart
         </Link>
@@ -137,7 +150,7 @@ export function MiniChart({ snapshot }: { snapshot: MarketSnapshot }) {
             href={snapshot.pairUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-9 items-center rounded-full bg-lavender px-4 font-display text-xs text-charcoal pop"
+            className="inline-flex min-h-11 items-center rounded-full bg-lavender px-4 font-display text-xs text-charcoal pop"
           >
             Dexscreener ↗
           </a>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,11 +36,13 @@ function AdminSignIn() {
 
   useEffect(() => {
     let active = true;
-    supabase.auth.getUser().then(({ data }) => {
-      if (!active) return;
-      if (data.user) navigate({ to: "/admin" });
-      setChecked(true);
-    });
+    void getSupabaseBrowserClient()
+      .then((supabase) => supabase.auth.getUser())
+      .then(({ data }) => {
+        if (!active) return;
+        if (data.user) navigate({ to: "/admin" });
+        setChecked(true);
+      });
     return () => {
       active = false;
     };
@@ -50,6 +52,7 @@ function AdminSignIn() {
     event.preventDefault();
     setBusy(true);
     setError(null);
+    const supabase = await getSupabaseBrowserClient();
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (signInError) {
@@ -73,9 +76,9 @@ function AdminSignIn() {
             Admin sign-in
           </h1>
           <p className="mt-3 text-charcoal/85">
-            Administrator accounts and roles are not configured yet. There are no demo or
-            hard-coded credentials on this site—an owner-approved account must be created in the
-            backend before anyone can sign in.
+            Administrator accounts and roles are not configured yet. There are no demo or hard-coded
+            credentials on this site—an owner-approved account must be created in the backend before
+            anyone can sign in.
           </p>
 
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
@@ -126,7 +129,10 @@ function AdminSignIn() {
           </p>
         </div>
 
-        <Link to="/" className="text-center font-display text-foreground underline underline-offset-4">
+        <Link
+          to="/"
+          className="text-center font-display text-foreground underline underline-offset-4"
+        >
           Back to ivy vibing
         </Link>
       </div>

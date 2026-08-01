@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getSiteMedia } from "@/lib/site-media.functions";
 import { getMarketSnapshot } from "@/lib/market.functions";
 import { getCuratedFeed } from "@/lib/curated.functions";
-import { EMPTY_CURATED_FEED, type CuratedFeed, type CuratedPost } from "@/types/curated";
+import { EMPTY_CURATED_FEED, type CuratedFeed } from "@/types/curated";
 import type { MarketSnapshot } from "@/lib/market.server";
 import { EMPTY_SITE_MEDIA, type SiteMedia } from "@/types/media";
 import { SiteNav } from "@/components/ivy/header";
@@ -12,23 +12,12 @@ import { IvySoundscape } from "@/components/ivy/soundscape";
 import { faqEntries } from "@/data/site-content";
 import { AmbientVibes } from "@/components/ivy/ambient";
 import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
-import {
-  Hero,
-  MeetIvy,
-  TheLore,
-  WhyIvy,
-  TokenRecord,
-} from "@/components/ivy/sections";
+import { Hero, MeetIvy, TheLore, WhyIvy, TokenRecord } from "@/components/ivy/sections";
 import { SocialWindows } from "@/components/ivy/social-windows";
 import { IvyPhotoRow, heroPhotoUrl } from "@/components/ivy/photo-row";
 import { LiveMarket } from "@/components/ivy/market";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
-import {
-  OwnerCorner,
-  RoyalCourt,
-  FAQ,
-  SiteFooter,
-} from "@/components/ivy/sections-b";
+import { OwnerCorner, RoyalCourt, FAQ, SiteFooter } from "@/components/ivy/sections-b";
 
 const TITLE = "$ivy — The Official ivy vibing Meme Coin";
 const DESCRIPTION =
@@ -44,8 +33,16 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:url", content: "/" },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41c25704-61f3-450c-8529-61b43b1e3809/id-preview-7b226fe4--ae92a54f-76f5-4c2b-9762-2e06f523c495.lovable.app-1785391145344.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41c25704-61f3-450c-8529-61b43b1e3809/id-preview-7b226fe4--ae92a54f-76f5-4c2b-9762-2e06f523c495.lovable.app-1785391145344.png" },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41c25704-61f3-450c-8529-61b43b1e3809/id-preview-7b226fe4--ae92a54f-76f5-4c2b-9762-2e06f523c495.lovable.app-1785391145344.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41c25704-61f3-450c-8529-61b43b1e3809/id-preview-7b226fe4--ae92a54f-76f5-4c2b-9762-2e06f523c495.lovable.app-1785391145344.png",
+      },
     ],
     links: [
       { rel: "canonical", href: "/" },
@@ -91,58 +88,12 @@ interface HomeData {
   curated: CuratedFeed;
 }
 
-interface HomeCuratedSections {
-  hero: CuratedPost | null;
-  freshPosts: CuratedPost[];
-}
-
-function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
-  const used = new Set<string>();
-  const isInstagramPhoto = (post: CuratedPost) =>
-    post.platform === "instagram" && post.originalPostUrl.includes("/p/");
-  const isVideoPost = (post: CuratedPost) =>
-    post.platform === "tiktok" || post.originalPostUrl.includes("/reel/");
-  const sortPinned = (posts: CuratedPost[]) =>
-    [...posts].sort((a, b) => {
-      if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
-      if (a.isFeatured !== b.isFeatured) return a.isFeatured ? -1 : 1;
-      return a.displayOrder - b.displayOrder;
-    });
-  const take = (posts: CuratedPost[], limit: number) => {
-    const picked: CuratedPost[] = [];
-    for (const post of posts) {
-      if (used.has(post.id)) continue;
-      picked.push(post);
-      used.add(post.id);
-      if (picked.length >= limit) break;
-    }
-    return picked;
-  };
-
-  const photoPosts = sortPinned(feed.all.filter(isInstagramPhoto));
-  const videoPosts = sortPinned(feed.all.filter(isVideoPost));
-  const hero =
-    (feed.hero && isInstagramPhoto(feed.hero) ? feed.hero : null) ??
-    photoPosts.find((post) => post.placements.includes("hero")) ??
-    photoPosts[0] ??
-    null;
-
-  if (hero) used.add(hero.id);
-
-  const freshPhotoPosts = take(photoPosts, 2);
-  const freshVideoPosts = take(videoPosts, 4);
-  const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
-
-  return { hero, freshPosts };
-
-}
-
 function Home() {
   const data = Route.useLoaderData();
   const media = data?.media ?? EMPTY_SITE_MEDIA;
   const market = data?.market ?? null;
   const curated = data?.curated ?? EMPTY_CURATED_FEED;
-  const homeCurated = buildHomeCuratedSections(curated);
+
   return (
     <CookieConsentProvider>
       <a

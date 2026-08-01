@@ -51,7 +51,6 @@ export function IvyHopSticker() {
     timers.current.push(window.setTimeout(() => setMove(null), MOVE_DURATION[nextMove]));
   };
 
-
   return (
     <div className="pointer-events-none fixed bottom-0 left-2 z-40 select-none sm:left-4">
       <div className="relative flex flex-col items-center">
