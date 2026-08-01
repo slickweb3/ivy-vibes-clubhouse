@@ -134,8 +134,9 @@ function Home() {
       <SiteNav />
       <main id="main">
         <Hero media={media.hero} market={market} curatedHero={homeCurated.hero} />
-        <MeetIvy />
         <IvyPhotoRow />
+        <MeetIvy />
+
         <SocialWindows posts={curated.all} />
         <HallOfFame items={media.hallOfFame} curated={homeCurated.hallOfFame} />
         <TheLore />
