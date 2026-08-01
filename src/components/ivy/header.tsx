@@ -154,9 +154,9 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
       >
         <nav
           aria-label="Main"
-          className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8"
+          className="mx-auto flex max-w-6xl items-center gap-2 px-3 py-3 sm:gap-3 sm:px-6 lg:px-8"
         >
-          <Link to="/" className="shrink-0" aria-label="ivy vibing home">
+          <Link to="/" className="min-w-0 shrink" aria-label="ivy vibing home">
             <IvyWordmark />
           </Link>
 
@@ -176,9 +176,10 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
 
           <Button
             onClick={() => setJoinOpen(true)}
-            className="ml-auto min-h-11 rounded-full bg-pink px-4 font-display text-charcoal pop hover:bg-pink lg:ml-2"
+            className="ml-auto min-h-11 shrink-0 rounded-full bg-pink px-3 font-display text-charcoal pop hover:bg-pink sm:px-4 lg:ml-2"
           >
-            Join the Vibe
+            <span className="sm:hidden">Join</span>
+            <span className="hidden sm:inline">Join the Vibe</span>
           </Button>
 
           <button
@@ -186,7 +187,7 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
             onClick={() => setMobileOpen((open) => !open)}
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-leaf text-charcoal pop lg:hidden"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-leaf text-charcoal pop lg:hidden"
           >
             {mobileOpen ? <X aria-hidden className="h-5 w-5" /> : <Menu aria-hidden className="h-5 w-5" />}
             <span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
