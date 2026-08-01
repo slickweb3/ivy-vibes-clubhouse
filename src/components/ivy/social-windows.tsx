@@ -16,6 +16,7 @@ import avatarTiktok from "@/assets/ivy-avatar-tiktok.png.asset.json";
  */
 
 interface ProfileMeta {
+  platform: "instagram" | "tiktok";
   displayName: string;
   handle: string;
   bio: string[];
@@ -25,10 +26,12 @@ interface ProfileMeta {
   urlLabel: string;
   avatar: string;
   profileUrl: string;
-  tone: "lavender";
+  tone: "lavender" | "leaf";
+  chrome: string;
 }
 
 const TIKTOK: ProfileMeta = {
+  platform: "tiktok",
   displayName: "Ivy",
   handle: "ivyvibing",
   bio: ["Ivy has short spine syndrome", "My dms are broken"],
@@ -42,31 +45,51 @@ const TIKTOK: ProfileMeta = {
   avatar: avatarTiktok.url,
   profileUrl: projectConfig.socials.tiktok ?? "https://www.tiktok.com/@ivyvibing",
   tone: "lavender",
+  chrome: "bg-lavender",
+};
+
+const INSTAGRAM: ProfileMeta = {
+  platform: "instagram",
+  displayName: "Ivy",
+  handle: "frogqueenivy",
+  bio: ["Ivy has short spine syndrome", "Frog Queen of the internet"],
+  stats: [{ label: "followers", value: "550K" }],
+  statsAsOf: "1 Aug 2026",
+  urlLabel: "instagram.com/frogqueenivy",
+  avatar: avatarInstagram.url,
+  profileUrl: projectConfig.socials.instagram ?? "https://www.instagram.com/frogqueenivy/",
+  tone: "leaf",
+  chrome: "bg-pink",
 };
 
 export function SocialWindows({ posts }: { posts: CuratedPost[] }) {
   const tiktok = useMemo(() => posts.filter((post) => post.platform === "tiktok"), [posts]);
+  const instagram = useMemo(
+    () => posts.filter((post) => post.platform === "instagram"),
+    [posts],
+  );
 
-  if (tiktok.length === 0) return null;
+  if (tiktok.length === 0 && instagram.length === 0) return null;
 
   return (
     <Section
       id="social-windows"
-      eyebrow="Straight from her account"
-      title="Ivy's TikTok window"
-      intro="A tall, scrollable window onto the Frog Queen's official TikTok. Her captions stay exactly as she wrote them, shown by TikTok itself."
+      eyebrow="Straight from her accounts"
+      title="Ivy's live social windows"
+      intro="Tall, scrollable windows onto the Frog Queen's official TikTok and Instagram. Her captions stay exactly as she wrote them, shown by the platforms themselves."
       tone="lavender"
     >
-      <div className="mx-auto max-w-2xl">
-        <ProfileWindow posts={tiktok} />
+      <div className="grid gap-8 lg:grid-cols-2">
+        {tiktok.length > 0 ? <ProfileWindow meta={TIKTOK} posts={tiktok} /> : null}
+        {instagram.length > 0 ? <ProfileWindow meta={INSTAGRAM} posts={instagram} /> : null}
       </div>
     </Section>
   );
 }
 
-function ProfileWindow({ posts }: { posts: CuratedPost[] }) {
-  const meta = TIKTOK;
-  const label = platformLabel("tiktok");
+function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[] }) {
+  const label = platformLabel(meta.platform);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const [progress, setProgress] = useState(0);
