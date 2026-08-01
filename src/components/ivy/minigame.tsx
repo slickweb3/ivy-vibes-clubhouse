@@ -889,10 +889,6 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       if (document.hidden) gameAudio.stopMusic();
     };
     document.addEventListener("visibilitychange", onHidden);
-    return () => {
-      document.removeEventListener("visibilitychange", onHidden);
-      gameAudio.stopMusic();
-    };
     try {
       const stored = Number(window.localStorage.getItem(BEST_KEY) ?? 0);
       if (Number.isFinite(stored) && stored > 0) {
