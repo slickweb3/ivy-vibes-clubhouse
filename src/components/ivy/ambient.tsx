@@ -41,7 +41,29 @@ const sprites: Sprite[] = [
 
 export function AmbientVibes() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-[5] overflow-hidden opacity-[0.18]">
+    <>
+      {/* Ivy herself, tumbling down with slow backflips. */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-[4] overflow-hidden">
+        {fallingIvys.map(({ left, size, delay, duration }) => (
+          <span
+            key={left}
+            className={`absolute top-[-20%] ${size} opacity-25 motion-safe:ivy-tumble`}
+            style={{ left, animationDelay: delay, animationDuration: duration }}
+          >
+            <img
+              src={ivySticker.url}
+              alt=""
+              width={671}
+              height={779}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-auto"
+            />
+          </span>
+        ))}
+      </div>
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-[5] overflow-hidden opacity-[0.18]">
+
       {sprites.map(({ Icon, left, size, delay, duration, tone }, index) => (
         <span
           key={`${left}-${index}`}
