@@ -48,7 +48,7 @@ export const Route = createFileRoute("/")({
     links: [
       { rel: "canonical", href: "/" },
       // The first frame-by-frame photo is the LCP candidate on the homepage.
-      { rel: "preload", as: "image", href: heroPhotoUrl, fetchpriority: "high" },
+      { rel: "preload", as: "image", href: heroPhotoUrl, fetchPriority: "high" },
     ],
     scripts: [
       {
