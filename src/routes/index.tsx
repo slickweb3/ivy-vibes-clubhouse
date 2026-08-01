@@ -18,6 +18,8 @@ import { IvyPhotoRow, heroPhotoUrl } from "@/components/ivy/photo-row";
 import { LiveMarket } from "@/components/ivy/market";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
 import { DailyRibbit } from "@/components/ivy/daily-ribbit";
+import { ChorusPond } from "@/components/ivy/chorus-pond";
+
 
 import { OwnerCorner, RoyalCourt, FAQ, SiteFooter } from "@/components/ivy/sections-b";
 
