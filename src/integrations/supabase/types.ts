@@ -247,36 +247,111 @@ export type Database = {
         }
         Relationships: []
       }
-      game_scores: {
+      game_runs: {
         Row: {
-          best_score: number
+          accepted: boolean
+          coins: number
+          confidence: number
           created_at: string
+          duration_ms: number
           id: string
-          last_played_at: string
-          plays: number
+          jumps: number
+          reasons: string[]
+          score: number
           season: string
-          updated_at: string
           wallet_address: string
         }
         Insert: {
-          best_score?: number
+          accepted?: boolean
+          coins?: number
+          confidence?: number
           created_at?: string
+          duration_ms?: number
           id?: string
-          last_played_at?: string
-          plays?: number
+          jumps?: number
+          reasons?: string[]
+          score: number
           season: string
-          updated_at?: string
           wallet_address: string
         }
         Update: {
-          best_score?: number
+          accepted?: boolean
+          coins?: number
+          confidence?: number
           created_at?: string
+          duration_ms?: number
           id?: string
+          jumps?: number
+          reasons?: string[]
+          score?: number
+          season?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
+      game_scores: {
+        Row: {
+          active_days: number
+          best_score: number
+          best_streak_days: number
+          coins: number
+          created_at: string
+          fair_play_score: number
+          first_seen_at: string
+          flagged_runs: number
+          id: string
+          last_play_date: string | null
+          last_played_at: string
+          plays: number
+          reward_eligible: boolean
+          season: string
+          streak_days: number
+          total_score: number
+          updated_at: string
+          wallet_address: string
+          xp: number
+        }
+        Insert: {
+          active_days?: number
+          best_score?: number
+          best_streak_days?: number
+          coins?: number
+          created_at?: string
+          fair_play_score?: number
+          first_seen_at?: string
+          flagged_runs?: number
+          id?: string
+          last_play_date?: string | null
           last_played_at?: string
           plays?: number
+          reward_eligible?: boolean
+          season: string
+          streak_days?: number
+          total_score?: number
+          updated_at?: string
+          wallet_address: string
+          xp?: number
+        }
+        Update: {
+          active_days?: number
+          best_score?: number
+          best_streak_days?: number
+          coins?: number
+          created_at?: string
+          fair_play_score?: number
+          first_seen_at?: string
+          flagged_runs?: number
+          id?: string
+          last_play_date?: string | null
+          last_played_at?: string
+          plays?: number
+          reward_eligible?: boolean
           season?: string
+          streak_days?: number
+          total_score?: number
           updated_at?: string
           wallet_address?: string
+          xp?: number
         }
         Relationships: []
       }
@@ -1044,9 +1119,35 @@ export type Database = {
         Args: { _limit?: number; _season?: string }
         Returns: {
           best_score: number
+          fair_play_score: number
           last_played_at: string
+          level: number
           plays: number
+          reward_eligible: boolean
+          streak_days: number
           wallet_masked: string
+          xp: number
+        }[]
+      }
+      player_card: {
+        Args: { _season?: string; _wallet: string }
+        Returns: {
+          active_days: number
+          best_score: number
+          best_streak_days: number
+          coins: number
+          fair_play_score: number
+          last_played_at: string
+          level: number
+          lifetime_best: number
+          lifetime_plays: number
+          plays: number
+          rank: number
+          reward_eligible: boolean
+          season: string
+          seasons_played: number
+          streak_days: number
+          xp: number
         }[]
       }
     }
