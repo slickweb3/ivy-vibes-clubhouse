@@ -1477,3 +1477,42 @@ html[data-scrolling="true"] .scroll-depth {
     display: none;
   }
 }
+
+/* ---------- Discovery layer: journal pip + find card ---------- */
+.ivy-journal-pip {
+  display: inline-block;
+  line-height: 1;
+  animation: ivy-pip-float 4.5s ease-in-out infinite;
+}
+
+@keyframes ivy-pip-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(4deg);
+  }
+}
+
+.ivy-find-card {
+  animation: ivy-find-arrive 0.62s cubic-bezier(0.22, 1.4, 0.36, 1) both;
+}
+
+@keyframes ivy-find-arrive {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ivy-journal-pip,
+  .ivy-find-card {
+    animation: none;
+  }
+}

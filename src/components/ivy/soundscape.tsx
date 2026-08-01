@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
+import { discover } from "@/lib/discoveries";
 
 /**
  * IvySoundscape — optional atmosphere for the pond.
@@ -126,6 +127,7 @@ export function IvySoundscape() {
     setOn((was) => {
       const next = !was;
       window.localStorage.setItem(STORAGE_KEY, next ? "on" : "off");
+      if (next) discover("listen");
       return next;
     });
   };

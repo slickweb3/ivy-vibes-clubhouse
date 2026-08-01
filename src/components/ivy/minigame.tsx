@@ -24,6 +24,7 @@ import { gameAudio } from "@/lib/game-audio";
 import type { Leaderboard } from "@/lib/game.server";
 import runnerSprite from "@/assets/ivy-runner.png";
 import gameFrame from "@/assets/game-frame.png";
+import { discover } from "@/lib/discoveries";
 
 const W = 480;
 const H = 270;
@@ -807,6 +808,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       record,
     });
     setPhase("over");
+    discover("leap");
     rafRef.current = null;
   }, []);
 
