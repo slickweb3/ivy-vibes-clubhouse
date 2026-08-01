@@ -109,7 +109,7 @@ export function IvyDiscoveries({ context = "home" }: { context?: "home" | "arcad
         <div
           role="status"
           aria-live="polite"
-          className="ivy-find-card fixed right-3 bottom-52 z-50 max-w-[17rem] rounded-2xl border-2 border-ivy/70 bg-cream/95 p-3 text-ivy shadow-[0_10px_0_rgba(23,79,54,0.35)] sm:right-6 sm:bottom-56"
+          className="ivy-find-card fixed right-3 bottom-[17rem] z-50 max-w-[17rem] rounded-2xl border-2 border-ivy/70 bg-cream/95 p-3 text-ivy shadow-[0_10px_0_rgba(23,79,54,0.35)] sm:right-6 sm:bottom-[19rem]"
         >
           <p className="font-display text-[0.7rem] tracking-[0.18em] uppercase opacity-60">
             Discovery {count} of {total}
