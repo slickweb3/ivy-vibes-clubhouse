@@ -514,10 +514,13 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       ctx.translate(PLAYER_X, py + 10);
       const tilt = Math.max(-0.22, Math.min(0.22, run.vy / 3600));
       ctx.rotate(tilt);
-      // Anticipation: stretch on the way up, squash on landing recovery.
-      const stretch = airborne ? 1 + Math.max(-0.08, Math.min(0.08, -run.vy / 9000)) : 1;
-      const squash = airborne ? stretch : 1 - Math.abs(Math.sin(run.t * 14)) * 0.03;
-      ctx.drawImage(sprite, -w / 2, -h * squash, w, h * squash);
+      // Area-preserving squash & stretch. run.squash is spring-driven in the
+      // physics step and always resolves back to 1, so Ivy can never get stuck
+      // shrunk after a hop. Idle breathing only applies while grounded.
+      const idle = airborne ? 0 : Math.abs(Math.sin(run.t * 14)) * 0.03;
+      const sy = Math.max(0.75, Math.min(1.25, run.squash - idle));
+      const sx = 1 / sy;
+      ctx.drawImage(sprite, (-w * sx) / 2, -h * sy, w * sx, h * sy);
       ctx.restore();
     } else {
       ctx.fillStyle = COLORS.leaf;
