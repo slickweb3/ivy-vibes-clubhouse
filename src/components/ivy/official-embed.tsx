@@ -116,6 +116,13 @@ export function OfficialSocialEmbed({
     };
   }, [playing, post.id]);
 
+  // Scrolling a playing video off screen closes its player too.
+  useEffect(() => {
+    if (!inView && playing) setPlaying(false);
+  }, [inView, playing]);
+
+
+
   // TikTok gives us its own official poster image, so the card shows a real
   // picture straight away and the video opens in TikTok's player on tap.
   const showPlayGate = isTikTok && !playing;
