@@ -73,9 +73,9 @@ function AdminSignIn() {
             Admin sign-in
           </h1>
           <p className="mt-3 text-charcoal/85">
-            Administrator accounts and roles are not configured yet. There are no demo or
-            hard-coded credentials on this site—an owner-approved account must be created in the
-            backend before anyone can sign in.
+            Administrator accounts and roles are not configured yet. There are no demo or hard-coded
+            credentials on this site—an owner-approved account must be created in the backend before
+            anyone can sign in.
           </p>
 
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
@@ -126,7 +126,10 @@ function AdminSignIn() {
           </p>
         </div>
 
-        <Link to="/" className="text-center font-display text-foreground underline underline-offset-4">
+        <Link
+          to="/"
+          className="text-center font-display text-foreground underline underline-offset-4"
+        >
           Back to ivy vibing
         </Link>
       </div>

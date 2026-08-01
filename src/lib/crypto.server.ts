@@ -15,10 +15,7 @@ async function keyMaterial(): Promise<CryptoKey> {
   if (!secret) throw new Error("SOCIAL_TOKEN_ENCRYPTION_KEY is not configured.");
   // Derive a stable 256-bit key from the configured secret.
   const digest = await crypto.subtle.digest("SHA-256", encoder.encode(secret));
-  return crypto.subtle.importKey("raw", digest, { name: "AES-GCM" }, false, [
-    "encrypt",
-    "decrypt",
-  ]);
+  return crypto.subtle.importKey("raw", digest, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
 }
 
 function toBase64(bytes: Uint8Array): string {

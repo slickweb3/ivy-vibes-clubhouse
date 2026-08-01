@@ -18,7 +18,11 @@ function emptyBoard(): Leaderboard {
   const season = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
   return {
     season,
-    seasonLabel: now.toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }),
+    seasonLabel: now.toLocaleDateString("en-GB", {
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    }),
     monthly: [],
     allTime: [],
     prizeTokens: 50_000,
@@ -76,10 +80,22 @@ function GamePage() {
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             {[
-              ["How to play", "Tap, click or press space to hop — hold for a higher arc, tap again mid-air for a double hop. Logs and stumps end the run. Coins are worth 15 and chaining them within about two seconds builds a combo worth up to 30 each. Clearing an obstacle by a whisker pays a +10 near-miss bonus. Press P or the pause button any time."],
-              ["No wallet needed", "The whole game is free to play with no wallet, no sign-up and no transactions. A wallet is optional and only unlocks the season board, XP, streaks and reward eligibility."],
-              ["How scores count", "Every run gets a one-time code from the server. Your wallet signs the code and the score together — a free read-only message — so only you can post your score. The server re-checks the run length, input rate and coin count before it counts."],
-              ["The airdrop", "Board resets on the 1st of each month (UTC). The highest verified score that month is airdropped 50,000 $ivy to the wallet that signed it."],
+              [
+                "How to play",
+                "Tap, click or press space to hop — hold for a higher arc, tap again mid-air for a double hop. Logs and stumps end the run. Coins are worth 15 and chaining them within about two seconds builds a combo worth up to 30 each. Clearing an obstacle by a whisker pays a +10 near-miss bonus. Press P or the pause button any time.",
+              ],
+              [
+                "No wallet needed",
+                "The whole game is free to play with no wallet, no sign-up and no transactions. A wallet is optional and only unlocks the season board, XP, streaks and reward eligibility.",
+              ],
+              [
+                "How scores count",
+                "Every run gets a one-time code from the server. Your wallet signs the code and the score together — a free read-only message — so only you can post your score. The server re-checks the run length, input rate and coin count before it counts.",
+              ],
+              [
+                "The airdrop",
+                "Board resets on the 1st of each month (UTC). The highest verified score that month is airdropped 50,000 $ivy to the wallet that signed it.",
+              ],
             ].map(([heading, body]) => (
               <div key={heading} className="rounded-2xl bg-card p-4 pop-static">
                 <h3 className="font-display text-base text-charcoal">{heading}</h3>
@@ -91,9 +107,9 @@ function GamePage() {
           <p className="mt-4 text-xs text-charcoal/70">
             XP, levels, day streaks and fair-play scores are earned by playing and can never be
             bought. Runs that look automated still show on the board but earn no XP and pause reward
-            eligibility until clean runs restore it.{" "}
-            Play for fun. This is a community game, not a financial product, and the airdrop is a
-            discretionary community reward paid from project allocations.
+            eligibility until clean runs restore it. Play for fun. This is a community game, not a
+            financial product, and the airdrop is a discretionary community reward paid from project
+            allocations.
           </p>
         </Section>
       </main>

@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
@@ -66,7 +59,9 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
         <DialogContent className="max-w-lg rounded-2xl bg-card pop-static">
           <DialogHeader>
-            <DialogTitle className="font-display text-2xl text-charcoal">Cookie settings</DialogTitle>
+            <DialogTitle className="font-display text-2xl text-charcoal">
+              Cookie settings
+            </DialogTitle>
             <DialogDescription className="text-charcoal/80">
               ivy vibing uses no analytics or advertising cookies. The only third-party storage
               comes from Ivy&apos;s own Instagram and TikTok players.
@@ -89,9 +84,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
             <div className="rounded-xl bg-card p-4 pop-static">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="font-display text-base text-charcoal">
-                    Official social embeds
-                  </h3>
+                  <h3 className="font-display text-base text-charcoal">Official social embeds</h3>
                   <p className="mt-1 text-sm text-charcoal/75">
                     Ivy&apos;s posts are shown with Instagram and TikTok&apos;s own players, which
                     may set their own cookies. They are part of the site&apos;s content, so they

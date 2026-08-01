@@ -123,8 +123,7 @@ export async function readAutomationSettings(): Promise<AutomationSettings> {
 /* -------------------------------------------------------- provider reads */
 
 async function fetchInstagram(token: string): Promise<NormalizedPost[]> {
-  const fields =
-    "id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,username,owner";
+  const fields = "id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,username,owner";
   const res = await fetch(
     `https://graph.instagram.com/v21.0/me/media?fields=${fields}&limit=25&access_token=${encodeURIComponent(token)}`,
   );
@@ -166,17 +165,14 @@ async function fetchInstagram(token: string): Promise<NormalizedPost[]> {
 async function fetchTikTok(token: string): Promise<NormalizedPost[]> {
   const fields =
     "id,title,video_description,cover_image_url,embed_link,share_url,create_time,duration,width,height";
-  const res = await fetch(
-    `https://open.tiktokapis.com/v2/video/list/?fields=${fields}`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({ max_count: 20 }),
+  const res = await fetch(`https://open.tiktokapis.com/v2/video/list/?fields=${fields}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "content-type": "application/json",
     },
-  );
+    body: JSON.stringify({ max_count: 20 }),
+  });
   if (!res.ok) throw new Error("upstream_unavailable");
   const json = (await res.json()) as {
     data?: { videos?: Array<Record<string, unknown>> };
@@ -238,9 +234,11 @@ export async function syncPlatform(platform: SocialPlatform): Promise<SyncOutcom
     .eq("platform", platform)
     .maybeSingle();
 
-  const connection = connectionRow as
-    | { is_connected: boolean; external_account_id: string | null; account_name: string | null }
-    | null;
+  const connection = connectionRow as {
+    is_connected: boolean;
+    external_account_id: string | null;
+    account_name: string | null;
+  } | null;
 
   if (!connection?.is_connected) {
     return { ...base, reason: `${platform} has not been authorized by the account owner yet.` };
@@ -248,7 +246,10 @@ export async function syncPlatform(platform: SocialPlatform): Promise<SyncOutcom
 
   const token = await loadAccessToken(platform);
   if (!token) {
-    return { ...base, reason: `${platform} has no stored access token. Re-authorization required.` };
+    return {
+      ...base,
+      reason: `${platform} has no stored access token. Re-authorization required.`,
+    };
   }
 
   const startedAt = new Date().toISOString();
@@ -270,9 +271,13 @@ export async function syncPlatform(platform: SocialPlatform): Promise<SyncOutcom
       .eq("platform", platform);
 
     const existing = new Map(
-      ((existingRows ?? []) as Array<{ id: string; platform_post_id: string; approval_status: string }>).map(
-        (row) => [row.platform_post_id, row],
-      ),
+      (
+        (existingRows ?? []) as Array<{
+          id: string;
+          platform_post_id: string;
+          approval_status: string;
+        }>
+      ).map((row) => [row.platform_post_id, row]),
     );
 
     let upserted = 0;
@@ -374,11 +379,14 @@ export async function syncPlatform(platform: SocialPlatform): Promise<SyncOutcom
       markedUnavailable = (stale ?? []).length;
     }
 
-    await db.from("social_connections").update({
-      last_sync_at: new Date().toISOString(),
-      last_sync_status: "ok",
-      last_error: null,
-    }).eq("platform", platform);
+    await db
+      .from("social_connections")
+      .update({
+        last_sync_at: new Date().toISOString(),
+        last_sync_status: "ok",
+        last_error: null,
+      })
+      .eq("platform", platform);
 
     await db.from("sync_runs").insert({
       platform,

@@ -14,10 +14,7 @@ export const Route = createFileRoute("/legal/$slug")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [
-          { title: "Page unavailable — ivy vibing" },
-          { name: "robots", content: "noindex" },
-        ],
+        meta: [{ title: "Page unavailable — ivy vibing" }, { name: "robots", content: "noindex" }],
       };
     }
     const title = `${loaderData.page.title} — ivy vibing`;

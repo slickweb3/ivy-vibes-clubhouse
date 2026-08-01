@@ -22,7 +22,14 @@ export function CrownDoodle({ className, title }: IconProps) {
         strokeWidth="2.5"
         strokeLinejoin="round"
       />
-      <circle cx="24" cy="4" r="2.6" fill="var(--yellow)" stroke="var(--charcoal)" strokeWidth="2" />
+      <circle
+        cx="24"
+        cy="4"
+        r="2.6"
+        fill="var(--yellow)"
+        stroke="var(--charcoal)"
+        strokeWidth="2"
+      />
     </svg>
   );
 }
@@ -30,11 +37,47 @@ export function CrownDoodle({ className, title }: IconProps) {
 export function PawDoodle({ className, title }: IconProps) {
   return (
     <svg viewBox="0 0 40 40" className={cn("h-5 w-5", className)} {...svgProps(title)}>
-      <ellipse cx="20" cy="27" rx="11" ry="9" fill="currentColor" stroke="var(--charcoal)" strokeWidth="2.5" />
-      <circle cx="8" cy="15" r="4.6" fill="currentColor" stroke="var(--charcoal)" strokeWidth="2.5" />
-      <circle cx="16" cy="8" r="4.6" fill="currentColor" stroke="var(--charcoal)" strokeWidth="2.5" />
-      <circle cx="25" cy="8" r="4.6" fill="currentColor" stroke="var(--charcoal)" strokeWidth="2.5" />
-      <circle cx="33" cy="15" r="4.6" fill="currentColor" stroke="var(--charcoal)" strokeWidth="2.5" />
+      <ellipse
+        cx="20"
+        cy="27"
+        rx="11"
+        ry="9"
+        fill="currentColor"
+        stroke="var(--charcoal)"
+        strokeWidth="2.5"
+      />
+      <circle
+        cx="8"
+        cy="15"
+        r="4.6"
+        fill="currentColor"
+        stroke="var(--charcoal)"
+        strokeWidth="2.5"
+      />
+      <circle
+        cx="16"
+        cy="8"
+        r="4.6"
+        fill="currentColor"
+        stroke="var(--charcoal)"
+        strokeWidth="2.5"
+      />
+      <circle
+        cx="25"
+        cy="8"
+        r="4.6"
+        fill="currentColor"
+        stroke="var(--charcoal)"
+        strokeWidth="2.5"
+      />
+      <circle
+        cx="33"
+        cy="15"
+        r="4.6"
+        fill="currentColor"
+        stroke="var(--charcoal)"
+        strokeWidth="2.5"
+      />
     </svg>
   );
 }
@@ -53,7 +96,13 @@ export function FrogDoodle({ className, title }: IconProps) {
         strokeWidth="2.5"
         strokeLinejoin="round"
       />
-      <path d="M15 26 Q22 30 29 26" fill="none" stroke="var(--charcoal)" strokeWidth="2.5" strokeLinecap="round" />
+      <path
+        d="M15 26 Q22 30 29 26"
+        fill="none"
+        stroke="var(--charcoal)"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -68,7 +117,13 @@ export function LeafDoodle({ className, title }: IconProps) {
         strokeWidth="2.5"
         strokeLinejoin="round"
       />
-      <path d="M24 8 L9 24" fill="none" stroke="var(--charcoal)" strokeWidth="2" strokeLinecap="round" />
+      <path
+        d="M24 8 L9 24"
+        fill="none"
+        stroke="var(--charcoal)"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -125,10 +180,7 @@ export function Tape({ className, rotate = -6 }: { className?: string; rotate?: 
   return (
     <span
       aria-hidden
-      className={cn(
-        "pointer-events-none absolute z-10 block h-6 w-24 opacity-90",
-        className,
-      )}
+      className={cn("pointer-events-none absolute z-10 block h-6 w-24 opacity-90", className)}
       style={{
         transform: `rotate(${rotate}deg)`,
         background: "var(--yellow)",

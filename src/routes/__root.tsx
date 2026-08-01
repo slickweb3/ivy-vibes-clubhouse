@@ -92,8 +92,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:title", content: "$ivy — The Official ivy vibing Meme Coin" },
       { name: "twitter:title", content: "$ivy — The Official ivy vibing Meme Coin" },
-      { property: "og:description", content: "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $ivy community project." },
-      { name: "twitter:description", content: "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $ivy community project." },
+      {
+        property: "og:description",
+        content:
+          "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $ivy community project.",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $ivy community project.",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

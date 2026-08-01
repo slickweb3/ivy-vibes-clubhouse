@@ -39,7 +39,9 @@ function LeaderboardPage() {
     if (!board) return;
     const csv = [
       "rank,wallet,score,plays,last_played_at",
-      ...board.rows.map((row, i) => `${i + 1},${row.wallet},${row.score},${row.plays},${row.lastPlayedAt}`),
+      ...board.rows.map(
+        (row, i) => `${i + 1},${row.wallet},${row.score},${row.plays},${row.lastPlayedAt}`,
+      ),
     ].join("\n");
     await navigator.clipboard.writeText(csv);
     setCopied(true);

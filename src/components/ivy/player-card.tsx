@@ -82,7 +82,10 @@ export function SeasonCard({
           aria-label={`Progress to level ${card.level + 1}`}
           className="h-3 w-full overflow-hidden rounded-full border-2 border-charcoal bg-cream"
         >
-          <div className="h-full bg-frog transition-[width] duration-500" style={{ width: `${progress}%` }} />
+          <div
+            className="h-full bg-frog transition-[width] duration-500"
+            style={{ width: `${progress}%` }}
+          />
         </div>
         <p className="mt-1 text-[11px] text-charcoal/70">
           {card.xpIntoLevel}/{card.xpForNextLevel} XP to level {card.level + 1}

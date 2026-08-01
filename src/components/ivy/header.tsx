@@ -75,7 +75,8 @@ function JoinTheVibeDialog({
           </ul>
         ) : null}
         <p className="rounded-xl bg-yellow p-3 text-sm text-charcoal pop-static">
-          These are the only official ivy vibing channels. Anything else claiming to be us is not us.
+          These are the only official ivy vibing channels. Anything else claiming to be us is not
+          us.
         </p>
       </DialogContent>
     </Dialog>
@@ -189,13 +190,16 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
             aria-controls="mobile-menu"
             className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-leaf text-charcoal pop lg:hidden"
           >
-            {mobileOpen ? <X aria-hidden className="h-5 w-5" /> : <Menu aria-hidden className="h-5 w-5" />}
+            {mobileOpen ? (
+              <X aria-hidden className="h-5 w-5" />
+            ) : (
+              <Menu aria-hidden className="h-5 w-5" />
+            )}
             <span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
           </button>
         </nav>
 
         <div ref={progressRef} aria-hidden className="scroll-progress h-[3px] w-full" />
-
 
         <div
           id="mobile-menu"

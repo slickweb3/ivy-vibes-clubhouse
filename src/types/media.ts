@@ -112,9 +112,7 @@ export function isVideoLike(item: UnifiedMediaItem): boolean {
 
 /** Default placement rules. Manual placements always win over these. */
 export function defaultPlacements(kind: MediaKind): Placement[] {
-  return isVideoKind(kind)
-    ? ["fresh_posts", "ivy_tv"]
-    : ["fresh_posts", "hall_of_fame"];
+  return isVideoKind(kind) ? ["fresh_posts", "ivy_tv"] : ["fresh_posts", "hall_of_fame"];
 }
 
 export function isVideoKind(kind: MediaKind): boolean {

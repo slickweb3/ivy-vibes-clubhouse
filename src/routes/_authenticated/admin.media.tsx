@@ -113,7 +113,13 @@ function MediaRow({ row, onSaved }: { row: AdminMediaRow; onSaved: () => void })
     <article className="rounded-2xl bg-card p-5 pop-static">
       <div className="flex flex-wrap items-center gap-2">
         <StatusChip
-          status={row.approvalStatus === "approved" ? "ok" : row.approvalStatus === "rejected" ? "off" : "pending"}
+          status={
+            row.approvalStatus === "approved"
+              ? "ok"
+              : row.approvalStatus === "rejected"
+                ? "off"
+                : "pending"
+          }
           label={row.approvalStatus}
         />
         <span className="font-display text-sm text-charcoal capitalize">
@@ -136,8 +142,14 @@ function MediaRow({ row, onSaved }: { row: AdminMediaRow; onSaved: () => void })
         <Meta label="Source account" value={row.accountName ? `@${row.accountName}` : "—"} />
         <Meta label="External account ID" value={row.sourceAccountId ?? "—"} />
         <Meta label="Platform post ID" value={row.platformPostId ?? "—"} />
-        <Meta label="Published" value={row.publishedAt ? new Date(row.publishedAt).toLocaleString() : "—"} />
-        <Meta label="Approved" value={row.approvedAt ? new Date(row.approvedAt).toLocaleString() : "—"} />
+        <Meta
+          label="Published"
+          value={row.publishedAt ? new Date(row.publishedAt).toLocaleString() : "—"}
+        />
+        <Meta
+          label="Approved"
+          value={row.approvedAt ? new Date(row.approvedAt).toLocaleString() : "—"}
+        />
         <Meta label="Approval rule" value={row.approvalSource ?? "—"} />
       </dl>
 
