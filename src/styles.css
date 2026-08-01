@@ -1166,11 +1166,13 @@ html[data-scrolling="true"] .scroll-depth {
 @media (prefers-reduced-motion: reduce) {
   .ivy-atmosphere {
     opacity: 0.4;
+    animation: none;
   }
   .ivy-curtain {
     display: none;
   }
 }
+
 
 @media (forced-colors: active) {
   .ivy-atmosphere {
