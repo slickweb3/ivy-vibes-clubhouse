@@ -7,6 +7,7 @@ import { projectConfig } from "@/config/project";
 import { platformLabel, type CuratedPost } from "@/types/curated";
 import { cn } from "@/lib/utils";
 import avatarTiktok from "@/assets/ivy-avatar-tiktok.png.asset.json";
+import avatarInstagram from "@/assets/ivy-avatar-instagram.png.asset.json";
 
 /**
  * Two tall "profile windows" — one per official public account. Each one is
@@ -45,7 +46,7 @@ const TIKTOK: ProfileMeta = {
   avatar: avatarTiktok.url,
   profileUrl: projectConfig.socials.tiktok ?? "https://www.tiktok.com/@ivyvibing",
   tone: "lavender",
-  chrome: "bg-lavender",
+  chrome: meta.chrome,
 };
 
 const INSTAGRAM: ProfileMeta = {
@@ -137,7 +138,7 @@ function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[
       <div
         className={cn(
           "grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 border-b-2 border-charcoal/15 px-4 py-3",
-          "bg-lavender",
+          meta.chrome,
         )}
       >
         <span aria-hidden className="flex shrink-0 items-center gap-1.5">
