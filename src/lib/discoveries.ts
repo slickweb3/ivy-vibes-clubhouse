@@ -134,6 +134,35 @@ export const DISCOVERIES: Discovery[] = [
     hint: "A song is no use unheard.",
     glyph: "🎼",
   },
+  {
+    id: "familiar",
+    title: "Summoned a familiar",
+    note: "There was always a frog waiting under your name. Now you have met.",
+    hint: "The pond can read letters. Give it some.",
+    glyph: "🔮",
+  },
+  {
+    id: "bloodline",
+    title: "Royal bloodline",
+    note: "Court rank or higher. Ivy nods, barely.",
+    hint: "Some familiars come out rarer than others.",
+    glyph: "👑",
+  },
+  {
+    id: "keepsake",
+    title: "Kept the record",
+    note: "The card is yours now. Put it somewhere people can see it.",
+    hint: "Some things are worth saving.",
+    glyph: "🖼️",
+  },
+  {
+    id: "herald",
+    title: "Told the world",
+    note: "You carried a frog out of the pond and into the timeline.",
+    hint: "Brag, ideally publicly.",
+    glyph: "📣",
+  },
+
 
 ];
 
