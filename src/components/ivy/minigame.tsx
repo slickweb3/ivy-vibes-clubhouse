@@ -796,6 +796,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       run.coyote = 0;
       run.holding = true;
       run.taps += 1;
+      run.squash = 1.12;
       burst(run, PLAYER_X - 8, run.y + 6, 5, COLORS.leaf, calmRef.current);
       gameAudio.play("jump");
       return true;
@@ -805,6 +806,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       run.jumps += 1;
       run.holding = true;
       run.taps += 1;
+      run.squash = 1.16;
       burst(run, PLAYER_X - 8, run.y + 6, 8, COLORS.leaf, calmRef.current);
       gameAudio.play("double");
       return true;
