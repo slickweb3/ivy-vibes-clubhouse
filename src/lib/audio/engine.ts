@@ -1,3 +1,10 @@
+import {
+  BASS_ROOTS,
+  HARP_SHAPE,
+  MELODY,
+  THEME_ROOT_MIDI,
+} from "./theme";
+
 /**
  * Ivy's living audio universe — a fully synthesised, asset-free soundscape.
  *
@@ -560,16 +567,13 @@ export class IvyAudio {
     }
   }
 
-  private note(voice: Voice, degree: number, octave: number, at: number, dur: number, lvl: number) {
-    const root = 50 + this.levels.register; // D3 reference — the Dorian home
-    const index = ((degree % SCALE.length) + SCALE.length) % SCALE.length;
-    const hz = midi(root + SCALE[index]! + octave * 12);
+  private note(voice: Voice, midiNote: number, at: number, dur: number, lvl: number) {
+    const hz = midi(midiNote);
     if (voice === "ocarina") this.ocarina(hz, at, dur, lvl);
     else if (voice === "pluck") this.pluck(hz, at, lvl);
     else if (voice === "horn") this.horn(hz, at, dur, lvl);
     else this.bell(hz, at, lvl);
   }
-
 
   // ------------------------------------------------------------- sequencer --
 
@@ -580,71 +584,50 @@ export class IvyAudio {
     while (this.nextTime < ctx.currentTime + 0.5) {
       const dur = stepDur();
       const at = this.nextTime;
-      const s = this.step;
-      const bar = Math.floor(s / 16) % 4;
-      const beat = s % 16;
+      const i = this.step % 64;
+      const bar = Math.floor(i / 16);
       const L = this.levels;
-      const chordRoot = L.chords[bar] ?? 50;
-      const chordDegree = SCALE.findIndex((v) => (chordRoot - 50 + 12) % 12 === (v + 12) % 12);
-      const base = chordDegree < 0 ? 0 : chordDegree;
+      const root = THEME_ROOT_MIDI + L.register;
 
-      // Pad: one slow swell per bar.
-      if (beat === 0 && L.pad > 0.02) {
-        const hz = midi(chordRoot - 12);
-        this.pad(hz, at, dur * 16 * 1.05, 0.05 * L.pad);
-        if (!this.lean) this.pad(hz * 1.5, at + dur * 2, dur * 12, 0.03 * L.pad);
+      // Pad: one slow swell per bar under the bar's bass root.
+      if (i % 16 === 0 && L.pad > 0.02) {
+        const hz = midi(root + (BASS_ROOTS[bar] ?? 0) - 12);
+        this.pad(hz, at, dur * 16 * 1.05, 0.045 * L.pad);
       }
 
-      // Sparse walking pulse: enough movement to feel alive, never a drum loop.
+      // Lead: the theme itself, on ocarina, unhurried and low in the mix.
+      const note = MELODY[i];
+      if (note !== null && note !== undefined && L.melody > 0.05) {
+        this.note("ocarina", root + note, at, dur * 3.6, 0.05 * L.melody);
+      }
+
+      // Bass: root on the beat, octave bounce on the offbeat — the platformer
+      // walk, played softly so it reads as a heartbeat rather than a groove.
+      if (i % 4 === 0 && L.pluck > 0.04) {
+        const up = i % 8 === 4;
+        this.pluck(midi(root + (BASS_ROOTS[bar] ?? 0) - 12 + (up ? 12 : 0)), at, 0.05 * L.pluck);
+      }
+
+      // Harp: rolling chord tones threading between the melody notes.
+      if (i % 4 === 3 && L.pluck > 0.05) {
+        const shape = HARP_SHAPE[(i * 3) % HARP_SHAPE.length] ?? 0;
+        this.pluck(midi(root + (BASS_ROOTS[bar] ?? 0) + shape + 12), at, 0.03 * L.pluck);
+      }
+
+      // Sparse walking pulse: movement, never a drum loop.
       if (L.perc > 0.05) {
-        if (beat === 0 || beat === 8) this.hand(at, 0.16 * L.perc, true);
-        if (beat === 12) this.hand(at, 0.05 * L.perc, false);
+        if (i % 16 === 0) this.hand(at, 0.14 * L.perc, true);
+        if (i % 16 === 12) this.hand(at, 0.05 * L.perc, false);
       }
 
-      // Harp/kalimba accompaniment: rolling chord tones in thirds, the way an
-      // overworld theme keeps moving under the tune.
-      if (L.pluck > 0.05 && beat % 4 === 0 && Math.random() < L.pluck) {
-        const shape = pick([0, 2, 4, 6, 7, 9]);
-        this.pluck(
-          midi(50 + this.levels.register + (SCALE[(base + shape) % SCALE.length] ?? 0)),
-          at,
-          0.035 + 0.025 * L.pluck,
-        );
+      // A rare bell high above the pond keeps the world shimmering.
+      if (!this.lean && L.bell > 0.03 && i === 30) {
+        this.note("bell", root + 26, at, 0, 0.04 * L.bell);
       }
 
-      // Melody: Ivy's four-note signature opens the phrase on ocarina, then a
-      // written overworld phrase answers it. The tune is chosen per cycle, so
-      // it sings a real melody rather than improvising note by note.
-      if (L.melody > 0.05) {
-        if (bar === 0 && beat % 4 === 0) {
-          const degree = base + (MOTIF[beat / 4] ?? 0);
-          this.note("ocarina", degree, 1, at, dur * 3.6, 0.055 * L.melody);
-        } else if (bar > 0) {
-          const phrase = PHRASES[(Math.floor(this.step / 64) * 3 + bar) % PHRASES.length]!;
-          const step = phrase[beat];
-          if (step !== null && step !== undefined) {
-            const long = beat >= 12;
-            this.note("ocarina", base + step, 1, at, dur * (long ? 4.2 : 2.1), 0.045 * L.melody);
-          }
-        }
-      }
-
-      // Bells and crystals: the machine breathing under the forest.
-      if (L.bell > 0.03 && beat === 12 && Math.random() < L.bell * 2) {
-        this.note("bell", base + pick([4, 5, 7]), 2, at, 0, 0.05 * L.bell);
-      }
-      if (!this.lean && L.crystal > 0.03 && Math.random() < L.crystal * 0.05) {
-        this.bell(midi(81 + pick([0, 3, 7, 10, 12])), at, 0.02 * L.crystal, 3.51);
-      }
-
-      // Inhabitants: the pond answers the tune. Frogs take the phrase-ends,
-      // Ivy signs off the cycle, and every so often her tail keeps the beat.
-      if (beat === 15 && Math.random() < L.creature * 0.35) this.ribbit(at + dur * 0.5, 0.032);
-      if (bar === 3 && beat === 14 && Math.random() < L.creature * 0.45) this.woof(at, 0.04);
-      if (bar === 1 && beat === 0 && Math.random() < L.creature * 0.12) {
-        this.tailThump(at, 0.025);
-      }
-
+      // Inhabitants: frogs answer each phrase, Ivy signs off every loop.
+      if ((i === 15 || i === 47) && Math.random() < 0.5 + L.creature) this.ribbit(at, 0.03);
+      if (i === 62 && Math.random() < 0.5 + L.creature) this.woof(at, 0.038);
 
       this.nextTime += dur;
       this.step += 1;
