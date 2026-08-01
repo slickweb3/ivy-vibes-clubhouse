@@ -63,27 +63,20 @@ const PROFILES: Record<CuratedPlatform, ProfileMeta> = {
 };
 
 export function SocialWindows({ posts }: { posts: CuratedPost[] }) {
-  const instagram = useMemo(
-    () => posts.filter((post) => post.platform === "instagram"),
-    [posts],
-  );
   const tiktok = useMemo(() => posts.filter((post) => post.platform === "tiktok"), [posts]);
 
-  if (instagram.length === 0 && tiktok.length === 0) return null;
+  if (tiktok.length === 0) return null;
 
   return (
     <Section
       id="social-windows"
-      eyebrow="Straight from her accounts"
-      title="Ivy's windows"
-      intro="Two tall windows onto the Frog Queen's official Instagram and TikTok. Scroll each one like the real app — her captions stay exactly as she wrote them, shown by the platforms themselves."
-      tone="leaf"
+      eyebrow="Straight from her account"
+      title="Ivy's TikTok window"
+      intro="A tall, scrollable window onto the Frog Queen's official TikTok. Her captions stay exactly as she wrote them, shown by TikTok itself."
+      tone="lavender"
     >
-      <div className="grid gap-8 xl:grid-cols-2">
-        {instagram.length > 0 ? (
-          <ProfileWindow platform="instagram" posts={instagram} />
-        ) : null}
-        {tiktok.length > 0 ? <ProfileWindow platform="tiktok" posts={tiktok} /> : null}
+      <div className="mx-auto max-w-2xl">
+        <ProfileWindow platform="tiktok" posts={tiktok} />
       </div>
     </Section>
   );
