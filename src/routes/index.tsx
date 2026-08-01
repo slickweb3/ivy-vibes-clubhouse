@@ -107,7 +107,9 @@ function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
 
   if (hero) used.add(hero.id);
 
-  const freshPosts = take(photoPosts, 2);
+  const freshPhotoPosts = take(photoPosts, 2);
+  const freshVideoPosts = take(videoPosts, 4);
+  const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
   const hallOfFame = take(photoPosts, 4);
 
   return { hero, freshPosts, hallOfFame };
