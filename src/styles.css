@@ -1561,41 +1561,9 @@ html[data-scrolling="true"] .scroll-depth {
 }
 
 /* ---------------------------------------------------------------------------
- * Night mode atmosphere: a moonlit sky layer + a gentle cool wash so warm
- * hand-placed surfaces settle into dusk without losing text contrast.
+ * Night mode atmosphere: a moonlit sky layer, a moon, and pond-glass
+ * surfaces so the warm daytime panels settle into dusk.
  * ------------------------------------------------------------------------- */
-.night-wash {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 700ms ease;
-  background: linear-gradient(180deg, #1a2f78 0%, #16215c 55%, #0d1440 100%);
-  mix-blend-mode: multiply;
-}
-
-.dark .night-wash {
-  opacity: 0.78;
-}
-
-/* Colour layer: pushes the whole meadow into moonlit blues without
-   flattening the luminance the multiply layer already set. */
-.night-hue {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 700ms ease;
-  background: linear-gradient(180deg, #1d3a7a 0%, #23306b 60%, #16224a 100%);
-  mix-blend-mode: color;
-}
-
-.dark .night-hue {
-  opacity: 0.5;
-  mix-blend-mode: soft-light;
-}
 
 .night-sky {
   position: fixed;
@@ -1670,4 +1638,31 @@ html.dark body {
   .dark .night-sky {
     animation: none;
   }
+}
+
+/* Night mode surfaces: the hand-placed warm panels become pond glass, and the
+   ink inside them flips to moonlight. Bright brand chips (frog / yellow / pink
+   / lavender) keep their dark ink so contrast holds. */
+.dark :is([class*="bg-cream"], [class*="bg-card"], [class*="bg-leaf"], [class*="bg-popover"]) {
+  background-color: color-mix(in oklab, #12242f 92%, var(--lavender));
+  color: var(--foreground);
+}
+
+.dark
+  :is([class*="bg-cream"], [class*="bg-card"], [class*="bg-leaf"], [class*="bg-popover"])
+  :is([class*="text-charcoal"], [class*="text-ink"]):not([class*="bg-yellow"]):not(
+    [class*="bg-pink"]
+  ):not([class*="bg-frog"]):not([class*="bg-lavender"]):not([class*="bg-leaf"]):not(
+    [class*="bg-cream"]
+  ) {
+  color: var(--foreground);
+}
+
+.dark :is([class*="border-charcoal"], .ink-border) {
+  border-color: color-mix(in oklab, var(--lavender) 55%, #0b1620);
+}
+
+.dark {
+  --shadow-pop: 0 6px 0 0 #06121a;
+  --shadow-pop-sm: 0 4px 0 0 #06121a;
 }
