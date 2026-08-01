@@ -39,6 +39,7 @@ export function NightModeToggle() {
   return (
     <>
       <div className="night-wash" aria-hidden />
+      <div className="night-hue" aria-hidden />
       <div className="night-sky" aria-hidden />
       <div className="night-moon" aria-hidden />
       <button
