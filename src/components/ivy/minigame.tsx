@@ -102,8 +102,6 @@ interface RunState {
   passedBest: boolean;
   nextObstacle: number;
   nextCoin: number;
-  /** Vertical squash/stretch factor. 1 = neutral; springs back to 1 always. */
-  squash: number;
   over: boolean;
 }
 
@@ -139,7 +137,6 @@ function freshRun(): RunState {
     passedBest: false,
     nextObstacle: 260,
     nextCoin: 133,
-    squash: 1,
     over: false,
   };
 }
@@ -514,13 +511,9 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       ctx.translate(PLAYER_X, py + 10);
       const tilt = Math.max(-0.22, Math.min(0.22, run.vy / 3600));
       ctx.rotate(tilt);
-      // Area-preserving squash & stretch. run.squash is spring-driven in the
-      // physics step and always resolves back to 1, so Ivy can never get stuck
-      // shrunk after a hop. Idle breathing only applies while grounded.
-      const idle = airborne ? 0 : Math.abs(Math.sin(run.t * 14)) * 0.03;
-      const sy = Math.max(0.75, Math.min(1.25, run.squash - idle));
-      const sx = 1 / sy;
-      ctx.drawImage(sprite, (-w * sx) / 2, -h * sy, w * sx, h * sy);
+      // Keep Ivy at her exact authored proportions. Motion comes from the hop,
+      // tilt, particles and landing feedback—not sprite deformation.
+      ctx.drawImage(sprite, -w / 2, -h, w, h);
       ctx.restore();
     } else {
       ctx.fillStyle = COLORS.leaf;
@@ -627,8 +620,6 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       if (run.y >= GROUND_Y) {
         if (wasAirborne && run.vy > 260) {
           burst(run, PLAYER_X, GROUND_Y + 10, 6, COLORS.cream, calmRef.current);
-          // Landing squat, proportional to impact speed.
-          run.squash = Math.max(0.82, 1 - Math.min(0.18, run.vy / 4200));
         }
         run.y = GROUND_Y;
         run.vy = 0;
@@ -637,13 +628,6 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       } else {
         run.coyote = Math.max(0, run.coyote - dt);
       }
-
-      // Squash/stretch spring: exponential recovery toward neutral, framerate
-      // independent, and hard-snapped once it is imperceptible so a paused or
-      // backgrounded tab can never leave Ivy stuck deformed.
-      run.squash += (1 - run.squash) * (1 - Math.exp(-dt * 11));
-      if (Math.abs(run.squash - 1) < 0.005) run.squash = 1;
-
 
       // Buffered input fires the instant a hop becomes legal again.
       run.buffer = Math.max(0, run.buffer - dt);
@@ -796,7 +780,6 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       run.coyote = 0;
       run.holding = true;
       run.taps += 1;
-      run.squash = 1.12;
       burst(run, PLAYER_X - 8, run.y + 6, 5, COLORS.leaf, calmRef.current);
       gameAudio.play("jump");
       return true;
@@ -806,7 +789,6 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       run.jumps += 1;
       run.holding = true;
       run.taps += 1;
-      run.squash = 1.16;
       burst(run, PLAYER_X - 8, run.y + 6, 8, COLORS.leaf, calmRef.current);
       gameAudio.play("double");
       return true;
@@ -815,7 +797,6 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   }
 
   const finishRun = useCallback((run: RunState) => {
-    run.squash = 1;
     const finalScore = scoreOf(run);
     const record = finalScore > bestRef.current;
     if (record) {
@@ -844,7 +825,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
 
   stepRef.current = step;
 
-  const start = useCallback(async () => {
+  const start = useCallback(async (hopImmediately = false) => {
     // Never leave a second loop running — that used to double the game speed.
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     gameAudio.unlock();
@@ -852,6 +833,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     // Ivy's world music steps aside so the game theme has the stage.
     audioScene("hush");
     runRef.current = freshRun();
+    if (hopImmediately) applyJump(runRef.current);
     setScore(0);
     setStatus(null);
     setPhase("playing");
@@ -888,7 +870,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       return;
     }
     if (phaseRef.current === "idle" || phaseRef.current === "over") {
-      void start();
+      void start(true);
       return;
     }
     if (!applyJump(run)) {

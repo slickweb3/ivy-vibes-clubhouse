@@ -24,7 +24,7 @@ function ensure(): AudioContext | null {
     if (!Ctor) return null;
     ctx = new Ctor();
     master = ctx.createGain();
-    master.gain.value = 0.32;
+    master.gain.value = 0.2;
     master.connect(ctx.destination);
   }
   if (ctx.state === "suspended") void ctx.resume();
@@ -399,8 +399,8 @@ function woof(time: number, gain: number) {
 function scheduleMusic() {
   const audio = ctx;
   if (!audio || !musicGain) return;
-  // Tempo rides the run: a calm march at the start, a chase at full speed.
-  const bpm = 128 + intensity * 34;
+  // A buoyant walking pace that only tightens slightly as the pond speeds up.
+  const bpm = 104 + intensity * 16;
   const spb = 60 / bpm / 4;
 
   while (nextNoteTime < audio.currentTime + 0.2) {
@@ -410,42 +410,35 @@ function scheduleMusic() {
 
     const note = MELODY[i];
     if (note !== null) {
-      // The lead is an ocarina singing the tune, with a quiet chip-square
-      // shadow underneath so it still reads as an arcade theme.
-      ocarina(t, hz(note), spb * 3.6, 0.075);
-      voice(t, hz(note), spb * 3.2, "square", 0.035);
+      // One clean ocarina lead keeps the tune memorable and unhurried.
+      ocarina(t, hz(note), spb * 3.6, 0.052);
     }
 
     // bass: root on the beat, octave bounce on the offbeat
     if (i % 2 === 0) {
       const root = BASS_ROOTS[bar];
       const up = i % 4 === 2;
-      voice(t, hz(root - 12 + (up ? 12 : 0)), spb * 1.7, "triangle", 0.115);
+      voice(t, hz(root - 12 + (up ? 12 : 0)), spb * 1.7, "triangle", 0.06);
     }
 
     // harp: rolling chord tones between the melody notes, the overworld shimmer
     if (i % 4 === 1 || i % 4 === 3) {
       const root = BASS_ROOTS[bar] ?? 2;
       const shape = [0, 7, 10, 14, 19][(i * 3) % 5]!;
-      voice(t, hz(root + shape + 12), spb * 1.4, "triangle", 0.03 + intensity * 0.015);
+      voice(t, hz(root + shape + 12), spb * 1.4, "triangle", 0.018 + intensity * 0.006);
     }
 
     // percussion
-    if (i % 4 === 0) voice(t, 78, 0.1, "sine", 0.16, 44);
-    if (i % 4 === 2) hat(t, 0.045 + intensity * 0.03);
-
-    // heroic horn on the downbeat of each phrase half
-    if (i === 0 || i === 32) voice(t, hz(BASS_ROOTS[bar] ?? 2), spb * 6, "sawtooth", 0.035);
+    if (i % 8 === 0) voice(t, 78, 0.1, "sine", 0.07, 44);
 
     if (intensity > 0.45) {
       const high = COUNTER[i];
-      if (high !== null) voice(t, hz(high), spb * 2.6, "triangle", 0.045 * intensity);
+      if (high !== null && i % 8 === 0) voice(t, hz(high), spb * 2.6, "triangle", 0.018 * intensity);
     }
 
     // foley: frogs answer each phrase, and Ivy signs off every loop
-    if (i === 15 || i === 47) croak(t, 0.075);
-    if (i === 30 && intensity > 0.3) croak(t, 0.045);
-    if (i === 62) woof(t, 0.09);
+    if (i === 15 || i === 47) croak(t, 0.035);
+    if (i === 62) woof(t, 0.045);
 
     nextNoteTime += spb;
     step16 += 1;
@@ -483,7 +476,7 @@ export const gameAudio = {
       if (master) musicGain.connect(master);
     }
     musicGain.gain.cancelScheduledValues(audio.currentTime);
-    musicGain.gain.setTargetAtTime(0.85, audio.currentTime, 0.5);
+    musicGain.gain.setTargetAtTime(0.62, audio.currentTime, 0.8);
     intensity = 0;
     if (musicTimer === null) {
       step16 = 0;
@@ -508,18 +501,14 @@ export const gameAudio = {
     if (!enabled) return;
     switch (cue) {
       case "jump":
-        // The hop: an ocarina "hup" scooping up a perfect fourth, a frog-throat
-        // body underneath, and one harp sparkle as she leaves the pad.
-        tone({ freq: 230, to: 470, dur: 0.11, type: "triangle", gain: 0.24 });
-        ocarinaCue(587.33, 784, 0.16, 0.16);
-        arp([0, 5, 12], 587.33, 0.05, 0.07, "triangle", 0.13);
-        tone({ freq: 2350, dur: 0.05, type: "sine", gain: 0.06, delay: 0.11 });
+        // A single soft ocarina fourth with a tiny wooden take-off tick.
+        ocarinaCue(523.25, 698.46, 0.14, 0.085);
+        tone({ freq: 260, to: 190, dur: 0.07, type: "triangle", gain: 0.045 });
         break;
       case "double":
-        // Mid-air hop answers an octave up — the little "secret" flourish.
-        tone({ freq: 420, to: 900, dur: 0.1, type: "triangle", gain: 0.14 });
-        ocarinaCue(880, 1174.66, 0.18, 0.13);
-        arp([12, 17, 19, 24], 587.33, 0.045, 0.055, "triangle", 0.1);
+        // The same motif one fifth higher, still one voice—not a flourish pile.
+        ocarinaCue(698.46, 880, 0.15, 0.075);
+        tone({ freq: 330, to: 230, dur: 0.06, type: "triangle", gain: 0.035 });
         break;
       case "coin":
         // Rupee-style two-tone chime, rising with the combo.
