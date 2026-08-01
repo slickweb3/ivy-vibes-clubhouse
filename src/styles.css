@@ -1675,3 +1675,21 @@ html.dark body {
 .dark .glass-dark {
   background-color: color-mix(in oklab, #0c1a24 82%, transparent);
 }
+
+/* Full-width brand bands: after dark they settle into moonlit panels instead of
+   staying daylight-bright, and their coloured tints stay a whisper. */
+.dark
+  [class*="band-"]:is(
+    section,
+    [class~="bg-lavender"],
+    [class~="bg-pink"],
+    [class~="bg-frog"],
+    [class~="bg-yellow"]
+  ) {
+  background-color: color-mix(in oklab, #101f2c 90%, var(--lavender));
+  color: var(--foreground);
+}
+
+.dark [class*="band-"] {
+  background-blend-mode: soft-light;
+}
