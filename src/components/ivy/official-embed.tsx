@@ -10,6 +10,28 @@ import { cn } from "@/lib/utils";
 const activePlayerListeners = new Set<(id: string) => void>();
 
 /**
+ * Hard cap on simultaneously mounted third-party iframes. Each Instagram or
+ * TikTok embed is a full web page; without a cap a long scroll can leave more
+ * than a dozen alive and mobile browsers reload the tab to reclaim memory.
+ */
+const MAX_MOUNTED_EMBEDS = 4;
+const mountedEmbeds: Array<() => void> = [];
+
+function claimEmbedSlot(release: () => void) {
+  if (!mountedEmbeds.includes(release)) mountedEmbeds.push(release);
+  while (mountedEmbeds.length > MAX_MOUNTED_EMBEDS) {
+    const oldest = mountedEmbeds.shift();
+    oldest?.();
+  }
+}
+
+function releaseEmbedSlot(release: () => void) {
+  const index = mountedEmbeds.indexOf(release);
+  if (index >= 0) mountedEmbeds.splice(index, 1);
+}
+
+
+/**
  * Renders one curated post using the platform's OWN official embed.
  *
  * Nothing is downloaded, proxied or rehosted: the iframe points straight at
@@ -31,30 +53,41 @@ export function OfficialSocialEmbed({
   const { embedsAllowed, openSettings } = useEmbedConsent();
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  // Only mount the third-party iframe once the card is near the viewport, so a
-  // page with many embeds stays smooth instead of loading everything at once.
+  // Third-party iframes are mounted only while their card is near the viewport
+  // and unmounted again once it scrolls away. Instagram/TikTok frames are full
+  // pages each, so keeping a dozen of them alive can exhaust memory on phones —
+  // which the browser resolves by silently reloading the tab.
   const [inView, setInView] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const node = frameRef.current;
-    if (!node || inView) return;
+    if (!node) return;
     if (typeof IntersectionObserver === "undefined") {
       setInView(true);
       return;
     }
+    const release = () => setInView(false);
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setInView(true);
-          observer.disconnect();
-        }
+        const visible = entries.some((entry) => entry.isIntersecting);
+        setInView(visible);
+        if (visible) claimEmbedSlot(release);
+        else releaseEmbedSlot(release);
       },
-      // Mount well before the card is visible so the player is ready on arrival.
-      { rootMargin: "800px 0px" },
+      // Mount a little before the card arrives, drop it soon after it leaves.
+      { rootMargin: "300px 0px" },
     );
     observer.observe(node);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      releaseEmbedSlot(release);
+    };
+  }, []);
+
+  // A frame that was dropped must show its placeholder again when it returns.
+  useEffect(() => {
+    if (!inView) setLoaded(false);
   }, [inView]);
 
   const label = platformLabel(post.platform);
@@ -79,6 +112,13 @@ export function OfficialSocialEmbed({
       activePlayerListeners.delete(listener);
     };
   }, [playing, post.id]);
+
+  // Scrolling a playing video off screen closes its player too.
+  useEffect(() => {
+    if (!inView && playing) setPlaying(false);
+  }, [inView, playing]);
+
+
 
   // TikTok gives us its own official poster image, so the card shows a real
   // picture straight away and the video opens in TikTok's player on tap.
