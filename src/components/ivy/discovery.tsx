@@ -94,7 +94,7 @@ export function IvyDiscoveries({ context = "home" }: { context?: "home" | "arcad
         type="button"
         onClick={openJournal}
         aria-label={`Field journal — ${count} of ${total} discoveries found`}
-        className="pop fixed right-3 bottom-24 z-40 flex items-center gap-2 rounded-full border-2 border-deep-ivy/70 bg-cream/90 px-3 py-2 font-display text-sm text-deep-ivy shadow-[0_6px_0_rgba(23,79,54,0.45)] backdrop-blur-sm sm:right-5 sm:bottom-28"
+        className="pop fixed right-3 bottom-24 z-40 flex items-center gap-2 rounded-full border-2 border-ivy/70 bg-cream/90 px-3 py-2 font-display text-sm text-ivy shadow-[0_6px_0_rgba(23,79,54,0.45)] backdrop-blur-sm sm:right-5 sm:bottom-28"
       >
         <span aria-hidden className="ivy-journal-pip">
           🪷
@@ -109,7 +109,7 @@ export function IvyDiscoveries({ context = "home" }: { context?: "home" | "arcad
         <div
           role="status"
           aria-live="polite"
-          className="ivy-find-card fixed right-3 bottom-40 z-50 max-w-[17rem] rounded-2xl border-2 border-deep-ivy/70 bg-cream/95 p-3 text-deep-ivy shadow-[0_10px_0_rgba(23,79,54,0.35)] sm:right-5 sm:bottom-44"
+          className="ivy-find-card fixed right-3 bottom-40 z-50 max-w-[17rem] rounded-2xl border-2 border-ivy/70 bg-cream/95 p-3 text-ivy shadow-[0_10px_0_rgba(23,79,54,0.35)] sm:right-5 sm:bottom-44"
         >
           <p className="font-display text-[0.7rem] tracking-[0.18em] uppercase opacity-60">
             Discovery {count} of {total}
@@ -132,7 +132,7 @@ export function IvyDiscoveries({ context = "home" }: { context?: "home" | "arcad
             if (event.target === event.currentTarget) setOpen(false);
           }}
         >
-          <div className="ivy-find-card max-h-[82vh] w-full max-w-lg overflow-y-auto rounded-3xl border-4 border-deep-ivy bg-cream p-5 text-deep-ivy shadow-[0_16px_0_rgba(21,21,21,0.5)]">
+          <div className="ivy-find-card max-h-[82vh] w-full max-w-lg overflow-y-auto rounded-3xl border-4 border-ivy bg-cream p-5 text-ivy shadow-[0_16px_0_rgba(21,21,21,0.5)]">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="font-display text-2xl leading-tight">Field journal</h2>
@@ -144,7 +144,7 @@ export function IvyDiscoveries({ context = "home" }: { context?: "home" | "arcad
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close journal"
-                className="pop shrink-0 rounded-full border-2 border-deep-ivy bg-frog p-2 text-deep-ivy"
+                className="pop shrink-0 rounded-full border-2 border-ivy bg-frog p-2 text-ivy"
               >
                 <XIcon className="size-4" />
               </button>
@@ -152,7 +152,7 @@ export function IvyDiscoveries({ context = "home" }: { context?: "home" | "arcad
 
             <div
               aria-hidden
-              className="mt-4 h-2 overflow-hidden rounded-full border-2 border-deep-ivy/40 bg-deep-ivy/10"
+              className="mt-4 h-2 overflow-hidden rounded-full border-2 border-ivy/40 bg-ivy/10"
             >
               <div
                 className="h-full rounded-full bg-frog transition-[width] duration-700 ease-out"
@@ -168,8 +168,8 @@ export function IvyDiscoveries({ context = "home" }: { context?: "home" | "arcad
                     key={entry.id}
                     className={
                       got
-                        ? "flex gap-3 rounded-2xl border-2 border-deep-ivy/60 bg-light-leaf/50 p-3"
-                        : "flex gap-3 rounded-2xl border-2 border-dashed border-deep-ivy/30 p-3 opacity-70"
+                        ? "flex gap-3 rounded-2xl border-2 border-ivy/60 bg-leaf/50 p-3"
+                        : "flex gap-3 rounded-2xl border-2 border-dashed border-ivy/30 p-3 opacity-70"
                     }
                   >
                     <span aria-hidden className="text-lg leading-none">
@@ -189,7 +189,7 @@ export function IvyDiscoveries({ context = "home" }: { context?: "home" | "arcad
             </ul>
 
             {count === total ? (
-              <p className="mt-4 rounded-2xl border-2 border-deep-ivy bg-yellow/60 p-3 text-center font-display text-sm">
+              <p className="mt-4 rounded-2xl border-2 border-ivy bg-yellow/60 p-3 text-center font-display text-sm">
                 Everything found. Ivy is genuinely impressed, and so is her owner.
               </p>
             ) : null}
