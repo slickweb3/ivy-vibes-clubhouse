@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getSiteMedia } from "@/lib/site-media.functions";
 import { getMarketSnapshot } from "@/lib/market.functions";
 import { getCuratedFeed } from "@/lib/curated.functions";
-import { EMPTY_CURATED_FEED, type CuratedFeed, type CuratedPost } from "@/types/curated";
+import { EMPTY_CURATED_FEED, type CuratedFeed } from "@/types/curated";
 import type { MarketSnapshot } from "@/lib/market.server";
 import { EMPTY_SITE_MEDIA, type SiteMedia } from "@/types/media";
 import { SiteNav } from "@/components/ivy/header";
