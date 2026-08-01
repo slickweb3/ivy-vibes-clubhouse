@@ -22,11 +22,30 @@ type Voice = "flute" | "pluck" | "bell" | "crystal";
 
 const midi = (note: number) => 440 * Math.pow(2, (note - 69) / 12);
 
-/** A-minor pentatonic + a Dorian colour tone: warm, folkloric, never sour. */
-const SCALE = [0, 3, 5, 7, 10, 12, 15, 17, 19, 22];
+/**
+ * D-Dorian across two octaves — the modal, adventurous colour that overworld
+ * themes live in: minor enough to feel like a quest, with the bright natural
+ * sixth that keeps the pond hopeful.
+ */
+const SCALE = [0, 2, 3, 5, 7, 9, 10, 12, 14, 15, 17, 19, 21, 22];
 
 /** Ivy's theme — the four-note signature the whole world is built from. */
-const MOTIF = [0, 2, 4, 3];
+const MOTIF = [0, 4, 3, 7];
+
+/**
+ * Overworld phrase library. Scale-degree phrases with rests (null), written as
+ * calls and answers in stepwise motion with fourth/fifth leaps at the cadence,
+ * so the melody sings a tune instead of noodling at random.
+ */
+const PHRASES: (number | null)[][] = [
+  [7, null, 5, 4, null, 7, null, null, 9, null, 7, null, 4, null, null, null],
+  [4, null, null, 7, 5, null, 4, null, 3, null, 4, null, 7, null, null, null],
+  [11, null, 9, null, 7, null, 5, 4, null, 7, null, null, null, null, null, null],
+  [7, 9, null, 11, null, null, 9, null, 7, null, 5, null, 4, null, null, null],
+  [0, null, 4, null, 7, null, 11, null, 9, null, null, 7, null, null, null, null],
+  [9, null, null, 7, null, 5, null, 4, 5, null, 7, null, null, null, null, null],
+];
+
 
 interface SceneConfig {
   bpm: number;
