@@ -100,12 +100,27 @@ export const DISCOVERIES: Discovery[] = [
     glyph: "🕰️",
   },
   {
+    id: "oracle",
+    title: "Heard the daily ribbit",
+    note: "The pond spoke. You listened. That is the whole ritual.",
+    hint: "The pond only says one thing per day.",
+    glyph: "🪷",
+  },
+  {
+    id: "streak",
+    title: "Three days running",
+    note: "Ivy now expects you. Do not let her down.",
+    hint: "Come back. Then come back again.",
+    glyph: "🔥",
+  },
+  {
     id: "journal",
     title: "Opened the journal",
     note: "You wanted to know how deep this goes. It goes deeper.",
     hint: "You are already here.",
     glyph: "📖",
   },
+
 ];
 
 const KEY = "ivy-discoveries";

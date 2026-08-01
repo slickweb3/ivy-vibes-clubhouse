@@ -17,6 +17,8 @@ import { SocialWindows } from "@/components/ivy/social-windows";
 import { IvyPhotoRow, heroPhotoUrl } from "@/components/ivy/photo-row";
 import { LiveMarket } from "@/components/ivy/market";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
+import { DailyRibbit } from "@/components/ivy/daily-ribbit";
+
 import { OwnerCorner, RoyalCourt, FAQ, SiteFooter } from "@/components/ivy/sections-b";
 
 const TITLE = "$ivy — The Official ivy vibing Meme Coin";
@@ -108,6 +110,8 @@ function Home() {
         <Hero media={media.hero} market={market} />
         <IvyPhotoRow />
         <MeetIvy />
+        <DailyRibbit />
+
 
         <SocialWindows posts={curated.all} />
         <TheLore />
