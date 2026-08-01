@@ -177,7 +177,7 @@ function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[
               href={meta.profileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="truncate text-sm text-ivy underline underline-offset-4"
+              className="inline-flex min-h-11 max-w-full items-center truncate text-sm text-ivy underline underline-offset-4"
             >
               @{meta.handle}
             </a>
