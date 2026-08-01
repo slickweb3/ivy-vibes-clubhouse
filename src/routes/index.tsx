@@ -108,9 +108,8 @@ function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
   const freshPhotoPosts = take(photoPosts, 2);
   const freshVideoPosts = take(videoPosts, 4);
   const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
-  const hallOfFame = take(photoPosts, 4);
 
-  return { hero, freshPosts, hallOfFame };
+  return { hero, freshPosts };
 
 }
 
