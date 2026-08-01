@@ -1641,7 +1641,7 @@ html.dark body {
     [class~="bg-pink"],
     [class~="bg-lavender"],
     [class~="bg-primary"]
-  ):is([class*="text-charcoal"], [class*="text-ink"]),
+  ):not(section):not([class*="band-"]):is([class*="text-charcoal"], [class*="text-ink"]),
 .dark
   :is(
     [class~="bg-frog"],
@@ -1649,7 +1649,7 @@ html.dark body {
     [class~="bg-pink"],
     [class~="bg-lavender"],
     [class~="bg-primary"]
-  )
+  ):not(section):not([class*="band-"])
   :is([class*="text-charcoal"], [class*="text-ink"]) {
   color: var(--charcoal);
 }
