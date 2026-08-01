@@ -85,6 +85,13 @@ export function OfficialSocialEmbed({
     };
   }, []);
 
+  // A frame that was dropped must show its placeholder again when it returns.
+  useEffect(() => {
+    if (!inView) setLoaded(false);
+  }, [inView]);
+
+
+
 
   const label = platformLabel(post.platform);
   const fallbackLabel = curatedFallbackLabel(post);
