@@ -187,7 +187,7 @@ function ProfileWindow({ posts }: { posts: CuratedPost[] }) {
             Follow on {label}
             <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />
           </a>
-          <Sticker tone={meta.tone === "pink" ? "yellow" : "leaf"}>
+          <Sticker tone="leaf">
             <FrogDoodle className="h-3.5 w-4 text-ivy" />
             {posts.length} {posts.length === 1 ? "post" : "posts"} in this window
           </Sticker>
