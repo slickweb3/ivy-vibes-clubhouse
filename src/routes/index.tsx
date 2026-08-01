@@ -17,6 +17,7 @@ import {
   WhyIvy,
   TokenRecord,
 } from "@/components/ivy/sections";
+import { SocialWindows } from "@/components/ivy/social-windows";
 import { LiveMarket } from "@/components/ivy/market";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
 import {
@@ -142,6 +143,7 @@ function Home() {
         <Hero media={media.hero} market={market} curatedHero={homeCurated.hero} />
         <MeetIvy curated={homeCurated.meetIvy} />
         <FreshFromTheFrogQueen media={media} curated={homeCurated.freshPosts} />
+        <SocialWindows posts={curated.all} />
         <HallOfFame items={media.hallOfFame} curated={homeCurated.hallOfFame} />
         <TheLore />
         <WhyIvy />
