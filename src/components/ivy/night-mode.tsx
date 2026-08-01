@@ -45,7 +45,7 @@ export function NightModeToggle() {
         onClick={toggle}
         aria-pressed={night}
         title={night ? "Back to daytime pond" : "Switch to night pond"}
-        className="pop fixed right-4 bottom-36 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-lavender text-charcoal sm:right-6 sm:bottom-40"
+        className="pop fixed right-9 bottom-36 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-lavender text-charcoal sm:right-16 sm:bottom-40"
       >
         {night ? (
           <Sun aria-hidden className="h-5 w-5" />

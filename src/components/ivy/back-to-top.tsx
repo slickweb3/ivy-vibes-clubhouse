@@ -37,7 +37,7 @@ export function BackToTop() {
       tabIndex={visible ? 0 : -1}
       aria-hidden={visible ? undefined : true}
       data-visible={visible ? "true" : "false"}
-      className="back-to-top fixed right-4 bottom-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-yellow text-charcoal pop sm:right-6 sm:bottom-6"
+      className="back-to-top fixed right-9 bottom-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-yellow text-charcoal pop sm:right-16 sm:bottom-6"
     >
       <ArrowUp aria-hidden className="h-5 w-5" />
       <span className="sr-only">Back to top</span>
