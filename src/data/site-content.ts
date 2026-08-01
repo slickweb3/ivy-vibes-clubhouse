@@ -199,7 +199,7 @@ export const loreChapters = [
   "Grass rolling becomes a royal tradition",
   "The ivy vibing community grows",
   "The Short Spine Queen becomes an internet favourite",
-  "$ivy begins its next chapter",
+  "Ivy's next chapter: this website and her meme coin $ivy",
 ];
 
 export const whyIvy = {

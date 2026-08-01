@@ -603,7 +603,7 @@ export function TheLore() {
       id="the-lore"
       eyebrow="The Lore"
       title="The Legend of the Short Spine Queen"
-      intro="Ivy's story, told as chapters. Exact dates are omitted until Ivy's family confirms them."
+      intro="Ivy's story, told in chronological order — chapter by chapter, no calendar required."
       tone="cream"
     >
       <ol className="relative space-y-6 border-l-[3px] border-charcoal/80 pl-6">
@@ -617,7 +617,7 @@ export function TheLore() {
             </span>
             <div className="rounded-2xl bg-card p-4 pop-static">
               <p className="font-display text-xs tracking-[0.2em] text-charcoal/60 uppercase">
-                Chapter {index + 1} · date {COMING_SOON}
+                Chapter {index + 1}
               </p>
               <h3 className="mt-1 font-display text-lg text-charcoal">{chapter}</h3>
             </div>
