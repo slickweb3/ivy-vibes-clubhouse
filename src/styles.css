@@ -1690,6 +1690,17 @@ html.dark body {
   color: var(--foreground);
 }
 
+/* One soft moonlight sheen replaces the daylight tints. */
 .dark [class*="band-"] {
-  background-blend-mode: soft-light;
+  background-image:
+    radial-gradient(
+      110% 80% at 0% 0%,
+      color-mix(in oklab, var(--lavender) 12%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      90% 70% at 100% 100%,
+      color-mix(in oklab, var(--frog) 10%, transparent) 0%,
+      transparent 62%
+    );
 }
