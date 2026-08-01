@@ -114,7 +114,7 @@ function ProfileWindow({ posts }: { posts: CuratedPost[] }) {
       <div
         className={cn(
           "grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 border-b-2 border-charcoal/15 px-4 py-3",
-          meta.tone === "pink" ? "bg-pink" : "bg-lavender",
+          "bg-lavender",
         )}
       >
         <span aria-hidden className="flex shrink-0 items-center gap-1.5">
