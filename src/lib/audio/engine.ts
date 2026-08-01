@@ -588,8 +588,8 @@ export class IvyAudio {
       const bar = Math.floor(s / 16) % 4;
       const beat = s % 16;
       const L = this.levels;
-      const chordRoot = L.chords[bar] ?? 45;
-      const chordDegree = SCALE.findIndex((v) => (chordRoot - 45 + 12) % 12 === (v + 12) % 12);
+      const chordRoot = L.chords[bar] ?? 50;
+      const chordDegree = SCALE.findIndex((v) => (chordRoot - 50 + 12) % 12 === (v + 12) % 12);
       const base = chordDegree < 0 ? 0 : chordDegree;
 
       // Pad: one slow swell per bar.
@@ -599,32 +599,44 @@ export class IvyAudio {
         if (!this.lean) this.pad(hz * 1.5, at + dur * 2, dur * 12, 0.03 * L.pad);
       }
 
-      // Hand percussion: gentle heartbeat, with a shifting off-beat.
+      // Percussion: a walking adventurer's pulse — frame drum on the beat, a
+      // tambourine-ish skin tap answering, and a marching triplet pickup.
       if (L.perc > 0.05) {
         if (beat === 0 || beat === 8) this.hand(at, 0.16 * L.perc, true);
+        if (beat === 4 || beat === 12) this.hand(at, 0.07 * L.perc, false);
         if (beat === 6 || beat === 14) this.hand(at, 0.09 * L.perc, false);
         if (beat === 11 && Math.random() < L.perc * 0.6) this.hand(at, 0.06 * L.perc, false);
       }
 
-      // Kalimba figure: arpeggiated, never twice the same.
+      // Harp/kalimba accompaniment: rolling chord tones in thirds, the way an
+      // overworld theme keeps moving under the tune.
       if (L.pluck > 0.05 && beat % 2 === 0 && Math.random() < L.pluck) {
-        const shape = pick([0, 2, 4, 5, 7]);
+        const shape = pick([0, 2, 4, 6, 7, 9]);
         this.pluck(
-          midi(57 + this.levels.register + (SCALE[(base + shape) % SCALE.length] ?? 0)),
+          midi(50 + this.levels.register + (SCALE[(base + shape) % SCALE.length] ?? 0)),
           at,
           0.05 + 0.05 * L.pluck,
         );
       }
 
-      // Melody: Ivy's motif at the top of each phrase, improvised in between.
+      // Melody: Ivy's four-note signature opens the phrase on ocarina, then a
+      // written overworld phrase answers it. The tune is chosen per cycle, so
+      // it sings a real melody rather than improvising note by note.
       if (L.melody > 0.05) {
         if (bar === 0 && beat % 4 === 0) {
           const degree = base + (MOTIF[beat / 4] ?? 0);
-          this.note("flute", degree, 1, at, dur * 3.4, 0.07 * L.melody);
-        } else if (beat % 2 === 0 && Math.random() < L.melody * 0.42) {
-          const degree = base + pick([0, 1, 2, 3, 4, 5, 6]);
-          const long = Math.random() < 0.3;
-          this.note("flute", degree, 1, at, dur * (long ? 4 : 2), 0.055 * L.melody);
+          this.note("ocarina", degree, 1, at, dur * 3.6, 0.075 * L.melody);
+          // A distant horn shadows the signature an octave down: heroic weight.
+          if (beat === 0 && L.melody > 0.4) {
+            this.note("horn", degree, 0, at, dur * 6, 0.03 * L.melody);
+          }
+        } else if (bar > 0) {
+          const phrase = PHRASES[(Math.floor(this.step / 64) * 3 + bar) % PHRASES.length]!;
+          const step = phrase[beat];
+          if (step !== null && step !== undefined) {
+            const long = beat >= 12;
+            this.note("ocarina", base + step, 1, at, dur * (long ? 4.2 : 2.1), 0.06 * L.melody);
+          }
         }
       }
 
@@ -636,9 +648,15 @@ export class IvyAudio {
         this.bell(midi(81 + pick([0, 3, 7, 10, 12])), at, 0.02 * L.crystal, 3.51);
       }
 
-      // Inhabitants.
-      if (beat === 15 && Math.random() < L.creature * 0.5) this.ribbit(at + dur * 0.5, 0.05);
-      if (bar === 3 && beat === 14 && Math.random() < L.creature * 0.6) this.woof(at, 0.07);
+      // Inhabitants: the pond answers the tune. Frogs take the phrase-ends,
+      // Ivy signs off the cycle, and every so often her tail keeps the beat.
+      if (beat === 15 && Math.random() < L.creature * 0.6) this.ribbit(at + dur * 0.5, 0.055);
+      if (beat === 7 && Math.random() < L.creature * 0.3) this.ribbit(at + dur * 0.5, 0.03);
+      if (bar === 3 && beat === 14 && Math.random() < L.creature * 0.7) this.woof(at, 0.075);
+      if (bar === 1 && beat === 0 && Math.random() < L.creature * 0.25) {
+        this.tailThump(at, 0.045);
+      }
+
 
       this.nextTime += dur;
       this.step += 1;
