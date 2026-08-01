@@ -17,6 +17,110 @@ export interface LeaderboardEntry {
   score: number;
   plays: number;
   lastPlayedAt: string;
+  xp: number;
+  level: number;
+  streakDays: number;
+  fairPlay: number;
+  rewardEligible: boolean;
+}
+
+/** Public season card for one wallet — the same data the masked board shows. */
+export interface PlayerCard {
+  season: string;
+  seasonLabel: string;
+  bestScore: number;
+  plays: number;
+  xp: number;
+  level: number;
+  xpIntoLevel: number;
+  xpForNextLevel: number;
+  coins: number;
+  streakDays: number;
+  bestStreakDays: number;
+  activeDays: number;
+  fairPlay: number;
+  rewardEligible: boolean;
+  rank: number | null;
+  seasonsPlayed: number;
+  lifetimeBest: number;
+  lifetimePlays: number;
+  lastPlayedAt: string | null;
+  nextResetIso: string;
+}
+
+/** Optional, client-reported run telemetry. Only ever used to lower trust. */
+export interface RunTelemetry {
+  coins?: number;
+  jumps?: number;
+  durationMs?: number;
+}
+
+export interface RunVerdict {
+  confidence: number;
+  reasons: string[];
+}
+
+/** Level curve: XP 250 per level step, square-rooted so it never runaway-inflates. */
+export function levelForXp(xp: number): number {
+  return Math.max(1, Math.floor(Math.sqrt(Math.max(xp, 0) / 250)) + 1);
+}
+
+export function xpForLevel(level: number): number {
+  return Math.max(0, (level - 1) ** 2 * 250);
+}
+
+/**
+ * Deterministic anti-cheat confidence. Every signal is a plausibility check on
+ * the run itself — no fingerprinting, no device tracking, no IP profiling.
+ * A run below the eligibility floor still counts on the board; it simply does
+ * not earn reward eligibility until a clean run replaces it.
+ */
+export function scoreRunConfidence(input: {
+  score: number;
+  elapsedSeconds: number;
+  telemetry: RunTelemetry;
+}): RunVerdict {
+  const reasons: string[] = [];
+  let confidence = 100;
+  const { score, elapsedSeconds, telemetry } = input;
+  const duration = telemetry.durationMs ? telemetry.durationMs / 1000 : null;
+
+  const rate = elapsedSeconds > 0 ? score / elapsedSeconds : Infinity;
+  if (rate > MAX_SCORE_PER_SECOND * 0.75) {
+    confidence -= 45;
+    reasons.push("score_rate_high");
+  }
+
+  if (duration !== null) {
+    // The reported run length must fit inside the server-timed window.
+    if (duration > elapsedSeconds + 5) {
+      confidence -= 40;
+      reasons.push("duration_exceeds_server_window");
+    }
+    if (duration > 0 && score / duration > MAX_SCORE_PER_SECOND) {
+      confidence -= 40;
+      reasons.push("score_impossible_for_duration");
+    }
+    if (typeof telemetry.jumps === "number" && duration > 4) {
+      const jumpsPerSecond = telemetry.jumps / duration;
+      // Sustained superhuman input frequency reads as a macro, not a player.
+      if (jumpsPerSecond > 9) {
+        confidence -= 35;
+        reasons.push("input_rate_superhuman");
+      }
+      if (telemetry.jumps === 0 && score > 500) {
+        confidence -= 30;
+        reasons.push("scored_without_input");
+      }
+    }
+  }
+
+  if (typeof telemetry.coins === "number" && telemetry.coins * COIN_VALUE > score) {
+    confidence -= 25;
+    reasons.push("coins_exceed_score");
+  }
+
+  return { confidence: Math.max(0, Math.min(100, confidence)), reasons };
 }
 
 export interface Leaderboard {
@@ -36,6 +140,10 @@ const MAX_SCORE_PER_SECOND = 120;
 const MAX_SCORE = 250_000;
 const MIN_RUN_SECONDS = 3;
 const NONCE_TTL_MS = 45 * 60 * 1000;
+/** Coins are worth 15 points in the client; used only as a consistency check. */
+const COIN_VALUE = 15;
+/** Runs scoring below this lose reward eligibility for the season. */
+export const FAIR_PLAY_FLOOR = 70;
 
 export function currentSeason(now: Date = new Date()): string {
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
@@ -99,6 +207,11 @@ type ScoreRow = {
   best_score: number;
   plays: number;
   last_played_at: string;
+  xp?: number;
+  level?: number;
+  streak_days?: number;
+  fair_play_score?: number;
+  reward_eligible?: boolean;
 };
 
 function toEntries(rows: ScoreRow[]): LeaderboardEntry[] {
@@ -108,6 +221,11 @@ function toEntries(rows: ScoreRow[]): LeaderboardEntry[] {
     score: row.best_score,
     plays: row.plays,
     lastPlayedAt: row.last_played_at,
+    xp: row.xp ?? 0,
+    level: row.level ?? 1,
+    streakDays: row.streak_days ?? 0,
+    fairPlay: row.fair_play_score ?? 100,
+    rewardEligible: row.reward_eligible ?? true,
   }));
 }
 
