@@ -19,6 +19,7 @@ import { LiveMarket } from "@/components/ivy/market";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
 import { DailyRibbit } from "@/components/ivy/daily-ribbit";
 import { ChorusPond } from "@/components/ivy/chorus-pond";
+import { FamiliarFoundry } from "@/components/ivy/familiar";
 
 
 import { OwnerCorner, RoyalCourt, FAQ, SiteFooter } from "@/components/ivy/sections-b";
@@ -112,6 +113,7 @@ function Home() {
         <Hero media={media.hero} market={market} />
         <IvyPhotoRow />
         <MeetIvy />
+        <FamiliarFoundry />
         <DailyRibbit />
         <ChorusPond />
 
