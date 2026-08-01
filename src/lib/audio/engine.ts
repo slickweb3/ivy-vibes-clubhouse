@@ -545,14 +545,35 @@ export class IvyAudio {
     osc.stop(at + 0.4);
   }
 
+  /** A short pant-and-tail-thump: Ivy nearby, pleased with the world. */
+  private tailThump(at: number, level: number) {
+    const ctx = this.ctx;
+    for (let i = 0; i < 3; i += 1) {
+      const t = at + i * 0.17;
+      const osc = ctx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(96, t);
+      osc.frequency.exponentialRampToValueAtTime(48, t + 0.09);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(level * (1 - i * 0.2), t);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+      osc.connect(gain);
+      this.send(gain, 0.25, this.music);
+      osc.start(t);
+      osc.stop(t + 0.14);
+    }
+  }
+
   private note(voice: Voice, degree: number, octave: number, at: number, dur: number, lvl: number) {
-    const root = 57 + this.levels.register; // A3 reference
+    const root = 50 + this.levels.register; // D3 reference — the Dorian home
     const index = ((degree % SCALE.length) + SCALE.length) % SCALE.length;
     const hz = midi(root + SCALE[index]! + octave * 12);
-    if (voice === "flute") this.flute(hz, at, dur, lvl);
+    if (voice === "ocarina") this.ocarina(hz, at, dur, lvl);
     else if (voice === "pluck") this.pluck(hz, at, lvl);
+    else if (voice === "horn") this.horn(hz, at, dur, lvl);
     else this.bell(hz, at, lvl);
   }
+
 
   // ------------------------------------------------------------- sequencer --
 
