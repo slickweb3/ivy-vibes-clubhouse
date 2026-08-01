@@ -16,14 +16,7 @@
 export type AudioScene = "landing" | "explore" | "game" | "hush";
 
 export type AudioCue =
-  | "press"
-  | "hover"
-  | "open"
-  | "reward"
-  | "discovery"
-  | "jump"
-  | "land"
-  | "fail";
+  "press" | "hover" | "open" | "reward" | "discovery" | "jump" | "land" | "fail";
 
 type Voice = "flute" | "pluck" | "bell" | "crystal";
 
@@ -101,7 +94,7 @@ const SCENES: Record<AudioScene, SceneConfig> = {
   },
 };
 
-const pick = <T,>(items: readonly T[]) => items[Math.floor(Math.random() * items.length)]!;
+const pick = <T>(items: readonly T[]) => items[Math.floor(Math.random() * items.length)]!;
 
 export class IvyAudio {
   private ctx: AudioContext;
