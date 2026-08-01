@@ -1222,7 +1222,9 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
               ) : null}
             </div>
           </div>
+          </div>
         </div>
+
 
         {/* Accessible mirror of the canvas HUD for screen readers. */}
         <p className="sr-only" aria-live="polite">
