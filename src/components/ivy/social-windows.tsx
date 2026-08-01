@@ -283,7 +283,7 @@ function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[
           href={meta.profileUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="pop inline-flex min-h-9 items-center gap-1 rounded-full bg-frog px-3 font-display text-charcoal"
+          className="pop inline-flex min-h-11 items-center gap-1 rounded-full bg-frog px-3 font-display text-charcoal"
         >
           Open profile
           <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />

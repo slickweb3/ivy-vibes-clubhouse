@@ -89,7 +89,7 @@ function LegalPageView() {
               <li key={section.heading}>
                 <a
                   href={`#section-${index}`}
-                  className="inline-flex min-h-9 items-center text-sm text-charcoal/85 underline-offset-4 hover:underline"
+                  className="inline-flex min-h-11 items-center text-sm text-charcoal/85 underline-offset-4 hover:underline"
                 >
                   {section.heading}
                 </a>

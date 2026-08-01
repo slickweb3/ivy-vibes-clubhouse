@@ -502,7 +502,7 @@ export function IvyTV({
                     href={item.permalink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-lavender px-3 font-display text-xs text-charcoal"
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-lavender px-3 font-display text-xs text-charcoal"
                   >
                     <Play aria-hidden className="h-3.5 w-3.5" />
                     Watch on {item.platform === "tiktok" ? "TikTok" : "Instagram"}

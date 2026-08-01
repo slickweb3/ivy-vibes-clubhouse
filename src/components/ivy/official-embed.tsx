@@ -212,7 +212,7 @@ export function OfficialSocialEmbed({
           href={post.originalPostUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-9 items-center gap-1 font-display text-ivy underline underline-offset-4"
+          className="inline-flex min-h-11 items-center gap-1 font-display text-ivy underline underline-offset-4"
         >
           View original post
           <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />

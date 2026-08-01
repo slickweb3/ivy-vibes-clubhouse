@@ -169,7 +169,7 @@ export function SiteFooter() {
               <li key={link.hash}>
                 <a
                   href={link.hash}
-                  className="inline-flex min-h-9 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
+                  className="inline-flex min-h-11 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
                 >
                   {link.label}
                 </a>
@@ -186,7 +186,7 @@ export function SiteFooter() {
                 <Link
                   to="/legal/$slug"
                   params={{ slug: page.slug }}
-                  className="inline-flex min-h-9 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
+                  className="inline-flex min-h-11 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
                 >
                   {page.title}
                 </Link>
@@ -196,7 +196,7 @@ export function SiteFooter() {
               <button
                 type="button"
                 onClick={openSettings}
-                className="inline-flex min-h-9 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
+                className="inline-flex min-h-11 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
               >
                 Cookie settings
               </button>

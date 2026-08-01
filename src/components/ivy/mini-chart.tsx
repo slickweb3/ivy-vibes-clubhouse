@@ -141,7 +141,7 @@ export function MiniChart({ snapshot }: { snapshot: MarketSnapshot }) {
         <Link
           to="/"
           hash="live-chart"
-          className="inline-flex min-h-9 items-center rounded-full bg-frog px-4 font-display text-xs text-charcoal pop"
+          className="inline-flex min-h-11 items-center rounded-full bg-frog px-4 font-display text-xs text-charcoal pop"
         >
           Full chart
         </Link>
@@ -150,7 +150,7 @@ export function MiniChart({ snapshot }: { snapshot: MarketSnapshot }) {
             href={snapshot.pairUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-9 items-center rounded-full bg-lavender px-4 font-display text-xs text-charcoal pop"
+            className="inline-flex min-h-11 items-center rounded-full bg-lavender px-4 font-display text-xs text-charcoal pop"
           >
             Dexscreener ↗
           </a>
