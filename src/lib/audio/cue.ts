@@ -1,4 +1,10 @@
-import type { AudioCue, AudioScene, IvyAudio } from "./engine";
+import type { AudioCue, AudioScene } from "./engine";
+
+/** Anything that can answer a cue — the site player, or nothing at all. */
+export type AudioSink = {
+  cue(name: AudioCue): void;
+  setScene(scene: AudioScene): void;
+};
 
 /**
  * Weightless bridge to the sound engine.
@@ -8,9 +14,9 @@ import type { AudioCue, AudioScene, IvyAudio } from "./engine";
  * calls become real audio the moment they do. `import type` keeps the engine
  * out of every bundle that only wants to make a noise.
  */
-let engine: IvyAudio | null = null;
+let engine: AudioSink | null = null;
 
-export function registerAudioEngine(next: IvyAudio | null) {
+export function registerAudioEngine(next: AudioSink | null) {
   engine = next;
 }
 
