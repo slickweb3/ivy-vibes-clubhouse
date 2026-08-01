@@ -47,6 +47,10 @@ export function IvySoundscape() {
   const engineRef = useRef<IvyAudio | null>(null);
   const pathname = useRouterState({ select: (state) => state.location.pathname });
 
+  // The arcade has its own soundtrack — the site score is force-muted there.
+  const onGame = pathname.startsWith("/game");
+  const active = on && !onGame;
+
   useEffect(() => {
     setOn(window.localStorage.getItem(ON_KEY) === "on");
     setVolume(readVolume());
@@ -54,7 +58,8 @@ export function IvySoundscape() {
 
   // --- engine lifecycle ----------------------------------------------------
   useEffect(() => {
-    if (!on) return undefined;
+    if (!active) return undefined;
+
     let cancelled = false;
     let engine: IvyAudio | null = null;
 
@@ -84,7 +89,7 @@ export function IvySoundscape() {
       engineRef.current = null;
       engine?.dispose();
     };
-  }, [on]);
+  }, [active]);
 
   useEffect(() => {
     engineRef.current?.setVolume(toGain(volume));
@@ -129,11 +134,11 @@ export function IvySoundscape() {
 
   useEffect(() => {
     engineRef.current?.setScene(scene);
-  }, [scene, on]);
+  }, [scene, active]);
 
   // --- interaction cues ----------------------------------------------------
   useEffect(() => {
-    if (!on) return undefined;
+    if (!active) return undefined;
 
     const isControl = (target: EventTarget | null) =>
       (target as HTMLElement | null)?.closest?.(
@@ -151,7 +156,7 @@ export function IvySoundscape() {
       document.removeEventListener("pointerdown", onPress);
       window.removeEventListener(DISCOVERY_EVENT, onDiscovery);
     };
-  }, [on]);
+  }, [active]);
 
   const toggle = useCallback(() => {
     setOn((was) => {
@@ -165,7 +170,7 @@ export function IvySoundscape() {
 
   return (
     <div className="fixed right-4 bottom-20 z-40 flex flex-col items-end gap-2 sm:right-6 sm:bottom-24">
-      {on && open ? (
+      {active && open ? (
         <div
           className="w-44 rounded-2xl border-2 border-charcoal/70 bg-cream/95 p-3 text-charcoal shadow-lg backdrop-blur"
           role="group"
@@ -196,7 +201,7 @@ export function IvySoundscape() {
       ) : null}
 
       <div className="flex items-center gap-2">
-        {on ? (
+        {active ? (
           <button
             type="button"
             onClick={() => setOpen((was) => !was)}
@@ -209,16 +214,29 @@ export function IvySoundscape() {
         <button
           type="button"
           onClick={toggle}
-          aria-pressed={on}
-          title={on ? "Mute Ivy's world" : "Play Ivy's world"}
-          className="pop inline-flex h-12 w-12 items-center justify-center rounded-full bg-lavender text-charcoal"
+          aria-pressed={active}
+          disabled={onGame}
+          title={
+            onGame
+              ? "Muted in the arcade — the game has its own soundtrack"
+              : on
+                ? "Mute Ivy's world"
+                : "Play Ivy's world"
+          }
+          className="pop inline-flex h-12 w-12 items-center justify-center rounded-full bg-lavender text-charcoal disabled:opacity-60"
         >
-          {on ? (
+          {active ? (
             <Volume2 aria-hidden className="h-5 w-5" />
           ) : (
             <VolumeX aria-hidden className="h-5 w-5" />
           )}
-          <span className="sr-only">{on ? "Mute Ivy's world" : "Play Ivy's world"}</span>
+          <span className="sr-only">
+            {onGame
+              ? "Site music muted in the arcade"
+              : on
+                ? "Mute Ivy's world"
+                : "Play Ivy's world"}
+          </span>
         </button>
       </div>
     </div>
