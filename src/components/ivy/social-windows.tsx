@@ -58,7 +58,7 @@ export function SocialWindows({ posts }: { posts: CuratedPost[] }) {
       tone="lavender"
     >
       <div className="mx-auto max-w-2xl">
-        <ProfileWindow platform="tiktok" posts={tiktok} />
+        <ProfileWindow posts={tiktok} />
       </div>
     </Section>
   );
