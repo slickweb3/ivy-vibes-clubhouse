@@ -274,7 +274,7 @@ export function drawFamiliarCard(
     ctx.fillStyle = "#151515";
     ctx.font = `600 24px ${SERIF}`;
     ctx.textAlign = "left";
-    ctx.fillText(`${stat.glyph} ${stat.label}`, x + 20, y + 30);
+    ctx.fillText(stat.label.toUpperCase(), x + 20, y + 30);
     // meter
     const barX = x + 20;
     const barY = y + 44;
@@ -304,7 +304,19 @@ export function drawFamiliarCard(
 
     ctx.fillStyle = "#151515";
     ctx.font = `700 32px ${SERIF}`;
-    ctx.fillText(`${move.cost}  ${fit(ctx, move.name, ART_W - 160)}`, ART_X, moveY + 12);
+    // cost pips instead of emoji — canvas has no guaranteed emoji font
+    const pips = Math.max(1, move.cost.length / 2);
+    for (let p = 0; p < pips; p += 1) {
+      ctx.fillStyle = p === 0 ? ring : `${ring}88`;
+      ellipse(ctx, ART_X + 13 + p * 32, moveY, 12, 12);
+      ctx.fill();
+      ctx.strokeStyle = "#15151533";
+      ctx.lineWidth = 2;
+      ellipse(ctx, ART_X + 13 + p * 32, moveY, 12, 12);
+      ctx.stroke();
+    }
+    ctx.fillStyle = "#151515";
+    ctx.fillText(fit(ctx, move.name, ART_W - 200), ART_X + 20 + pips * 32, moveY + 12);
     ctx.textAlign = "right";
     ctx.font = `700 36px ${SERIF}`;
     ctx.fillText(String(move.power), ART_X + ART_W, moveY + 12);
