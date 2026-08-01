@@ -3,15 +3,28 @@ import { useEffect, useState } from "react";
 /**
  * IvyPresence — the site's ambient "living environment" layer.
  *
- * Three jobs, all transform/opacity only so nothing costs layout:
+ * Four jobs, all transform/opacity/custom-property work so nothing costs layout:
  *  1. A one-per-session cinematic curtain lift on first paint.
  *  2. Pointer + scroll telemetry published as CSS custom properties
  *     (`--ivy-px`, `--ivy-py`, `--ivy-depth`) that the atmosphere layers read.
- *  3. Magnetic pull on chunky `.pop` controls: the hovered control leans
+ *  3. Section-aware aura: the section in view sets the two light colours of the
+ *     atmosphere, so the environment shifts as the visitor travels the page.
+ *  4. Magnetic pull on chunky `.pop` controls: the hovered control leans
  *     toward the cursor via `--mx` / `--my`.
  *
- * Everything is skipped for coarse pointers and `prefers-reduced-motion`.
+ * Everything heavy is skipped for coarse pointers and `prefers-reduced-motion`.
  */
+
+/** Aura pairs cycle through the brand palette — never off-brand hues. */
+const AURAS: Array<[string, string]> = [
+  ["var(--frog)", "var(--lavender)"],
+  ["var(--light-leaf)", "var(--frog)"],
+  ["var(--yellow)", "var(--light-leaf)"],
+  ["var(--pink)", "var(--lavender)"],
+  ["var(--lavender)", "var(--frog)"],
+  ["var(--frog)", "var(--yellow)"],
+];
+
 export function IvyPresence() {
   const [curtain, setCurtain] = useState(false);
 
@@ -26,6 +39,41 @@ export function IvyPresence() {
     }
     return undefined;
   }, []);
+
+  // Section-aware aura. One observer, no scroll math, no re-renders.
+  useEffect(() => {
+    const root = document.documentElement;
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>("main > section, main > div > section"),
+    );
+    if (sections.length === 0) return undefined;
+
+    const apply = (index: number) => {
+      const [a, b] = AURAS[index % AURAS.length]!;
+      root.style.setProperty("--ivy-aura-a", a);
+      root.style.setProperty("--ivy-aura-b", b);
+    };
+    apply(0);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        apply(sections.indexOf(visible.target as HTMLElement));
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.01, 0.25] },
+    );
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--ivy-aura-a");
+      root.style.removeProperty("--ivy-aura-b");
+    };
+  }, []);
+
 
   useEffect(() => {
     const root = document.documentElement;

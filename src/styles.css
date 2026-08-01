@@ -1085,16 +1085,29 @@ html[data-scrolling="true"] .scroll-depth {
   background:
     radial-gradient(
       38vmax 38vmax at calc(var(--ivy-px, 0.5) * 100%) calc(var(--ivy-py, 0.3) * 100%),
-      color-mix(in oklab, var(--frog) 22%, transparent),
+      color-mix(in oklab, var(--ivy-aura-a, var(--frog)) 22%, transparent),
       transparent 70%
     ),
     radial-gradient(
       30vmax 30vmax at calc(100% - var(--ivy-px, 0.5) * 100%) calc(var(--ivy-py, 0.3) * 60% + 40%),
-      color-mix(in oklab, var(--lavender) 16%, transparent),
+      color-mix(in oklab, var(--ivy-aura-b, var(--lavender)) 16%, transparent),
       transparent 72%
     );
-  transition: opacity 600ms ease;
+  /* Colour changes ease so the environment breathes between sections. */
+  transition: opacity 600ms ease, background 1400ms ease;
+  animation: ivy-atmosphere-breathe 14s ease-in-out infinite;
 }
+
+@keyframes ivy-atmosphere-breathe {
+  0%,
+  100% {
+    filter: saturate(1) brightness(1);
+  }
+  50% {
+    filter: saturate(1.18) brightness(1.06);
+  }
+}
+
 
 /* First-visit curtain: a single cinematic lift, once per session. */
 .ivy-curtain {
@@ -1153,11 +1166,13 @@ html[data-scrolling="true"] .scroll-depth {
 @media (prefers-reduced-motion: reduce) {
   .ivy-atmosphere {
     opacity: 0.4;
+    animation: none;
   }
   .ivy-curtain {
     display: none;
   }
 }
+
 
 @media (forced-colors: active) {
   .ivy-atmosphere {
