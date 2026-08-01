@@ -4,23 +4,33 @@
  * The runner is the owner-supplied character sprite. Everything else is drawn
  * on canvas at device resolution (up to 3x, so it stays crisp on 4K and
  * high-DPI phones). Reduced-motion friendly: nothing animates until a run starts.
+ *
+ * Game-feel systems (all deterministic, all client side):
+ *   - coyote time + input buffering so a hop never feels dropped
+ *   - variable jump height (hold to float, release to drop)
+ *   - hit-stop and a flash frame on impact
+ *   - coin combos, near-miss rewards and milestone callouts
+ *   - pause anywhere, generated audio, persistent best score
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import bs58 from "bs58";
+import { Pause, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusChip } from "@/components/ivy/primitives";
 import { getLeaderboard, startRun, submitScore } from "@/lib/game.functions";
 import { SeasonCard } from "@/components/ivy/player-card";
+import { gameAudio } from "@/lib/game-audio";
 import type { Leaderboard } from "@/lib/game.server";
 import runnerSprite from "@/assets/ivy-runner.png";
 import gameFrame from "@/assets/game-frame.png";
-
 
 const W = 480;
 const H = 270;
 const GROUND_Y = 214;
 const GRAVITY = 2000;
+/** Extra gravity once the hop button is released — short taps give short hops. */
+const RELEASE_GRAVITY = 3400;
 const JUMP_V = -620;
 const START_SPEED = 338;
 /** No ceiling: the pond keeps accelerating at a constant rate until it beats you. */
@@ -29,7 +39,11 @@ const SPEED_RAMP = 38;
 const MAX_PIXEL_RATIO = 3;
 const PLAYER_X = 76;
 const PLAYER_H = 58;
-
+/** Grace window after walking off a ledge / before landing. Classic platformer feel. */
+const COYOTE = 0.1;
+const BUFFER = 0.14;
+const COMBO_WINDOW = 2.2;
+const BEST_KEY = "ivy-leap-best";
 
 const COLORS = {
   pond: "#174F36",
@@ -47,25 +61,43 @@ const COLORS = {
 const BARK = "#6B4A2B";
 const WOOD = "#C68B4C";
 
-type Obstacle = { x: number; w: number; h: number; kind: "stump" | "log" };
+type Obstacle = { x: number; w: number; h: number; kind: "stump" | "log"; scored: boolean };
 type Coin = { x: number; y: number; taken: boolean; spin: number };
 type Splash = { x: number; y: number; vx: number; vy: number; life: number; hue: string };
+type Floater = { x: number; y: number; text: string; life: number; hue: string; size: number };
 
 interface RunState {
   t: number;
   speed: number;
   distance: number;
+  /** Coins collected — reported verbatim as telemetry. */
   coins: number;
+  /** Points banked from coins, including combo bonuses. */
+  coinScore: number;
+  bonus: number;
+  combo: number;
+  comboTimer: number;
+  bestCombo: number;
+  nearMisses: number;
+  milestone: number;
   y: number;
   vy: number;
   jumps: number;
+  holding: boolean;
+  coyote: number;
+  buffer: number;
   /** Total hops this run — reported as anti-cheat telemetry, never as identity. */
   taps: number;
   obstacles: Obstacle[];
   coinsList: Coin[];
   pads: number[];
   splashes: Splash[];
+  floaters: Floater[];
   shake: number;
+  flash: number;
+  hitstop: number;
+  scorePulse: number;
+  passedBest: boolean;
   nextObstacle: number;
   nextCoin: number;
   over: boolean;
@@ -77,23 +109,39 @@ function freshRun(): RunState {
     speed: START_SPEED,
     distance: 0,
     coins: 0,
+    coinScore: 0,
+    bonus: 0,
+    combo: 0,
+    comboTimer: 0,
+    bestCombo: 0,
+    nearMisses: 0,
+    milestone: 0,
     y: GROUND_Y,
     vy: 0,
     jumps: 0,
+    holding: false,
+    coyote: COYOTE,
+    buffer: 0,
     taps: 0,
     obstacles: [],
     coinsList: [],
     pads: [60, 200, 340, 460],
     splashes: [],
+    floaters: [],
     shake: 0,
-    nextObstacle: 193,
+    flash: 0,
+    hitstop: 0,
+    scorePulse: 0,
+    passedBest: false,
+    nextObstacle: 260,
     nextCoin: 133,
     over: false,
   };
 }
 
-function burst(run: RunState, x: number, y: number, count: number, hue: string) {
-  for (let i = 0; i < count; i += 1) {
+function burst(run: RunState, x: number, y: number, count: number, hue: string, calm = false) {
+  const n = calm ? Math.ceil(count / 3) : count;
+  for (let i = 0; i < n; i += 1) {
     run.splashes.push({
       x,
       y,
@@ -105,8 +153,11 @@ function burst(run: RunState, x: number, y: number, count: number, hue: string) 
   }
 }
 
+function float(run: RunState, x: number, y: number, text: string, hue: string, size = 12) {
+  run.floaters.push({ x, y, text, life: 0.9, hue, size });
+}
 
-const scoreOf = (run: RunState) => Math.floor(run.distance / 8) + run.coins * 15;
+const scoreOf = (run: RunState) => Math.floor(run.distance / 8) + run.coinScore + run.bonus;
 
 /* ---------------------------------- wallet --------------------------------- */
 
@@ -139,10 +190,16 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   const nonceRef = useRef<string | null>(null);
   const jumpRef = useRef<() => void>(() => {});
   const stepRef = useRef<(now: number) => void>(() => {});
+  const phaseRef = useRef<"idle" | "playing" | "paused" | "over">("idle");
+  const bestRef = useRef(0);
+  const calmRef = useRef(false);
+  const hudRef = useRef(0);
 
-  const [phase, setPhase] = useState<"idle" | "playing" | "over">("idle");
+  const [phase, setPhase] = useState<"idle" | "playing" | "paused" | "over">("idle");
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(0);
+  const [summary, setSummary] = useState({ score: 0, coins: 0, combo: 0, seconds: 0, record: false });
+  const [soundOn, setSoundOn] = useState(true);
   const [wallet, setWallet] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -152,6 +209,8 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   const beginRun = useServerFn(startRun);
   const sendScore = useServerFn(submitScore);
   const refreshBoard = useServerFn(getLeaderboard);
+
+  phaseRef.current = phase;
 
   /* ---- draw ---- */
   const draw = useCallback((run: RunState) => {
@@ -166,7 +225,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     ctx.imageSmoothingQuality = "high";
     ctx.clearRect(0, 0, W, H);
 
-    const shake = run.shake;
+    const shake = calmRef.current ? 0 : run.shake;
     if (shake > 0) {
       ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
     }
@@ -240,7 +299,6 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     }
     ctx.restore();
 
-
     // drifting bubbles
     ctx.globalAlpha = 0.14;
     ctx.fillStyle = COLORS.leaf;
@@ -313,6 +371,25 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
         ctx.fill();
       }
     });
+
+    // speed lines — the pond blurs past once the ramp gets serious
+    const rush = Math.min(1, Math.max(0, (run.speed - START_SPEED) / 420));
+    if (rush > 0.05 && !calmRef.current) {
+      ctx.save();
+      ctx.globalAlpha = rush * 0.3;
+      ctx.strokeStyle = COLORS.leaf;
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < 7; i += 1) {
+        const raw = (i * 97 - run.distance * 2.2) % (W + 160);
+        const x = raw < 0 ? raw + W + 160 : raw;
+        const y = 46 + ((i * 53) % 150);
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + 26 + rush * 30, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
 
     // coins
     run.coinsList.forEach((coin) => {
@@ -397,7 +474,6 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       }
     });
 
-
     // splashes
     run.splashes.forEach((p) => {
       ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 2));
@@ -427,7 +503,9 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       ctx.translate(PLAYER_X, py + 10);
       const tilt = Math.max(-0.22, Math.min(0.22, run.vy / 3600));
       ctx.rotate(tilt);
-      const squash = airborne ? 1.04 : 1 - Math.abs(Math.sin(run.t * 14)) * 0.03;
+      // Anticipation: stretch on the way up, squash on landing recovery.
+      const stretch = airborne ? 1 + Math.max(-0.08, Math.min(0.08, -run.vy / 9000)) : 1;
+      const squash = airborne ? stretch : 1 - Math.abs(Math.sin(run.t * 14)) * 0.03;
       ctx.drawImage(sprite, -w / 2, -h * squash, w, h * squash);
       ctx.restore();
     } else {
@@ -437,50 +515,123 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       ctx.fill();
     }
 
+    // floating callouts
+    run.floaters.forEach((f) => {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, f.life * 1.6));
+      ctx.translate(f.x, f.y - (0.9 - f.life) * 26);
+      ctx.font = `bold ${f.size}px system-ui, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "rgba(21,21,21,0.55)";
+      ctx.strokeText(f.text, 0, 0);
+      ctx.fillStyle = f.hue;
+      ctx.fillText(f.text, 0, 0);
+      ctx.restore();
+    });
+
     // hud
     ctx.save();
     ctx.shadowColor = "rgba(0,0,0,0.35)";
     ctx.shadowBlur = 6;
     ctx.fillStyle = COLORS.cream;
-    ctx.font = "bold 18px system-ui, sans-serif";
+    const pulse = 1 + Math.min(0.35, run.scorePulse);
     ctx.textAlign = "left";
-    ctx.fillText(`${scoreOf(run)}`, 14, 28);
+    ctx.save();
+    ctx.translate(14, 28);
+    ctx.scale(pulse, pulse);
+    ctx.font = "bold 18px system-ui, sans-serif";
+    ctx.fillText(`${scoreOf(run)}`, 0, 0);
+    ctx.restore();
     ctx.font = "bold 10px system-ui, sans-serif";
+    ctx.fillStyle = "rgba(255, 248, 231, 0.8)";
     ctx.fillText("SCORE", 14, 40);
+    if (bestRef.current > 0) {
+      ctx.fillText(`BEST ${bestRef.current}`, 14, 52);
+    }
     if (run.coins > 0) {
       ctx.textAlign = "right";
       ctx.fillStyle = COLORS.yellow;
       ctx.font = "bold 14px system-ui, sans-serif";
       ctx.fillText(`◎ ${run.coins}`, W - 14, 28);
     }
+    if (run.combo > 1) {
+      ctx.textAlign = "right";
+      ctx.fillStyle = COLORS.pink;
+      ctx.font = "bold 12px system-ui, sans-serif";
+      ctx.fillText(`x${run.combo} combo`, W - 14, 44);
+      // combo timer bar
+      ctx.fillStyle = "rgba(255, 142, 174, 0.85)";
+      const barW = 64 * Math.max(0, run.comboTimer / COMBO_WINDOW);
+      ctx.fillRect(W - 14 - barW, 50, barW, 3);
+    }
     ctx.restore();
-  }, []);
 
+    // impact flash — one bright frame reads as "that hurt" without a long fade
+    if (run.flash > 0 && !calmRef.current) {
+      ctx.fillStyle = `rgba(255, 248, 231, ${Math.min(0.5, run.flash)})`;
+      ctx.fillRect(-20, -20, W + 40, H + 40);
+    }
+  }, []);
 
   /* ---- loop ---- */
   const step = useCallback(
     (now: number) => {
       const run = runRef.current;
       // Clamp dt so a backgrounded tab can never teleport the player into a reed.
-      const dt = Math.min((now - lastRef.current) / 1000, 1 / 30);
+      const rawDt = Math.min((now - lastRef.current) / 1000, 1 / 30);
       lastRef.current = now;
 
+      // Hit-stop: a few frozen frames on impact so the crash lands physically.
+      if (run.hitstop > 0) {
+        run.hitstop -= rawDt;
+        run.flash = Math.max(0, run.flash - rawDt * 2);
+        draw(run);
+        if (run.hitstop <= 0 && run.over) {
+          finishRun(run);
+          return;
+        }
+        rafRef.current = requestAnimationFrame(stepRef.current);
+        return;
+      }
+
+      const dt = rawDt;
       run.t += dt;
       run.speed = START_SPEED + run.t * SPEED_RAMP;
       const dx = run.speed * dt;
       run.distance += dx;
+      run.scorePulse = Math.max(0, run.scorePulse - dt * 2.2);
+      run.flash = Math.max(0, run.flash - dt * 3);
 
       const wasAirborne = run.y < GROUND_Y - 0.5;
-      run.vy += GRAVITY * dt;
+      // Release the hop early and Ivy drops sooner — full control over arc height.
+      const g = run.vy < 0 && !run.holding ? RELEASE_GRAVITY : GRAVITY;
+      run.vy += g * dt;
       run.y += run.vy * dt;
       if (run.y >= GROUND_Y) {
-        if (wasAirborne && run.vy > 260) burst(run, PLAYER_X, GROUND_Y + 10, 6, COLORS.cream);
+        if (wasAirborne && run.vy > 260) {
+          burst(run, PLAYER_X, GROUND_Y + 10, 6, COLORS.cream, calmRef.current);
+        }
         run.y = GROUND_Y;
         run.vy = 0;
         run.jumps = 0;
+        run.coyote = COYOTE;
+      } else {
+        run.coyote = Math.max(0, run.coyote - dt);
+      }
+
+      // Buffered input fires the instant a hop becomes legal again.
+      run.buffer = Math.max(0, run.buffer - dt);
+      if (run.buffer > 0 && (run.y >= GROUND_Y || run.coyote > 0 || run.jumps < 2)) {
+        run.buffer = 0;
+        applyJump(run);
       }
 
       run.shake = Math.max(0, run.shake - dt * 22);
+      if (run.comboTimer > 0) {
+        run.comboTimer -= dt;
+        if (run.comboTimer <= 0) run.combo = 0;
+      }
 
       run.pads = run.pads.map((p) => (p - dx * 0.6 < -40 ? p + W + 60 : p - dx * 0.6));
 
@@ -489,14 +640,15 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
         const lying = Math.random() < 0.45;
         run.obstacles.push(
           lying
-            ? { x: W + 20, w: 40, h: 24, kind: "log" }
-            : { x: W + 20, w: 20, h: 34 + Math.random() * 24, kind: "stump" },
+            ? { x: W + 20, w: 40, h: 24, kind: "log", scored: false }
+            : { x: W + 20, w: 20, h: 34 + Math.random() * 24, kind: "stump", scored: false },
         );
         // Gap scales with speed so it stays clearable, but tightens as the run drags on.
+        // The first ~8 seconds stay generous: nobody should die while still learning.
+        const warmup = run.t < 8 ? 1.25 : 1;
         const tighten = Math.max(0.56, 1 - run.t * 0.007);
-        run.nextObstacle = run.speed * tighten * (0.88 + Math.random() * 0.52);
+        run.nextObstacle = run.speed * tighten * warmup * (0.88 + Math.random() * 0.52);
       }
-
 
       run.nextCoin -= dx;
       if (run.nextCoin <= 0) {
@@ -525,6 +677,11 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
         p.y += p.vy * dt;
         return p.life > 0;
       });
+      run.floaters = run.floaters.filter((f) => {
+        f.life -= dt;
+        f.x -= dx * 0.4;
+        return f.life > 0;
+      });
 
       // collisions — a forgiving box tucked inside the sprite
       const pl = { x: PLAYER_X - 17, y: run.y - 34, w: 34, h: 40 };
@@ -533,8 +690,25 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
         if (pl.x < ob.x + ob.w - 3 && pl.x + pl.w > ob.x + 3 && pl.y + pl.h > oy + 3) {
           run.over = true;
           run.shake = 12;
-          burst(run, PLAYER_X + 10, run.y - 12, 16, COLORS.pink);
-          break;
+          run.flash = 0.5;
+          run.hitstop = 0.22;
+          burst(run, PLAYER_X + 10, run.y - 12, 16, COLORS.pink, calmRef.current);
+          gameAudio.play("death");
+          draw(run);
+          rafRef.current = requestAnimationFrame(stepRef.current);
+          return;
+        }
+        // Near miss: cleared it with barely any daylight. Skill gets paid.
+        if (!ob.scored && ob.x + ob.w < pl.x) {
+          ob.scored = true;
+          const clearance = oy - (run.y + 6);
+          if (clearance > 0 && clearance < 26) {
+            run.bonus += 10;
+            run.nearMisses += 1;
+            run.scorePulse = 0.3;
+            float(run, PLAYER_X + 40, run.y - 46, "NICE! +10", COLORS.lavender, 11);
+            gameAudio.play("near");
+          }
         }
       }
       for (const coin of run.coinsList) {
@@ -542,30 +716,106 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
         if (Math.hypot(coin.x - PLAYER_X, coin.y - (run.y - 16)) < 28) {
           coin.taken = true;
           run.coins += 1;
-          burst(run, coin.x, coin.y, 8, COLORS.yellow);
+          run.combo = Math.min(run.combo + 1, 99);
+          run.bestCombo = Math.max(run.bestCombo, run.combo);
+          run.comboTimer = COMBO_WINDOW;
+          const value = 15 + Math.min(run.combo - 1, 3) * 5;
+          run.coinScore += value;
+          run.scorePulse = 0.28;
+          burst(run, coin.x, coin.y, 8, COLORS.yellow, calmRef.current);
+          float(run, coin.x, coin.y - 12, `+${value}`, COLORS.yellow, 12);
+          gameAudio.play("coin", run.combo);
+          if (run.combo === 5) {
+            float(run, PLAYER_X + 60, run.y - 60, "COMBO x5!", COLORS.pink, 14);
+            gameAudio.play("combo");
+          }
         }
       }
 
-      draw(run);
-      setScore(scoreOf(run));
-
-      if (run.over) {
-        const finalScore = scoreOf(run);
-        setPhase("over");
-        setBest((prev) => Math.max(prev, finalScore));
-        rafRef.current = null;
-        return;
+      // milestones — a small celebration every 500 points keeps the middle alive
+      const live = scoreOf(run);
+      if (live >= run.milestone + 500) {
+        run.milestone = Math.floor(live / 500) * 500;
+        float(run, W / 2, 90, `${run.milestone}!`, COLORS.frog, 20);
+        burst(run, W / 2, 100, 12, COLORS.frog, calmRef.current);
+        gameAudio.play("milestone");
       }
+      if (!run.passedBest && bestRef.current > 0 && live > bestRef.current) {
+        run.passedBest = true;
+        float(run, W / 2, 70, "NEW BEST!", COLORS.yellow, 18);
+        gameAudio.play("milestone");
+      }
+
+      draw(run);
+
+      // React state is expensive at 60fps — the canvas owns the live score and
+      // the DOM only syncs a few times a second for the accessible readout.
+      hudRef.current += dt;
+      if (hudRef.current > 0.2) {
+        hudRef.current = 0;
+        setScore(live);
+      }
+
       rafRef.current = requestAnimationFrame(stepRef.current);
     },
     [draw],
   );
+
+  /** Shared jump impulse so buffered and live inputs behave identically. */
+  function applyJump(run: RunState) {
+    const grounded = run.y >= GROUND_Y - 0.5 || run.coyote > 0;
+    if (grounded && run.jumps === 0) {
+      run.vy = JUMP_V;
+      run.jumps = 1;
+      run.coyote = 0;
+      run.holding = true;
+      run.taps += 1;
+      burst(run, PLAYER_X - 8, run.y + 6, 5, COLORS.leaf, calmRef.current);
+      gameAudio.play("jump");
+      return true;
+    }
+    if (run.jumps < 2) {
+      run.vy = JUMP_V * 0.86;
+      run.jumps += 1;
+      run.holding = true;
+      run.taps += 1;
+      burst(run, PLAYER_X - 8, run.y + 6, 8, COLORS.leaf, calmRef.current);
+      gameAudio.play("double");
+      return true;
+    }
+    return false;
+  }
+
+  const finishRun = useCallback((run: RunState) => {
+    const finalScore = scoreOf(run);
+    const record = finalScore > bestRef.current;
+    if (record) {
+      bestRef.current = finalScore;
+      setBest(finalScore);
+      try {
+        window.localStorage.setItem(BEST_KEY, String(finalScore));
+      } catch {
+        /* private mode — the run still counts, it just isn't remembered */
+      }
+    }
+    setScore(finalScore);
+    setSummary({
+      score: finalScore,
+      coins: run.coins,
+      combo: run.bestCombo,
+      seconds: Math.round(run.t),
+      record,
+    });
+    setPhase("over");
+    rafRef.current = null;
+  }, []);
 
   stepRef.current = step;
 
   const start = useCallback(async () => {
     // Never leave a second loop running — that used to double the game speed.
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    gameAudio.unlock();
     runRef.current = freshRun();
     setScore(0);
     setStatus(null);
@@ -581,22 +831,64 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     }
   }, [beginRun]);
 
+  const resume = useCallback(() => {
+    if (phaseRef.current !== "paused") return;
+    setPhase("playing");
+    lastRef.current = performance.now();
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(stepRef.current);
+  }, []);
+
+  const pause = useCallback(() => {
+    if (phaseRef.current !== "playing") return;
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+    setPhase("paused");
+  }, []);
+
   const jump = useCallback(() => {
     const run = runRef.current;
-    if (phase === "idle" || phase === "over") {
+    if (phaseRef.current === "paused") {
+      resume();
+      return;
+    }
+    if (phaseRef.current === "idle" || phaseRef.current === "over") {
       void start();
       return;
     }
-    if (run.jumps < 2) {
-      run.vy = JUMP_V * (run.jumps === 0 ? 1 : 0.86);
-      run.jumps += 1;
-      run.taps += 1;
-      burst(run, PLAYER_X - 8, run.y + 6, run.jumps === 1 ? 5 : 8, COLORS.leaf);
+    if (!applyJump(run)) {
+      // Too early — remember it and fire the moment a hop is legal again.
+      run.buffer = BUFFER;
     }
-  }, [phase, start]);
+  }, [resume, start]);
 
+  const release = useCallback(() => {
+    runRef.current.holding = false;
+  }, []);
 
   jumpRef.current = jump;
+
+  /* ---- reduced motion + stored preferences ---- */
+  useEffect(() => {
+    gameAudio.init();
+    setSoundOn(gameAudio.enabled);
+    try {
+      const stored = Number(window.localStorage.getItem(BEST_KEY) ?? 0);
+      if (Number.isFinite(stored) && stored > 0) {
+        bestRef.current = stored;
+        setBest(stored);
+      }
+    } catch {
+      /* ignore */
+    }
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => {
+      calmRef.current = query.matches;
+    };
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
 
   /* ---- crisp canvas: match the backing store to the real device pixels ---- */
   useEffect(() => {
@@ -640,37 +932,62 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   }, [draw]);
 
   useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.code !== "Space" && event.code !== "ArrowUp" && event.code !== "Enter") return;
-      const target = event.target as HTMLElement | null;
-      // Never hijack space from buttons, inputs or the rest of the page.
-      if (target && target.closest("input, textarea, select, button, a, [contenteditable]")) return;
+    const inField = (target: EventTarget | null) => {
+      const el = target as HTMLElement | null;
+      return Boolean(el?.closest("input, textarea, select, button, a, [contenteditable]"));
+    };
+    const onScreen = () => {
       const canvas = canvasRef.current;
-      if (!canvas) return;
+      if (!canvas) return false;
       const box = canvas.getBoundingClientRect();
-      const visible = box.bottom > 0 && box.top < window.innerHeight;
-      if (!visible) return;
+      return box.bottom > 0 && box.top < window.innerHeight;
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (inField(event.target) || !onScreen()) return;
+      if (event.code === "KeyP" || event.code === "Escape") {
+        event.preventDefault();
+        if (phaseRef.current === "playing") pause();
+        else if (phaseRef.current === "paused") resume();
+        return;
+      }
+      if (event.code !== "Space" && event.code !== "ArrowUp" && event.code !== "Enter") return;
       event.preventDefault();
+      if (event.repeat) return;
       jumpRef.current();
     };
+    const onKeyUp = (event: KeyboardEvent) => {
+      if (event.code === "Space" || event.code === "ArrowUp" || event.code === "Enter") release();
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+    window.addEventListener("keyup", onKeyUp);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("keyup", onKeyUp);
+    };
+  }, [pause, release, resume]);
 
   /* ---- pause when the tab is hidden so nothing runs off-screen ---- */
   useEffect(() => {
     const onVisibility = () => {
-      if (document.visibilityState === "hidden") {
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      } else if (!runRef.current.over && rafRef.current === null && phase === "playing") {
-        lastRef.current = performance.now();
-        rafRef.current = requestAnimationFrame(stepRef.current);
-      }
+      if (document.visibilityState === "hidden" && phaseRef.current === "playing") pause();
     };
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
-  }, [phase]);
+  }, [pause]);
+
+  /* ---- auto-pause when the player scrolls the game out of view ---- */
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting && phaseRef.current === "playing") pause();
+      },
+      { threshold: 0.25 },
+    );
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, [pause]);
 
   useEffect(
     () => () => {
@@ -678,7 +995,6 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     },
     [],
   );
-
 
   /* ---- wallet ---- */
   useEffect(() => {
@@ -768,6 +1084,13 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     }
   }, [refreshBoard, sendScore, wallet]);
 
+  const toggleSound = useCallback(() => {
+    const next = !gameAudio.enabled;
+    gameAudio.setEnabled(next);
+    setSoundOn(next);
+    if (next) gameAudio.play("ui");
+  }, []);
+
   const resetDate = useMemo(
     () =>
       new Date(board.nextResetIso).toLocaleDateString("en-GB", {
@@ -781,7 +1104,6 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
       <div className="rounded-2xl bg-card p-2 pop-static sm:p-4">
-
         <div
           className="game-frame"
           style={{ ["--game-frame-src" as string]: `url(${gameFrame})` }}
@@ -790,17 +1112,21 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
             <div
               role="button"
               tabIndex={0}
-              aria-label="Play Lily Pad Leap. Tap or press space to hop."
+              aria-label="Play Lily Pad Leap. Tap or press space to hop, hold for a higher hop, press P to pause."
               onPointerDown={(event) => {
                 event.preventDefault();
                 jump();
               }}
+              onPointerUp={release}
+              onPointerCancel={release}
+              onPointerLeave={release}
               onKeyDown={(event) => {
                 if (event.key === " " || event.key === "Enter") {
                   event.preventDefault();
-                  jump();
+                  if (!event.repeat) jump();
                 }
               }}
+              onKeyUp={release}
               className="relative block h-full max-h-full w-auto max-w-full touch-none select-none overflow-hidden rounded-md border-2 border-charcoal sm:rounded-xl sm:border-[3px]"
               style={{ aspectRatio: `${W} / ${H}` }}
             >
@@ -811,19 +1137,64 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
                 className="block h-full w-full bg-ivy"
                 style={{ imageRendering: "auto" }}
               />
-              {phase !== "playing" ? (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-ivy/80 p-2 text-center text-cream sm:gap-2 sm:p-3">
-                  <p className="font-display text-lg sm:text-2xl">
-                    {phase === "idle" ? "Lily Pad Leap" : "Splash!"}
-                  </p>
-                  <p className="max-w-xs text-[11px] leading-snug opacity-90 sm:text-sm">
-                    {phase === "idle"
-                      ? "Hop across the pond. Dodge the logs, scoop the $ivy coins."
-                      : `You scored ${score}. Best this visit: ${best}.`}
-                  </p>
-                  <span className="rounded-full bg-frog px-3 py-1.5 font-display text-[11px] text-charcoal pop-static sm:px-4 sm:py-2 sm:text-sm">
 
-                    {phase === "idle" ? "Tap / press space to start" : "Tap to hop again"}
+              {phase === "playing" ? (
+                <button
+                  type="button"
+                  aria-label="Pause game"
+                  onPointerDown={(event) => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    pause();
+                  }}
+                  className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-charcoal bg-cream/90 text-charcoal transition-transform hover:scale-110 active:scale-95"
+                >
+                  <Pause className="h-4 w-4" aria-hidden />
+                </button>
+              ) : null}
+
+              {phase !== "playing" ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-ivy/85 p-2 text-center text-cream backdrop-blur-[2px] duration-200 animate-in fade-in sm:gap-2 sm:p-3">
+                  <p className="font-display text-lg sm:text-2xl">
+                    {phase === "idle" ? "Lily Pad Leap" : phase === "paused" ? "Paused" : "Splash!"}
+                  </p>
+
+                  {phase === "over" ? (
+                    <div className="flex flex-wrap items-center justify-center gap-1.5 text-[10px] sm:text-xs">
+                      <span className="rounded-full bg-cream/15 px-2 py-0.5">
+                        Score <b className="tabular-nums">{summary.score}</b>
+                      </span>
+                      <span className="rounded-full bg-cream/15 px-2 py-0.5">
+                        ◎ <b className="tabular-nums">{summary.coins}</b>
+                      </span>
+                      {summary.combo > 1 ? (
+                        <span className="rounded-full bg-cream/15 px-2 py-0.5">
+                          Best combo x{summary.combo}
+                        </span>
+                      ) : null}
+                      <span className="rounded-full bg-cream/15 px-2 py-0.5">{summary.seconds}s</span>
+                      {summary.record ? (
+                        <span className="rounded-full bg-yellow px-2 py-0.5 font-bold text-charcoal">
+                          New best!
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-cream/15 px-2 py-0.5">Best {best}</span>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="max-w-xs text-[11px] leading-snug opacity-90 sm:text-sm">
+                      {phase === "idle"
+                        ? "Hop the logs, scoop the $ivy coins. Tap twice to double-hop, hold for height."
+                        : "Take your time. Nothing moves until you do."}
+                    </p>
+                  )}
+
+                  <span className="rounded-full bg-frog px-3 py-1.5 font-display text-[11px] text-charcoal pop-static sm:px-4 sm:py-2 sm:text-sm">
+                    {phase === "idle"
+                      ? "Tap / press space to start"
+                      : phase === "paused"
+                        ? "Tap or press P to resume"
+                        : "Tap to hop again"}
                   </span>
                 </div>
               ) : null}
@@ -831,6 +1202,14 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
           </div>
         </div>
 
+        {/* Accessible mirror of the canvas HUD for screen readers. */}
+        <p className="sr-only" aria-live="polite">
+          {phase === "over"
+            ? `Run over. Score ${summary.score}. Best ${best}.`
+            : phase === "paused"
+              ? "Game paused."
+              : `Score ${score}.`}
+        </p>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {wallet ? (
@@ -856,17 +1235,36 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
             {busy ? "Signing…" : "Submit score to leaderboard"}
           </Button>
           <Button
-            onClick={() => void start()}
+            onClick={() => (phase === "paused" ? resume() : void start())}
             variant="outline"
-            className="min-h-11 rounded-full border-[3px] border-charcoal bg-card px-4 font-display text-charcoal"
+            className="min-h-11 gap-1.5 rounded-full border-[3px] border-charcoal bg-card px-4 font-display text-charcoal"
           >
-            {phase === "playing" ? "Restart" : "Play"}
+            {phase === "playing" ? (
+              <RotateCcw className="h-4 w-4" aria-hidden />
+            ) : (
+              <Play className="h-4 w-4" aria-hidden />
+            )}
+            {phase === "playing" ? "Restart" : phase === "paused" ? "Resume" : "Play"}
+          </Button>
+          <Button
+            onClick={toggleSound}
+            variant="outline"
+            aria-pressed={soundOn}
+            aria-label={soundOn ? "Mute game sound" : "Unmute game sound"}
+            className="min-h-11 min-w-11 rounded-full border-[3px] border-charcoal bg-card px-3 text-charcoal"
+          >
+            {soundOn ? (
+              <Volume2 className="h-4 w-4" aria-hidden />
+            ) : (
+              <VolumeX className="h-4 w-4" aria-hidden />
+            )}
           </Button>
         </div>
         {status ? <p className="mt-2 text-sm text-charcoal/85">{status}</p> : null}
         <p className="mt-2 text-xs text-charcoal/70">
-          The game is fully playable with no wallet. Connecting only reads your public address;
-          signing is a free, read-only message that never approves a transaction or touches funds.
+          Space, tap or click to hop · hold for height · double-tap to double-hop · P to pause. The
+          game is fully playable with no wallet. Connecting only reads your public address; signing
+          is a free, read-only message that never approves a transaction or touches funds.
         </p>
         {wallet ? <SeasonCard wallet={wallet} refreshKey={cardKey} /> : null}
       </div>
