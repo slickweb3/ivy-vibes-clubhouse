@@ -31,31 +31,38 @@ export function OfficialSocialEmbed({
   const { embedsAllowed, openSettings } = useEmbedConsent();
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  // Only mount the third-party iframe once the card is near the viewport, so a
-  // page with many embeds stays smooth instead of loading everything at once.
+  // Third-party iframes are mounted only while their card is near the viewport
+  // and unmounted again once it scrolls away. Instagram/TikTok frames are full
+  // pages each, so keeping a dozen of them alive can exhaust memory on phones —
+  // which the browser resolves by silently reloading the tab.
   const [inView, setInView] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const node = frameRef.current;
-    if (!node || inView) return;
+    if (!node) return;
     if (typeof IntersectionObserver === "undefined") {
       setInView(true);
       return;
     }
+    const release = () => setInView(false);
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setInView(true);
-          observer.disconnect();
-        }
+        const visible = entries.some((entry) => entry.isIntersecting);
+        setInView(visible);
+        if (visible) claimEmbedSlot(release);
+        else releaseEmbedSlot(release);
       },
-      // Mount well before the card is visible so the player is ready on arrival.
-      { rootMargin: "800px 0px" },
+      // Mount a little before the card arrives, drop it soon after it leaves.
+      { rootMargin: "300px 0px" },
     );
     observer.observe(node);
-    return () => observer.disconnect();
-  }, [inView]);
+    return () => {
+      observer.disconnect();
+      releaseEmbedSlot(release);
+    };
+  }, []);
+
 
   const label = platformLabel(post.platform);
   const fallbackLabel = curatedFallbackLabel(post);
