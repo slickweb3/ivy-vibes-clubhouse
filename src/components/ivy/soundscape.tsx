@@ -3,21 +3,18 @@ import { Volume2, VolumeX, Music } from "lucide-react";
 import { useRouterState } from "@tanstack/react-router";
 import { discover, DISCOVERY_EVENT } from "@/lib/discoveries";
 import { registerAudioEngine } from "@/lib/audio/cue";
-import type { AudioScene, IvyAudio } from "@/lib/audio/engine";
+import type { AudioCue, AudioScene } from "@/lib/audio/engine";
 
 /**
- * IvySoundscape — the control surface for Ivy's living audio universe.
+ * IvySoundscape — the control surface for Ivy's audio.
  *
- * Behaviour, in order of importance:
- *  - Off by default. Nothing is fetched, created or heard until the visitor
- *    opts in; the engine module itself is dynamically imported on first play.
- *  - Adaptive: the mix follows where the visitor is — the landing doorway,
- *    open exploration, the arcade, or the hushed footer — and crossfades.
- *  - Interactive: presses, hovers and discoveries get their own small musical
- *    answers, ducking the score instead of shouting over it.
- *  - Respectful: volume + mute are remembered, audio suspends with the tab,
- *    reduced-motion and low-power devices get a leaner mix, and touch devices
- *    never fire hover cues.
+ * The whole site now plays the arcade's score: "The Legend of Frog Queen Ivy"
+ * from `@/lib/game-audio`, so the homepage and the minigame are one continuous
+ * world. Sitewide it runs quieter and calmer (low intensity), and it hands over
+ * completely on `/game`, where the game itself drives the same theme.
+ *
+ * Still true: off until the visitor opts in, volume + mute remembered, audio
+ * suspends with the tab, and taps answer with the wooden menu tick.
  */
 
 // Versioned so the previous, busier soundtrack never resumes automatically.
@@ -31,23 +28,43 @@ const SCENE_LABEL: Record<AudioScene, string> = {
   hush: "Quiet pond",
 };
 
+/** How busy the shared theme plays in each part of the pond. */
+const SCENE_INTENSITY: Record<AudioScene, number> = {
+  landing: 0.12,
+  explore: 0.34,
+  game: 0.5,
+  hush: 0.04,
+};
+
 function readVolume(): number {
   const raw = Number(window.localStorage.getItem(VOL_KEY));
   return Number.isFinite(raw) && raw > 0 && raw <= 1 ? raw : 0.5;
 }
 
 /** Gentle by design: the slider's 100% is still a background level. */
-const toGain = (volume: number) => volume * 0.2;
+const toGain = (volume: number) => volume * 0.4;
+
+/** Interaction cues, mapped onto the game's own Zelda-ish palette. */
+const CUE_MAP: Record<AudioCue, "ui" | "coin" | "combo" | "jump" | "double" | "near"> = {
+  press: "ui",
+  hover: "ui",
+  open: "ui",
+  reward: "coin",
+  discovery: "combo",
+  jump: "jump",
+  land: "double",
+  fail: "near",
+};
 
 export function IvySoundscape() {
   const [on, setOn] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [open, setOpen] = useState(false);
   const [scene, setScene] = useState<AudioScene>("landing");
-  const engineRef = useRef<IvyAudio | null>(null);
+  const sceneRef = useRef<AudioScene>("landing");
   const pathname = useRouterState({ select: (state) => state.location.pathname });
 
-  // The arcade has its own soundtrack — the site score is force-muted there.
+  // The arcade drives the same theme itself — the site player stands down there.
   const onGame = pathname.startsWith("/game");
   const active = on && !onGame;
 
@@ -56,29 +73,28 @@ export function IvySoundscape() {
     setVolume(readVolume());
   }, []);
 
-  // --- engine lifecycle ----------------------------------------------------
+  // --- soundtrack lifecycle ------------------------------------------------
   useEffect(() => {
     if (!active) return undefined;
 
     let cancelled = false;
-    let engine: IvyAudio | null = null;
+    let audio: typeof import("@/lib/game-audio").gameAudio | null = null;
 
-    const lean =
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      window.matchMedia("(pointer: coarse)").matches ||
-      (navigator.hardwareConcurrency ?? 8) <= 4;
-
-    void import("@/lib/audio/engine").then(async ({ IvyAudio: Engine }) => {
+    void import("@/lib/game-audio").then(({ gameAudio }) => {
       if (cancelled) return;
-      engine = new Engine(lean);
-      engineRef.current = engine;
-      registerAudioEngine(engine);
-      await engine.start(toGain(readVolume()));
+      audio = gameAudio;
+      gameAudio.setIntensity(SCENE_INTENSITY[sceneRef.current]);
+      gameAudio.startMusic({ volume: toGain(readVolume()), force: true });
+      registerAudioEngine({
+        cue: (name) => gameAudio.playForce(CUE_MAP[name]),
+        setScene: (next) => gameAudio.setIntensity(SCENE_INTENSITY[next]),
+      });
     });
 
     const onVisibility = () => {
-      if (document.hidden) engineRef.current?.suspend();
-      else engineRef.current?.resume();
+      if (!audio) return;
+      if (document.hidden) audio.stopMusic();
+      else audio.startMusic({ volume: toGain(readVolume()), force: true });
     };
     document.addEventListener("visibilitychange", onVisibility);
 
@@ -86,14 +102,17 @@ export function IvySoundscape() {
       cancelled = true;
       document.removeEventListener("visibilitychange", onVisibility);
       registerAudioEngine(null);
-      engineRef.current = null;
-      engine?.dispose();
+      audio?.stopMusic();
     };
   }, [active]);
 
   useEffect(() => {
-    engineRef.current?.setVolume(toGain(volume));
-  }, [volume]);
+    if (!active) return;
+    void import("@/lib/game-audio").then(({ gameAudio }) => {
+      gameAudio.setMusicVolume(toGain(volume));
+    });
+  }, [volume, active]);
+
 
   // --- adaptive scene ------------------------------------------------------
   useEffect(() => {
@@ -133,7 +152,11 @@ export function IvySoundscape() {
   }, [pathname]);
 
   useEffect(() => {
-    engineRef.current?.setScene(scene);
+    sceneRef.current = scene;
+    if (!active) return;
+    void import("@/lib/game-audio").then(({ gameAudio }) => {
+      gameAudio.setIntensity(SCENE_INTENSITY[scene]);
+    });
   }, [scene, active]);
 
   // --- interaction cues ----------------------------------------------------
@@ -145,10 +168,15 @@ export function IvySoundscape() {
         "button, a[href], [role='button'], summary, input[type='range']",
       ) ?? null;
 
-    const onPress = (event: Event) => {
-      if (isControl(event.target)) engineRef.current?.cue("press");
+    const cue = (name: "ui" | "combo") => {
+      void import("@/lib/game-audio").then(({ gameAudio }) => gameAudio.playForce(name));
     };
-    const onDiscovery = () => engineRef.current?.cue("discovery");
+
+    const onPress = (event: Event) => {
+      if (isControl(event.target)) cue("ui");
+    };
+    const onDiscovery = () => cue("combo");
+
 
     document.addEventListener("pointerdown", onPress);
     window.addEventListener(DISCOVERY_EVENT, onDiscovery);

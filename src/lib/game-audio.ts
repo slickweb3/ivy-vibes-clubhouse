@@ -14,6 +14,7 @@ const STORAGE_KEY = "ivy-leap-sound";
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
 let enabled = true;
+let musicVolume = 0.62;
 
 function ensure(): AudioContext | null {
   if (typeof window === "undefined") return null;
@@ -328,9 +329,14 @@ export const gameAudio = {
   unlock() {
     if (enabled) ensure();
   },
-  /** Start (or resume) the Legend of Frog Queen Ivy theme for a run. */
-  startMusic() {
-    if (!enabled) return;
+  /**
+   * Start (or resume) the Legend of Frog Queen Ivy theme.
+   *
+   * The site soundscape plays the very same score, just quieter and with
+   * `force` set so it does not depend on the arcade's own sound preference.
+   */
+  startMusic(opts?: { volume?: number; force?: boolean }) {
+    if (!enabled && !opts?.force) return;
     const audio = ensure();
     if (!audio) return;
     if (!musicGain) {
@@ -338,8 +344,9 @@ export const gameAudio = {
       musicGain.gain.value = 0;
       if (master) musicGain.connect(master);
     }
+    musicVolume = opts?.volume ?? 0.62;
     musicGain.gain.cancelScheduledValues(audio.currentTime);
-    musicGain.gain.setTargetAtTime(0.62, audio.currentTime, 0.8);
+    musicGain.gain.setTargetAtTime(musicVolume, audio.currentTime, 0.8);
     intensity = 0;
     if (musicTimer === null) {
       step16 = 0;
@@ -355,6 +362,18 @@ export const gameAudio = {
       musicTimer = null;
     }
     if (musicGain && ctx) musicGain.gain.setTargetAtTime(0, ctx.currentTime, 0.25);
+  },
+  /** Live level for the theme, used by the sitewide mixer's volume slider. */
+  setMusicVolume(next: number) {
+    musicVolume = Math.max(0, Math.min(1, next));
+    if (musicGain && ctx) musicGain.gain.setTargetAtTime(musicVolume, ctx.currentTime, 0.3);
+  },
+  /** Fire a cue regardless of the arcade preference (used for sitewide taps). */
+  playForce(cue: Cue, level = 1) {
+    const was = enabled;
+    enabled = true;
+    this.play(cue, level);
+    enabled = was;
   },
   /** 0 = opening march, 1 = full chase. Drives tempo and the counter-melody. */
   setIntensity(next: number) {
