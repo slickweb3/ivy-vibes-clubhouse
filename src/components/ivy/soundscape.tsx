@@ -47,6 +47,10 @@ export function IvySoundscape() {
   const engineRef = useRef<IvyAudio | null>(null);
   const pathname = useRouterState({ select: (state) => state.location.pathname });
 
+  // The arcade has its own soundtrack — the site score is force-muted there.
+  const onGame = pathname.startsWith("/game");
+  const active = on && !onGame;
+
   useEffect(() => {
     setOn(window.localStorage.getItem(ON_KEY) === "on");
     setVolume(readVolume());
@@ -54,7 +58,8 @@ export function IvySoundscape() {
 
   // --- engine lifecycle ----------------------------------------------------
   useEffect(() => {
-    if (!on) return undefined;
+    if (!active) return undefined;
+
     let cancelled = false;
     let engine: IvyAudio | null = null;
 
