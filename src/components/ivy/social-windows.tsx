@@ -58,7 +58,7 @@ function SocialWindow({
   const label = platformLabel(platform);
   const handle = posts[0]?.sourceAccountHandle ?? "";
   const profileUrl =
-    (platform === "instagram" ? projectConfig.social.instagram : projectConfig.social.tiktok) ??
+    (platform === "instagram" ? projectConfig.socials.instagram : projectConfig.socials.tiktok) ??
     posts[0]?.sourceAccountUrl ??
     "#";
 
