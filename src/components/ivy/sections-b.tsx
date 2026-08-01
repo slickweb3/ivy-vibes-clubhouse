@@ -168,8 +168,9 @@ export function SiteFooter() {
             {navLinks.map((link) => (
               <li key={link.hash}>
                 <a
-                  href={link.hash}
+                  href={`/${link.hash}`}
                   className="inline-flex min-h-11 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
+
                 >
                   {link.label}
                 </a>
