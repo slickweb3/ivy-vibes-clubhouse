@@ -1,4 +1,5 @@
 import { IvyHopSticker } from "@/components/ivy/hop-sticker";
+import { ScrollSignature } from "@/components/ivy/scroll-signature";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -155,6 +156,7 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <ScrollSignature />
         <Scripts />
       </body>
     </html>

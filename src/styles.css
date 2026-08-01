@@ -834,3 +834,238 @@ figcaption {
     color: var(--charcoal);
   }
 }
+
+/* ==========================================================================
+   Pond scrollbar — the site's scroll signature.
+
+   Built to feel sculpted rather than browser-default: a lily-stem rail with a
+   frog-green thumb that thins while idle, swells on hover, and glows while it
+   is actually being dragged. State comes from two data attributes that the
+   ScrollSignature listener sets on <html> (`data-scrolling`, `data-sb-grab`);
+   everything animated below is a compositor-friendly property so scrolling
+   never pays a layout cost.
+   ========================================================================== */
+:root {
+  /* Idle / active geometry, tuned against the chunky 3px ink borders. */
+  --sb-size: 10px;
+  --sb-size-live: 14px;
+  --sb-radius: 999px;
+  --sb-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --sb-thumb-idle: color-mix(in oklab, var(--frog) 46%, var(--ivy) 54%);
+  --sb-thumb-live: color-mix(in oklab, var(--frog) 84%, var(--ivy) 16%);
+  --sb-thumb-grab: var(--frog);
+  --sb-track: color-mix(in oklab, var(--ivy) 88%, black 12%);
+}
+
+/* Firefox: only width + colour are customisable, so give it the same palette
+   and let it fall back gracefully on the rest. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sb-thumb-idle) var(--sb-track);
+  scrollbar-gutter: stable;
+}
+
+html[data-scrolling="true"] {
+  scrollbar-color: var(--sb-thumb-live) var(--sb-track);
+}
+
+/* WebKit / Blink — Chrome, Edge, Safari, and mobile equivalents. */
+html::-webkit-scrollbar {
+  width: var(--sb-size);
+  height: var(--sb-size);
+  transition: width 320ms var(--sb-ease), height 320ms var(--sb-ease);
+}
+
+html[data-scrolling="true"]::-webkit-scrollbar,
+html[data-sb-grab="true"]::-webkit-scrollbar {
+  width: var(--sb-size-live);
+  height: var(--sb-size-live);
+}
+
+html::-webkit-scrollbar-track {
+  /* A faint stem the thumb travels along, magnetised to the viewport edge. */
+  background:
+    linear-gradient(
+      to right,
+      transparent 0,
+      color-mix(in oklab, var(--sb-track) 70%, transparent) 35%,
+      color-mix(in oklab, var(--sb-track) 92%, transparent) 100%
+    );
+  border: 0;
+}
+
+html::-webkit-scrollbar-thumb {
+  /* Layered gradient + inner light gives the thumb dimension without a border. */
+  background-image:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--cream) 26%, transparent) 0%,
+      transparent 42%,
+      color-mix(in oklab, var(--ivy) 30%, transparent) 100%
+    ),
+    linear-gradient(180deg, var(--sb-thumb-idle), color-mix(in oklab, var(--sb-thumb-idle) 78%, var(--ivy)));
+  border-radius: var(--sb-radius);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--cream) 34%, transparent),
+    0 2px 6px -2px rgba(10, 26, 18, 0.55);
+  transition:
+    background-image 260ms var(--sb-ease),
+    box-shadow 260ms var(--sb-ease),
+    border-color 260ms var(--sb-ease);
+}
+
+html[data-scrolling="true"]::-webkit-scrollbar-thumb {
+  background-image:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--cream) 34%, transparent) 0%,
+      transparent 46%,
+      color-mix(in oklab, var(--ivy) 24%, transparent) 100%
+    ),
+    linear-gradient(180deg, var(--sb-thumb-live), color-mix(in oklab, var(--sb-thumb-live) 74%, var(--ivy)));
+  border-width: 2px;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--cream) 46%, transparent),
+    0 0 10px -1px color-mix(in oklab, var(--frog) 55%, transparent),
+    0 3px 8px -3px rgba(10, 26, 18, 0.6);
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  border-width: 2px;
+  background-image:
+    linear-gradient(180deg, color-mix(in oklab, var(--cream) 38%, transparent) 0%, transparent 48%),
+    linear-gradient(180deg, var(--sb-thumb-live), color-mix(in oklab, var(--frog) 70%, var(--ivy)));
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--cream) 50%, transparent),
+    0 0 14px -2px color-mix(in oklab, var(--frog) 65%, transparent),
+    0 4px 10px -4px rgba(10, 26, 18, 0.6);
+}
+
+/* Dragging: a confident, brighter grip with a touch of yellow pond light. */
+html::-webkit-scrollbar-thumb:active,
+html[data-sb-grab="true"]::-webkit-scrollbar-thumb {
+  background-image:
+    linear-gradient(180deg, color-mix(in oklab, var(--cream) 42%, transparent) 0%, transparent 52%),
+    linear-gradient(180deg, var(--sb-thumb-grab), color-mix(in oklab, var(--yellow) 34%, var(--frog)));
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--cream) 60%, transparent),
+    0 0 18px -2px color-mix(in oklab, var(--frog) 70%, transparent);
+}
+
+html::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Nested scrollers (rails, dialogs, drawers, admin tables) get the same
+   language at a smaller scale so behaviour is consistent everywhere. */
+.pond-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sb-thumb-idle) transparent;
+}
+
+.pond-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.pond-scroll::-webkit-scrollbar-track {
+  background: color-mix(in oklab, var(--ivy) 30%, transparent);
+  border-radius: var(--sb-radius);
+}
+
+.pond-scroll::-webkit-scrollbar-thumb {
+  background-image: linear-gradient(
+    180deg,
+    var(--sb-thumb-idle),
+    color-mix(in oklab, var(--sb-thumb-idle) 76%, var(--ivy))
+  );
+  border-radius: var(--sb-radius);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-image 240ms var(--sb-ease);
+}
+
+.pond-scroll::-webkit-scrollbar-thumb:hover {
+  background-image: linear-gradient(180deg, var(--sb-thumb-live), var(--frog));
+}
+
+/* Scroll-depth ribbon. Pure CSS scroll-driven animation — no JS, no polling.
+   Only rendered where the browser supports it; elsewhere the scrollbar alone
+   carries the job. */
+.scroll-depth {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100vh;
+  transform-origin: top center;
+  transform: scaleY(0);
+  border-radius: var(--sb-radius);
+  background: linear-gradient(
+    180deg,
+    var(--frog) 0%,
+    var(--leaf) 45%,
+    var(--yellow) 78%,
+    var(--pink) 100%
+  );
+  opacity: 0;
+  transition: opacity 420ms var(--sb-ease);
+  pointer-events: none;
+  z-index: 60;
+}
+
+html[data-scrolling="true"] .scroll-depth {
+  opacity: 0.75;
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-depth {
+    animation: scroll-depth-fill linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes scroll-depth-fill {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* Touch devices have no persistent scrollbar to decorate, and the ribbon would
+   sit under the system overlay — keep the surface clean. */
+@media (hover: none) {
+  .scroll-depth {
+    display: none;
+  }
+}
+
+/* Honour reduced motion and forced colours without losing the affordance. */
+@media (prefers-reduced-motion: reduce) {
+  html::-webkit-scrollbar,
+  html::-webkit-scrollbar-thumb,
+  .scroll-depth {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --sb-thumb-idle: var(--frog);
+    --sb-thumb-live: var(--frog);
+  }
+}
+
+@media (forced-colors: active) {
+  html {
+    scrollbar-color: auto;
+  }
+  .scroll-depth {
+    display: none;
+  }
+}
