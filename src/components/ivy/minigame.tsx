@@ -815,6 +815,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   }
 
   const finishRun = useCallback((run: RunState) => {
+    run.squash = 1;
     const finalScore = scoreOf(run);
     const record = finalScore > bestRef.current;
     if (record) {
