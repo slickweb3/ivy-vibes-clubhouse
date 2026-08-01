@@ -97,24 +97,38 @@
   --gradient-night: linear-gradient(140deg, #174f36 0%, #0f3527 100%);
 }
 
+/* Night mode: moonlit pond. Deep indigo-ivy surfaces, lavender moonlight. */
 .dark {
-  --background: #101a14;
-  --foreground: #fff8e7;
-  --card: #16281e;
-  --card-foreground: #fff8e7;
-  --popover: #16281e;
-  --popover-foreground: #fff8e7;
-  --primary: #83d94e;
-  --primary-foreground: #102417;
-  --secondary: #c9f39b;
-  --secondary-foreground: #102417;
-  --muted: #1c3227;
-  --muted-foreground: #bcd3c2;
+  --background: #0d1a22;
+  --gradient-night: linear-gradient(150deg, #0d1a22 0%, #101f2c 55%, #0a1319 100%);
+
+  /* brand, cooled down for moonlight (cream stays light so text-cream reads) */
+  --frog: #6dc44a;
+  --ivy: #0f2a34;
+  --cream: #e9f1f3;
+  --leaf: #a9dc93;
+  --lavender: #b9aaf5;
+  --yellow: #f5cf72;
+
+  --foreground: #e9f1f3;
+  --card: #e9f1f3;
+  --card-foreground: #12212a;
+  --popover: #e9f1f3;
+  --popover-foreground: #12212a;
+  --primary: #6dc44a;
+  --primary-foreground: #0b1f14;
+  --secondary: #a9dc93;
+  --secondary-foreground: #0b1f14;
+  --muted: #16303c;
+  --muted-foreground: #b6ccd4;
   --accent: #ff8eae;
-  --accent-foreground: #151515;
-  --border: #2c4a38;
-  --input: #2c4a38;
-  --ring: #83d94e;
+  --accent-foreground: #12212a;
+  --border: #234453;
+  --input: #234453;
+  --ring: #b9aaf5;
+  --gradient-meadow: linear-gradient(160deg, #1a3b48 0%, #13293a 55%, #0e1d28 100%);
+  --shadow-card: 0 18px 40px -22px rgba(0, 0, 0, 0.75);
+
 }
 
 @layer base {
@@ -1544,4 +1558,124 @@ html[data-scrolling="true"] .scroll-depth {
   .ivy-find-card {
     animation: none;
   }
+}
+
+/* ---------------------------------------------------------------------------
+ * Night mode atmosphere: a moonlit sky layer, a moon, and pond-glass
+ * surfaces so the warm daytime panels settle into dusk.
+ * ------------------------------------------------------------------------- */
+
+.night-sky {
+  position: fixed;
+  inset: 0;
+  z-index: 61;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 700ms ease;
+  background:
+    radial-gradient(
+      42rem 30rem at 82% -6%,
+      color-mix(in oklab, var(--lavender) 26%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(1.5px 1.5px at 12% 18%, rgba(255, 255, 255, 0.85), transparent 60%),
+    radial-gradient(1.5px 1.5px at 28% 42%, rgba(255, 255, 255, 0.6), transparent 60%),
+    radial-gradient(2px 2px at 46% 12%, rgba(255, 255, 255, 0.75), transparent 60%),
+    radial-gradient(1.5px 1.5px at 64% 34%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(1.5px 1.5px at 78% 62%, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(2px 2px at 90% 24%, rgba(255, 255, 255, 0.8), transparent 60%),
+    radial-gradient(1.5px 1.5px at 6% 74%, rgba(255, 255, 255, 0.5), transparent 60%),
+    linear-gradient(180deg, rgba(18, 28, 60, 0.32), rgba(10, 18, 30, 0.18));
+  mix-blend-mode: screen;
+}
+
+.dark .night-sky {
+  opacity: 1;
+  animation: night-twinkle 7s ease-in-out infinite;
+}
+
+.night-moon {
+  position: fixed;
+  top: clamp(4rem, 12vh, 8rem);
+  right: clamp(1rem, 6vw, 5rem);
+  z-index: 62;
+  height: clamp(2.5rem, 6vw, 4.5rem);
+  width: clamp(2.5rem, 6vw, 4.5rem);
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 700ms ease,
+    transform 700ms ease;
+  transform: translateY(-1rem) scale(0.9);
+  background: radial-gradient(circle at 35% 32%, #fffaf0, #e6dfc4 62%, #cfd8dd 100%);
+  box-shadow:
+    0 0 2.5rem color-mix(in oklab, var(--yellow) 45%, transparent),
+    0 0 7rem color-mix(in oklab, var(--lavender) 35%, transparent);
+}
+
+.dark .night-moon {
+  opacity: 0.95;
+  transform: none;
+}
+
+html.dark body {
+  background-image: var(--gradient-night);
+  background-attachment: fixed;
+}
+
+@keyframes night-twinkle {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.22);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dark .night-sky {
+    animation: none;
+  }
+}
+
+/* Night mode surfaces: the hand-placed warm panels become pond glass, and the
+   ink inside them flips to moonlight. Bright brand chips (frog / yellow / pink
+   / lavender) keep their dark ink so contrast holds. */
+.dark :is([class*="bg-cream"], [class*="bg-card"], [class*="bg-leaf"], [class*="bg-popover"]) {
+  background-color: color-mix(in oklab, #12242f 92%, var(--lavender));
+  color: var(--foreground);
+}
+
+.dark
+  :is([class*="bg-cream"], [class*="bg-card"], [class*="bg-leaf"], [class*="bg-popover"])
+  :is([class*="text-charcoal"], [class*="text-ink"]):not([class*="bg-yellow"]):not(
+    [class*="bg-pink"]
+  ):not([class*="bg-frog"]):not([class*="bg-lavender"]):not([class*="bg-leaf"]):not(
+    [class*="bg-cream"]
+  ) {
+  color: var(--foreground);
+}
+
+.dark :is([class*="border-charcoal"], .ink-border) {
+  border-color: color-mix(in oklab, var(--lavender) 55%, #0b1620);
+}
+
+.dark {
+  --shadow-pop: 0 6px 0 0 #06121a;
+  --shadow-pop-sm: 0 4px 0 0 #06121a;
+}
+
+/* Deep-ivy ink and frosted glass both need to invert after dark. */
+.dark [class*="text-ivy"] {
+  color: var(--frog);
+}
+
+.dark .glass {
+  background-color: color-mix(in oklab, #12242f 80%, transparent);
+}
+
+.dark .glass-dark {
+  background-color: color-mix(in oklab, #0c1a24 82%, transparent);
 }
