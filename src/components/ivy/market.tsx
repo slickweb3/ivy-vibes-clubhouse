@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ComingSoonPill, Section, StatusChip, keepTickerCase } from "@/components/ivy/primitives";
 import { useEmbedConsent } from "@/components/ivy/cookie-consent";
+import { CountUp } from "@/components/ivy/count-up";
 import type { MarketSnapshot } from "@/lib/market.server";
 
 function usd(value: number | null, digits = 2): string | null {
@@ -36,12 +37,29 @@ const STATUS_LABEL: Record<MarketSnapshot["status"], { status: "ok" | "pending" 
   disabled: { status: "off", label: "Live data paused" },
 };
 
-function Stat({ label, value }: { label: string; value: string | null }) {
+function Stat({
+  label,
+  value,
+  amount,
+  format,
+}: {
+  label: string;
+  value: string | null;
+  /** When present, the figure counts up on first view. */
+  amount?: number | null;
+  format?: (value: number) => string;
+}) {
   return (
     <div className="rounded-2xl bg-card p-4 pop-static">
       <p className="font-display text-[0.7rem] tracking-wide text-charcoal/70 uppercase">{keepTickerCase(label)}</p>
       <div className="mt-2 font-display text-xl text-charcoal sm:text-2xl">
-        {value ?? <ComingSoonPill />}
+        {value === null ? (
+          <ComingSoonPill />
+        ) : amount !== null && amount !== undefined && format ? (
+          <CountUp value={amount} format={format} />
+        ) : (
+          value
+        )}
       </div>
     </div>
   );
@@ -83,10 +101,30 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
       ) : null}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Price" value={live ? usd(snapshot.priceUsd, 6) : null} />
-        <Stat label="Market cap" value={live ? compactUsd(snapshot.marketCapUsd ?? snapshot.fdvUsd) : null} />
-        <Stat label="Liquidity" value={live ? compactUsd(snapshot.liquidityUsd) : null} />
-        <Stat label="24h volume" value={live ? compactUsd(snapshot.volume24hUsd) : null} />
+        <Stat
+          label="Price"
+          value={live ? usd(snapshot.priceUsd, 6) : null}
+          amount={live ? snapshot.priceUsd : null}
+          format={(n) => usd(n, 6) ?? ""}
+        />
+        <Stat
+          label="Market cap"
+          value={live ? compactUsd(snapshot.marketCapUsd ?? snapshot.fdvUsd) : null}
+          amount={live ? (snapshot.marketCapUsd ?? snapshot.fdvUsd) : null}
+          format={(n) => compactUsd(n) ?? ""}
+        />
+        <Stat
+          label="Liquidity"
+          value={live ? compactUsd(snapshot.liquidityUsd) : null}
+          amount={live ? snapshot.liquidityUsd : null}
+          format={(n) => compactUsd(n) ?? ""}
+        />
+        <Stat
+          label="24h volume"
+          value={live ? compactUsd(snapshot.volume24hUsd) : null}
+          amount={live ? snapshot.volume24hUsd : null}
+          format={(n) => compactUsd(n) ?? ""}
+        />
       </div>
 
       {live ? (
