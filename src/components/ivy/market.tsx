@@ -36,12 +36,29 @@ const STATUS_LABEL: Record<MarketSnapshot["status"], { status: "ok" | "pending" 
   disabled: { status: "off", label: "Live data paused" },
 };
 
-function Stat({ label, value }: { label: string; value: string | null }) {
+function Stat({
+  label,
+  value,
+  amount,
+  format,
+}: {
+  label: string;
+  value: string | null;
+  /** When present, the figure counts up on first view. */
+  amount?: number | null;
+  format?: (value: number) => string;
+}) {
   return (
     <div className="rounded-2xl bg-card p-4 pop-static">
       <p className="font-display text-[0.7rem] tracking-wide text-charcoal/70 uppercase">{keepTickerCase(label)}</p>
       <div className="mt-2 font-display text-xl text-charcoal sm:text-2xl">
-        {value ?? <ComingSoonPill />}
+        {value === null ? (
+          <ComingSoonPill />
+        ) : amount !== null && amount !== undefined && format ? (
+          <CountUp value={amount} format={format} />
+        ) : (
+          value
+        )}
       </div>
     </div>
   );
