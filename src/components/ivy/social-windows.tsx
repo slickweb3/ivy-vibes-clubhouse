@@ -244,7 +244,7 @@ function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[
           tabIndex={0}
           role="region"
           aria-label={`Scrollable preview of Ivy's official ${label} posts`}
-          className="social-window h-[34rem] overflow-y-auto overscroll-contain px-3 py-4 sm:h-[46rem] sm:px-5 lg:h-[54rem]"
+          className="social-window pond-scroll h-[34rem] overflow-y-auto overscroll-contain px-3 py-4 sm:h-[46rem] sm:px-5 lg:h-[54rem]"
         >
           <ul className="m-0 flex list-none flex-col gap-5 p-0">
             {posts.map((post, index) => (
