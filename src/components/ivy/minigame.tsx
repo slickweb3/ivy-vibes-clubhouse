@@ -627,6 +627,8 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       if (run.y >= GROUND_Y) {
         if (wasAirborne && run.vy > 260) {
           burst(run, PLAYER_X, GROUND_Y + 10, 6, COLORS.cream, calmRef.current);
+          // Landing squat, proportional to impact speed.
+          run.squash = Math.max(0.82, 1 - Math.min(0.18, run.vy / 4200));
         }
         run.y = GROUND_Y;
         run.vy = 0;
@@ -635,6 +637,13 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       } else {
         run.coyote = Math.max(0, run.coyote - dt);
       }
+
+      // Squash/stretch spring: exponential recovery toward neutral, framerate
+      // independent, and hard-snapped once it is imperceptible so a paused or
+      // backgrounded tab can never leave Ivy stuck deformed.
+      run.squash += (1 - run.squash) * (1 - Math.exp(-dt * 11));
+      if (Math.abs(run.squash - 1) < 0.005) run.squash = 1;
+
 
       // Buffered input fires the instant a hop becomes legal again.
       run.buffer = Math.max(0, run.buffer - dt);
