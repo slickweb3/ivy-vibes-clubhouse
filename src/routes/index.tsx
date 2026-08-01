@@ -89,12 +89,11 @@ interface HomeData {
 }
 
 function Home() {
-
   const data = Route.useLoaderData();
   const media = data?.media ?? EMPTY_SITE_MEDIA;
   const market = data?.market ?? null;
   const curated = data?.curated ?? EMPTY_CURATED_FEED;
-  const homeCurated = buildHomeCuratedSections(curated);
+
   return (
     <CookieConsentProvider>
       <a
