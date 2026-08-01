@@ -76,7 +76,7 @@ export function IvyPhotoRow() {
       intro="A row of Ivy's greatest looks — sunny sprints, headphone sessions, holiday sweaters and one very small birthday puppy. Swipe sideways, tap any photo to see it big."
       tone="leaf"
     >
-      <ul className="ivy-photo-scroll -mx-4 m-0 flex list-none snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 sm:mx-0 sm:gap-6 sm:px-0">
+      <ul className="rail -mx-4 m-0 flex list-none snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 sm:mx-0 sm:gap-6 sm:px-0">
         {PHOTOS.map((photo, index) => (
           <li
             key={photo.src}
