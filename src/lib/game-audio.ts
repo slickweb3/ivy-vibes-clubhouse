@@ -501,15 +501,15 @@ export const gameAudio = {
     if (!enabled) return;
     switch (cue) {
       case "jump":
-        // A single soft ocarina fourth with a tiny wooden take-off tick.
-        ocarinaCue(523.25, 698.46, 0.14, 0.085);
-        tone({ freq: 260, to: 190, dur: 0.07, type: "triangle", gain: 0.045 });
+        // A soft, low ocarina lift — gentle enough to hop hundreds of times.
+        ocarinaCue(392, 466.16, 0.11, 0.03);
+        tone({ freq: 200, to: 160, dur: 0.05, type: "triangle", gain: 0.014 });
         break;
       case "double":
-        // The same motif one fifth higher, still one voice—not a flourish pile.
-        ocarinaCue(698.46, 880, 0.15, 0.075);
-        tone({ freq: 330, to: 230, dur: 0.06, type: "triangle", gain: 0.035 });
+        // The same motif a step higher, still whisper-quiet.
+        ocarinaCue(523.25, 622.25, 0.12, 0.026);
         break;
+
       case "coin":
         // Rupee-style two-tone chime, rising with the combo.
         tone({ freq: 987.77 + Math.min(level, 5) * 70, dur: 0.07, type: "triangle", gain: 0.18 });
