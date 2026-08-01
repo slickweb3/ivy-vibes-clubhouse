@@ -11,7 +11,6 @@ import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import {
   Hero,
   MeetIvy,
-  HallOfFame,
   TheLore,
   WhyIvy,
   TokenRecord,
@@ -71,7 +70,6 @@ interface HomeData {
 interface HomeCuratedSections {
   hero: CuratedPost | null;
   freshPosts: CuratedPost[];
-  hallOfFame: CuratedPost[];
 }
 
 function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
@@ -110,9 +108,8 @@ function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
   const freshPhotoPosts = take(photoPosts, 2);
   const freshVideoPosts = take(videoPosts, 4);
   const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
-  const hallOfFame = take(photoPosts, 4);
 
-  return { hero, freshPosts, hallOfFame };
+  return { hero, freshPosts };
 
 }
 
@@ -138,7 +135,6 @@ function Home() {
         <MeetIvy />
 
         <SocialWindows posts={curated.all} />
-        <HallOfFame items={media.hallOfFame} curated={homeCurated.hallOfFame} />
         <TheLore />
         <WhyIvy />
         <TokenRecord market={market ?? undefined} />

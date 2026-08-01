@@ -4,9 +4,8 @@ import { OfficialSocialEmbed } from "./official-embed";
 import { Section, Sticker } from "./primitives";
 import { FrogDoodle, PawDoodle } from "./doodles";
 import { projectConfig } from "@/config/project";
-import { platformLabel, type CuratedPlatform, type CuratedPost } from "@/types/curated";
+import { platformLabel, type CuratedPost } from "@/types/curated";
 import { cn } from "@/lib/utils";
-import avatarInstagram from "@/assets/ivy-avatar-instagram.png.asset.json";
 import avatarTiktok from "@/assets/ivy-avatar-tiktok.png.asset.json";
 
 /**
@@ -26,78 +25,48 @@ interface ProfileMeta {
   urlLabel: string;
   avatar: string;
   profileUrl: string;
-  tone: "pink" | "lavender";
+  tone: "lavender";
 }
 
-const PROFILES: Record<CuratedPlatform, ProfileMeta> = {
-  instagram: {
-    displayName: "Ivy",
-    handle: "frogqueenivy",
-    bio: ["Not a breed", "Short spine syndrome", "linktr.ee/Ivyvibing"],
-    stats: [
-      { label: "posts", value: "623" },
-      { label: "followers", value: "549K" },
-      { label: "following", value: "214" },
-    ],
-    statsAsOf: "1 Aug 2026",
-    urlLabel: "instagram.com/frogqueenivy",
-    avatar: avatarInstagram.url,
-    profileUrl: projectConfig.socials.instagram ?? "https://www.instagram.com/frogqueenivy/",
-    tone: "pink",
-  },
-  tiktok: {
-    displayName: "Ivy",
-    handle: "ivyvibing",
-    bio: ["Ivy has short spine syndrome", "My dms are broken"],
-    stats: [
-      { label: "following", value: "134" },
-      { label: "followers", value: "4.7M" },
-      { label: "likes", value: "144.7M" },
-    ],
-    statsAsOf: "1 Aug 2026",
-    urlLabel: "tiktok.com/@ivyvibing",
-    avatar: avatarTiktok.url,
-    profileUrl: projectConfig.socials.tiktok ?? "https://www.tiktok.com/@ivyvibing",
-    tone: "lavender",
-  },
+const TIKTOK: ProfileMeta = {
+  displayName: "Ivy",
+  handle: "ivyvibing",
+  bio: ["Ivy has short spine syndrome", "My dms are broken"],
+  stats: [
+    { label: "following", value: "134" },
+    { label: "followers", value: "4.7M" },
+    { label: "likes", value: "144.7M" },
+  ],
+  statsAsOf: "1 Aug 2026",
+  urlLabel: "tiktok.com/@ivyvibing",
+  avatar: avatarTiktok.url,
+  profileUrl: projectConfig.socials.tiktok ?? "https://www.tiktok.com/@ivyvibing",
+  tone: "lavender",
 };
 
 export function SocialWindows({ posts }: { posts: CuratedPost[] }) {
-  const instagram = useMemo(
-    () => posts.filter((post) => post.platform === "instagram"),
-    [posts],
-  );
   const tiktok = useMemo(() => posts.filter((post) => post.platform === "tiktok"), [posts]);
 
-  if (instagram.length === 0 && tiktok.length === 0) return null;
+  if (tiktok.length === 0) return null;
 
   return (
     <Section
       id="social-windows"
-      eyebrow="Straight from her accounts"
-      title="Ivy's windows"
-      intro="Two tall windows onto the Frog Queen's official Instagram and TikTok. Scroll each one like the real app — her captions stay exactly as she wrote them, shown by the platforms themselves."
-      tone="leaf"
+      eyebrow="Straight from her account"
+      title="Ivy's TikTok window"
+      intro="A tall, scrollable window onto the Frog Queen's official TikTok. Her captions stay exactly as she wrote them, shown by TikTok itself."
+      tone="lavender"
     >
-      <div className="grid gap-8 xl:grid-cols-2">
-        {instagram.length > 0 ? (
-          <ProfileWindow platform="instagram" posts={instagram} />
-        ) : null}
-        {tiktok.length > 0 ? <ProfileWindow platform="tiktok" posts={tiktok} /> : null}
+      <div className="mx-auto max-w-2xl">
+        <ProfileWindow posts={tiktok} />
       </div>
     </Section>
   );
 }
 
-function ProfileWindow({
-  platform,
-  posts,
-}: {
-  platform: CuratedPlatform;
-  posts: CuratedPost[];
-}) {
-  const meta = PROFILES[platform];
-  const label = platformLabel(platform);
+function ProfileWindow({ posts }: { posts: CuratedPost[] }) {
+  const meta = TIKTOK;
+  const label = platformLabel("tiktok");
   const scrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const [progress, setProgress] = useState(0);
@@ -145,7 +114,7 @@ function ProfileWindow({
       <div
         className={cn(
           "grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 border-b-2 border-charcoal/15 px-4 py-3",
-          meta.tone === "pink" ? "bg-pink" : "bg-lavender",
+          "bg-lavender",
         )}
       >
         <span aria-hidden className="flex shrink-0 items-center gap-1.5">
@@ -218,7 +187,7 @@ function ProfileWindow({
             Follow on {label}
             <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />
           </a>
-          <Sticker tone={meta.tone === "pink" ? "yellow" : "leaf"}>
+          <Sticker tone="leaf">
             <FrogDoodle className="h-3.5 w-4 text-ivy" />
             {posts.length} {posts.length === 1 ? "post" : "posts"} in this window
           </Sticker>
@@ -264,7 +233,7 @@ function ProfileWindow({
               >
                 <OfficialSocialEmbed
                   post={post}
-                  tone={platform === "tiktok" ? "lavender" : "cream"}
+                  tone="lavender"
                   className="w-full"
                 />
               </li>
