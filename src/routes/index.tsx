@@ -21,7 +21,6 @@ import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
 import { DailyRibbit } from "@/components/ivy/daily-ribbit";
 import { ChorusPond } from "@/components/ivy/chorus-pond";
 import { PondChat } from "@/components/ivy/chat-box";
-import { FamiliarFoundry } from "@/components/ivy/familiar";
 
 
 import { OwnerCorner, RoyalCourt, FAQ, SiteFooter } from "@/components/ivy/sections-b";
@@ -115,7 +114,6 @@ function Home() {
         <Hero media={media.hero} market={market} />
         <IvyPhotoRow />
         <MeetIvy />
-        <FamiliarFoundry />
         <DailyRibbit />
         <ChorusPond />
         <PondChat />
