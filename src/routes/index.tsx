@@ -121,9 +121,9 @@ function Home() {
         <ArcadeTeaser />
         <OwnerCorner />
         <RoyalCourt />
-        <FAQ />
         <ChorusPond />
         <PondChat />
+        <FAQ />
       </main>
       <SiteFooter />
       <SectionRail />
