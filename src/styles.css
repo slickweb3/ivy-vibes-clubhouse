@@ -1594,30 +1594,8 @@ html[data-scrolling="true"] .scroll-depth {
   animation: night-twinkle 7s ease-in-out infinite;
 }
 
-.night-moon {
-  position: fixed;
-  top: clamp(4rem, 12vh, 8rem);
-  right: clamp(1rem, 6vw, 5rem);
-  z-index: 62;
-  height: clamp(2.5rem, 6vw, 4.5rem);
-  width: clamp(2.5rem, 6vw, 4.5rem);
-  border-radius: 999px;
-  pointer-events: none;
-  opacity: 0;
-  transition:
-    opacity 700ms ease,
-    transform 700ms ease;
-  transform: translateY(-1rem) scale(0.9);
-  background: radial-gradient(circle at 35% 32%, #fffaf0, #e6dfc4 62%, #cfd8dd 100%);
-  box-shadow:
-    0 0 2.5rem color-mix(in oklab, var(--yellow) 45%, transparent),
-    0 0 7rem color-mix(in oklab, var(--lavender) 35%, transparent);
-}
+/* No decorative moon: the sky glow alone carries the night. */
 
-.dark .night-moon {
-  opacity: 0.95;
-  transform: none;
-}
 
 html.dark body {
   background-image: var(--gradient-night);
@@ -1641,21 +1619,39 @@ html.dark body {
 }
 
 /* Night mode surfaces: the hand-placed warm panels become pond glass, and the
-   ink inside them flips to moonlight. Bright brand chips (frog / yellow / pink
-   / lavender) keep their dark ink so contrast holds. */
+   ink on them flips to moonlight. */
 .dark :is([class*="bg-cream"], [class*="bg-card"], [class*="bg-leaf"], [class*="bg-popover"]) {
   background-color: color-mix(in oklab, #12242f 92%, var(--lavender));
   color: var(--foreground);
 }
 
-.dark
-  :is([class*="bg-cream"], [class*="bg-card"], [class*="bg-leaf"], [class*="bg-popover"])
-  :is([class*="text-charcoal"], [class*="text-ink"]):not([class*="bg-yellow"]):not(
-    [class*="bg-pink"]
-  ):not([class*="bg-frog"]):not([class*="bg-lavender"]):not([class*="bg-leaf"]):not(
-    [class*="bg-cream"]
-  ) {
+/* Charcoal ink anywhere over a dark surface would vanish, so it becomes
+   moonlight by default. */
+.dark :is([class*="text-charcoal"], [class*="text-ink"]) {
   color: var(--foreground);
+}
+
+/* ...except on the solid bright brand chips, which stay light after dark: their
+   ink must stay charcoal. Exact class tokens only — translucent variants like
+   `bg-frog/20` read as dark surfaces and keep the moonlight ink. */
+.dark
+  :is(
+    [class~="bg-frog"],
+    [class~="bg-yellow"],
+    [class~="bg-pink"],
+    [class~="bg-lavender"],
+    [class~="bg-primary"]
+  ):not(section):not([class*="band-"]):is([class*="text-charcoal"], [class*="text-ink"]),
+.dark
+  :is(
+    [class~="bg-frog"],
+    [class~="bg-yellow"],
+    [class~="bg-pink"],
+    [class~="bg-lavender"],
+    [class~="bg-primary"]
+  ):not(section):not([class*="band-"])
+  :is([class*="text-charcoal"], [class*="text-ink"]) {
+  color: var(--charcoal);
 }
 
 .dark :is([class*="border-charcoal"], .ink-border) {
@@ -1678,4 +1674,33 @@ html.dark body {
 
 .dark .glass-dark {
   background-color: color-mix(in oklab, #0c1a24 82%, transparent);
+}
+
+/* Full-width brand bands: after dark they settle into moonlit panels instead of
+   staying daylight-bright, and their coloured tints stay a whisper. */
+.dark
+  [class*="band-"]:is(
+    section,
+    [class~="bg-lavender"],
+    [class~="bg-pink"],
+    [class~="bg-frog"],
+    [class~="bg-yellow"]
+  ) {
+  background-color: color-mix(in oklab, #101f2c 90%, var(--lavender));
+  color: var(--foreground);
+}
+
+/* One soft moonlight sheen replaces the daylight tints. */
+.dark [class*="band-"] {
+  background-image:
+    radial-gradient(
+      110% 80% at 0% 0%,
+      color-mix(in oklab, var(--lavender) 12%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      90% 70% at 100% 100%,
+      color-mix(in oklab, var(--frog) 10%, transparent) 0%,
+      transparent 62%
+    );
 }
