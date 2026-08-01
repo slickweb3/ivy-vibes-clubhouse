@@ -37,23 +37,6 @@ const midi = (note: number) => 440 * Math.pow(2, (note - 69) / 12);
 const SCALE = [0, 2, 3, 5, 7, 9, 10, 12, 14, 15, 17, 19, 21, 22];
 
 /** Ivy's theme — the four-note signature the whole world is built from. */
-const MOTIF = [0, 4, 3, 7];
-
-/**
- * Overworld phrase library. Scale-degree phrases with rests (null), written as
- * calls and answers in stepwise motion with fourth/fifth leaps at the cadence,
- * so the melody sings a tune instead of noodling at random.
- */
-const PHRASES: (number | null)[][] = [
-  [7, null, 5, 4, null, 7, null, null, 9, null, 7, null, 4, null, null, null],
-  [4, null, null, 7, 5, null, 4, null, 3, null, 4, null, 7, null, null, null],
-  [11, null, 9, null, 7, null, 5, 4, null, 7, null, null, null, null, null, null],
-  [7, 9, null, 11, null, null, 9, null, 7, null, 5, null, 4, null, null, null],
-  [0, null, 4, null, 7, null, 11, null, 9, null, null, 7, null, null, null, null],
-  [9, null, null, 7, null, 5, null, 4, 5, null, 7, null, null, null, null, null],
-];
-
-
 interface SceneConfig {
   bpm: number;
   /** Chord roots (MIDI) cycled one per bar. */
@@ -71,7 +54,7 @@ interface SceneConfig {
 
 const SCENES: Record<AudioScene, SceneConfig> = {
   landing: {
-    bpm: 70,
+    bpm: 94,
     // Dm – C – F – C: the modal overworld cadence, stated slowly.
     chords: [50, 48, 53, 48],
     pad: 0.28,
@@ -84,7 +67,7 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     creature: 0.24,
   },
   explore: {
-    bpm: 78,
+    bpm: 100,
     // Dm – C – Gm – F: walking-the-trail progression.
     chords: [50, 48, 55, 53],
     pad: 0.24,
@@ -97,7 +80,7 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     creature: 0.34,
   },
   game: {
-    bpm: 96,
+    bpm: 104,
     // Dm – F – C – Gm: the chase harmonies.
     chords: [50, 53, 48, 55],
     pad: 0.16,
@@ -106,11 +89,11 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     perc: 0.24,
     bell: 0.05,
     crystal: 0.04,
-    register: 12,
+    register: 0,
     creature: 0.28,
   },
   hush: {
-    bpm: 68,
+    bpm: 90,
     // Calm but sunny: F – C – Dm – C, kept in the friendly register.
     chords: [53, 48, 50, 48],
     pad: 0.18,
