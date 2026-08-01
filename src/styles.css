@@ -1726,3 +1726,88 @@ html.dark body {
       transparent 62%
     );
 }
+
+/* ── The Chorus Pond ──────────────────────────────────────────────────────
+   Living water plus one lily pad per visitor. Everything animates with
+   transform/opacity only so a busy pond stays cheap to paint. */
+.pond-water {
+  background:
+    radial-gradient(120% 90% at 20% 10%, color-mix(in oklab, var(--frog) 26%, transparent), transparent 60%),
+    radial-gradient(100% 80% at 85% 90%, color-mix(in oklab, var(--lavender) 22%, transparent), transparent 62%),
+    linear-gradient(180deg, color-mix(in oklab, var(--ivy) 82%, #000) 0%, color-mix(in oklab, var(--ivy) 96%, #000) 100%);
+  box-shadow: inset 0 0 60px color-mix(in oklab, #000 34%, transparent);
+  contain: paint;
+}
+
+.pond-water::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background-image:
+    repeating-radial-gradient(
+      circle at 30% 40%,
+      color-mix(in oklab, var(--cream) 7%, transparent) 0 2px,
+      transparent 2px 46px
+    ),
+    repeating-radial-gradient(
+      circle at 72% 66%,
+      color-mix(in oklab, var(--frog) 8%, transparent) 0 2px,
+      transparent 2px 58px
+    );
+  animation: pond-drift 26s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes pond-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(1.5%, -1.5%, 0) scale(1.03); }
+  to   { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+.pond-pad {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  margin: -1.175rem 0 0 -1.175rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  line-height: 1;
+  background: color-mix(in oklab, var(--frog) 78%, var(--ivy));
+  border: 2px solid color-mix(in oklab, var(--ivy) 70%, #000);
+  box-shadow: 0 6px 14px color-mix(in oklab, #000 42%, transparent);
+  transform: scale(var(--pad-scale, 1));
+  animation: pond-bob 6.5s ease-in-out var(--pad-delay, 0s) infinite;
+  will-change: transform;
+}
+
+@keyframes pond-bob {
+  0%, 100% { transform: scale(var(--pad-scale, 1)) translate3d(0, 0, 0); }
+  50%      { transform: scale(var(--pad-scale, 1)) translate3d(0, -4px, 0); }
+}
+
+.pond-pad-fresh { animation: pond-bloom 0.55s cubic-bezier(0.2, 1.5, 0.4, 1) 1, pond-bob 6.5s ease-in-out 0.6s infinite; }
+
+@keyframes pond-bloom {
+  0%   { transform: scale(0) rotate(-25deg); opacity: 0; }
+  70%  { transform: scale(calc(var(--pad-scale, 1) * 1.25)) rotate(6deg); opacity: 1; }
+  100% { transform: scale(var(--pad-scale, 1)) rotate(0deg); opacity: 1; }
+}
+
+.pond-pad-active {
+  background: var(--yellow);
+  border-color: var(--cream);
+  box-shadow:
+    0 0 0 6px color-mix(in oklab, var(--yellow) 34%, transparent),
+    0 0 26px color-mix(in oklab, var(--yellow) 60%, transparent);
+  transform: scale(calc(var(--pad-scale, 1) * 1.3));
+  animation: none;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pond-water::after,
+  .pond-pad,
+  .pond-pad-fresh { animation: none; }
+}

@@ -120,8 +120,23 @@ export const DISCOVERIES: Discovery[] = [
     hint: "You are already here.",
     glyph: "📖",
   },
+  {
+    id: "chorus",
+    title: "Added a note to the pond",
+    note: "Your croak is part of today's song forever. Well — until midnight.",
+    hint: "The pond writes one song a day. Be in it.",
+    glyph: "🎵",
+  },
+  {
+    id: "conductor",
+    title: "Conducted the pond",
+    note: "You pressed play and heard a whole day of strangers croaking in key.",
+    hint: "A song is no use unheard.",
+    glyph: "🎼",
+  },
 
 ];
+
 
 const KEY = "ivy-discoveries";
 const VISIT_KEY = "ivy-visits";

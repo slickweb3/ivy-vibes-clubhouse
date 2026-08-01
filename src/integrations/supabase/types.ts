@@ -656,6 +656,65 @@ export type Database = {
         }
         Relationships: []
       }
+      pond_pads: {
+        Row: {
+          created_at: string
+          croak: string
+          day: string
+          id: string
+          note_index: number
+          x: number
+          y: number
+        }
+        Insert: {
+          created_at?: string
+          croak: string
+          day?: string
+          id?: string
+          note_index: number
+          x: number
+          y: number
+        }
+        Update: {
+          created_at?: string
+          croak?: string
+          day?: string
+          id?: string
+          note_index?: number
+          x?: number
+          y?: number
+        }
+        Relationships: []
+      }
+      pond_planters: {
+        Row: {
+          created_at: string
+          day: string
+          pad_id: string
+          planter_hash: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          pad_id: string
+          planter_hash: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          pad_id?: string
+          planter_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pond_planters_pad_id_fkey"
+            columns: ["pad_id"]
+            isOneToOne: false
+            referencedRelation: "pond_pads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
