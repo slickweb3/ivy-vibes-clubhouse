@@ -90,9 +90,6 @@ export function OfficialSocialEmbed({
     if (!inView) setLoaded(false);
   }, [inView]);
 
-
-
-
   const label = platformLabel(post.platform);
   const fallbackLabel = curatedFallbackLabel(post);
   const [playing, setPlaying] = useState(false);
