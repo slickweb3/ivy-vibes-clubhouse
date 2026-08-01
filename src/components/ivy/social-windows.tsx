@@ -257,7 +257,7 @@ function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[
               >
                 <OfficialSocialEmbed
                   post={post}
-                  tone="lavender"
+                  tone={meta.tone}
                   className="w-full"
                 />
               </li>
