@@ -64,15 +64,9 @@ export function SocialWindows({ posts }: { posts: CuratedPost[] }) {
   );
 }
 
-function ProfileWindow({
-  platform,
-  posts,
-}: {
-  platform: CuratedPlatform;
-  posts: CuratedPost[];
-}) {
-  const meta = PROFILES[platform];
-  const label = platformLabel(platform);
+function ProfileWindow({ posts }: { posts: CuratedPost[] }) {
+  const meta = TIKTOK;
+  const label = platformLabel("tiktok");
   const scrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const [progress, setProgress] = useState(0);
