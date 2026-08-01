@@ -142,7 +142,7 @@ export function Hero({
 
 /* -------------------------------------------------------------- Meet Ivy */
 
-export function MeetIvy({ curated = [] }: { curated?: CuratedPost[] }) {
+export function MeetIvy() {
   return (
     <Section
       id="meet-ivy"
