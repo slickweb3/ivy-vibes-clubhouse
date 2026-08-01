@@ -58,7 +58,7 @@ export function RoyalCourt() {
           const url =
             (projectConfig.socials as unknown as Record<string, string | null>)[channel.id] ?? null;
           return (
-            <li key={channel.id} className="rounded-2xl bg-card p-5 pop-static">
+            <li key={channel.id} data-tilt className="rounded-2xl bg-card p-5 pop-static">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="font-display text-lg text-charcoal">{channel.label}</h3>
                 <StatusChip status={url ? "ok" : "pending"} label={url ? "Official" : COMING_SOON} />

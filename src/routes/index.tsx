@@ -7,6 +7,7 @@ import type { MarketSnapshot } from "@/lib/market.server";
 import { EMPTY_SITE_MEDIA, type SiteMedia } from "@/types/media";
 import { SiteNav } from "@/components/ivy/header";
 import { BackToTop } from "@/components/ivy/back-to-top";
+import { IvySoundscape } from "@/components/ivy/soundscape";
 import { faqEntries } from "@/data/site-content";
 import { AmbientVibes } from "@/components/ivy/ambient";
 import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
@@ -167,6 +168,7 @@ function Home() {
         <FAQ />
       </main>
       <SiteFooter />
+      <IvySoundscape />
       <BackToTop />
     </CookieConsentProvider>
   );

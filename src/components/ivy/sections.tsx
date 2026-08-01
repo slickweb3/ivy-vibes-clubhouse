@@ -478,7 +478,7 @@ export function IvyTV({
       {curated.length === 0 && approvedVideos.length > 0 ? (
         <ul className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {approvedVideos.map((item) => (
-            <li key={item.key} className="rounded-2xl bg-card p-4 pop-static">
+            <li key={item.key} data-tilt className="rounded-2xl bg-card p-4 pop-static">
               <ApprovedMedia item={item} label="Approved Ivy video" aspect="tall" tone="leaf" compact />
               <p className="mt-3 line-clamp-3 text-sm text-charcoal/85">{displayCaption(item)}</p>
               <div className="mt-3 flex items-center gap-2">
@@ -507,7 +507,7 @@ export function IvyTV({
       {curated.length === 0 ? (
         <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
-            <li key={item.id} className="rounded-2xl bg-card p-4 pop-static">
+            <li key={item.id} data-tilt className="rounded-2xl bg-card p-4 pop-static">
               <MediaPlaceholder label={item.mediaLabel} aspect="tall" tone="leaf" compact />
               <h3 className="mt-3 font-display text-base text-charcoal">{item.title}</h3>
               <p className="mt-1 text-sm text-charcoal/80">{item.caption}</p>
