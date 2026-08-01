@@ -77,6 +77,26 @@ function noise(dur: number, gain = 0.35, sweepTo = 400) {
   src.start();
 }
 
+
+/** One-shot ocarina tone for interaction cues: scoops into pitch, then glides. */
+function ocarinaCue(from: number, to: number, dur: number, gain: number) {
+  const audio = ensure();
+  if (!audio || !master) return;
+  const t0 = audio.currentTime;
+  const osc = audio.createOscillator();
+  const env = audio.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(from * 0.94, t0);
+  osc.frequency.exponentialRampToValueAtTime(from, t0 + 0.03);
+  osc.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+  env.gain.setValueAtTime(0.0001, t0);
+  env.gain.exponentialRampToValueAtTime(gain, t0 + 0.03);
+  env.gain.exponentialRampToValueAtTime(0.0001, t0 + dur + 0.05);
+  osc.connect(env).connect(master);
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.08);
+}
+
 /** Ascending sparkle used by the hop cues — semitone offsets over a root. */
 function arp(
   steps: number[],
@@ -300,6 +320,82 @@ function hat(time: number, gain: number) {
   src.start(time);
 }
 
+/** Soft ocarina doubling of the lead: sine core with a blooming vibrato. */
+function ocarina(time: number, freq: number, dur: number, gain: number) {
+  const audio = ctx;
+  if (!audio || !musicGain) return;
+  const osc = audio.createOscillator();
+  const env = audio.createGain();
+  const vib = audio.createOscillator();
+  const depth = audio.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq * 0.96, time);
+  osc.frequency.exponentialRampToValueAtTime(freq, time + 0.05);
+  vib.frequency.value = 5.2;
+  depth.gain.setValueAtTime(0.0001, time);
+  depth.gain.linearRampToValueAtTime(freq * 0.008, time + dur * 0.6);
+  vib.connect(depth).connect(osc.frequency);
+  env.gain.setValueAtTime(0.0001, time);
+  env.gain.exponentialRampToValueAtTime(gain, time + 0.04);
+  env.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+  osc.connect(env).connect(musicGain);
+  osc.start(time);
+  vib.start(time);
+  osc.stop(time + dur + 0.02);
+  vib.stop(time + dur + 0.02);
+}
+
+/** A frog on the bank, keeping the offbeat. */
+function croak(time: number, gain: number) {
+  const audio = ctx;
+  if (!audio || !musicGain) return;
+  for (let i = 0; i < 2; i += 1) {
+    const t = time + i * 0.08;
+    const osc = audio.createOscillator();
+    const wob = audio.createOscillator();
+    const depth = audio.createGain();
+    const band = audio.createBiquadFilter();
+    const env = audio.createGain();
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(250 - i * 30, t);
+    osc.frequency.exponentialRampToValueAtTime(120, t + 0.07);
+    wob.frequency.value = 40;
+    depth.gain.value = 42;
+    wob.connect(depth).connect(osc.frequency);
+    band.type = "bandpass";
+    band.frequency.value = 470;
+    band.Q.value = 5;
+    env.gain.setValueAtTime(0.0001, t);
+    env.gain.exponentialRampToValueAtTime(gain, t + 0.01);
+    env.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+    osc.connect(band).connect(env).connect(musicGain);
+    osc.start(t);
+    wob.start(t);
+    osc.stop(t + 0.12);
+    wob.stop(t + 0.12);
+  }
+}
+
+/** Ivy answering the melody with one warm woof. */
+function woof(time: number, gain: number) {
+  const audio = ctx;
+  if (!audio || !musicGain) return;
+  const osc = audio.createOscillator();
+  const low = audio.createBiquadFilter();
+  const env = audio.createGain();
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(210, time);
+  osc.frequency.exponentialRampToValueAtTime(88, time + 0.22);
+  low.type = "lowpass";
+  low.frequency.value = 820;
+  env.gain.setValueAtTime(0.0001, time);
+  env.gain.exponentialRampToValueAtTime(gain, time + 0.025);
+  env.gain.exponentialRampToValueAtTime(0.0001, time + 0.3);
+  osc.connect(low).connect(env).connect(musicGain);
+  osc.start(time);
+  osc.stop(time + 0.34);
+}
+
 function scheduleMusic() {
   const audio = ctx;
   if (!audio || !musicGain) return;
@@ -311,10 +407,14 @@ function scheduleMusic() {
     const t = nextNoteTime;
     const i = step16 % 64;
     const bar = Math.floor(i / 16);
-    const beat = i % 4;
 
     const note = MELODY[i];
-    if (note !== null) voice(t, hz(note), spb * 3.4, "square", 0.085);
+    if (note !== null) {
+      // The lead is an ocarina singing the tune, with a quiet chip-square
+      // shadow underneath so it still reads as an arcade theme.
+      ocarina(t, hz(note), spb * 3.6, 0.075);
+      voice(t, hz(note), spb * 3.2, "square", 0.035);
+    }
 
     // bass: root on the beat, octave bounce on the offbeat
     if (i % 2 === 0) {
@@ -323,20 +423,30 @@ function scheduleMusic() {
       voice(t, hz(root - 12 + (up ? 12 : 0)), spb * 1.7, "triangle", 0.115);
     }
 
+    // harp: rolling chord tones between the melody notes, the overworld shimmer
+    if (i % 4 === 1 || i % 4 === 3) {
+      const root = BASS_ROOTS[bar] ?? 2;
+      const shape = [0, 7, 10, 14, 19][(i * 3) % 5]!;
+      voice(t, hz(root + shape + 12), spb * 1.4, "triangle", 0.03 + intensity * 0.015);
+    }
+
     // percussion
     if (i % 4 === 0) voice(t, 78, 0.1, "sine", 0.16, 44);
     if (i % 4 === 2) hat(t, 0.045 + intensity * 0.03);
+
+    // heroic horn on the downbeat of each phrase half
+    if (i === 0 || i === 32) voice(t, hz(BASS_ROOTS[bar] ?? 2), spb * 6, "sawtooth", 0.035);
 
     if (intensity > 0.45) {
       const high = COUNTER[i];
       if (high !== null) voice(t, hz(high), spb * 2.6, "triangle", 0.045 * intensity);
     }
 
-    // foley: a ribbit answers each phrase, and Ivy signs off every loop
-    if (i === 15 || i === 47) voice(t, 190, 0.09, "sawtooth", 0.05, 120);
-    if (i === 62) voice(t, 165, 0.22, "triangle", 0.06, 96);
+    // foley: frogs answer each phrase, and Ivy signs off every loop
+    if (i === 15 || i === 47) croak(t, 0.075);
+    if (i === 30 && intensity > 0.3) croak(t, 0.045);
+    if (i === 62) woof(t, 0.09);
 
-    void beat;
     nextNoteTime += spb;
     step16 += 1;
   }
@@ -398,44 +508,69 @@ export const gameAudio = {
     if (!enabled) return;
     switch (cue) {
       case "jump":
-        // Zelda-ish "hup": a little airy body under a rising perfect-fourth
-        // sparkle, so the hop reads as heroic rather than as a beep.
-        tone({ freq: 240, to: 460, dur: 0.1, type: "triangle", gain: 0.26 });
-        arp([0, 5, 12], 587.33, 0.05, 0.075, "triangle", 0.2);
-        tone({ freq: 2350, dur: 0.05, type: "sine", gain: 0.07, delay: 0.1 });
+        // The hop: an ocarina "hup" scooping up a perfect fourth, a frog-throat
+        // body underneath, and one harp sparkle as she leaves the pad.
+        tone({ freq: 230, to: 470, dur: 0.11, type: "triangle", gain: 0.24 });
+        ocarinaCue(587.33, 784, 0.16, 0.16);
+        arp([0, 5, 12], 587.33, 0.05, 0.07, "triangle", 0.13);
+        tone({ freq: 2350, dur: 0.05, type: "sine", gain: 0.06, delay: 0.11 });
         break;
       case "double":
-        // Second hop answers the first an octave up — the classic secret chime.
-        tone({ freq: 420, to: 900, dur: 0.1, type: "triangle", gain: 0.16 });
-        arp([12, 17, 19, 24], 587.33, 0.045, 0.06, "square", 0.12);
+        // Mid-air hop answers an octave up — the little "secret" flourish.
+        tone({ freq: 420, to: 900, dur: 0.1, type: "triangle", gain: 0.14 });
+        ocarinaCue(880, 1174.66, 0.18, 0.13);
+        arp([12, 17, 19, 24], 587.33, 0.045, 0.055, "triangle", 0.1);
         break;
       case "coin":
-        tone({ freq: 880 + Math.min(level, 5) * 90, dur: 0.08, type: "square", gain: 0.2 });
+        // Rupee-style two-tone chime, rising with the combo.
+        tone({ freq: 987.77 + Math.min(level, 5) * 70, dur: 0.07, type: "triangle", gain: 0.18 });
         tone({
-          freq: 1320 + Math.min(level, 5) * 120,
-          dur: 0.12,
-          type: "square",
-          gain: 0.16,
-          delay: 0.06,
+          freq: 1479.98 + Math.min(level, 5) * 100,
+          dur: 0.16,
+          type: "triangle",
+          gain: 0.14,
+          delay: 0.055,
         });
         break;
       case "combo":
-        tone({ freq: 1200, to: 1900, dur: 0.18, type: "triangle", gain: 0.22 });
+        // Harp run up the mode: the reward for chaining.
+        arp([0, 4, 7, 11, 12], 587.33, 0.09, 0.05, "triangle", 0.16);
         break;
       case "near":
-        tone({ freq: 220, to: 140, dur: 0.12, type: "sine", gain: 0.18 });
+        // Close call: a low frog gulp rather than a buzz.
+        tone({ freq: 210, to: 130, dur: 0.13, type: "sawtooth", gain: 0.14 });
         break;
       case "milestone":
-        [0, 0.09, 0.18].forEach((delay, i) =>
-          tone({ freq: 660 + i * 220, dur: 0.16, type: "triangle", gain: 0.22, delay }),
+        // Secret-found fanfare, ending on the octave, with Ivy's woof under it.
+        [0, 4, 7, 12].forEach((semi, i) =>
+          tone({
+            freq: 587.33 * Math.pow(2, semi / 12),
+            dur: 0.2,
+            type: "triangle",
+            gain: 0.2,
+            delay: i * 0.1,
+          }),
         );
+        tone({ freq: 200, to: 90, dur: 0.28, type: "triangle", gain: 0.14, delay: 0.42 });
         break;
       case "death":
-        noise(0.4, 0.3, 200);
-        tone({ freq: 320, to: 70, dur: 0.5, type: "sawtooth", gain: 0.22 });
+        // The gentle "quest paused" fall: descending ocarina, soft splash, woof.
+        noise(0.4, 0.24, 200);
+        [12, 10, 7, 3].forEach((semi, i) =>
+          tone({
+            freq: 587.33 * Math.pow(2, semi / 12),
+            dur: 0.22,
+            type: "sine",
+            gain: 0.16,
+            delay: i * 0.12,
+          }),
+        );
+        tone({ freq: 190, to: 80, dur: 0.34, type: "triangle", gain: 0.14, delay: 0.56 });
         break;
       case "ui":
-        tone({ freq: 620, dur: 0.06, type: "triangle", gain: 0.16 });
+        // Wooden menu tick on the tonic.
+        tone({ freq: 587.33, dur: 0.05, type: "triangle", gain: 0.13 });
+        tone({ freq: 880, dur: 0.07, type: "sine", gain: 0.06, delay: 0.02 });
         break;
     }
   },
