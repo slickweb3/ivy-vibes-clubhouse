@@ -103,18 +103,19 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     creature: 0.28,
   },
   hush: {
-    bpm: 66,
-    // Slow lantern-light: F – Dm – C – Dm.
-    chords: [53, 50, 48, 50],
-    pad: 0.3,
-    melody: 0.14,
-    pluck: 0.14,
+    bpm: 68,
+    // Calm but sunny: F – C – Dm – C, kept in the friendly register.
+    chords: [53, 48, 50, 48],
+    pad: 0.18,
+    melody: 0.16,
+    pluck: 0.18,
     perc: 0,
-    bell: 0.05,
-    crystal: 0.04,
-    register: -12,
-    creature: 0.16,
+    bell: 0.06,
+    crystal: 0.05,
+    register: 0,
+    creature: 0.2,
   },
+
 };
 
 const pick = <T>(items: readonly T[]) => items[Math.floor(Math.random() * items.length)]!;
