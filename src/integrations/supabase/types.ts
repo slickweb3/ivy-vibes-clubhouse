@@ -277,6 +277,48 @@ export type Database = {
         }
         Relationships: []
       }
+      game_payouts: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          paid_at: string | null
+          place: number
+          score: number
+          season: string
+          tokens: number
+          tx_signature: string | null
+          updated_at: string
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          paid_at?: string | null
+          place: number
+          score?: number
+          season: string
+          tokens?: number
+          tx_signature?: string | null
+          updated_at?: string
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          paid_at?: string | null
+          place?: number
+          score?: number
+          season?: string
+          tokens?: number
+          tx_signature?: string | null
+          updated_at?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       game_runs: {
         Row: {
           accepted: boolean

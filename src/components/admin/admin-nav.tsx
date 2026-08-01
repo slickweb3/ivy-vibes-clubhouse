@@ -9,6 +9,7 @@ const LINKS = [
   { to: "/admin/media", label: "Media library" },
   { to: "/admin/token", label: "Token & chart" },
   { to: "/admin/leaderboard", label: "Game leaderboard" },
+  { to: "/admin/winners", label: "Monthly winners" },
   { to: "/admin/chat", label: "Pond chat" },
   { to: "/admin/settings", label: "Automation" },
 ] as const;

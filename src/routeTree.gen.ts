@@ -33,6 +33,7 @@ import { Route as AuthenticatedAdminLeaderboardRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminTokenRouteImport } from './routes/_authenticated/admin.token'
+import { Route as AuthenticatedAdminWinnersRouteImport } from './routes/_authenticated/admin.winners'
 import { Route as ApiPublicCuratedPostsRouteImport } from './routes/api/public/curated-posts'
 import { Route as ApiPublicMarketRouteImport } from './routes/api/public/market'
 import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
@@ -161,6 +162,12 @@ const AuthenticatedAdminTokenRoute = AuthenticatedAdminTokenRouteImport.update({
   path: '/admin/token',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminWinnersRoute =
+  AuthenticatedAdminWinnersRouteImport.update({
+    id: '/admin/winners',
+    path: '/admin/winners',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicCuratedPostsRoute = ApiPublicCuratedPostsRouteImport.update({
   id: '/api/public/curated-posts',
   path: '/api/public/curated-posts',
@@ -207,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/token': typeof AuthenticatedAdminTokenRoute
+  '/admin/winners': typeof AuthenticatedAdminWinnersRoute
   '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -236,6 +244,7 @@ export interface FileRoutesByTo {
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/token': typeof AuthenticatedAdminTokenRoute
+  '/admin/winners': typeof AuthenticatedAdminWinnersRoute
   '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -267,6 +276,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/token': typeof AuthenticatedAdminTokenRoute
+  '/_authenticated/admin/winners': typeof AuthenticatedAdminWinnersRoute
   '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/settings'
     | '/admin/token'
+    | '/admin/winners'
     | '/api/public/curated-posts'
     | '/api/public/market'
     | '/admin/'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/settings'
     | '/admin/token'
+    | '/admin/winners'
     | '/api/public/curated-posts'
     | '/api/public/market'
     | '/admin'
@@ -357,6 +369,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/media'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/token'
+    | '/_authenticated/admin/winners'
     | '/api/public/curated-posts'
     | '/api/public/market'
     | '/_authenticated/admin/'
@@ -557,6 +570,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminTokenRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/winners': {
+      id: '/_authenticated/admin/winners'
+      path: '/admin/winners'
+      fullPath: '/admin/winners'
+      preLoaderRoute: typeof AuthenticatedAdminWinnersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/curated-posts': {
       id: '/api/public/curated-posts'
       path: '/api/public/curated-posts'
@@ -596,6 +616,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminTokenRoute: typeof AuthenticatedAdminTokenRoute
+  AuthenticatedAdminWinnersRoute: typeof AuthenticatedAdminWinnersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -607,6 +628,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminTokenRoute: AuthenticatedAdminTokenRoute,
+  AuthenticatedAdminWinnersRoute: AuthenticatedAdminWinnersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
