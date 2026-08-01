@@ -1571,12 +1571,12 @@ html[data-scrolling="true"] .scroll-depth {
   pointer-events: none;
   opacity: 0;
   transition: opacity 700ms ease;
-  background: linear-gradient(180deg, #3b4a86 0%, #2b3a63 55%, #1d2740 100%);
+  background: linear-gradient(180deg, #2a3a72 0%, #1b2750 55%, #101833 100%);
   mix-blend-mode: multiply;
 }
 
 .dark .night-wash {
-  opacity: 0.55;
+  opacity: 0.82;
 }
 
 .night-sky {
