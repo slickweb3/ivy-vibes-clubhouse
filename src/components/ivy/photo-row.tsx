@@ -1,4 +1,7 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { Section } from "./primitives";
+
 import photo1 from "@/assets/ivy-photo-1.jpg.asset.json";
 import photo2 from "@/assets/ivy-photo-2.jpg.asset.json";
 import photo3 from "@/assets/ivy-photo-3.jpg.asset.json";
