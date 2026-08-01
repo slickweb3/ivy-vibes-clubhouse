@@ -19,6 +19,7 @@ import { LiveMarket } from "@/components/ivy/market";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
 import { DailyRibbit } from "@/components/ivy/daily-ribbit";
 import { ChorusPond } from "@/components/ivy/chorus-pond";
+import { PondChat } from "@/components/ivy/chat-box";
 import { FamiliarFoundry } from "@/components/ivy/familiar";
 
 
@@ -116,6 +117,7 @@ function Home() {
         <FamiliarFoundry />
         <DailyRibbit />
         <ChorusPond />
+        <PondChat />
 
 
 

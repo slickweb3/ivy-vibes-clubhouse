@@ -47,6 +47,36 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          body: string
+          created_at: string
+          hidden_at: string | null
+          hidden_by: string | null
+          hidden_reason: string | null
+          id: string
+          wallet_address: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          hidden_at?: string | null
+          hidden_by?: string | null
+          hidden_reason?: string | null
+          id?: string
+          wallet_address: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          hidden_at?: string | null
+          hidden_by?: string | null
+          hidden_reason?: string | null
+          id?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       content_blocks: {
         Row: {
           body: string | null
@@ -1166,6 +1196,15 @@ export type Database = {
     }
     Functions: {
       bootstrap_first_admin: { Args: never; Returns: boolean }
+      chat_recent: {
+        Args: { _limit?: number }
+        Returns: {
+          body: string
+          created_at: string
+          id: string
+          wallet_masked: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
