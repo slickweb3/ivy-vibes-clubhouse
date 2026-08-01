@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { Section } from "./primitives";
+import { discover } from "@/lib/discoveries";
 
 import photo1 from "@/assets/ivy-photo-1.jpg.asset.json";
 import photo2 from "@/assets/ivy-photo-2.jpg.asset.json";
@@ -60,6 +61,10 @@ export function IvyPhotoRow() {
       document.body.style.overflow = previous;
     };
   }, [open, close, step]);
+
+  useEffect(() => {
+    if (open !== null) discover("gaze");
+  }, [open]);
 
   const active = open === null ? null : PHOTOS[open];
 

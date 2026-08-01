@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import ivySticker from "@/assets/ivy-hop-sticker.png.asset.json";
+import { discover } from "@/lib/discoveries";
 
 /**
  * Tucked-away Ivy sticker that hops up the screen when you tap her.
@@ -45,6 +46,8 @@ export function IvyHopSticker() {
     setMove(nextMove);
     setPuffKey((key) => key + 1);
     setHops(next);
+    if (nextMove === "double") discover("double");
+    else if (nextMove === "flip") discover("flip");
     timers.current.push(window.setTimeout(() => setMove(null), MOVE_DURATION[nextMove]));
   };
 

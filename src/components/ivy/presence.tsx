@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { discover } from "@/lib/discoveries";
 
 /**
  * IvyPresence — the site's ambient "living environment" layer.
@@ -185,6 +186,7 @@ export function IvyPresence() {
       if (typed === "ribbit") {
         typed = "";
         setRibbit(true);
+        discover("ribbit");
         window.setTimeout(() => setRibbit(false), 4200);
       }
     };
