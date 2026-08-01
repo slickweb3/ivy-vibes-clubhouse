@@ -319,10 +319,12 @@
 }
 
 /* Every interactive control gets tactile press feedback, even the plain
-   text links and icon buttons that don't carry the chunky `pop` treatment. */
-button:not(.pop),
-a[role="button"]:not(.pop),
-[role="button"]:not(.pop),
+   text links and icon buttons that don't carry the chunky `pop` treatment.
+   `.no-press` opts out: play surfaces (the game canvas) must never scale,
+   because a stuck :active on touch would leave the whole window shrunk. */
+button:not(.pop):not(.no-press),
+a[role="button"]:not(.pop):not(.no-press),
+[role="button"]:not(.pop):not(.no-press),
 summary {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -331,9 +333,9 @@ summary {
     opacity 150ms ease;
 }
 
-button:not(.pop):active,
-a[role="button"]:not(.pop):active,
-[role="button"]:not(.pop):active,
+button:not(.pop):not(.no-press):active,
+a[role="button"]:not(.pop):not(.no-press):active,
+[role="button"]:not(.pop):not(.no-press):active,
 summary:active {
   transform: scale(0.94) rotate(-0.6deg);
   opacity: 0.9;
@@ -341,6 +343,15 @@ summary:active {
     transform 80ms ease-out,
     opacity 80ms ease-out;
 }
+
+.no-press,
+.no-press:active {
+  transform: none !important;
+  opacity: 1 !important;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+
 
 button:disabled:active,
 button[aria-disabled="true"]:active {
