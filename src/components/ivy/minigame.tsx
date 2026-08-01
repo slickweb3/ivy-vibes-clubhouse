@@ -11,6 +11,7 @@ import bs58 from "bs58";
 import { Button } from "@/components/ui/button";
 import { StatusChip } from "@/components/ivy/primitives";
 import { getLeaderboard, startRun, submitScore } from "@/lib/game.functions";
+import { SeasonCard } from "@/components/ivy/player-card";
 import type { Leaderboard } from "@/lib/game.server";
 import runnerSprite from "@/assets/ivy-runner.png";
 import gameFrame from "@/assets/game-frame.png";
@@ -146,6 +147,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [board, setBoard] = useState<Leaderboard>(initialLeaderboard);
+  const [cardKey, setCardKey] = useState(0);
 
   const beginRun = useServerFn(startRun);
   const sendScore = useServerFn(submitScore);
@@ -743,11 +745,20 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
         setStatus(result.reason ?? "Score was not accepted.");
       } else {
         nonceRef.current = null;
-        setStatus(
+        const bits = [
           result.rank
             ? `Locked in. Season best ${result.bestScore} — currently #${result.rank}.`
             : `Locked in. Season best ${result.bestScore}.`,
-        );
+        ];
+        if (result.xpEarned) bits.push(`+${result.xpEarned} XP (level ${result.level}).`);
+        if (result.streakDays && result.streakDays > 1) {
+          bits.push(`${result.streakDays}-day streak.`);
+        }
+        if (result.flagged) {
+          bits.push("This run looked automated, so it earned no XP and reward eligibility is paused.");
+        }
+        setStatus(bits.join(" "));
+        setCardKey((key) => key + 1);
         setBoard(await refreshBoard({}));
       }
     } catch {
@@ -854,9 +865,10 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
         </div>
         {status ? <p className="mt-2 text-sm text-charcoal/85">{status}</p> : null}
         <p className="mt-2 text-xs text-charcoal/70">
-          Signing is a free, read-only message. It proves the wallet is yours — it never approves a
-          transaction and never touches your funds.
+          The game is fully playable with no wallet. Connecting only reads your public address;
+          signing is a free, read-only message that never approves a transaction or touches funds.
         </p>
+        {wallet ? <SeasonCard wallet={wallet} refreshKey={cardKey} /> : null}
       </div>
 
       <div className="rounded-2xl bg-card p-4 pop-static">
@@ -888,8 +900,28 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
                 >
                   {entry.rank}
                 </span>
-                <span className="font-mono text-sm text-charcoal">{shortWallet(entry.wallet)}</span>
-                <span className="ml-auto font-display text-base text-charcoal">{entry.score}</span>
+                <span className="min-w-0 truncate font-mono text-sm text-charcoal">
+                  {shortWallet(entry.wallet)}
+                </span>
+                <span className="hidden shrink-0 rounded-full bg-lavender px-2 py-0.5 text-[11px] font-bold text-charcoal sm:inline">
+                  Lv {entry.level}
+                </span>
+                {entry.streakDays > 1 ? (
+                  <span className="hidden shrink-0 rounded-full bg-yellow px-2 py-0.5 text-[11px] font-bold text-charcoal sm:inline">
+                    {entry.streakDays}d streak
+                  </span>
+                ) : null}
+                {entry.rewardEligible ? null : (
+                  <span
+                    title="Reward eligibility paused pending fair-play review"
+                    className="shrink-0 rounded-full bg-pink px-2 py-0.5 text-[11px] font-bold text-charcoal"
+                  >
+                    Under review
+                  </span>
+                )}
+                <span className="ml-auto shrink-0 font-display text-base text-charcoal tabular-nums">
+                  {entry.score}
+                </span>
               </li>
             ))
           )}
