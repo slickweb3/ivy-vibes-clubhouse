@@ -108,6 +108,8 @@ function Home() {
         <Hero media={media.hero} market={market} />
         <IvyPhotoRow />
         <MeetIvy />
+        <DailyRibbit />
+
 
         <SocialWindows posts={curated.all} />
         <TheLore />
