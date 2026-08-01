@@ -367,12 +367,17 @@ export class IvyAudio {
    * moment rather than announcing itself.
    */
   private harp(rootMidi: number, at: number, level: number, count = 7, down = false) {
-    const steps = down ? [...SCALE].reverse() : SCALE;
     for (let i = 0; i < count; i += 1) {
-      const step = steps[i % steps.length] ?? 0;
-      const octave = Math.floor(i / steps.length) * 12;
+      const step = SCALE[i % SCALE.length] ?? 0;
+      const octave = Math.floor(i / SCALE.length) * 12;
+      const offset = step + octave;
       const gap = 0.042 + i * 0.004; // gentle slowing as the run tops out
-      this.pluck(midi(rootMidi + step + octave), at + i * gap, level * (1 - i * 0.06), this.fx);
+      this.pluck(
+        midi(down ? rootMidi - offset : rootMidi + offset),
+        at + i * gap,
+        level * (1 - i * 0.06),
+        this.fx,
+      );
     }
   }
 
