@@ -89,7 +89,7 @@ export function drawFamiliarCard(
   borderGrad.addColorStop(1, ring);
   ctx.fillStyle = borderGrad;
   ctx.fillRect(0, 0, CARD_W, CARD_H);
-  if (familiar.foil) drawFoil(ctx, 0, 0, CARD_W, CARD_H, familiar.prismatic ? 0.5 : 0.3, rnd);
+  if (familiar.foil) drawFoil(ctx, 0, 0, CARD_W, CARD_H, familiar.prismatic ? 0.34 : 0.2, rnd);
   ctx.restore();
 
   // inner paper panel
@@ -221,7 +221,7 @@ export function drawFamiliarCard(
   ctx.fillRect(ART_X, ART_Y, ART_W, ART_H);
 
   // foil over the artwork — the tell that a card is rare
-  if (familiar.foil) drawFoil(ctx, ART_X, ART_Y, ART_W, ART_H, familiar.prismatic ? 0.42 : 0.26, rnd);
+  if (familiar.foil) drawFoil(ctx, ART_X, ART_Y, ART_W, ART_H, familiar.prismatic ? 0.3 : 0.18, rnd);
 
   // sparkle dust for the top tier
   if (familiar.prismatic) {
