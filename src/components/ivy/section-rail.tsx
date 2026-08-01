@@ -16,9 +16,6 @@ const RAIL_SECTIONS: { id: string; label: string }[] = [
   { id: "main", label: "Top of the pond" },
   { id: "ivy-photos", label: "Frame by frame" },
   { id: "meet-ivy", label: "Meet Ivy" },
-  { id: "daily-ribbit", label: "Daily ribbit" },
-  { id: "chorus-pond", label: "Chorus pond" },
-  { id: "pond-chat", label: "Pond chat" },
   { id: "social-windows", label: "Instagram & TikTok" },
   { id: "the-lore", label: "The lore" },
   { id: "why-ivy", label: "Why $ivy" },
@@ -27,6 +24,8 @@ const RAIL_SECTIONS: { id: string; label: string }[] = [
   { id: "arcade", label: "Lily Pad Leap" },
   { id: "royal-court", label: "Royal court" },
   { id: "faq", label: "Questions" },
+  { id: "chorus-pond", label: "Chorus pond" },
+  { id: "pond-chat", label: "Pond chat" },
   { id: "site-footer", label: "Footer" },
 ];
 
