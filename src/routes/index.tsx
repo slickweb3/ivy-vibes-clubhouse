@@ -11,7 +11,6 @@ import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import {
   Hero,
   MeetIvy,
-  HallOfFame,
   TheLore,
   WhyIvy,
   TokenRecord,
