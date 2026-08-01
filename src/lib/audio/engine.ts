@@ -18,15 +18,34 @@ export type AudioScene = "landing" | "explore" | "game" | "hush";
 export type AudioCue =
   "press" | "hover" | "open" | "reward" | "discovery" | "jump" | "land" | "fail";
 
-type Voice = "flute" | "pluck" | "bell" | "crystal";
+type Voice = "ocarina" | "pluck" | "bell" | "crystal" | "horn";
 
 const midi = (note: number) => 440 * Math.pow(2, (note - 69) / 12);
 
-/** A-minor pentatonic + a Dorian colour tone: warm, folkloric, never sour. */
-const SCALE = [0, 3, 5, 7, 10, 12, 15, 17, 19, 22];
+/**
+ * D-Dorian across two octaves — the modal, adventurous colour that overworld
+ * themes live in: minor enough to feel like a quest, with the bright natural
+ * sixth that keeps the pond hopeful.
+ */
+const SCALE = [0, 2, 3, 5, 7, 9, 10, 12, 14, 15, 17, 19, 21, 22];
 
 /** Ivy's theme — the four-note signature the whole world is built from. */
-const MOTIF = [0, 2, 4, 3];
+const MOTIF = [0, 4, 3, 7];
+
+/**
+ * Overworld phrase library. Scale-degree phrases with rests (null), written as
+ * calls and answers in stepwise motion with fourth/fifth leaps at the cadence,
+ * so the melody sings a tune instead of noodling at random.
+ */
+const PHRASES: (number | null)[][] = [
+  [7, null, 5, 4, null, 7, null, null, 9, null, 7, null, 4, null, null, null],
+  [4, null, null, 7, 5, null, 4, null, 3, null, 4, null, 7, null, null, null],
+  [11, null, 9, null, 7, null, 5, 4, null, 7, null, null, null, null, null, null],
+  [7, 9, null, 11, null, null, 9, null, 7, null, 5, null, 4, null, null, null],
+  [0, null, 4, null, 7, null, 11, null, 9, null, null, 7, null, null, null, null],
+  [9, null, null, 7, null, 5, null, 4, 5, null, 7, null, null, null, null, null],
+];
+
 
 interface SceneConfig {
   bpm: number;
@@ -46,7 +65,8 @@ interface SceneConfig {
 const SCENES: Record<AudioScene, SceneConfig> = {
   landing: {
     bpm: 74,
-    chords: [45, 45, 41, 43],
+    // Dm – C – F – C: the modal overworld cadence, stated slowly.
+    chords: [50, 48, 53, 48],
     pad: 0.5,
     melody: 0.3,
     pluck: 0.32,
@@ -54,11 +74,12 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     bell: 0.18,
     crystal: 0.3,
     register: 0,
-    creature: 0.25,
+    creature: 0.45,
   },
   explore: {
     bpm: 88,
-    chords: [45, 50, 43, 48],
+    // Dm – C – Gm – F: walking-the-trail progression.
+    chords: [50, 48, 55, 53],
     pad: 0.34,
     melody: 0.5,
     pluck: 0.55,
@@ -66,11 +87,12 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     bell: 0.14,
     crystal: 0.18,
     register: 0,
-    creature: 0.4,
+    creature: 0.72,
   },
   game: {
     bpm: 116,
-    chords: [45, 43, 50, 48],
+    // Dm – F – C – Gm: the chase harmonies.
+    chords: [50, 53, 48, 55],
     pad: 0.22,
     melody: 0.62,
     pluck: 0.7,
@@ -78,11 +100,12 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     bell: 0.1,
     crystal: 0.12,
     register: 12,
-    creature: 0.3,
+    creature: 0.5,
   },
   hush: {
     bpm: 66,
-    chords: [41, 45, 43, 45],
+    // Slow lantern-light: F – Dm – C – Dm.
+    chords: [53, 50, 48, 50],
     pad: 0.55,
     melody: 0.2,
     pluck: 0.2,
@@ -90,7 +113,7 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     bell: 0.2,
     crystal: 0.34,
     register: -12,
-    creature: 0.18,
+    creature: 0.3,
   },
 };
 
@@ -258,34 +281,41 @@ export class IvyAudio {
     node.connect(tap).connect(this.verbSend);
   }
 
-  /** Warm wooden flute: breathy sine core, gentle vibrato, soft tonguing. */
-  private flute(hz: number, at: number, dur: number, level: number) {
+  /**
+   * Ocarina: the hero's instrument. Near-pure sine core, a soft hollow fifth
+   * partial, a scoop up into the pitch, and vibrato that only blooms after the
+   * note has settled — the way a real player leans into a held tone.
+   */
+  private ocarina(hz: number, at: number, dur: number, level: number) {
     const ctx = this.ctx;
     const osc = ctx.createOscillator();
     osc.type = "sine";
-    osc.frequency.setValueAtTime(hz * 0.985, at);
-    osc.frequency.exponentialRampToValueAtTime(hz, at + 0.09);
+    osc.frequency.setValueAtTime(hz * 0.955, at);
+    osc.frequency.exponentialRampToValueAtTime(hz, at + 0.07);
     const body = ctx.createOscillator();
-    body.type = "triangle";
-    body.frequency.value = hz * 2.002;
+    body.type = "sine";
+    body.frequency.value = hz * 3.0;
     const bodyGain = ctx.createGain();
-    bodyGain.gain.value = 0.12;
+    bodyGain.gain.value = 0.07;
 
     const vib = ctx.createOscillator();
-    vib.frequency.value = 4.6 + Math.random() * 1.2;
+    vib.frequency.value = 5.1 + Math.random() * 0.8;
     const vibDepth = ctx.createGain();
-    vibDepth.gain.value = hz * 0.006;
+    // Vibrato blooms in — flat attack, expressive tail.
+    vibDepth.gain.setValueAtTime(0.0001, at);
+    vibDepth.gain.linearRampToValueAtTime(hz * 0.009, at + Math.max(0.18, dur * 0.5));
     vib.connect(vibDepth).connect(osc.frequency);
 
-    const gain = this.env(at, 0.12, dur * 0.6, dur * 0.5, level);
+    const gain = this.env(at, 0.07, dur * 0.72, dur * 0.55, level);
     const tone = ctx.createBiquadFilter();
     tone.type = "lowpass";
-    tone.frequency.value = Math.min(hz * 6, 6500);
+    tone.frequency.value = Math.min(hz * 4.5, 5200);
 
     osc.connect(tone);
     body.connect(bodyGain).connect(tone);
     tone.connect(gain);
-    this.send(gain, 0.5, this.music);
+    this.send(gain, 0.62, this.music);
+
 
     // A whisper of breath at the attack keeps it human.
     if (!this.lean) {
@@ -329,6 +359,55 @@ export class IvyAudio {
     partial.start(at);
     osc.stop(at + 1);
     partial.stop(at + 1);
+  }
+
+  /**
+   * Harp run: the "you found something" flourish. A quick rising sweep of
+   * plucked scale tones with a soft ritardando, kept quiet so it decorates the
+   * moment rather than announcing itself.
+   */
+  private harp(rootMidi: number, at: number, level: number, count = 7, down = false) {
+    for (let i = 0; i < count; i += 1) {
+      const step = SCALE[i % SCALE.length] ?? 0;
+      const octave = Math.floor(i / SCALE.length) * 12;
+      const offset = step + octave;
+      const gap = 0.042 + i * 0.004; // gentle slowing as the run tops out
+      this.pluck(
+        midi(down ? rootMidi - offset : rootMidi + offset),
+        at + i * gap,
+        level * (1 - i * 0.06),
+        this.fx,
+      );
+    }
+  }
+
+  /**
+   * Heroic horn: the fanfare voice. Detuned saw pair through a swept lowpass,
+   * so it reads as a distant brass call across the pond, never as a synth stab.
+   */
+  private horn(hz: number, at: number, dur: number, level: number, bus: GainNode = this.music) {
+    const ctx = this.ctx;
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(Math.min(hz * 2, 900), at);
+    filter.frequency.linearRampToValueAtTime(Math.min(hz * 6, 3600), at + 0.09);
+    filter.frequency.linearRampToValueAtTime(Math.min(hz * 3, 1600), at + dur);
+    filter.Q.value = 1.1;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, at);
+    gain.gain.exponentialRampToValueAtTime(level, at + 0.05);
+    gain.gain.setTargetAtTime(level * 0.72, at + 0.05, dur * 0.4);
+    gain.gain.exponentialRampToValueAtTime(0.0001, at + dur + 0.12);
+    for (let i = 0; i < (this.lean ? 1 : 2); i += 1) {
+      const osc = ctx.createOscillator();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(hz * (1 + i * 0.006), at);
+      osc.connect(filter);
+      osc.start(at);
+      osc.stop(at + dur + 0.2);
+    }
+    filter.connect(gain);
+    this.send(gain, 0.6, bus);
   }
 
   /** Bowed string / choir pad: two detuned saws under a slow filter sweep. */
@@ -471,14 +550,35 @@ export class IvyAudio {
     osc.stop(at + 0.4);
   }
 
+  /** A short pant-and-tail-thump: Ivy nearby, pleased with the world. */
+  private tailThump(at: number, level: number) {
+    const ctx = this.ctx;
+    for (let i = 0; i < 3; i += 1) {
+      const t = at + i * 0.17;
+      const osc = ctx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(96, t);
+      osc.frequency.exponentialRampToValueAtTime(48, t + 0.09);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(level * (1 - i * 0.2), t);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+      osc.connect(gain);
+      this.send(gain, 0.25, this.music);
+      osc.start(t);
+      osc.stop(t + 0.14);
+    }
+  }
+
   private note(voice: Voice, degree: number, octave: number, at: number, dur: number, lvl: number) {
-    const root = 57 + this.levels.register; // A3 reference
+    const root = 50 + this.levels.register; // D3 reference — the Dorian home
     const index = ((degree % SCALE.length) + SCALE.length) % SCALE.length;
     const hz = midi(root + SCALE[index]! + octave * 12);
-    if (voice === "flute") this.flute(hz, at, dur, lvl);
+    if (voice === "ocarina") this.ocarina(hz, at, dur, lvl);
     else if (voice === "pluck") this.pluck(hz, at, lvl);
+    else if (voice === "horn") this.horn(hz, at, dur, lvl);
     else this.bell(hz, at, lvl);
   }
+
 
   // ------------------------------------------------------------- sequencer --
 
@@ -493,8 +593,8 @@ export class IvyAudio {
       const bar = Math.floor(s / 16) % 4;
       const beat = s % 16;
       const L = this.levels;
-      const chordRoot = L.chords[bar] ?? 45;
-      const chordDegree = SCALE.findIndex((v) => (chordRoot - 45 + 12) % 12 === (v + 12) % 12);
+      const chordRoot = L.chords[bar] ?? 50;
+      const chordDegree = SCALE.findIndex((v) => (chordRoot - 50 + 12) % 12 === (v + 12) % 12);
       const base = chordDegree < 0 ? 0 : chordDegree;
 
       // Pad: one slow swell per bar.
@@ -504,32 +604,44 @@ export class IvyAudio {
         if (!this.lean) this.pad(hz * 1.5, at + dur * 2, dur * 12, 0.03 * L.pad);
       }
 
-      // Hand percussion: gentle heartbeat, with a shifting off-beat.
+      // Percussion: a walking adventurer's pulse — frame drum on the beat, a
+      // tambourine-ish skin tap answering, and a marching triplet pickup.
       if (L.perc > 0.05) {
         if (beat === 0 || beat === 8) this.hand(at, 0.16 * L.perc, true);
+        if (beat === 4 || beat === 12) this.hand(at, 0.07 * L.perc, false);
         if (beat === 6 || beat === 14) this.hand(at, 0.09 * L.perc, false);
         if (beat === 11 && Math.random() < L.perc * 0.6) this.hand(at, 0.06 * L.perc, false);
       }
 
-      // Kalimba figure: arpeggiated, never twice the same.
+      // Harp/kalimba accompaniment: rolling chord tones in thirds, the way an
+      // overworld theme keeps moving under the tune.
       if (L.pluck > 0.05 && beat % 2 === 0 && Math.random() < L.pluck) {
-        const shape = pick([0, 2, 4, 5, 7]);
+        const shape = pick([0, 2, 4, 6, 7, 9]);
         this.pluck(
-          midi(57 + this.levels.register + (SCALE[(base + shape) % SCALE.length] ?? 0)),
+          midi(50 + this.levels.register + (SCALE[(base + shape) % SCALE.length] ?? 0)),
           at,
           0.05 + 0.05 * L.pluck,
         );
       }
 
-      // Melody: Ivy's motif at the top of each phrase, improvised in between.
+      // Melody: Ivy's four-note signature opens the phrase on ocarina, then a
+      // written overworld phrase answers it. The tune is chosen per cycle, so
+      // it sings a real melody rather than improvising note by note.
       if (L.melody > 0.05) {
         if (bar === 0 && beat % 4 === 0) {
           const degree = base + (MOTIF[beat / 4] ?? 0);
-          this.note("flute", degree, 1, at, dur * 3.4, 0.07 * L.melody);
-        } else if (beat % 2 === 0 && Math.random() < L.melody * 0.42) {
-          const degree = base + pick([0, 1, 2, 3, 4, 5, 6]);
-          const long = Math.random() < 0.3;
-          this.note("flute", degree, 1, at, dur * (long ? 4 : 2), 0.055 * L.melody);
+          this.note("ocarina", degree, 1, at, dur * 3.6, 0.075 * L.melody);
+          // A distant horn shadows the signature an octave down: heroic weight.
+          if (beat === 0 && L.melody > 0.4) {
+            this.note("horn", degree, 0, at, dur * 6, 0.03 * L.melody);
+          }
+        } else if (bar > 0) {
+          const phrase = PHRASES[(Math.floor(this.step / 64) * 3 + bar) % PHRASES.length]!;
+          const step = phrase[beat];
+          if (step !== null && step !== undefined) {
+            const long = beat >= 12;
+            this.note("ocarina", base + step, 1, at, dur * (long ? 4.2 : 2.1), 0.06 * L.melody);
+          }
         }
       }
 
@@ -541,9 +653,15 @@ export class IvyAudio {
         this.bell(midi(81 + pick([0, 3, 7, 10, 12])), at, 0.02 * L.crystal, 3.51);
       }
 
-      // Inhabitants.
-      if (beat === 15 && Math.random() < L.creature * 0.5) this.ribbit(at + dur * 0.5, 0.05);
-      if (bar === 3 && beat === 14 && Math.random() < L.creature * 0.6) this.woof(at, 0.07);
+      // Inhabitants: the pond answers the tune. Frogs take the phrase-ends,
+      // Ivy signs off the cycle, and every so often her tail keeps the beat.
+      if (beat === 15 && Math.random() < L.creature * 0.6) this.ribbit(at + dur * 0.5, 0.055);
+      if (beat === 7 && Math.random() < L.creature * 0.3) this.ribbit(at + dur * 0.5, 0.03);
+      if (bar === 3 && beat === 14 && Math.random() < L.creature * 0.7) this.woof(at, 0.075);
+      if (bar === 1 && beat === 0 && Math.random() < L.creature * 0.25) {
+        this.tailThump(at, 0.045);
+      }
+
 
       this.nextTime += dur;
       this.step += 1;
@@ -569,56 +687,84 @@ export class IvyAudio {
         const stamp = performance.now();
         if (stamp - this.lastHover < 110) return;
         this.lastHover = stamp;
-        this.bell(midi(88 + pick([0, 3, 7])), now, 0.012, 2.01, this.fx);
+        // A single harp tone from the D-Dorian scale: a menu cursor in a
+        // wooden-and-brass adventure UI rather than a digital blip.
+        this.pluck(midi(74 + pick([0, 2, 5, 7, 9])), now, 0.03, this.fx);
         return;
       }
       case "press": {
         this.duckFor(0.18, 0.1);
-        this.pluck(midi(69), now, 0.075, this.fx);
-        this.bell(midi(81), now + 0.02, 0.035, 2.01, this.fx);
-        const tap = this.noise(now, 0.05, 0.05, 2600, 2);
+        // Harp thumb-pluck plus its fifth: the "confirm" of the pond menu.
+        this.pluck(midi(62), now, 0.075, this.fx);
+        this.pluck(midi(69), now + 0.02, 0.05, this.fx);
+        this.bell(midi(86), now + 0.03, 0.022, 2.01, this.fx);
+        const tap = this.noise(now, 0.05, 0.04, 2600, 2);
         tap.connect(this.fx);
         return;
       }
       case "open": {
-        this.duckFor(0.25, 1.2);
-        this.pad(midi(33), now, 3.4, 0.06);
-        [69, 76, 81].forEach((n, i) => this.bell(midi(n), now + i * 0.16, 0.05, 2.01, this.fx));
-        this.ribbit(now + 1.5, 0.045);
+        this.duckFor(0.28, 1.4);
+        // Curtain-up: warm low drone, a rising harp run, an ocarina call, and
+        // the pond answering — the world waking up around you.
+        this.pad(midi(38), now, 3.6, 0.06);
+        this.harp(62, now + 0.05, 0.055, 8);
+        this.ocarina(midi(74), now + 0.55, 0.9, 0.055);
+        this.ocarina(midi(81), now + 1.15, 1.2, 0.045);
+        this.ribbit(now + 1.9, 0.05);
         return;
       }
-      case "reward":
       case "discovery": {
-        this.duckFor(0.3, 0.9);
-        const notes = name === "reward" ? [69, 74, 76, 81, 88] : [72, 76, 79, 84];
-        notes.forEach((n, i) => this.bell(midi(n), now + i * 0.085, 0.06, 2.01, this.fx));
-        this.pluck(midi(57), now, 0.07, this.fx);
-        if (name === "reward") this.woof(now + 0.62, 0.06);
+        this.duckFor(0.34, 1.1);
+        // "Secret found": a stepwise climb that lands on the octave, harp
+        // sparkle over the top, and a delighted frog at the end.
+        [62, 65, 69, 74].forEach((n, i) => {
+          this.pluck(midi(n), now + i * 0.11, 0.075, this.fx);
+          this.bell(midi(n + 12), now + i * 0.11, 0.03, 2.01, this.fx);
+        });
+        this.ocarina(midi(74), now + 0.44, 0.8, 0.06);
+        this.ribbit(now + 0.95, 0.05);
+        return;
+      }
+      case "reward": {
+        this.duckFor(0.38, 1.4);
+        // Item-get fanfare: horn calls on the tonic triad, harp run over it,
+        // and Ivy's woof as the last word.
+        [62, 66, 69, 74].forEach((n, i) => this.horn(midi(n), now + i * 0.13, 0.34, 0.05, this.fx));
+        this.horn(midi(81), now + 0.56, 0.8, 0.055, this.fx);
+        this.harp(62, now + 0.1, 0.045, 9);
+        this.woof(now + 0.95, 0.07);
         return;
       }
       case "jump": {
+        // A frog-hop "hup": airy body under a rising fourth.
         const osc = ctx.createOscillator();
         osc.type = "triangle";
-        osc.frequency.setValueAtTime(320, now);
-        osc.frequency.exponentialRampToValueAtTime(880, now + 0.13);
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(760, now + 0.12);
         const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.055, now);
+        gain.gain.setValueAtTime(0.05, now);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
         osc.connect(gain).connect(this.fx);
         osc.start(now);
         osc.stop(now + 0.18);
+        this.pluck(midi(86), now + 0.06, 0.022, this.fx);
         return;
       }
       case "land": {
         this.hand(now, 0.09, true);
+        this.tailThump(now + 0.06, 0.03);
         return;
       }
       case "fail": {
-        this.duckFor(0.4, 1);
-        [76, 72, 69, 64].forEach((n, i) => this.pluck(midi(n), now + i * 0.1, 0.06, this.fx));
-        this.woof(now + 0.5, 0.05);
+        this.duckFor(0.4, 1.2);
+        // The gentle "puzzle failed" sigh: a descending harp fall, a low
+        // ocarina, and a sympathetic woof. Sad, never punishing.
+        this.harp(74, now, 0.055, 6, true);
+        this.ocarina(midi(56), now + 0.35, 0.7, 0.045);
+        this.woof(now + 0.7, 0.055);
         return;
       }
+
     }
   }
 }
