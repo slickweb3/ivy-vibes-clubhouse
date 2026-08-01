@@ -1183,7 +1183,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
                   }
                 }}
                 onKeyUp={release}
-                className="relative block h-full max-h-full w-auto max-w-full touch-none select-none overflow-hidden rounded-md border-2 border-charcoal sm:rounded-xl sm:border-[3px]"
+                className="no-press relative block h-full max-h-full w-auto max-w-full touch-none select-none overflow-hidden rounded-md border-2 border-charcoal sm:rounded-xl sm:border-[3px]"
                 style={{ aspectRatio: `${W} / ${H}` }}
               >
                 <canvas
