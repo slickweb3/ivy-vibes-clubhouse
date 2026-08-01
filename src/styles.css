@@ -1564,10 +1564,25 @@ html[data-scrolling="true"] .scroll-depth {
  * Night mode atmosphere: a moonlit sky layer + a gentle cool wash so warm
  * hand-placed surfaces settle into dusk without losing text contrast.
  * ------------------------------------------------------------------------- */
+.night-wash {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 700ms ease;
+  background: linear-gradient(180deg, #3b4a86 0%, #2b3a63 55%, #1d2740 100%);
+  mix-blend-mode: multiply;
+}
+
+.dark .night-wash {
+  opacity: 0.55;
+}
+
 .night-sky {
   position: fixed;
   inset: 0;
-  z-index: 5;
+  z-index: 61;
   pointer-events: none;
   opacity: 0;
   transition: opacity 700ms ease;
@@ -1597,7 +1612,7 @@ html[data-scrolling="true"] .scroll-depth {
   position: fixed;
   top: clamp(4rem, 12vh, 8rem);
   right: clamp(1rem, 6vw, 5rem);
-  z-index: 5;
+  z-index: 62;
   height: clamp(2.5rem, 6vw, 4.5rem);
   width: clamp(2.5rem, 6vw, 4.5rem);
   border-radius: 999px;
