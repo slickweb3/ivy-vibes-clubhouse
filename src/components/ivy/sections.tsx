@@ -104,27 +104,19 @@ export function Hero({
         </Reveal>
 
         <Reveal variant="zoom" delay={120} className="relative">
-          <div className="relative rotate-1">
-            {curatedHero ? (
-              <OfficialSocialEmbed post={curatedHero} tone="cream" className="mx-auto max-w-md" />
-            ) : (
-              <ApprovedMedia
-                item={media}
-                label={heroCopy.mediaLabel}
-                hint="Photo or video supplied by Ivy's owner"
-                aspect="portrait"
-                tone="cream"
-                className="mx-auto max-w-md"
-              />
-            )}
-          </div>
+          <ul className="flex flex-wrap gap-2">
+            <li>
+              <Sticker tone="yellow" className="rotate-[-4deg]">
+                <FrogDoodle className="h-4 w-5 text-ivy" /> Frog Queen
+              </Sticker>
+            </li>
+            <li>
+              <Sticker tone="pink" className="rotate-[3deg]">
+                <PawDoodle className="h-4 w-4 text-charcoal" /> Short Spine Queen
+              </Sticker>
+            </li>
+          </ul>
 
-          <Sticker tone="yellow" className="absolute -top-3 -left-2 rotate-[-8deg]">
-            <FrogDoodle className="h-4 w-5 text-ivy" /> Frog Queen
-          </Sticker>
-          <Sticker tone="pink" className="absolute -bottom-3 right-2 rotate-[6deg]">
-            <PawDoodle className="h-4 w-4 text-charcoal" /> Short Spine Queen
-          </Sticker>
 
           {market ? (
             <div className="mt-8 -rotate-1">

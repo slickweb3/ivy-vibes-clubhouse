@@ -146,7 +146,7 @@ function Home() {
       <AmbientVibes />
       <SiteNav />
       <main id="main">
-        <Hero media={media.hero} market={market} curatedHero={homeCurated.hero} />
+        <Hero media={media.hero} market={market} />
         <IvyPhotoRow />
         <MeetIvy />
 
