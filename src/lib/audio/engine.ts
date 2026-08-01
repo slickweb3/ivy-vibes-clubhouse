@@ -18,7 +18,7 @@ export type AudioScene = "landing" | "explore" | "game" | "hush";
 export type AudioCue =
   "press" | "hover" | "open" | "reward" | "discovery" | "jump" | "land" | "fail";
 
-type Voice = "flute" | "pluck" | "bell" | "crystal";
+type Voice = "ocarina" | "pluck" | "bell" | "crystal" | "horn";
 
 const midi = (note: number) => 440 * Math.pow(2, (note - 69) / 12);
 
@@ -74,7 +74,7 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     bell: 0.18,
     crystal: 0.3,
     register: 0,
-    creature: 0.25,
+    creature: 0.45,
   },
   explore: {
     bpm: 88,
@@ -87,7 +87,7 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     bell: 0.14,
     crystal: 0.18,
     register: 0,
-    creature: 0.4,
+    creature: 0.72,
   },
   game: {
     bpm: 116,
@@ -100,7 +100,7 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     bell: 0.1,
     crystal: 0.12,
     register: 12,
-    creature: 0.3,
+    creature: 0.5,
   },
   hush: {
     bpm: 66,
@@ -113,7 +113,7 @@ const SCENES: Record<AudioScene, SceneConfig> = {
     bell: 0.2,
     crystal: 0.34,
     register: -12,
-    creature: 0.18,
+    creature: 0.3,
   },
 };
 
