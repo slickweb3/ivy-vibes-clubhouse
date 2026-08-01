@@ -70,7 +70,6 @@ interface HomeData {
 interface HomeCuratedSections {
   hero: CuratedPost | null;
   freshPosts: CuratedPost[];
-  hallOfFame: CuratedPost[];
 }
 
 function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
