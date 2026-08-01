@@ -84,30 +84,37 @@ export function IvySoundscape() {
   }, [active]);
 
   // --- interaction cues ----------------------------------------------------
+  // Sound is reserved for real, working controls: an enabled button or a link
+  // that actually navigates. Taps on decorative art, cards, canvases, text or
+  // disabled controls stay silent.
   useEffect(() => {
     if (!active) return undefined;
-
-    const isControl = (target: EventTarget | null) =>
-      (target as HTMLElement | null)?.closest?.(
-        "button, a[href], [role='button'], summary, input[type='range']",
-      ) ?? null;
 
     const cue = (name: "ui" | "combo") => {
       void import("@/lib/game-audio").then(({ gameAudio }) => gameAudio.playForce(name));
     };
 
-    const onPress = (event: Event) => {
-      if (isControl(event.target)) cue("ui");
+    const onClick = (event: MouseEvent) => {
+      const el = (event.target as HTMLElement | null)?.closest?.(
+        "button, a[href], [role='button']",
+      ) as HTMLElement | null;
+      if (!el) return;
+      if (el.hasAttribute("data-silent")) return;
+      if (el.getAttribute("aria-disabled") === "true") return;
+      if ((el as HTMLButtonElement).disabled) return;
+      if (el instanceof HTMLAnchorElement && !el.getAttribute("href")) return;
+      cue("ui");
     };
     const onDiscovery = () => cue("combo");
 
-    document.addEventListener("pointerdown", onPress);
+    document.addEventListener("click", onClick);
     window.addEventListener(DISCOVERY_EVENT, onDiscovery);
     return () => {
-      document.removeEventListener("pointerdown", onPress);
+      document.removeEventListener("click", onClick);
       window.removeEventListener(DISCOVERY_EVENT, onDiscovery);
     };
   }, [active]);
+
 
   const toggle = useCallback(() => {
     setOn((was) => {
