@@ -13,32 +13,23 @@ import { cn } from "@/lib/utils";
  * embeds — nothing is scraped, copied or re-hosted.
  */
 export function SocialWindows({ posts }: { posts: CuratedPost[] }) {
-  const instagram = useMemo(
-    () => posts.filter((post) => post.platform === "instagram"),
-    [posts],
-  );
   const tiktok = useMemo(
     () => posts.filter((post) => post.platform === "tiktok"),
     [posts],
   );
 
-  if (instagram.length === 0 && tiktok.length === 0) return null;
+  if (tiktok.length === 0) return null;
 
   return (
     <Section
       id="social-windows"
       eyebrow="Straight from her accounts"
-      title="Ivy's windows"
-      intro="Two little windows into the Frog Queen's official Instagram and TikTok. Scroll each one — her captions stay exactly as she wrote them, shown by the platforms themselves."
+      title="Ivy's window"
+      intro="A little window into the Frog Queen's official TikTok. Scroll it — her captions stay exactly as she wrote them, shown by the platform itself."
       tone="leaf"
     >
-      <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-        {instagram.length > 0 ? (
-          <SocialWindow platform="instagram" posts={instagram} tone="pink" />
-        ) : null}
-        {tiktok.length > 0 ? (
-          <SocialWindow platform="tiktok" posts={tiktok} tone="lavender" />
-        ) : null}
+      <div className="mx-auto w-full max-w-xl">
+        <SocialWindow platform="tiktok" posts={tiktok} tone="lavender" />
       </div>
     </Section>
   );

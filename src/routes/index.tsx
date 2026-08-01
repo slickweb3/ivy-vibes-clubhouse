@@ -11,13 +11,13 @@ import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import {
   Hero,
   MeetIvy,
-  FreshFromTheFrogQueen,
   HallOfFame,
   TheLore,
   WhyIvy,
   TokenRecord,
 } from "@/components/ivy/sections";
 import { SocialWindows } from "@/components/ivy/social-windows";
+import { IvyPhotoRow } from "@/components/ivy/photo-row";
 import { LiveMarket } from "@/components/ivy/market";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
 import {
@@ -135,7 +135,7 @@ function Home() {
       <main id="main">
         <Hero media={media.hero} market={market} curatedHero={homeCurated.hero} />
         <MeetIvy />
-        <FreshFromTheFrogQueen media={media} curated={homeCurated.freshPosts} />
+        <IvyPhotoRow />
         <SocialWindows posts={curated.all} />
         <HallOfFame items={media.hallOfFame} curated={homeCurated.hallOfFame} />
         <TheLore />
