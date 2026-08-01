@@ -21,6 +21,7 @@ import { StatusChip } from "@/components/ivy/primitives";
 import { getLeaderboard, startRun, submitScore } from "@/lib/game.functions";
 import { SeasonCard } from "@/components/ivy/player-card";
 import { gameAudio } from "@/lib/game-audio";
+import { audioScene } from "@/lib/audio/cue";
 import type { Leaderboard } from "@/lib/game.server";
 import runnerSprite from "@/assets/ivy-runner.png";
 import gameFrame from "@/assets/game-frame.png";
@@ -818,6 +819,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     });
     setPhase("over");
     gameAudio.stopMusic();
+    audioScene("game");
     discover("leap");
     rafRef.current = null;
   }, []);
@@ -829,6 +831,8 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     gameAudio.unlock();
     gameAudio.startMusic();
+    // Ivy's world music steps aside so the game theme has the stage.
+    audioScene("hush");
     runRef.current = freshRun();
     setScore(0);
     setStatus(null);
