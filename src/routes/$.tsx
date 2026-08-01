@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { IvyNotFound } from "@/components/ivy/not-found";
 
 const TITLE = "Page not found — ivy vibing";
@@ -18,5 +18,10 @@ export const Route = createFileRoute("/$")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
+  // Throwing keeps the HTTP status honest (404) while still rendering the
+  // branded screen through the router's notFoundComponent.
+  loader: () => {
+    throw notFound();
+  },
   component: IvyNotFound,
 });
