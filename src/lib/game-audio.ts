@@ -527,7 +527,7 @@ export const gameAudio = {
         break;
       case "near":
         // Close call: a low frog gulp rather than a buzz.
-        tone({ freq: 210, to: 130, dur: 0.13, type: "sawtooth", gain: 0.14 });
+        tone({ freq: 300, to: 220, dur: 0.1, type: "triangle", gain: 0.08 });
         break;
       case "milestone":
         // Secret-found fanfare, ending on the octave, with Ivy's woof under it.
@@ -544,7 +544,7 @@ export const gameAudio = {
         break;
       case "death":
         // The gentle "quest paused" fall: descending ocarina, soft splash, woof.
-        noise(0.4, 0.24, 200);
+        noise(0.3, 0.14, 420);
         [12, 10, 7, 3].forEach((semi, i) =>
           tone({
             freq: 587.33 * Math.pow(2, semi / 12),
