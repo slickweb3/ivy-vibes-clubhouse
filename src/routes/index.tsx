@@ -6,6 +6,8 @@ import { EMPTY_CURATED_FEED, type CuratedFeed, type CuratedPost } from "@/types/
 import type { MarketSnapshot } from "@/lib/market.server";
 import { EMPTY_SITE_MEDIA, type SiteMedia } from "@/types/media";
 import { SiteNav } from "@/components/ivy/header";
+import { BackToTop } from "@/components/ivy/back-to-top";
+import { faqEntries } from "@/data/site-content";
 import { AmbientVibes } from "@/components/ivy/ambient";
 import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import {
@@ -42,6 +44,20 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "/" },
     ],
     links: [{ rel: "canonical", href: "/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqEntries.map((entry) => ({
+            "@type": "Question",
+            name: entry.question,
+            acceptedAnswer: { "@type": "Answer", text: entry.answer },
+          })),
+        }),
+      },
+    ],
   }),
   // Public read model: approved + visible + active items only.
   loader: async (): Promise<HomeData> => {
@@ -145,6 +161,7 @@ function Home() {
         <FAQ />
       </main>
       <SiteFooter />
+      <BackToTop />
     </CookieConsentProvider>
   );
 }

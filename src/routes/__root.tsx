@@ -112,6 +112,36 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;800&display=swap",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "ivy vibing",
+          url: "https://ivyvibing.com",
+          logo: "https://ivyvibing.com/favicon.png",
+          description:
+            "The internet clubhouse for Ivy, the Short Spine Queen and Frog Queen, and the $ivy community project.",
+          sameAs: [
+            "https://www.instagram.com/frogqueenivy/",
+            "https://www.tiktok.com/@ivyvibing",
+            "https://x.com/Ivyvibing",
+            "https://t.me/frogqueenivy",
+            "https://linktr.ee/ivyvibing",
+          ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "ivy vibing",
+          url: "https://ivyvibing.com",
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
