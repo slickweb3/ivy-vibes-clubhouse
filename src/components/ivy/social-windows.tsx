@@ -143,7 +143,8 @@ function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[
           <span className="h-3 w-3 rounded-full bg-charcoal/25" />
           <span className="h-3 w-3 rounded-full bg-charcoal/25" />
         </span>
-        <span className="flex min-w-0 items-center gap-2 rounded-full bg-card/70 px-3 py-1">
+        {/* Tinted with ink, not a panel colour, so it stays legible after dark. */}
+        <span className="flex min-w-0 items-center gap-2 rounded-full bg-charcoal/10 px-3 py-1">
           <FrogDoodle aria-hidden className="h-3.5 w-4 shrink-0 text-ivy" />
           <span className="truncate text-xs text-charcoal/80">{meta.urlLabel}</span>
         </span>
