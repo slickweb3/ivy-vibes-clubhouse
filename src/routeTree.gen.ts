@@ -26,6 +26,7 @@ import { Route as AdminSignInRouteImport } from './routes/admin.sign-in'
 import { Route as ApiSocialFeedRouteImport } from './routes/api/social-feed'
 import { Route as LegalSlugRouteImport } from './routes/legal.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminChatRouteImport } from './routes/_authenticated/admin.chat'
 import { Route as AuthenticatedAdminConnectionsRouteImport } from './routes/_authenticated/admin.connections'
 import { Route as AuthenticatedAdminCuratedRouteImport } from './routes/_authenticated/admin.curated'
 import { Route as AuthenticatedAdminLeaderboardRouteImport } from './routes/_authenticated/admin.leaderboard'
@@ -121,6 +122,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminChatRoute = AuthenticatedAdminChatRouteImport.update({
+  id: '/admin/chat',
+  path: '/admin/chat',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminConnectionsRoute =
   AuthenticatedAdminConnectionsRouteImport.update({
     id: '/admin/connections',
@@ -194,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/admin/sign-in': typeof AdminSignInRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
+  '/admin/chat': typeof AuthenticatedAdminChatRoute
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/admin/curated': typeof AuthenticatedAdminCuratedRoute
   '/admin/leaderboard': typeof AuthenticatedAdminLeaderboardRoute
@@ -222,6 +229,7 @@ export interface FileRoutesByTo {
   '/admin/sign-in': typeof AdminSignInRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
+  '/admin/chat': typeof AuthenticatedAdminChatRoute
   '/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/admin/curated': typeof AuthenticatedAdminCuratedRoute
   '/admin/leaderboard': typeof AuthenticatedAdminLeaderboardRoute
@@ -252,6 +260,7 @@ export interface FileRoutesById {
   '/admin/sign-in': typeof AdminSignInRoute
   '/api/social-feed': typeof ApiSocialFeedRoute
   '/legal/$slug': typeof LegalSlugRoute
+  '/_authenticated/admin/chat': typeof AuthenticatedAdminChatRoute
   '/_authenticated/admin/connections': typeof AuthenticatedAdminConnectionsRoute
   '/_authenticated/admin/curated': typeof AuthenticatedAdminCuratedRoute
   '/_authenticated/admin/leaderboard': typeof AuthenticatedAdminLeaderboardRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/admin/sign-in'
     | '/api/social-feed'
     | '/legal/$slug'
+    | '/admin/chat'
     | '/admin/connections'
     | '/admin/curated'
     | '/admin/leaderboard'
@@ -310,6 +320,7 @@ export interface FileRouteTypes {
     | '/admin/sign-in'
     | '/api/social-feed'
     | '/legal/$slug'
+    | '/admin/chat'
     | '/admin/connections'
     | '/admin/curated'
     | '/admin/leaderboard'
@@ -339,6 +350,7 @@ export interface FileRouteTypes {
     | '/admin/sign-in'
     | '/api/social-feed'
     | '/legal/$slug'
+    | '/_authenticated/admin/chat'
     | '/_authenticated/admin/connections'
     | '/_authenticated/admin/curated'
     | '/_authenticated/admin/leaderboard'
@@ -496,6 +508,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/chat': {
+      id: '/_authenticated/admin/chat'
+      path: '/admin/chat'
+      fullPath: '/admin/chat'
+      preLoaderRoute: typeof AuthenticatedAdminChatRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/connections': {
       id: '/_authenticated/admin/connections'
       path: '/admin/connections'
@@ -570,6 +589,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminChatRoute: typeof AuthenticatedAdminChatRoute
   AuthenticatedAdminConnectionsRoute: typeof AuthenticatedAdminConnectionsRoute
   AuthenticatedAdminCuratedRoute: typeof AuthenticatedAdminCuratedRoute
   AuthenticatedAdminLeaderboardRoute: typeof AuthenticatedAdminLeaderboardRoute
@@ -580,6 +600,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminChatRoute: AuthenticatedAdminChatRoute,
   AuthenticatedAdminConnectionsRoute: AuthenticatedAdminConnectionsRoute,
   AuthenticatedAdminCuratedRoute: AuthenticatedAdminCuratedRoute,
   AuthenticatedAdminLeaderboardRoute: AuthenticatedAdminLeaderboardRoute,
