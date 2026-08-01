@@ -135,7 +135,6 @@ function Home() {
         <MeetIvy />
 
         <SocialWindows posts={curated.all} />
-        <HallOfFame items={media.hallOfFame} curated={homeCurated.hallOfFame} />
         <TheLore />
         <WhyIvy />
         <TokenRecord market={market ?? undefined} />
