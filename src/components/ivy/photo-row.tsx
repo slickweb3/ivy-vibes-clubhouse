@@ -73,14 +73,14 @@ export function IvyPhotoRow() {
       id="ivy-photos"
       eyebrow="Owner-approved photos"
       title="The Frog Queen, frame by frame"
-      intro="A row of Ivy's greatest looks — sunny sprints, headphone sessions, holiday sweaters and one very small birthday puppy. Tap any photo to see it big."
+      intro="A row of Ivy's greatest looks — sunny sprints, headphone sessions, holiday sweaters and one very small birthday puppy. Swipe sideways, tap any photo to see it big."
       tone="leaf"
     >
-      <ul className="m-0 flex list-none snap-x snap-mandatory gap-4 overflow-x-auto p-0 pb-4 sm:gap-6">
+      <ul className="ivy-photo-scroll -mx-4 m-0 flex list-none snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 sm:mx-0 sm:gap-6 sm:px-0">
         {PHOTOS.map((photo, index) => (
           <li
             key={photo.src}
-            className="ivy-photo-frame group w-[16rem] shrink-0 snap-center sm:w-[19rem]"
+            className="ivy-photo-frame group w-[min(80vw,17rem)] shrink-0 snap-center sm:w-[19rem]"
           >
             <button
               type="button"
@@ -98,7 +98,7 @@ export function IvyPhotoRow() {
                 decoding="async"
                 width={1079}
                 height={1080}
-                className="block h-[19rem] w-full rounded-[1.15rem] object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] sm:h-[23rem]"
+                className="block aspect-square h-auto w-full rounded-[1.15rem] object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
               />
             </button>
           </li>
