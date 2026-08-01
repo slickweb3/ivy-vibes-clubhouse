@@ -1137,8 +1137,11 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
               aria-label="Play Lily Pad Leap. Tap or press space to hop, hold for a higher hop, press P to pause."
               onPointerDown={(event) => {
                 event.preventDefault();
+                // Native-handheld feel: a 8ms tick where the platform supports it.
+                navigator.vibrate?.(8);
                 jump();
               }}
+
               onPointerUp={release}
               onPointerCancel={release}
               onPointerLeave={release}
