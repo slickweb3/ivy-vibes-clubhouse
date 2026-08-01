@@ -1,4 +1,14 @@
 import { CrownDoodle, FrogDoodle, LeafDoodle, PawDoodle } from "./doodles";
+import ivySticker from "@/assets/ivy-hop-sticker.png.asset.json";
+
+/** Ivy stickers tumbling slowly down the page, backflipping as they fall. */
+const fallingIvys = [
+  { left: "8%", size: "h-20 w-auto", delay: "0s", duration: "46s" },
+  { left: "38%", size: "h-14 w-auto", delay: "17s", duration: "58s" },
+  { left: "66%", size: "h-24 w-auto", delay: "31s", duration: "52s" },
+  { left: "88%", size: "h-16 w-auto", delay: "9s", duration: "64s" },
+];
+
 
 type Sprite = {
   Icon: typeof LeafDoodle;
@@ -31,7 +41,29 @@ const sprites: Sprite[] = [
 
 export function AmbientVibes() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-[5] overflow-hidden opacity-[0.18]">
+    <>
+      {/* Ivy herself, tumbling down with slow backflips. */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-[4] overflow-hidden">
+        {fallingIvys.map(({ left, size, delay, duration }) => (
+          <span
+            key={left}
+            className={`absolute top-[-20%] ${size} opacity-25 motion-safe:ivy-tumble`}
+            style={{ left, animationDelay: delay, animationDuration: duration }}
+          >
+            <img
+              src={ivySticker.url}
+              alt=""
+              width={671}
+              height={779}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-auto"
+            />
+          </span>
+        ))}
+      </div>
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-[5] overflow-hidden opacity-[0.18]">
+
       {sprites.map(({ Icon, left, size, delay, duration, tone }, index) => (
         <span
           key={`${left}-${index}`}
@@ -54,7 +86,9 @@ export function AmbientVibes() {
         className="absolute right-1/4 top-0 h-52 w-52 rounded-full bg-yellow opacity-40 blur-3xl motion-safe:ivy-glow"
         style={{ animationDelay: "13s" }}
       />
-    </div>
+      </div>
+    </>
   );
+
 }
 

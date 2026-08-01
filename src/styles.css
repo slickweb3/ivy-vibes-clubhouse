@@ -336,9 +336,26 @@ button[aria-disabled="true"]:active {
   animation: ivy-drift 30s linear infinite;
 }
 
+@utility ivy-tumble {
+  animation: ivy-tumble 50s linear infinite;
+}
+
+@keyframes ivy-tumble {
+  0% {
+    transform: translateY(-15vh) translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(55vh) translateX(4vw) rotate(-540deg);
+  }
+  100% {
+    transform: translateY(125vh) translateX(-2vw) rotate(-1080deg);
+  }
+}
+
 @utility ivy-glow {
   animation: ivy-glow 12s ease-in-out infinite;
 }
+
 
 @keyframes ivy-drift {
   0% {
