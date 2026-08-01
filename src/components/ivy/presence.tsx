@@ -138,10 +138,81 @@ export function IvyPresence() {
     };
   }, []);
 
+  // Reactive surfaces: cards marked `data-tilt` lean toward the cursor.
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (reduce || !fine) return undefined;
+
+    let tilted: HTMLElement | null = null;
+
+    const clear = () => {
+      tilted?.style.removeProperty("--tx");
+      tilted?.style.removeProperty("--ty");
+      tilted = null;
+    };
+
+    const onMove = (event: PointerEvent) => {
+      const next = (event.target as HTMLElement | null)?.closest?.(
+        "[data-tilt]",
+      ) as HTMLElement | null;
+      if (next !== tilted) clear();
+      if (!next) return;
+      tilted = next;
+      const box = next.getBoundingClientRect();
+      const nx = (event.clientX - (box.left + box.width / 2)) / (box.width / 2);
+      const ny = (event.clientY - (box.top + box.height / 2)) / (box.height / 2);
+      next.style.setProperty("--tx", `${(ny * -3.2).toFixed(2)}deg`);
+      next.style.setProperty("--ty", `${(nx * 3.2).toFixed(2)}deg`);
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      clear();
+    };
+  }, []);
+
+  // Easter egg: type "ribbit" anywhere and the pond answers with a frog shower.
+  const [ribbit, setRibbit] = useState(false);
+  useEffect(() => {
+    let typed = "";
+    const onKey = (event: KeyboardEvent) => {
+      const el = event.target as HTMLElement | null;
+      if (el && /^(input|textarea)$/i.test(el.tagName)) return;
+      if (event.key.length !== 1) return;
+      typed = (typed + event.key.toLowerCase()).slice(-6);
+      if (typed === "ribbit") {
+        typed = "";
+        setRibbit(true);
+        window.setTimeout(() => setRibbit(false), 4200);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   return (
     <>
       {/* Atmosphere: a soft pond light that tracks the cursor and deepens with scroll. */}
       <div aria-hidden className="ivy-atmosphere" />
+      {ribbit ? (
+        <div aria-hidden className="ivy-ribbit">
+          {Array.from({ length: 14 }).map((_, index) => (
+            <span
+              key={index}
+              className="ivy-ribbit-frog"
+              style={{
+                left: `${(index * 7.3 + 4) % 96}%`,
+                animationDelay: `${(index % 7) * 0.18}s`,
+                fontSize: `${18 + ((index * 5) % 22)}px`,
+              }}
+            >
+              🐸
+            </span>
+          ))}
+        </div>
+      ) : null}
       {curtain ? (
         <div aria-hidden className="ivy-curtain">
           <span className="ivy-curtain-mark">ivy vibing</span>
@@ -150,3 +221,4 @@ export function IvyPresence() {
     </>
   );
 }
+
