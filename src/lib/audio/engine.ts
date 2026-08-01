@@ -281,34 +281,41 @@ export class IvyAudio {
     node.connect(tap).connect(this.verbSend);
   }
 
-  /** Warm wooden flute: breathy sine core, gentle vibrato, soft tonguing. */
-  private flute(hz: number, at: number, dur: number, level: number) {
+  /**
+   * Ocarina: the hero's instrument. Near-pure sine core, a soft hollow fifth
+   * partial, a scoop up into the pitch, and vibrato that only blooms after the
+   * note has settled — the way a real player leans into a held tone.
+   */
+  private ocarina(hz: number, at: number, dur: number, level: number) {
     const ctx = this.ctx;
     const osc = ctx.createOscillator();
     osc.type = "sine";
-    osc.frequency.setValueAtTime(hz * 0.985, at);
-    osc.frequency.exponentialRampToValueAtTime(hz, at + 0.09);
+    osc.frequency.setValueAtTime(hz * 0.955, at);
+    osc.frequency.exponentialRampToValueAtTime(hz, at + 0.07);
     const body = ctx.createOscillator();
-    body.type = "triangle";
-    body.frequency.value = hz * 2.002;
+    body.type = "sine";
+    body.frequency.value = hz * 3.0;
     const bodyGain = ctx.createGain();
-    bodyGain.gain.value = 0.12;
+    bodyGain.gain.value = 0.07;
 
     const vib = ctx.createOscillator();
-    vib.frequency.value = 4.6 + Math.random() * 1.2;
+    vib.frequency.value = 5.1 + Math.random() * 0.8;
     const vibDepth = ctx.createGain();
-    vibDepth.gain.value = hz * 0.006;
+    // Vibrato blooms in — flat attack, expressive tail.
+    vibDepth.gain.setValueAtTime(0.0001, at);
+    vibDepth.gain.linearRampToValueAtTime(hz * 0.009, at + Math.max(0.18, dur * 0.5));
     vib.connect(vibDepth).connect(osc.frequency);
 
-    const gain = this.env(at, 0.12, dur * 0.6, dur * 0.5, level);
+    const gain = this.env(at, 0.07, dur * 0.72, dur * 0.55, level);
     const tone = ctx.createBiquadFilter();
     tone.type = "lowpass";
-    tone.frequency.value = Math.min(hz * 6, 6500);
+    tone.frequency.value = Math.min(hz * 4.5, 5200);
 
     osc.connect(tone);
     body.connect(bodyGain).connect(tone);
     tone.connect(gain);
-    this.send(gain, 0.5, this.music);
+    this.send(gain, 0.62, this.music);
+
 
     // A whisper of breath at the attack keeps it human.
     if (!this.lean) {
