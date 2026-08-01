@@ -361,6 +361,50 @@ export class IvyAudio {
     partial.stop(at + 1);
   }
 
+  /**
+   * Harp run: the "you found something" flourish. A quick rising sweep of
+   * plucked scale tones with a soft ritardando, kept quiet so it decorates the
+   * moment rather than announcing itself.
+   */
+  private harp(rootMidi: number, at: number, level: number, count = 7, down = false) {
+    const steps = down ? [...SCALE].reverse() : SCALE;
+    for (let i = 0; i < count; i += 1) {
+      const step = steps[i % steps.length] ?? 0;
+      const octave = Math.floor(i / steps.length) * 12;
+      const gap = 0.042 + i * 0.004; // gentle slowing as the run tops out
+      this.pluck(midi(rootMidi + step + octave), at + i * gap, level * (1 - i * 0.06), this.fx);
+    }
+  }
+
+  /**
+   * Heroic horn: the fanfare voice. Detuned saw pair through a swept lowpass,
+   * so it reads as a distant brass call across the pond, never as a synth stab.
+   */
+  private horn(hz: number, at: number, dur: number, level: number, bus: GainNode = this.music) {
+    const ctx = this.ctx;
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(Math.min(hz * 2, 900), at);
+    filter.frequency.linearRampToValueAtTime(Math.min(hz * 6, 3600), at + 0.09);
+    filter.frequency.linearRampToValueAtTime(Math.min(hz * 3, 1600), at + dur);
+    filter.Q.value = 1.1;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, at);
+    gain.gain.exponentialRampToValueAtTime(level, at + 0.05);
+    gain.gain.setTargetAtTime(level * 0.72, at + 0.05, dur * 0.4);
+    gain.gain.exponentialRampToValueAtTime(0.0001, at + dur + 0.12);
+    for (let i = 0; i < (this.lean ? 1 : 2); i += 1) {
+      const osc = ctx.createOscillator();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(hz * (1 + i * 0.006), at);
+      osc.connect(filter);
+      osc.start(at);
+      osc.stop(at + dur + 0.2);
+    }
+    filter.connect(gain);
+    this.send(gain, 0.6, bus);
+  }
+
   /** Bowed string / choir pad: two detuned saws under a slow filter sweep. */
   private pad(hz: number, at: number, dur: number, level: number) {
     const ctx = this.ctx;
