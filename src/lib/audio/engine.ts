@@ -682,56 +682,84 @@ export class IvyAudio {
         const stamp = performance.now();
         if (stamp - this.lastHover < 110) return;
         this.lastHover = stamp;
-        this.bell(midi(88 + pick([0, 3, 7])), now, 0.012, 2.01, this.fx);
+        // A single harp tone from the D-Dorian scale: a menu cursor in a
+        // wooden-and-brass adventure UI rather than a digital blip.
+        this.pluck(midi(74 + pick([0, 2, 5, 7, 9])), now, 0.03, this.fx);
         return;
       }
       case "press": {
         this.duckFor(0.18, 0.1);
-        this.pluck(midi(69), now, 0.075, this.fx);
-        this.bell(midi(81), now + 0.02, 0.035, 2.01, this.fx);
-        const tap = this.noise(now, 0.05, 0.05, 2600, 2);
+        // Harp thumb-pluck plus its fifth: the "confirm" of the pond menu.
+        this.pluck(midi(62), now, 0.075, this.fx);
+        this.pluck(midi(69), now + 0.02, 0.05, this.fx);
+        this.bell(midi(86), now + 0.03, 0.022, 2.01, this.fx);
+        const tap = this.noise(now, 0.05, 0.04, 2600, 2);
         tap.connect(this.fx);
         return;
       }
       case "open": {
-        this.duckFor(0.25, 1.2);
-        this.pad(midi(33), now, 3.4, 0.06);
-        [69, 76, 81].forEach((n, i) => this.bell(midi(n), now + i * 0.16, 0.05, 2.01, this.fx));
-        this.ribbit(now + 1.5, 0.045);
+        this.duckFor(0.28, 1.4);
+        // Curtain-up: warm low drone, a rising harp run, an ocarina call, and
+        // the pond answering — the world waking up around you.
+        this.pad(midi(38), now, 3.6, 0.06);
+        this.harp(62, now + 0.05, 0.055, 8);
+        this.ocarina(midi(74), now + 0.55, 0.9, 0.055);
+        this.ocarina(midi(81), now + 1.15, 1.2, 0.045);
+        this.ribbit(now + 1.9, 0.05);
         return;
       }
-      case "reward":
       case "discovery": {
-        this.duckFor(0.3, 0.9);
-        const notes = name === "reward" ? [69, 74, 76, 81, 88] : [72, 76, 79, 84];
-        notes.forEach((n, i) => this.bell(midi(n), now + i * 0.085, 0.06, 2.01, this.fx));
-        this.pluck(midi(57), now, 0.07, this.fx);
-        if (name === "reward") this.woof(now + 0.62, 0.06);
+        this.duckFor(0.34, 1.1);
+        // "Secret found": a stepwise climb that lands on the octave, harp
+        // sparkle over the top, and a delighted frog at the end.
+        [62, 65, 69, 74].forEach((n, i) => {
+          this.pluck(midi(n), now + i * 0.11, 0.075, this.fx);
+          this.bell(midi(n + 12), now + i * 0.11, 0.03, 2.01, this.fx);
+        });
+        this.ocarina(midi(74), now + 0.44, 0.8, 0.06);
+        this.ribbit(now + 0.95, 0.05);
+        return;
+      }
+      case "reward": {
+        this.duckFor(0.38, 1.4);
+        // Item-get fanfare: horn calls on the tonic triad, harp run over it,
+        // and Ivy's woof as the last word.
+        [62, 66, 69, 74].forEach((n, i) => this.horn(midi(n), now + i * 0.13, 0.34, 0.05, this.fx));
+        this.horn(midi(81), now + 0.56, 0.8, 0.055, this.fx);
+        this.harp(62, now + 0.1, 0.045, 9);
+        this.woof(now + 0.95, 0.07);
         return;
       }
       case "jump": {
+        // A frog-hop "hup": airy body under a rising fourth.
         const osc = ctx.createOscillator();
         osc.type = "triangle";
-        osc.frequency.setValueAtTime(320, now);
-        osc.frequency.exponentialRampToValueAtTime(880, now + 0.13);
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(760, now + 0.12);
         const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.055, now);
+        gain.gain.setValueAtTime(0.05, now);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
         osc.connect(gain).connect(this.fx);
         osc.start(now);
         osc.stop(now + 0.18);
+        this.pluck(midi(86), now + 0.06, 0.022, this.fx);
         return;
       }
       case "land": {
         this.hand(now, 0.09, true);
+        this.tailThump(now + 0.06, 0.03);
         return;
       }
       case "fail": {
-        this.duckFor(0.4, 1);
-        [76, 72, 69, 64].forEach((n, i) => this.pluck(midi(n), now + i * 0.1, 0.06, this.fx));
-        this.woof(now + 0.5, 0.05);
+        this.duckFor(0.4, 1.2);
+        // The gentle "puzzle failed" sigh: a descending harp fall, a low
+        // ocarina, and a sympathetic woof. Sad, never punishing.
+        this.harp(74, now, 0.055, 6, true);
+        this.ocarina(midi(56), now + 0.35, 0.7, 0.045);
+        this.woof(now + 0.7, 0.055);
         return;
       }
+
     }
   }
 }
