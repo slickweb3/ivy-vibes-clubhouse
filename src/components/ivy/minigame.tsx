@@ -139,6 +139,7 @@ function freshRun(): RunState {
     passedBest: false,
     nextObstacle: 260,
     nextCoin: 133,
+    squash: 1,
     over: false,
   };
 }
