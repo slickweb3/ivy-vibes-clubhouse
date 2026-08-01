@@ -65,7 +65,8 @@ interface SceneConfig {
 const SCENES: Record<AudioScene, SceneConfig> = {
   landing: {
     bpm: 74,
-    chords: [45, 45, 41, 43],
+    // Dm – C – F – C: the modal overworld cadence, stated slowly.
+    chords: [50, 48, 53, 48],
     pad: 0.5,
     melody: 0.3,
     pluck: 0.32,
@@ -77,7 +78,8 @@ const SCENES: Record<AudioScene, SceneConfig> = {
   },
   explore: {
     bpm: 88,
-    chords: [45, 50, 43, 48],
+    // Dm – C – Gm – F: walking-the-trail progression.
+    chords: [50, 48, 55, 53],
     pad: 0.34,
     melody: 0.5,
     pluck: 0.55,
@@ -89,7 +91,8 @@ const SCENES: Record<AudioScene, SceneConfig> = {
   },
   game: {
     bpm: 116,
-    chords: [45, 43, 50, 48],
+    // Dm – F – C – Gm: the chase harmonies.
+    chords: [50, 53, 48, 55],
     pad: 0.22,
     melody: 0.62,
     pluck: 0.7,
@@ -101,7 +104,8 @@ const SCENES: Record<AudioScene, SceneConfig> = {
   },
   hush: {
     bpm: 66,
-    chords: [41, 45, 43, 45],
+    // Slow lantern-light: F – Dm – C – Dm.
+    chords: [53, 50, 48, 50],
     pad: 0.55,
     melody: 0.2,
     pluck: 0.2,
