@@ -1619,22 +1619,40 @@ html.dark body {
 }
 
 /* Night mode surfaces: the hand-placed warm panels become pond glass, and the
-   ink inside them flips to moonlight. Bright brand chips (frog / yellow / pink
-   / lavender) keep their dark ink so contrast holds. */
+   ink on them flips to moonlight. */
 .dark :is([class*="bg-cream"], [class*="bg-card"], [class*="bg-leaf"], [class*="bg-popover"]) {
   background-color: color-mix(in oklab, #12242f 92%, var(--lavender));
   color: var(--foreground);
 }
 
-.dark
-  :is([class*="bg-cream"], [class*="bg-card"], [class*="bg-leaf"], [class*="bg-popover"])
-  :is([class*="text-charcoal"], [class*="text-ink"]):not([class*="bg-yellow"]):not(
-    [class*="bg-pink"]
-  ):not([class*="bg-frog"]):not([class*="bg-lavender"]):not([class*="bg-leaf"]):not(
-    [class*="bg-cream"]
-  ) {
+/* Charcoal ink anywhere over a dark surface would vanish, so it becomes
+   moonlight by default. */
+.dark :is([class*="text-charcoal"], [class*="text-ink"]) {
   color: var(--foreground);
 }
+
+/* ...except on the bright brand chips, which stay light: their ink must stay
+   dark. Re-asserted after the flip, and it wins on descendants too. */
+.dark
+  :is(
+    [class*="bg-frog"],
+    [class*="bg-yellow"],
+    [class*="bg-pink"],
+    [class*="bg-lavender"],
+    [class*="bg-primary"]
+  ):is([class*="text-charcoal"], [class*="text-ink"]),
+.dark
+  :is(
+    [class*="bg-frog"],
+    [class*="bg-yellow"],
+    [class*="bg-pink"],
+    [class*="bg-lavender"],
+    [class*="bg-primary"]
+  )
+  :is([class*="text-charcoal"], [class*="text-ink"]) {
+  color: var(--charcoal);
+}
+
 
 .dark :is([class*="border-charcoal"], .ink-border) {
   border-color: color-mix(in oklab, var(--lavender) 55%, #0b1620);
