@@ -141,9 +141,21 @@ export class IvyAudio {
     this.duck = ctx.createGain();
     this.duck.connect(this.master);
 
+    // Day / night variation: after dusk the pond gets darker and dreamier.
+    const hour = new Date().getHours();
+    const night = hour < 6 || hour >= 21;
     this.air = ctx.createBiquadFilter();
     this.air.type = "lowpass";
-    this.air.frequency.value = 5200;
+    this.air.frequency.value = night ? 3400 : 5200;
+    if (night) {
+      for (const scene of Object.values(SCENES)) {
+        scene.register -= 12;
+        scene.pad = Math.min(1, scene.pad * 1.25);
+        scene.crystal = Math.min(1, scene.crystal * 1.3);
+        scene.perc *= 0.6;
+      }
+      this.levels = { ...SCENES.landing };
+    }
     this.air.Q.value = 0.4;
     this.air.connect(this.duck);
 
