@@ -97,7 +97,11 @@
   --gradient-night: linear-gradient(140deg, #174f36 0%, #0f3527 100%);
 }
 
+/* Night mode: moonlit pond. Deep indigo-ivy surfaces, lavender moonlight. */
 .dark {
+  --background: #0d1a22;
+  --gradient-night: linear-gradient(150deg, #0d1a22 0%, #101f2c 55%, #0a1319 100%);
+
   --background: #101a14;
   --foreground: #fff8e7;
   --card: #16281e;
