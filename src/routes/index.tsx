@@ -113,6 +113,8 @@ function Home() {
         <IvyPhotoRow />
         <MeetIvy />
         <DailyRibbit />
+        <ChorusPond />
+
 
 
         <SocialWindows posts={curated.all} />
