@@ -72,7 +72,7 @@ function WinnerCard({
         </span>
         <span className="text-sm text-charcoal/70">{winner.plays} plays</span>
         {winner.paidAt ? (
-          <StatusChip status="approved" label={`Dropped ${winner.paidAt.slice(0, 10)}`} />
+          <StatusChip status="ok" label={`Dropped ${winner.paidAt.slice(0, 10)}`} />
         ) : (
           <StatusChip status="pending" label="Not dropped yet" />
         )}
@@ -135,7 +135,7 @@ function WinnersPage() {
   const fetchWinners = useServerFn(getMonthlyWinners);
   const query = useQuery({
     queryKey: ["admin", "winners"],
-    queryFn: () => fetchWinners({ data: {} }),
+    queryFn: () => fetchWinners(),
     retry: false,
   });
 
@@ -202,7 +202,7 @@ function WinnersPage() {
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="font-display text-lg text-charcoal">{season.label}</h2>
             <StatusChip
-              status={season.isComplete ? "approved" : "pending"}
+              status={season.isComplete ? "ok" : "pending"}
               label={season.isComplete ? "Month closed" : "In progress"}
             />
             <span className="text-sm text-charcoal/70">{season.players} wallets</span>
