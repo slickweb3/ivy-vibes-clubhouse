@@ -126,152 +126,15 @@ function arp(
  * scheduled a beat ahead, so it stays in time without any audio files.
  * ------------------------------------------------------------------------- */
 
-const ROOT = 146.83; // D3
-const hz = (semi: number) => ROOT * Math.pow(2, semi / 12);
-const R = null;
+import {
+  BASS_ROOTS,
+  COUNTER,
+  HARP_SHAPE,
+  MELODY,
+  THEME_ROOT_HZ,
+} from "@/lib/audio/theme";
 
-/** 64 sixteenth-notes: the heroic call, then its answer. */
-const MELODY: (number | null)[] = [
-  // bar 1 — the call
-  19,
-  R,
-  R,
-  14,
-  R,
-  12,
-  R,
-  14,
-  19,
-  R,
-  R,
-  R,
-  21,
-  R,
-  19,
-  R,
-  // bar 2 — lift
-  17,
-  R,
-  R,
-  12,
-  R,
-  10,
-  R,
-  12,
-  17,
-  R,
-  R,
-  R,
-  19,
-  R,
-  17,
-  R,
-  // bar 3 — the answer
-  22,
-  R,
-  21,
-  R,
-  19,
-  R,
-  17,
-  R,
-  19,
-  R,
-  R,
-  14,
-  R,
-  R,
-  12,
-  R,
-  // bar 4 — resolve home
-  10,
-  R,
-  12,
-  R,
-  14,
-  R,
-  17,
-  R,
-  19,
-  R,
-  R,
-  R,
-  R,
-  R,
-  R,
-  R,
-];
-
-/** High counter-melody that only appears once the run gets fast. */
-const COUNTER: (number | null)[] = [
-  31,
-  R,
-  R,
-  R,
-  26,
-  R,
-  R,
-  R,
-  31,
-  R,
-  R,
-  R,
-  33,
-  R,
-  R,
-  R,
-  29,
-  R,
-  R,
-  R,
-  24,
-  R,
-  R,
-  R,
-  29,
-  R,
-  R,
-  R,
-  31,
-  R,
-  R,
-  R,
-  34,
-  R,
-  R,
-  R,
-  31,
-  R,
-  R,
-  R,
-  29,
-  R,
-  R,
-  R,
-  26,
-  R,
-  R,
-  R,
-  22,
-  R,
-  24,
-  R,
-  26,
-  R,
-  29,
-  R,
-  31,
-  R,
-  R,
-  R,
-  R,
-  R,
-  R,
-  R,
-];
-
-/** Root of the bar, walked in bouncy octaves by the bass. */
-const BASS_ROOTS = [2, -2, 5, 0];
+const hz = (semi: number) => THEME_ROOT_HZ * Math.pow(2, semi / 12);
 
 let musicTimer: number | null = null;
 let musicGain: GainNode | null = null;
@@ -424,7 +287,7 @@ function scheduleMusic() {
     // harp: rolling chord tones between the melody notes, the overworld shimmer
     if (i % 4 === 1 || i % 4 === 3) {
       const root = BASS_ROOTS[bar] ?? 2;
-      const shape = [0, 7, 10, 14, 19][(i * 3) % 5]!;
+      const shape = HARP_SHAPE[(i * 3) % HARP_SHAPE.length]!;
       voice(t, hz(root + shape + 12), spb * 1.4, "triangle", 0.018 + intensity * 0.006);
     }
 
