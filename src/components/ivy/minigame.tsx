@@ -1103,12 +1103,34 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
-      <div className="rounded-2xl bg-card p-2 pop-static sm:p-4">
+      <div>
+        {/* Console pod. `data-phase` drives every bezel state in CSS so the
+            shell can animate without re-rendering the game loop. */}
         <div
-          className="game-frame"
-          style={{ ["--game-frame-src" as string]: `url(${gameFrame})` }}
+          className="game-pod"
+          data-phase={phase === "over" && summary.record ? "record" : phase}
         >
-          <div className="game-frame-screen">
+          <div className="game-pod-rail" aria-hidden>
+            <span className="game-pod-led" />
+            <span className="game-pod-led" />
+            <span className="game-pod-led" />
+            <span>
+              {phase === "playing"
+                ? "Live · Pond Sector 64"
+                : phase === "paused"
+                  ? "Standby"
+                  : phase === "over"
+                    ? "Run archived"
+                    : "Portal ready"}
+            </span>
+            <span className="ml-auto tabular-nums">Best {best}</span>
+          </div>
+          <div
+            className="game-frame"
+            style={{ ["--game-frame-src" as string]: `url(${gameFrame})` }}
+          >
+            <div className="game-frame-screen">
+
             <div
               role="button"
               tabIndex={0}
