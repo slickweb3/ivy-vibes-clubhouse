@@ -605,6 +605,8 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       const dt = rawDt;
       run.t += dt;
       run.speed = START_SPEED + run.t * SPEED_RAMP;
+      // The theme tightens as the pond speeds up.
+      gameAudio.setIntensity((run.speed - START_SPEED) / 420);
       const dx = run.speed * dt;
       run.distance += dx;
       run.scorePulse = Math.max(0, run.scorePulse - dt * 2.2);
@@ -701,6 +703,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
           run.hitstop = 0.22;
           burst(run, PLAYER_X + 10, run.y - 12, 16, COLORS.pink, calmRef.current);
           gameAudio.play("death");
+          gameAudio.stopMusic();
           draw(run);
           rafRef.current = requestAnimationFrame(stepRef.current);
           return;
@@ -814,6 +817,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
       record,
     });
     setPhase("over");
+    gameAudio.stopMusic();
     discover("leap");
     rafRef.current = null;
   }, []);
@@ -824,6 +828,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     // Never leave a second loop running — that used to double the game speed.
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     gameAudio.unlock();
+    gameAudio.startMusic();
     runRef.current = freshRun();
     setScore(0);
     setStatus(null);
@@ -880,6 +885,14 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   useEffect(() => {
     gameAudio.init();
     setSoundOn(gameAudio.enabled);
+    const onHidden = () => {
+      if (document.hidden) gameAudio.stopMusic();
+    };
+    document.addEventListener("visibilitychange", onHidden);
+    return () => {
+      document.removeEventListener("visibilitychange", onHidden);
+      gameAudio.stopMusic();
+    };
     try {
       const stored = Number(window.localStorage.getItem(BEST_KEY) ?? 0);
       if (Number.isFinite(stored) && stored > 0) {
@@ -1098,8 +1111,13 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     const next = !gameAudio.enabled;
     gameAudio.setEnabled(next);
     setSoundOn(next);
-    if (next) gameAudio.play("ui");
-  }, []);
+    if (next) {
+      gameAudio.play("ui");
+      if (phase === "playing") gameAudio.startMusic();
+    } else {
+      gameAudio.stopMusic();
+    }
+  }, [phase]);
 
   const resetDate = useMemo(
     () =>
