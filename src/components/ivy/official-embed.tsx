@@ -10,6 +10,28 @@ import { cn } from "@/lib/utils";
 const activePlayerListeners = new Set<(id: string) => void>();
 
 /**
+ * Hard cap on simultaneously mounted third-party iframes. Each Instagram or
+ * TikTok embed is a full web page; without a cap a long scroll can leave more
+ * than a dozen alive and mobile browsers reload the tab to reclaim memory.
+ */
+const MAX_MOUNTED_EMBEDS = 4;
+const mountedEmbeds: Array<() => void> = [];
+
+function claimEmbedSlot(release: () => void) {
+  if (!mountedEmbeds.includes(release)) mountedEmbeds.push(release);
+  while (mountedEmbeds.length > MAX_MOUNTED_EMBEDS) {
+    const oldest = mountedEmbeds.shift();
+    oldest?.();
+  }
+}
+
+function releaseEmbedSlot(release: () => void) {
+  const index = mountedEmbeds.indexOf(release);
+  if (index >= 0) mountedEmbeds.splice(index, 1);
+}
+
+
+/**
  * Renders one curated post using the platform's OWN official embed.
  *
  * Nothing is downloaded, proxied or rehosted: the iframe points straight at
