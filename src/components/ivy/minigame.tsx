@@ -58,6 +58,8 @@ interface RunState {
   y: number;
   vy: number;
   jumps: number;
+  /** Total hops this run — reported as anti-cheat telemetry, never as identity. */
+  taps: number;
   obstacles: Obstacle[];
   coinsList: Coin[];
   pads: number[];
@@ -77,6 +79,7 @@ function freshRun(): RunState {
     y: GROUND_Y,
     vy: 0,
     jumps: 0,
+    taps: 0,
     obstacles: [],
     coinsList: [],
     pads: [60, 200, 340, 460],
@@ -585,6 +588,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     if (run.jumps < 2) {
       run.vy = JUMP_V * (run.jumps === 0 ? 1 : 0.86);
       run.jumps += 1;
+      run.taps += 1;
       burst(run, PLAYER_X - 8, run.y + 6, run.jumps === 1 ? 5 : 8, COLORS.leaf);
     }
   }, [phase, start]);
@@ -728,6 +732,11 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
           score: finalScore,
           nonce,
           signature: bs58.encode(signed.signature),
+          telemetry: {
+            coins: runRef.current.coins,
+            jumps: runRef.current.taps,
+            durationMs: Math.round(runRef.current.t * 1000),
+          },
         },
       });
       if (!result.accepted) {
