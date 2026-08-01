@@ -1,59 +1,110 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ExternalLinkIcon } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ArrowUpIcon, ExternalLinkIcon } from "lucide-react";
 import { OfficialSocialEmbed } from "./official-embed";
 import { Section, Sticker } from "./primitives";
 import { FrogDoodle, PawDoodle } from "./doodles";
 import { projectConfig } from "@/config/project";
 import { platformLabel, type CuratedPlatform, type CuratedPost } from "@/types/curated";
 import { cn } from "@/lib/utils";
+import avatarInstagram from "@/assets/ivy-avatar-instagram.png.asset.json";
+import avatarTiktok from "@/assets/ivy-avatar-tiktok.png.asset.json";
 
 /**
- * Two side-by-side "windows", each a live scrollable preview of one of Ivy's
- * official public accounts. Posts render through the platform's own official
- * embeds — nothing is scraped, copied or re-hosted.
+ * Two tall "profile windows" — one per official public account. Each one is
+ * styled like the real app it mirrors and scrolls through Ivy's official
+ * platform embeds. Nothing is scraped, copied or re-hosted: every post is
+ * rendered by Instagram / TikTok themselves.
  */
+
+interface ProfileMeta {
+  displayName: string;
+  handle: string;
+  bio: string[];
+  /** Owner-supplied profile numbers, shown with the date they were captured. */
+  stats: { label: string; value: string }[];
+  statsAsOf: string;
+  urlLabel: string;
+  avatar: string;
+  profileUrl: string;
+  tone: "pink" | "lavender";
+}
+
+const PROFILES: Record<CuratedPlatform, ProfileMeta> = {
+  instagram: {
+    displayName: "Ivy",
+    handle: "frogqueenivy",
+    bio: ["Not a breed", "Short spine syndrome", "linktr.ee/Ivyvibing"],
+    stats: [
+      { label: "posts", value: "623" },
+      { label: "followers", value: "549K" },
+      { label: "following", value: "214" },
+    ],
+    statsAsOf: "1 Aug 2026",
+    urlLabel: "instagram.com/frogqueenivy",
+    avatar: avatarInstagram.url,
+    profileUrl: projectConfig.socials.instagram ?? "https://www.instagram.com/frogqueenivy/",
+    tone: "pink",
+  },
+  tiktok: {
+    displayName: "Ivy",
+    handle: "ivyvibing",
+    bio: ["Ivy has short spine syndrome", "My dms are broken"],
+    stats: [
+      { label: "following", value: "134" },
+      { label: "followers", value: "4.7M" },
+      { label: "likes", value: "144.7M" },
+    ],
+    statsAsOf: "1 Aug 2026",
+    urlLabel: "tiktok.com/@ivyvibing",
+    avatar: avatarTiktok.url,
+    profileUrl: projectConfig.socials.tiktok ?? "https://www.tiktok.com/@ivyvibing",
+    tone: "lavender",
+  },
+};
+
 export function SocialWindows({ posts }: { posts: CuratedPost[] }) {
-  const tiktok = useMemo(
-    () => posts.filter((post) => post.platform === "tiktok"),
+  const instagram = useMemo(
+    () => posts.filter((post) => post.platform === "instagram"),
     [posts],
   );
+  const tiktok = useMemo(() => posts.filter((post) => post.platform === "tiktok"), [posts]);
 
-  if (tiktok.length === 0) return null;
+  if (instagram.length === 0 && tiktok.length === 0) return null;
 
   return (
     <Section
       id="social-windows"
       eyebrow="Straight from her accounts"
-      title="Ivy's window"
-      intro="A little window into the Frog Queen's official TikTok. Scroll it — her captions stay exactly as she wrote them, shown by the platform itself."
+      title="Ivy's windows"
+      intro="Two tall windows onto the Frog Queen's official Instagram and TikTok. Scroll each one like the real app — her captions stay exactly as she wrote them, shown by the platforms themselves."
       tone="leaf"
     >
-      <div className="mx-auto w-full max-w-xl">
-        <SocialWindow platform="tiktok" posts={tiktok} tone="lavender" />
+      <div className="grid gap-8 xl:grid-cols-2">
+        {instagram.length > 0 ? (
+          <ProfileWindow platform="instagram" posts={instagram} />
+        ) : null}
+        {tiktok.length > 0 ? <ProfileWindow platform="tiktok" posts={tiktok} /> : null}
       </div>
     </Section>
   );
 }
 
-function SocialWindow({
+function ProfileWindow({
   platform,
   posts,
-  tone,
 }: {
   platform: CuratedPlatform;
   posts: CuratedPost[];
-  tone: "pink" | "lavender";
 }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(0);
+  const meta = PROFILES[platform];
   const label = platformLabel(platform);
-  const handle = posts[0]?.sourceAccountHandle ?? "";
-  const profileUrl =
-    (platform === "instagram" ? projectConfig.socials.instagram : projectConfig.socials.tiktok) ??
-    posts[0]?.sourceAccountUrl ??
-    "#";
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const [progress, setProgress] = useState(0);
+  const [current, setCurrent] = useState(1);
+  const [showTop, setShowTop] = useState(false);
 
-  // Progress bar for the window's own scroll — cheap, rAF-throttled.
+  // Scroll progress + "which post am I on" — rAF throttled, no layout thrash.
   useEffect(() => {
     const node = scrollRef.current;
     if (!node) return;
@@ -61,7 +112,16 @@ function SocialWindow({
     const update = () => {
       frame = 0;
       const max = node.scrollHeight - node.clientHeight;
-      setProgress(max > 0 ? Math.min(1, node.scrollTop / max) : 0);
+      const ratio = max > 0 ? Math.min(1, Math.max(0, node.scrollTop / max)) : 0;
+      setProgress(ratio);
+      setShowTop(node.scrollTop > 240);
+      const mid = node.scrollTop + node.clientHeight / 2;
+      let active = 1;
+      itemRefs.current.forEach((item, index) => {
+        if (!item) return;
+        if (item.offsetTop <= mid) active = index + 1;
+      });
+      setCurrent(active);
     };
     const onScroll = () => {
       if (frame) return;
@@ -73,15 +133,19 @@ function SocialWindow({
       node.removeEventListener("scroll", onScroll);
       if (frame) cancelAnimationFrame(frame);
     };
+  }, [posts.length]);
+
+  const scrollToTop = useCallback(() => {
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   return (
-    <div className="flex min-w-0 flex-col overflow-hidden rounded-3xl bg-card ink-border pop-static">
-      {/* Window chrome */}
+    <div className="flex min-w-0 flex-col overflow-hidden rounded-[1.75rem] bg-card ink-border pop-static">
+      {/* Browser-ish chrome */}
       <div
         className={cn(
-          "flex flex-wrap items-center gap-3 border-b-2 border-charcoal/15 px-4 py-3",
-          tone === "pink" ? "bg-pink" : "bg-lavender",
+          "grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 border-b-2 border-charcoal/15 px-4 py-3",
+          meta.tone === "pink" ? "bg-pink" : "bg-lavender",
         )}
       >
         <span aria-hidden className="flex shrink-0 items-center gap-1.5">
@@ -89,26 +153,92 @@ function SocialWindow({
           <span className="h-3 w-3 rounded-full bg-charcoal/25" />
           <span className="h-3 w-3 rounded-full bg-charcoal/25" />
         </span>
-        <span className="min-w-0 flex-1">
-          <span className="block truncate font-display text-base text-charcoal">
-            {label}
-          </span>
-          {handle ? (
-            <span className="block truncate text-xs text-charcoal/70">@{handle}</span>
-          ) : null}
+        <span className="flex min-w-0 items-center gap-2 rounded-full bg-card/70 px-3 py-1">
+          <FrogDoodle aria-hidden className="h-3.5 w-4 shrink-0 text-ivy" />
+          <span className="truncate text-xs text-charcoal/80">{meta.urlLabel}</span>
         </span>
-        <Sticker tone={tone === "pink" ? "yellow" : "leaf"}>
-          {platform === "tiktok" ? (
-            <PawDoodle className="h-3.5 w-3.5 text-charcoal" />
-          ) : (
-            <FrogDoodle className="h-3.5 w-4 text-ivy" />
-          )}
-          {posts.length} {posts.length === 1 ? "post" : "posts"}
-        </Sticker>
       </div>
 
-      {/* Scroll progress */}
-      <div aria-hidden className="h-1 w-full bg-charcoal/10">
+      {/* Profile header, mirroring the real app layout */}
+      <div className="flex flex-col gap-4 px-4 py-5 sm:px-6">
+        <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4">
+          <span className="relative shrink-0">
+            <img
+              src={meta.avatar}
+              alt={`Ivy's official ${label} profile picture`}
+              width={320}
+              height={320}
+              loading="lazy"
+              decoding="async"
+              className="h-20 w-20 rounded-full bg-cream object-cover ink-border sm:h-24 sm:w-24"
+            />
+            <span
+              aria-hidden
+              className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-frog ink-border"
+            >
+              <PawDoodle className="h-3.5 w-3.5 text-charcoal" />
+            </span>
+          </span>
+          <div className="min-w-0">
+            <p className="truncate font-display text-2xl leading-tight text-charcoal">
+              {meta.displayName}
+            </p>
+            <a
+              href={meta.profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="truncate text-sm text-ivy underline underline-offset-4"
+            >
+              @{meta.handle}
+            </a>
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+              {meta.stats.map((stat) => (
+                <span key={stat.label} className="text-sm text-charcoal/80">
+                  <strong className="font-display text-charcoal">{stat.value}</strong>{" "}
+                  {stat.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-0.5 text-sm text-charcoal/85">
+          {meta.bio.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <a
+            href={meta.profileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="pop inline-flex min-h-10 items-center gap-1.5 rounded-full bg-frog px-4 font-display text-charcoal"
+          >
+            Follow on {label}
+            <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />
+          </a>
+          <Sticker tone={meta.tone === "pink" ? "yellow" : "leaf"}>
+            <FrogDoodle className="h-3.5 w-4 text-ivy" />
+            {posts.length} {posts.length === 1 ? "post" : "posts"} in this window
+          </Sticker>
+        </div>
+        <p className="text-[0.7rem] leading-snug text-charcoal/60">
+          Profile numbers as shared by Ivy&apos;s owner on {meta.statsAsOf}. Live counts live on{" "}
+          {label}.
+        </p>
+      </div>
+
+      {/* Feed viewport */}
+      <div className="flex items-center gap-3 border-y-2 border-charcoal/15 bg-leaf/40 px-4 py-2 sm:px-6">
+        <span className="font-display text-xs uppercase tracking-wide text-charcoal">
+          Official {label} feed
+        </span>
+        <span aria-live="polite" className="ml-auto text-xs text-charcoal/70">
+          {current} / {posts.length}
+        </span>
+      </div>
+      <div aria-hidden className="h-1.5 w-full bg-charcoal/10">
         <div
           className="h-full bg-frog transition-[width] duration-150 ease-out"
           style={{ width: `${Math.round(progress * 100)}%` }}
@@ -121,11 +251,17 @@ function SocialWindow({
           tabIndex={0}
           role="region"
           aria-label={`Scrollable preview of Ivy's official ${label} posts`}
-          className="social-window h-[26rem] overflow-y-auto overscroll-contain px-3 py-4 sm:h-[34rem] sm:px-4"
+          className="social-window h-[34rem] overflow-y-auto overscroll-contain px-3 py-4 sm:h-[46rem] sm:px-5 lg:h-[54rem]"
         >
-          <ul className="m-0 flex list-none flex-col gap-4 p-0">
-            {posts.map((post) => (
-              <li key={post.id} className="social-window-item">
+          <ul className="m-0 flex list-none flex-col gap-5 p-0">
+            {posts.map((post, index) => (
+              <li
+                key={post.id}
+                ref={(node) => {
+                  itemRefs.current[index] = node;
+                }}
+                className="social-window-item"
+              >
                 <OfficialSocialEmbed
                   post={post}
                   tone={platform === "tiktok" ? "lavender" : "cream"}
@@ -135,22 +271,36 @@ function SocialWindow({
             ))}
           </ul>
         </div>
+
         {/* Soft fade so the window reads as a viewport, not a cut-off list. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-card to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-card to-transparent"
         />
+
+        {showTop ? (
+          <button
+            type="button"
+            onClick={scrollToTop}
+            className="pop absolute bottom-4 right-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-yellow text-charcoal"
+            aria-label={`Back to the top of Ivy's ${label} feed`}
+          >
+            <ArrowUpIcon aria-hidden className="h-5 w-5" />
+          </button>
+        ) : null}
       </div>
 
-      <div className="flex items-center justify-between gap-3 border-t-2 border-charcoal/15 px-4 py-3 text-xs">
-        <span className="text-charcoal/70">Official {label} embeds</span>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t-2 border-charcoal/15 px-4 py-3 text-xs sm:px-6">
+        <span className="text-charcoal/70">
+          Rendered by {label}&apos;s own embeds — nothing copied or re-hosted.
+        </span>
         <a
-          href={profileUrl}
+          href={meta.profileUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="pop inline-flex min-h-9 items-center gap-1 rounded-full bg-frog px-3 font-display text-charcoal"
         >
-          Follow on {label}
+          Open profile
           <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />
         </a>
       </div>
