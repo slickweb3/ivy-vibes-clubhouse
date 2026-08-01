@@ -723,14 +723,14 @@ export class IvyAudio {
         const osc = ctx.createOscillator();
         osc.type = "triangle";
         osc.frequency.setValueAtTime(300, now);
-        osc.frequency.exponentialRampToValueAtTime(760, now + 0.12);
+        osc.frequency.exponentialRampToValueAtTime(560, now + 0.1);
         const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.05, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+        gain.gain.setValueAtTime(0.024, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
         osc.connect(gain).connect(this.fx);
         osc.start(now);
         osc.stop(now + 0.18);
-        this.pluck(midi(86), now + 0.06, 0.022, this.fx);
+        this.pluck(midi(86), now + 0.06, 0.01, this.fx);
         return;
       }
       case "land": {
@@ -742,8 +742,8 @@ export class IvyAudio {
         this.duckFor(0.4, 1.2);
         // The gentle "puzzle failed" sigh: a descending harp fall, a low
         // ocarina, and a sympathetic woof. Sad, never punishing.
-        this.harp(74, now, 0.055, 6, true);
-        this.ocarina(midi(56), now + 0.35, 0.7, 0.045);
+        this.harp(74, now, 0.045, 5, true);
+        this.ocarina(midi(69), now + 0.35, 0.6, 0.04);
         this.woof(now + 0.7, 0.055);
         return;
       }
