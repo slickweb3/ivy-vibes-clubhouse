@@ -8,7 +8,7 @@ import {
   type SiteMedia,
   type UnifiedMediaItem,
 } from "@/types/media";
-import { CrownDoodle, FrogDoodle, GrassStrip, LeafDoodle, PawDoodle, VineDivider } from "./doodles";
+import { CrownDoodle, FrogDoodle, GrassStrip, LeafDoodle, PawDoodle } from "./doodles";
 import { useEmbedConsent } from "./cookie-consent";
 import { OfficialSocialEmbed, CuratedNote } from "./official-embed";
 import { Reveal } from "./reveal";
