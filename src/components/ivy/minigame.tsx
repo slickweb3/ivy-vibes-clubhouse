@@ -904,7 +904,11 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
     };
     sync();
     query.addEventListener("change", sync);
-    return () => query.removeEventListener("change", sync);
+    return () => {
+      query.removeEventListener("change", sync);
+      document.removeEventListener("visibilitychange", onHidden);
+      gameAudio.stopMusic();
+    };
   }, []);
 
   /* ---- crisp canvas: match the backing store to the real device pixels ---- */
