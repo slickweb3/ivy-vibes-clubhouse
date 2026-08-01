@@ -215,6 +215,23 @@
   box-shadow: 0 6px 0 0 var(--charcoal);
 }
 
+@utility ivy-photo-frame {
+  border: 3px solid var(--charcoal);
+  border-radius: 1.5rem;
+  padding: 0.5rem;
+  background-color: var(--cream);
+  box-shadow: 0 6px 0 0 var(--charcoal);
+  overflow: hidden;
+  transition:
+    transform 260ms cubic-bezier(0.34, 1.6, 0.5, 1),
+    box-shadow 220ms ease;
+  &:hover {
+    transform: translateY(-4px) rotate(-1deg);
+    box-shadow: 0 12px 0 0 var(--charcoal);
+  }
+}
+
+
 @utility meadow {
   background-image: var(--gradient-meadow);
 }
