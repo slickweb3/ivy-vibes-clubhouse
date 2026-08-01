@@ -102,6 +102,8 @@ interface RunState {
   passedBest: boolean;
   nextObstacle: number;
   nextCoin: number;
+  /** Vertical squash/stretch factor. 1 = neutral; springs back to 1 always. */
+  squash: number;
   over: boolean;
 }
 
