@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,6 +38,7 @@ function AuthPage() {
     setBusy(true);
     setMessage(null);
     try {
+      const supabase = await getSupabaseBrowserClient();
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email,

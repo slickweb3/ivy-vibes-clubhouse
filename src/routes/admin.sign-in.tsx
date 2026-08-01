@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,11 +36,13 @@ function AdminSignIn() {
 
   useEffect(() => {
     let active = true;
-    supabase.auth.getUser().then(({ data }) => {
-      if (!active) return;
-      if (data.user) navigate({ to: "/admin" });
-      setChecked(true);
-    });
+    void getSupabaseBrowserClient()
+      .then((supabase) => supabase.auth.getUser())
+      .then(({ data }) => {
+        if (!active) return;
+        if (data.user) navigate({ to: "/admin" });
+        setChecked(true);
+      });
     return () => {
       active = false;
     };
@@ -50,6 +52,7 @@ function AdminSignIn() {
     event.preventDefault();
     setBusy(true);
     setError(null);
+    const supabase = await getSupabaseBrowserClient();
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (signInError) {

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatusChip, Sticker, MediaPlaceholder } from "@/components/ivy/primitives";
@@ -60,6 +60,7 @@ function AdminDashboard() {
   async function signOut() {
     await queryClient.cancelQueries();
     queryClient.clear();
+    const supabase = await getSupabaseBrowserClient();
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
