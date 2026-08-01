@@ -5,8 +5,9 @@ import { Moon, Sun } from "lucide-react";
  * NightMode — flips the whole pond into a moonlit version of itself.
  *
  * The `dark` class on <html> drives every token; this component adds the
- * decorative sky (stars + moon) and remembers the visitor's choice.
+ * decorative star sky and remembers the visitor's choice.
  */
+
 
 const KEY = "ivy-night-mode";
 
