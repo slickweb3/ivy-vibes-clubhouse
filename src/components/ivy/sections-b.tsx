@@ -6,9 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Section, MediaPlaceholder, InfoCard, Sticker, StatusChip } from "./primitives";
-import type { CuratedPost } from "@/types/curated";
-import { OfficialSocialEmbed } from "./official-embed";
+import { Section, InfoCard, Sticker, StatusChip } from "./primitives";
 import { CrownDoodle, FrogDoodle, IvyWordmark, PawDoodle, VineDivider } from "./doodles";
 import { useEmbedConsent } from "./cookie-consent";
 import {
@@ -24,7 +22,7 @@ import { COMING_SOON, projectConfig } from "@/config/project";
 
 /* --------------------------------------------------------- Owner's Corner */
 
-export function OwnerCorner({ curatedPost = null }: { curatedPost?: CuratedPost | null }) {
+export function OwnerCorner() {
   return (
     <Section
       id="owner-corner"
@@ -33,22 +31,10 @@ export function OwnerCorner({ curatedPost = null }: { curatedPost?: CuratedPost 
       intro={ownerCorner.body}
       tone="lavender"
     >
-      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-        {curatedPost ? (
-          <OfficialSocialEmbed post={curatedPost} tone="cream" />
-        ) : (
-          <MediaPlaceholder
-            label={ownerCorner.mediaLabel}
-            aspect="portrait"
-            tone="cream"
-            hint="Shared only with the owner's permission"
-          />
-        )}
-        <div className="grid gap-4 sm:grid-cols-2">
-          {ownerCorner.cards.map((card) => (
-            <InfoCard key={card.title} title={card.title} body={card.body} tone="cream" />
-          ))}
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {ownerCorner.cards.map((card) => (
+          <InfoCard key={card.title} title={card.title} body={card.body} tone="cream" />
+        ))}
       </div>
     </Section>
   );

@@ -70,11 +70,8 @@ interface HomeData {
 
 interface HomeCuratedSections {
   hero: CuratedPost | null;
-  meetIvy: CuratedPost[];
   freshPosts: CuratedPost[];
-  ivyTv: CuratedPost[];
   hallOfFame: CuratedPost[];
-  ownerCorner: CuratedPost | null;
 }
 
 function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
@@ -110,16 +107,12 @@ function buildHomeCuratedSections(feed: CuratedFeed): HomeCuratedSections {
 
   if (hero) used.add(hero.id);
 
-  // Compact homepage: fewer, stronger cards and a light video load for phones.
-  const meetIvy = take(photoPosts, 3);
   const freshPhotoPosts = take(photoPosts, 2);
   const freshVideoPosts = take(videoPosts, 4);
   const freshPosts = [...freshPhotoPosts, ...freshVideoPosts];
-  const ivyTv: CuratedPost[] = [];
   const hallOfFame = take(photoPosts, 4);
-  const ownerCorner = take([...photoPosts, ...videoPosts], 1)[0] ?? null;
 
-  return { hero, meetIvy, freshPosts, ivyTv, hallOfFame, ownerCorner };
+  return { hero, freshPosts, hallOfFame };
 
 }
 
@@ -141,7 +134,7 @@ function Home() {
       <SiteNav />
       <main id="main">
         <Hero media={media.hero} market={market} curatedHero={homeCurated.hero} />
-        <MeetIvy curated={homeCurated.meetIvy} />
+        <MeetIvy />
         <FreshFromTheFrogQueen media={media} curated={homeCurated.freshPosts} />
         <SocialWindows posts={curated.all} />
         <HallOfFame items={media.hallOfFame} curated={homeCurated.hallOfFame} />
@@ -150,7 +143,7 @@ function Home() {
         <TokenRecord market={market ?? undefined} />
         {market ? <LiveMarket snapshot={market} /> : null}
         <ArcadeTeaser />
-        <OwnerCorner curatedPost={homeCurated.ownerCorner} />
+        <OwnerCorner />
         <RoyalCourt />
         <FAQ />
       </main>
