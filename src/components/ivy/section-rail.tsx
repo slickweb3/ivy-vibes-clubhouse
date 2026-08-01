@@ -23,9 +23,9 @@ const RAIL_SECTIONS: { id: string; label: string }[] = [
   { id: "live-chart", label: "Live chart" },
   { id: "arcade", label: "Lily Pad Leap" },
   { id: "royal-court", label: "Royal court" },
-  { id: "faq", label: "Questions" },
   { id: "chorus-pond", label: "Chorus pond" },
   { id: "pond-chat", label: "Pond chat" },
+  { id: "faq", label: "Questions" },
   { id: "site-footer", label: "Footer" },
 ];
 
