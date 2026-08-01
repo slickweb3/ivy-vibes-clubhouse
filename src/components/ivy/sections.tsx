@@ -156,15 +156,6 @@ export function MeetIvy() {
           <InfoCard key={card.title} title={card.title} body={card.body} tone={card.tone} />
         ))}
       </div>
-
-      <VineDivider className="my-12" />
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {meetIvy.editorial.map((item) => (
-          <InfoCard key={item.heading} title={item.heading} body={item.body} tone="cream" />
-        ))}
-      </div>
-
     </Section>
   );
 }
