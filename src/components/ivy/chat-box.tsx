@@ -163,7 +163,7 @@ export function PondChat() {
         </div>
 
         <form
-          className="mt-3 flex flex-col gap-2 sm:flex-row"
+          className="mt-3 flex flex-col gap-2 pr-16 sm:flex-row sm:pr-0"
           onSubmit={(event) => {
             event.preventDefault();
             if (canSend) send.mutate(cleaned);
@@ -200,7 +200,7 @@ export function PondChat() {
           )}
         </form>
 
-        <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs opacity-80">
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2 pr-16 text-xs opacity-80 sm:pr-0">
           <span>
             {wallet
               ? `Signed in as ${wallet.slice(0, 4)}…${wallet.slice(-4)} · ${MAX_LENGTH - cleaned.length} characters left`
