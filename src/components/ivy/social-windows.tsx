@@ -4,9 +4,8 @@ import { OfficialSocialEmbed } from "./official-embed";
 import { Section, Sticker } from "./primitives";
 import { FrogDoodle, PawDoodle } from "./doodles";
 import { projectConfig } from "@/config/project";
-import { platformLabel, type CuratedPlatform, type CuratedPost } from "@/types/curated";
+import { platformLabel, type CuratedPost } from "@/types/curated";
 import { cn } from "@/lib/utils";
-import avatarInstagram from "@/assets/ivy-avatar-instagram.png.asset.json";
 import avatarTiktok from "@/assets/ivy-avatar-tiktok.png.asset.json";
 
 /**
