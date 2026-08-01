@@ -1078,7 +1078,10 @@ html[data-scrolling="true"] .scroll-depth {
   inset: -20vmax;
   z-index: 0;
   pointer-events: none;
-  opacity: calc(0.5 + var(--ivy-depth, 0) * 0.35);
+  /* Soft-light keeps this a lighting pass over the page instead of a tint that
+     would fight text contrast. */
+  mix-blend-mode: soft-light;
+  opacity: calc(0.45 + var(--ivy-depth, 0) * 0.3);
   background:
     radial-gradient(
       38vmax 38vmax at calc(var(--ivy-px, 0.5) * 100%) calc(var(--ivy-py, 0.3) * 100%),
@@ -1149,7 +1152,7 @@ html[data-scrolling="true"] .scroll-depth {
 
 @media (prefers-reduced-motion: reduce) {
   .ivy-atmosphere {
-    opacity: 0.45;
+    opacity: 0.4;
   }
   .ivy-curtain {
     display: none;
