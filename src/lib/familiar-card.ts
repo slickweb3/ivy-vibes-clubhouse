@@ -308,11 +308,11 @@ export function drawFamiliarCard(
     const pips = Math.max(1, move.cost.length / 2);
     for (let p = 0; p < pips; p += 1) {
       ctx.fillStyle = p === 0 ? ring : `${ring}88`;
-      ellipse(ctx, ART_X + 13 + p * 32, moveY, 12, 12);
+      ellipse(ctx, ART_X + 13 + p * 32, moveY + 2, 12, 12);
       ctx.fill();
       ctx.strokeStyle = "#15151533";
       ctx.lineWidth = 2;
-      ellipse(ctx, ART_X + 13 + p * 32, moveY, 12, 12);
+      ellipse(ctx, ART_X + 13 + p * 32, moveY + 2, 12, 12);
       ctx.stroke();
     }
     ctx.fillStyle = "#151515";
