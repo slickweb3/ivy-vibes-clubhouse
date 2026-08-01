@@ -233,7 +233,7 @@ function ProfileWindow({ posts }: { posts: CuratedPost[] }) {
               >
                 <OfficialSocialEmbed
                   post={post}
-                  tone={platform === "tiktok" ? "lavender" : "cream"}
+                  tone="lavender"
                   className="w-full"
                 />
               </li>
