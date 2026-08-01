@@ -114,6 +114,14 @@ export const DISCOVERIES: Discovery[] = [
     glyph: "🔥",
   },
   {
+    id: "chatter",
+    title: "Ribbited in the pond chat",
+    note: "Signed by your own wallet, so the pond knows it was really you.",
+    hint: "The pond listens to wallets.",
+    glyph: "💬",
+  },
+
+  {
     id: "journal",
     title: "Opened the journal",
     note: "You wanted to know how deep this goes. It goes deeper.",
