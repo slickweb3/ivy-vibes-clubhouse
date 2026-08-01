@@ -858,8 +858,9 @@ figcaption {
    ========================================================================== */
 :root {
   /* Idle / active geometry, tuned against the chunky 3px ink borders. */
-  --sb-size: 10px;
-  --sb-size-live: 14px;
+  /* One fixed gutter width: animating the scrollbar width would reflow the
+     whole page on every scroll, so only the thumb's paint changes. */
+  --sb-size: 14px;
   --sb-radius: 999px;
   --sb-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --sb-thumb-idle: color-mix(in oklab, var(--frog) 46%, var(--ivy) 54%);
@@ -884,15 +885,6 @@ html[data-scrolling="true"] {
 html::-webkit-scrollbar {
   width: var(--sb-size);
   height: var(--sb-size);
-  transition:
-    width 320ms var(--sb-ease),
-    height 320ms var(--sb-ease);
-}
-
-html[data-scrolling="true"]::-webkit-scrollbar,
-html[data-sb-grab="true"]::-webkit-scrollbar {
-  width: var(--sb-size-live);
-  height: var(--sb-size-live);
 }
 
 html::-webkit-scrollbar-track {
