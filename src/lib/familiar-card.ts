@@ -130,34 +130,35 @@ export function drawFamiliarCard(canvas: HTMLCanvasElement, familiar: Familiar) 
   ellipse(ctx, cx + 208, cy + 214, 62, 42);
   ctx.fill();
 
-  // ears — frog nubs stretch into dog flops as dogness climbs.
-  // Drawn before the head, but pushed far enough out to stay visible.
-  const earLen = 130 + dog * 200;
-  const earW = 62 + dog * 26;
-  for (const side of [-1, 1]) {
-    ctx.save();
-    ctx.translate(cx + side * 196, cy - 118);
-    ctx.rotate(-side * (0.55 + dog * 0.32));
-    // Ears use the light skin tone with a dark rim so they stay readable
-    // against the dark pond backdrop.
-    ctx.fillStyle = palette.skin;
-    ctx.strokeStyle = palette.skinDark;
-    ctx.lineWidth = 10;
-    ellipse(ctx, 0, earLen / 2, earW, earLen / 2);
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = palette.belly;
-    ctx.globalAlpha = 0.3;
-    ellipse(ctx, 0, earLen / 2 + 10, earW * 0.46, earLen / 2 - 26);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.restore();
-  }
-
   // head
   ctx.fillStyle = palette.skin;
   ellipse(ctx, cx, cy, 200, 172);
   ctx.fill();
+
+  // ears — frog nubs stretch into dog flops as dogness climbs.
+  // Drawn on top of the head with a rim light so they never merge into the
+  // silhouette (they are the visual tell for the dog/frog blend).
+  const earLen = 130 + dog * 210;
+  const earW = 60 + dog * 26;
+  for (const side of [-1, 1]) {
+    ctx.save();
+    ctx.translate(cx + side * 168, cy - 132);
+    ctx.rotate(-side * (0.5 + dog * 0.35));
+    ctx.fillStyle = palette.skinDark;
+    ellipse(ctx, 0, earLen / 2, earW, earLen / 2);
+    ctx.fill();
+    ctx.strokeStyle = palette.belly;
+    ctx.globalAlpha = 0.55;
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#FF8EAE";
+    ctx.globalAlpha = 0.45;
+    ellipse(ctx, 0, earLen / 2 + 8, earW * 0.42, earLen / 2 - 30);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
 
   // markings
   ctx.globalAlpha = 0.5;
