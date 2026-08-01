@@ -1565,6 +1565,9 @@ html[data-scrolling="true"] .scroll-depth {
  * surfaces so the warm daytime panels settle into dusk.
  * ------------------------------------------------------------------------- */
 
+/* The sky is one static, composited layer. No blend mode and no animated
+   filter: both forced the whole page to re-composite on every frame, which is
+   what made night mode feel laggy. Only opacity moves, on its own layer. */
 .night-sky {
   position: fixed;
   inset: 0;
@@ -1572,10 +1575,12 @@ html[data-scrolling="true"] .scroll-depth {
   pointer-events: none;
   opacity: 0;
   transition: opacity 700ms ease;
+  will-change: opacity;
+  transform: translateZ(0);
   background:
     radial-gradient(
       42rem 30rem at 82% -6%,
-      color-mix(in oklab, var(--lavender) 26%, transparent),
+      color-mix(in oklab, var(--lavender) 18%, transparent),
       transparent 70%
     ),
     radial-gradient(1.5px 1.5px at 12% 18%, rgba(255, 255, 255, 0.85), transparent 60%),
@@ -1584,31 +1589,36 @@ html[data-scrolling="true"] .scroll-depth {
     radial-gradient(1.5px 1.5px at 64% 34%, rgba(255, 255, 255, 0.7), transparent 60%),
     radial-gradient(1.5px 1.5px at 78% 62%, rgba(255, 255, 255, 0.55), transparent 60%),
     radial-gradient(2px 2px at 90% 24%, rgba(255, 255, 255, 0.8), transparent 60%),
-    radial-gradient(1.5px 1.5px at 6% 74%, rgba(255, 255, 255, 0.5), transparent 60%),
-    linear-gradient(180deg, rgba(18, 28, 60, 0.32), rgba(10, 18, 30, 0.18));
-  mix-blend-mode: screen;
+    radial-gradient(1.5px 1.5px at 6% 74%, rgba(255, 255, 255, 0.5), transparent 60%);
 }
 
 .dark .night-sky {
-  opacity: 1;
-  animation: night-twinkle 7s ease-in-out infinite;
+  opacity: 0.9;
+  animation: night-twinkle 9s ease-in-out infinite;
 }
 
 /* No decorative moon: the sky glow alone carries the night. */
 
+/* The gradient lives on the root element, so it fills the viewport without
+   `background-attachment: fixed` — that repaints on every scroll frame and is
+   the main cause of scroll stutter on phones. */
+html.dark {
+  background-color: #0d1a22;
+  background-image: var(--gradient-night);
+}
 
 html.dark body {
-  background-image: var(--gradient-night);
-  background-attachment: fixed;
+  background-image: none;
+  background-color: transparent;
 }
 
 @keyframes night-twinkle {
   0%,
   100% {
-    filter: brightness(1);
+    opacity: 0.78;
   }
   50% {
-    filter: brightness(1.22);
+    opacity: 1;
   }
 }
 
@@ -1617,6 +1627,7 @@ html.dark body {
     animation: none;
   }
 }
+
 
 /* Night mode surfaces: the hand-placed warm panels become pond glass, and the
    ink on them flips to moonlight. */
