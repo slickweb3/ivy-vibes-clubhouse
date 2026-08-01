@@ -1,4 +1,5 @@
 import { IvyHopSticker } from "@/components/ivy/hop-sticker";
+import { IvyPresence } from "@/components/ivy/presence";
 import { ScrollSignature } from "@/components/ivy/scroll-signature";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -170,6 +171,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <IvyPresence />
       <IvyHopSticker />
     </QueryClientProvider>
   );

@@ -1069,3 +1069,98 @@ html[data-scrolling="true"] .scroll-depth {
     display: none;
   }
 }
+
+/* ---------- presence layer: atmosphere, curtain, magnetic controls ---------- */
+
+/* Pond light. Fixed, pointer-events-none, transform/opacity only. */
+.ivy-atmosphere {
+  position: fixed;
+  inset: -20vmax;
+  z-index: 0;
+  pointer-events: none;
+  /* Soft-light keeps this a lighting pass over the page instead of a tint that
+     would fight text contrast. */
+  mix-blend-mode: soft-light;
+  opacity: calc(0.45 + var(--ivy-depth, 0) * 0.3);
+  background:
+    radial-gradient(
+      38vmax 38vmax at calc(var(--ivy-px, 0.5) * 100%) calc(var(--ivy-py, 0.3) * 100%),
+      color-mix(in oklab, var(--frog) 22%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      30vmax 30vmax at calc(100% - var(--ivy-px, 0.5) * 100%) calc(var(--ivy-py, 0.3) * 60% + 40%),
+      color-mix(in oklab, var(--lavender) 16%, transparent),
+      transparent 72%
+    );
+  transition: opacity 600ms ease;
+}
+
+/* First-visit curtain: a single cinematic lift, once per session. */
+.ivy-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  background: var(--gradient-night, linear-gradient(180deg, var(--deep-ivy), var(--charcoal)));
+  animation: ivy-curtain-lift 1150ms cubic-bezier(0.72, 0, 0.24, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.ivy-curtain-mark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.75rem, 7vw, 4rem);
+  letter-spacing: -0.03em;
+  color: var(--cream);
+  animation: ivy-curtain-mark 900ms cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes ivy-curtain-lift {
+  0%,
+  55% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-102%);
+    opacity: 1;
+  }
+}
+
+@keyframes ivy-curtain-mark {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  40%,
+  70% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px) scale(1.02);
+  }
+}
+
+/* Magnetic lean for chunky controls, layered on top of the existing pop hover. */
+.pop:hover {
+  transform: translate(var(--mx, 0px), calc(-3px + var(--my, 0px))) rotate(-1.2deg) scale(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ivy-atmosphere {
+    opacity: 0.4;
+  }
+  .ivy-curtain {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .ivy-atmosphere {
+    display: none;
+  }
+}
