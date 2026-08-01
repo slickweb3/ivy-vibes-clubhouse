@@ -152,7 +152,11 @@ export function IvySoundscape() {
   }, [pathname]);
 
   useEffect(() => {
-    engineRef.current?.setScene(scene);
+    sceneRef.current = scene;
+    if (!active) return;
+    void import("@/lib/game-audio").then(({ gameAudio }) => {
+      gameAudio.setIntensity(SCENE_INTENSITY[scene]);
+    });
   }, [scene, active]);
 
   // --- interaction cues ----------------------------------------------------
@@ -164,10 +168,15 @@ export function IvySoundscape() {
         "button, a[href], [role='button'], summary, input[type='range']",
       ) ?? null;
 
-    const onPress = (event: Event) => {
-      if (isControl(event.target)) engineRef.current?.cue("press");
+    const cue = (name: "ui" | "combo") => {
+      void import("@/lib/game-audio").then(({ gameAudio }) => gameAudio.playForce(name));
     };
-    const onDiscovery = () => engineRef.current?.cue("discovery");
+
+    const onPress = (event: Event) => {
+      if (isControl(event.target)) cue("ui");
+    };
+    const onDiscovery = () => cue("combo");
+
 
     document.addEventListener("pointerdown", onPress);
     window.addEventListener(DISCOVERY_EVENT, onDiscovery);
