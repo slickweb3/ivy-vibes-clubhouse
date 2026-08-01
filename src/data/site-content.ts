@@ -379,10 +379,11 @@ export const joinTheVibeMessage =
 
 export const navLinks = [
   { label: "Meet Ivy", hash: "#meet-ivy" },
-  { label: "Fresh Posts", hash: "#fresh-posts" },
+  { label: "Daily Ribbit", hash: "#daily-ribbit" },
+  { label: "Fresh Posts", hash: "#social-windows" },
   { label: "The Lore", hash: "#the-lore" },
   { label: "$ivy", hash: "#token-record" },
-  { label: "Chart", hash: "#live-chart" },
   { label: "Game", hash: "#arcade" },
   { label: "FAQ", hash: "#faq" },
 ];
+
