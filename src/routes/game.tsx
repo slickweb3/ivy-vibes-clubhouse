@@ -5,6 +5,7 @@ import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import { Section } from "@/components/ivy/primitives";
 import { LilyPadLeap } from "@/components/ivy/minigame";
 import { IvyDiscoveries } from "@/components/ivy/discovery";
+import { IvySoundscape } from "@/components/ivy/soundscape";
 import { SiteFooter } from "@/components/ivy/sections-b";
 import { getLeaderboard } from "@/lib/game.functions";
 import type { Leaderboard } from "@/lib/game.server";
@@ -114,6 +115,7 @@ function GamePage() {
         </Section>
       </main>
       <IvyDiscoveries context="arcade" />
+      <IvySoundscape />
       <SiteFooter />
     </CookieConsentProvider>
   );

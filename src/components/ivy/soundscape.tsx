@@ -1,239 +1,231 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Volume2, VolumeX } from "lucide-react";
-import { discover } from "@/lib/discoveries";
+import { Volume2, VolumeX, Music } from "lucide-react";
+import { useRouterState } from "@tanstack/react-router";
+import { discover, DISCOVERY_EVENT } from "@/lib/discoveries";
+import { registerAudioEngine } from "@/lib/audio/cue";
+import type { AudioScene, IvyAudio } from "@/lib/audio/engine";
 
 /**
- * IvySoundscape — an opt-in chiptune adventure theme for the pond.
+ * IvySoundscape — the control surface for Ivy's living audio universe.
  *
- * Rules from the brief: never annoy, never interrupt, only enhance.
- *  - Off by default. Nothing is created until the visitor opts in.
- *  - Fully synthesised with WebAudio (no asset weight, no network).
- *  - Style: bouncy Mario-style platformer bass under a Zelda-ish heroic
- *    melody, with frog "ribbit" blips on the offbeats and a soft "woof"
- *    at the end of each phrase.
- *  - Choice is remembered; audio suspends when the tab is hidden.
+ * Behaviour, in order of importance:
+ *  - Off by default. Nothing is fetched, created or heard until the visitor
+ *    opts in; the engine module itself is dynamically imported on first play.
+ *  - Adaptive: the mix follows where the visitor is — the landing doorway,
+ *    open exploration, the arcade, or the hushed footer — and crossfades.
+ *  - Interactive: presses, hovers and discoveries get their own small musical
+ *    answers, ducking the score instead of shouting over it.
+ *  - Respectful: volume + mute are remembered, audio suspends with the tab,
+ *    reduced-motion and low-power devices get a leaner mix, and touch devices
+ *    never fire hover cues.
  */
 
-const STORAGE_KEY = "ivy-sound";
+const ON_KEY = "ivy-sound";
+const VOL_KEY = "ivy-sound-volume";
 
-const BPM = 128;
-const STEP = 60 / BPM / 2; // eighth note
-const BARS = 8;
-const STEPS = BARS * 8;
+const SCENE_LABEL: Record<AudioScene, string> = {
+  landing: "Doorway",
+  explore: "Exploring",
+  game: "Arcade",
+  hush: "Quiet pond",
+};
 
-// Heroic pentatonic melody (MIDI notes, 0 = rest), 8 bars of eighths.
-const MELODY: number[] = [
-  // bar 1-2 — call
-  76, 0, 79, 0, 81, 0, 79, 76, 74, 0, 76, 0, 79, 0, 0, 0,
-  // bar 3-4 — answer
-  81, 0, 83, 0, 86, 0, 83, 81, 79, 0, 76, 0, 74, 0, 0, 0,
-  // bar 5-6 — lift
-  83, 0, 81, 79, 81, 0, 83, 0, 86, 0, 88, 0, 86, 83, 81, 0,
-  // bar 7-8 — home
-  79, 0, 81, 0, 83, 0, 79, 0, 76, 0, 0, 74, 76, 0, 0, 0,
-];
+function readVolume(): number {
+  const raw = Number(window.localStorage.getItem(VOL_KEY));
+  return Number.isFinite(raw) && raw > 0 && raw <= 1 ? raw : 0.5;
+}
 
-// Bouncy platformer bass.
-const BASS: number[] = [
-  40, 52, 40, 52, 45, 57, 45, 57, 43, 55, 43, 55, 38, 50, 38, 50, 40, 52, 40, 52, 45, 57, 45, 57,
-  47, 59, 47, 59, 43, 55, 43, 55, 41, 53, 41, 53, 45, 57, 45, 57, 43, 55, 43, 55, 48, 60, 48, 60,
-  40, 52, 40, 52, 47, 59, 47, 59, 43, 55, 45, 57, 40, 52, 40, 52,
-];
-
-const midiToHz = (note: number) => 440 * Math.pow(2, (note - 69) / 12);
+/** Gentle by design: the slider's 100% is still a background level. */
+const toGain = (volume: number) => volume * 0.34;
 
 export function IvySoundscape() {
   const [on, setOn] = useState(false);
-  const ctxRef = useRef<AudioContext | null>(null);
-  const masterRef = useRef<GainNode | null>(null);
-
-  const teardown = useCallback(() => {
-    const ctx = ctxRef.current;
-    if (!ctx) return;
-    masterRef.current?.gain.setTargetAtTime(0, ctx.currentTime, 0.2);
-    window.setTimeout(() => {
-      void ctx.close().catch(() => undefined);
-      ctxRef.current = null;
-      masterRef.current = null;
-    }, 500);
-  }, []);
+  const [volume, setVolume] = useState(0.5);
+  const [open, setOpen] = useState(false);
+  const [scene, setScene] = useState<AudioScene>("landing");
+  const engineRef = useRef<IvyAudio | null>(null);
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   useEffect(() => {
-    if (!on) {
-      teardown();
-      return undefined;
-    }
+    setOn(window.localStorage.getItem(ON_KEY) === "on");
+    setVolume(readVolume());
+  }, []);
 
-    const Ctor =
-      window.AudioContext ??
-      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!Ctor) return undefined;
+  // --- engine lifecycle ----------------------------------------------------
+  useEffect(() => {
+    if (!on) return undefined;
+    let cancelled = false;
+    let engine: IvyAudio | null = null;
 
-    const ctx = new Ctor();
-    ctxRef.current = ctx;
-    void ctx.resume().catch(() => undefined);
+    const lean =
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      window.matchMedia("(pointer: coarse)").matches ||
+      (navigator.hardwareConcurrency ?? 8) <= 4;
 
-    const master = ctx.createGain();
-    master.gain.value = 0;
-    master.gain.setTargetAtTime(0.16, ctx.currentTime, 1.2);
-    masterRef.current = master;
-
-    // Gentle warmth so the chiptune never gets shrill.
-    const warm = ctx.createBiquadFilter();
-    warm.type = "lowpass";
-    warm.frequency.value = 4200;
-    warm.connect(master).connect(ctx.destination);
-
-    // --- voices ------------------------------------------------------------
-    const blip = (hz: number, at: number, dur: number, type: OscillatorType, vol: number) => {
-      const osc = ctx.createOscillator();
-      osc.type = type;
-      osc.frequency.setValueAtTime(hz, at);
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.0001, at);
-      gain.gain.exponentialRampToValueAtTime(vol, at + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.0001, at + dur);
-      osc.connect(gain).connect(warm);
-      osc.start(at);
-      osc.stop(at + dur + 0.03);
-    };
-
-    // Frog: two quick descending croaks with a throaty wobble.
-    const ribbit = (at: number) => {
-      for (let i = 0; i < 2; i += 1) {
-        const t = at + i * 0.1;
-        const osc = ctx.createOscillator();
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(330 - i * 40, t);
-        osc.frequency.exponentialRampToValueAtTime(150 - i * 20, t + 0.09);
-        const wob = ctx.createOscillator();
-        wob.frequency.value = 42;
-        const wobDepth = ctx.createGain();
-        wobDepth.gain.value = 55;
-        wob.connect(wobDepth).connect(osc.frequency);
-        const band = ctx.createBiquadFilter();
-        band.type = "bandpass";
-        band.frequency.value = 520;
-        band.Q.value = 4;
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.0001, t);
-        gain.gain.exponentialRampToValueAtTime(0.09, t + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
-        osc.connect(band).connect(gain).connect(warm);
-        wob.start(t);
-        osc.start(t);
-        osc.stop(t + 0.13);
-        wob.stop(t + 0.13);
-      }
-    };
-
-    // Ivy: a soft low "woof" to close a phrase.
-    const woof = (at: number) => {
-      const osc = ctx.createOscillator();
-      osc.type = "triangle";
-      osc.frequency.setValueAtTime(210, at);
-      osc.frequency.exponentialRampToValueAtTime(88, at + 0.22);
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.0001, at);
-      gain.gain.exponentialRampToValueAtTime(0.13, at + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.3);
-      const low = ctx.createBiquadFilter();
-      low.type = "lowpass";
-      low.frequency.value = 900;
-      osc.connect(low).connect(gain).connect(warm);
-      osc.start(at);
-      osc.stop(at + 0.34);
-    };
-
-    // --- scheduler ---------------------------------------------------------
-    let step = 0;
-    let nextTime = ctx.currentTime + 0.12;
-
-    const schedule = () => {
-      while (nextTime < ctx.currentTime + 0.4) {
-        const i = step % STEPS;
-        const lead = MELODY[i];
-        if (lead) blip(midiToHz(lead), nextTime, 0.22, "square", 0.13);
-        const bass = BASS[i];
-        if (bass) blip(midiToHz(bass), nextTime, 0.14, "triangle", 0.16);
-        // frog on the offbeat of every other bar
-        if (i % 16 === 6 || i % 16 === 14) ribbit(nextTime + STEP * 0.5);
-        // Ivy signs off at the end of each 4-bar phrase
-        if (i === 30 || i === 62) woof(nextTime + STEP * 0.5);
-        nextTime += STEP;
-        step += 1;
-      }
-    };
-
-    schedule();
-    const timer = window.setInterval(schedule, 120);
+    void import("@/lib/audio/engine").then(async ({ IvyAudio: Engine }) => {
+      if (cancelled) return;
+      engine = new Engine(lean);
+      engineRef.current = engine;
+      registerAudioEngine(engine);
+      await engine.start(toGain(readVolume()));
+    });
 
     const onVisibility = () => {
-      if (document.hidden) void ctx.suspend().catch(() => undefined);
-      else void ctx.resume().catch(() => undefined);
+      if (document.hidden) engineRef.current?.suspend();
+      else engineRef.current?.resume();
     };
     document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
-      window.clearInterval(timer);
+      cancelled = true;
       document.removeEventListener("visibilitychange", onVisibility);
-      teardown();
+      registerAudioEngine(null);
+      engineRef.current = null;
+      engine?.dispose();
     };
-  }, [on, teardown]);
-
-  // Tactile feedback: a coin-ish plip when a chunky control is pressed.
-  useEffect(() => {
-    if (!on) return undefined;
-
-    const plip = (event: Event) => {
-      const target = (event.target as HTMLElement | null)?.closest?.(".pop");
-      const ctx = ctxRef.current;
-      if (!target || !ctx) return;
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      osc.type = "square";
-      osc.frequency.setValueAtTime(988, now);
-      osc.frequency.setValueAtTime(1319, now + 0.06);
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.1, now + 0.008);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.22);
-    };
-
-    document.addEventListener("pointerdown", plip);
-    return () => document.removeEventListener("pointerdown", plip);
   }, [on]);
 
   useEffect(() => {
-    setOn(window.localStorage.getItem(STORAGE_KEY) === "on");
-  }, []);
+    engineRef.current?.setVolume(toGain(volume));
+  }, [volume]);
 
-  const toggle = () => {
+  // --- adaptive scene ------------------------------------------------------
+  useEffect(() => {
+    if (pathname.startsWith("/game")) {
+      setScene("game");
+      return undefined;
+    }
+
+    let frame = 0;
+    const evaluate = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const viewport = window.innerHeight;
+      const total = document.documentElement.scrollHeight;
+      const marked = document.querySelector<HTMLElement>("[data-audio-scene]");
+      const markedScene = marked?.dataset.audioScene as AudioScene | undefined;
+      const markedTop = marked?.getBoundingClientRect().top ?? Infinity;
+
+      let next: AudioScene = "explore";
+      if (y < viewport * 0.55) next = "landing";
+      else if (y + viewport > total - viewport * 0.6) next = "hush";
+      if (markedScene && markedTop > -viewport * 0.5 && markedTop < viewport * 0.5) {
+        next = markedScene;
+      }
+      setScene(next);
+    };
+
+    const onScroll = () => {
+      if (frame === 0) frame = requestAnimationFrame(evaluate);
+    };
+    evaluate();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [pathname]);
+
+  useEffect(() => {
+    engineRef.current?.setScene(scene);
+  }, [scene, on]);
+
+  // --- interaction cues ----------------------------------------------------
+  useEffect(() => {
+    if (!on) return undefined;
+
+    const isControl = (target: EventTarget | null) =>
+      (target as HTMLElement | null)?.closest?.(
+        "button, a[href], [role='button'], summary, input[type='range']",
+      ) ?? null;
+
+    const onPress = (event: Event) => {
+      if (isControl(event.target)) engineRef.current?.cue("press");
+    };
+    const onHover = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      if (isControl(event.target)) engineRef.current?.cue("hover");
+    };
+    const onDiscovery = () => engineRef.current?.cue("discovery");
+
+    document.addEventListener("pointerdown", onPress);
+    document.addEventListener("pointerover", onHover);
+    window.addEventListener(DISCOVERY_EVENT, onDiscovery);
+    return () => {
+      document.removeEventListener("pointerdown", onPress);
+      document.removeEventListener("pointerover", onHover);
+      window.removeEventListener(DISCOVERY_EVENT, onDiscovery);
+    };
+  }, [on]);
+
+  const toggle = useCallback(() => {
     setOn((was) => {
       const next = !was;
-      window.localStorage.setItem(STORAGE_KEY, next ? "on" : "off");
+      window.localStorage.setItem(ON_KEY, next ? "on" : "off");
       if (next) discover("listen");
+      else setOpen(false);
       return next;
     });
-  };
+  }, []);
 
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-pressed={on}
-      title={on ? "Mute the ivy theme" : "Play the ivy theme"}
-      className="fixed right-4 bottom-20 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-lavender text-charcoal pop sm:right-6 sm:bottom-24"
-    >
-      {on ? (
-        <Volume2 aria-hidden className="h-5 w-5" />
-      ) : (
-        <VolumeX aria-hidden className="h-5 w-5" />
-      )}
-      <span className="sr-only">{on ? "Mute the ivy theme" : "Play the ivy theme"}</span>
-    </button>
+    <div className="fixed right-4 bottom-20 z-40 flex flex-col items-end gap-2 sm:right-6 sm:bottom-24">
+      {on && open ? (
+        <div
+          className="w-44 rounded-2xl border-2 border-charcoal/70 bg-cream/95 p-3 text-charcoal shadow-lg backdrop-blur"
+          role="group"
+          aria-label="Soundscape controls"
+        >
+          <p className="flex items-center gap-1.5 font-display text-xs">
+            <Music aria-hidden className="h-3.5 w-3.5" />
+            {SCENE_LABEL[scene]}
+          </p>
+          <label className="mt-2 block text-[0.7rem] font-medium" htmlFor="ivy-volume">
+            Volume
+          </label>
+          <input
+            id="ivy-volume"
+            type="range"
+            min={0.05}
+            max={1}
+            step={0.05}
+            value={volume}
+            onChange={(event) => {
+              const next = Number(event.target.value);
+              setVolume(next);
+              window.localStorage.setItem(VOL_KEY, String(next));
+            }}
+            className="mt-1 w-full accent-frog"
+          />
+        </div>
+      ) : null}
+
+      <div className="flex items-center gap-2">
+        {on ? (
+          <button
+            type="button"
+            onClick={() => setOpen((was) => !was)}
+            aria-expanded={open}
+            className="pop inline-flex h-11 items-center rounded-full bg-cream/95 px-3 font-display text-xs text-charcoal"
+          >
+            {open ? "Hide mix" : "Mix"}
+          </button>
+        ) : null}
+        <button
+          type="button"
+          onClick={toggle}
+          aria-pressed={on}
+          title={on ? "Mute Ivy's world" : "Play Ivy's world"}
+          className="pop inline-flex h-12 w-12 items-center justify-center rounded-full bg-lavender text-charcoal"
+        >
+          {on ? (
+            <Volume2 aria-hidden className="h-5 w-5" />
+          ) : (
+            <VolumeX aria-hidden className="h-5 w-5" />
+          )}
+          <span className="sr-only">{on ? "Mute Ivy's world" : "Play Ivy's world"}</span>
+        </button>
+      </div>
+    </div>
   );
 }
