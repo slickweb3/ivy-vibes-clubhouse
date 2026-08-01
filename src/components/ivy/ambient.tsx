@@ -86,7 +86,9 @@ export function AmbientVibes() {
         className="absolute right-1/4 top-0 h-52 w-52 rounded-full bg-yellow opacity-40 blur-3xl motion-safe:ivy-glow"
         style={{ animationDelay: "13s" }}
       />
-    </div>
+      </div>
+    </>
   );
+
 }
 
