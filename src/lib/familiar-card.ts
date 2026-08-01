@@ -93,14 +93,14 @@ export function drawFamiliarCard(canvas: HTMLCanvasElement, familiar: Familiar) 
   // ---- header --------------------------------------------------------
   ctx.textAlign = "center";
   ctx.fillStyle = "#FFF8E7";
-  ctx.font = "700 34px Georgia, serif";
+  ctx.font = "700 34px Georgia, 'Times New Roman', serif";
   ctx.fillText("IVY'S POND · FAMILIAR RECORD", CARD_W / 2, 132);
 
   ctx.fillStyle = ring;
   rounded(ctx, CARD_W / 2 - 210, 158, 420, 60, 30);
   ctx.fill();
   ctx.fillStyle = "#151515";
-  ctx.font = "700 30px Georgia, serif";
+  ctx.font = "700 30px Georgia, 'Times New Roman', serif";
   ctx.fillText(familiar.rarity.toUpperCase(), CARD_W / 2, 198);
 
   // ---- the creature --------------------------------------------------
@@ -130,23 +130,35 @@ export function drawFamiliarCard(canvas: HTMLCanvasElement, familiar: Familiar) 
   ellipse(ctx, cx + 208, cy + 214, 62, 42);
   ctx.fill();
 
-  // ears — frog nubs stretch into dog flops as dogness climbs
-  const earLen = 40 + dog * 150;
-  const earW = 46 + dog * 18;
-  ctx.fillStyle = palette.skinDark;
-  for (const side of [-1, 1]) {
-    ctx.save();
-    ctx.translate(cx + side * 148, cy - 78);
-    ctx.rotate(side * (0.35 + dog * 0.28));
-    ellipse(ctx, 0, earLen / 2, earW, earLen / 2 + 20);
-    ctx.fill();
-    ctx.restore();
-  }
-
   // head
   ctx.fillStyle = palette.skin;
   ellipse(ctx, cx, cy, 200, 172);
   ctx.fill();
+
+  // ears — frog nubs stretch into dog flops as dogness climbs.
+  // Drawn on top of the head with a rim light so they never merge into the
+  // silhouette (they are the visual tell for the dog/frog blend).
+  const earLen = 130 + dog * 210;
+  const earW = 60 + dog * 26;
+  for (const side of [-1, 1]) {
+    ctx.save();
+    ctx.translate(cx + side * 168, cy - 132);
+    ctx.rotate(-side * (0.5 + dog * 0.35));
+    ctx.fillStyle = palette.skinDark;
+    ellipse(ctx, 0, earLen / 2, earW, earLen / 2);
+    ctx.fill();
+    ctx.strokeStyle = palette.belly;
+    ctx.globalAlpha = 0.55;
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#FF8EAE";
+    ctx.globalAlpha = 0.45;
+    ellipse(ctx, 0, earLen / 2 + 8, earW * 0.42, earLen / 2 - 30);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
 
   // markings
   ctx.globalAlpha = 0.5;
@@ -194,37 +206,24 @@ export function drawFamiliarCard(canvas: HTMLCanvasElement, familiar: Familiar) 
   ellipse(ctx, cx, cy + 34, 15, 11);
   ctx.fill();
 
-  // hat glyph — a wet leaf, a crown, or nothing at all
-  ctx.font = "120px system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif";
-  const hatGlyph = familiar.hat.includes("nothing")
-    ? ""
-    : familiar.hat.includes("crown")
-      ? "👑"
-      : familiar.hat.includes("leaf") || familiar.hat.includes("lily")
-        ? "🍃"
-        : familiar.hat.includes("party")
-          ? "🎉"
-          : familiar.hat.includes("sunhat")
-            ? "🌞"
-            : "🐸";
-  if (hatGlyph) ctx.fillText(hatGlyph, cx, cy - 150);
+  drawHat(ctx, familiar.hat, cx, cy - 150, palette);
 
   // ---- name plate ----------------------------------------------------
   ctx.fillStyle = "#FFF8E7";
-  ctx.font = "700 72px Georgia, serif";
+  ctx.font = "700 72px Georgia, 'Times New Roman', serif";
   ctx.fillText(familiar.name, cx, 950);
   ctx.fillStyle = palette.aura;
-  ctx.font = "italic 36px Georgia, serif";
+  ctx.font = "italic 36px Georgia, 'Times New Roman', serif";
   ctx.fillText(familiar.title, cx, 1000);
 
   // ---- trait strip ---------------------------------------------------
   const rows = [
     `${familiar.dogness}% dog · ${100 - familiar.dogness}% frog`,
-    `${familiar.croak.glyph} croaks in "${familiar.croak.word}"`,
+    `croaks in the key of "${familiar.croak.word}"`,
     familiar.talent,
     `1 in ${familiar.oneIn} of the pond`,
   ];
-  ctx.font = "500 32px Georgia, serif";
+  ctx.font = "500 32px Georgia, 'Times New Roman', serif";
   rows.forEach((row, i) => {
     const y = 1064 + i * 50;
     ctx.fillStyle = "#FFF8E7";
@@ -235,7 +234,7 @@ export function drawFamiliarCard(canvas: HTMLCanvasElement, familiar: Familiar) 
 
   // ---- footer --------------------------------------------------------
   ctx.fillStyle = ring;
-  ctx.font = "700 30px Georgia, serif";
+  ctx.font = "700 30px Georgia, 'Times New Roman', serif";
   ctx.fillText("ivyvibing.com  ·  summoned for " + shortSeed(familiar.input), cx, CARD_H - 76);
 }
 
@@ -243,4 +242,107 @@ function shortSeed(input: string): string {
   const clean = input.trim();
   if (clean.length <= 22) return clean;
   return `${clean.slice(0, 10)}…${clean.slice(-6)}`;
+}
+
+/**
+ * Hats, drawn with shapes.
+ *
+ * Deliberately not emoji: canvas has no emoji font on many machines, so a
+ * glyph hat can render as an empty box in the saved image. Shapes always work.
+ */
+function drawHat(
+  ctx: CanvasRenderingContext2D,
+  hat: string,
+  x: number,
+  y: number,
+  palette: { skin: string; skinDark: string; belly: string; aura: string },
+) {
+  if (hat.includes("nothing")) return;
+  ctx.save();
+  ctx.lineJoin = "round";
+
+  if (hat.includes("crown")) {
+    ctx.fillStyle = "#FFD86B";
+    ctx.beginPath();
+    ctx.moveTo(x - 96, y + 54);
+    ctx.lineTo(x - 96, y - 10);
+    ctx.lineTo(x - 54, y + 22);
+    ctx.lineTo(x - 6, y - 34);
+    ctx.lineTo(x + 42, y + 22);
+    ctx.lineTo(x + 96, y - 10);
+    ctx.lineTo(x + 96, y + 54);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#FF8EAE";
+    ellipse(ctx, x, y + 34, 14, 14);
+    ctx.fill();
+  } else if (hat.includes("leaf") || hat.includes("lily") || hat.includes("weed")) {
+    ctx.fillStyle = "#83D94E";
+    ctx.save();
+    ctx.translate(x, y + 26);
+    ctx.rotate(-0.22);
+    ellipse(ctx, 0, 0, 104, 34);
+    ctx.fill();
+    ctx.strokeStyle = "#174F36";
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(-96, 0);
+    ctx.lineTo(96, 0);
+    ctx.stroke();
+    ctx.restore();
+  } else if (hat.includes("party")) {
+    ctx.fillStyle = "#FF8EAE";
+    ctx.beginPath();
+    ctx.moveTo(x, y - 62);
+    ctx.lineTo(x + 52, y + 54);
+    ctx.lineTo(x - 52, y + 54);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#FFD86B";
+    ellipse(ctx, x, y - 66, 16, 16);
+    ctx.fill();
+  } else if (hat.includes("sunhat") || hat.includes("bucket")) {
+    ctx.fillStyle = hat.includes("bucket") ? "#C7B8FF" : "#FFD86B";
+    ellipse(ctx, x, y + 46, 138, 34);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x, y + 44, 78, 62, 0, Math.PI, Math.PI * 2);
+    ctx.fill();
+    if (hat.includes("bite")) {
+      ctx.fillStyle = palette.aura;
+      ellipse(ctx, x + 128, y + 46, 26, 22);
+      ctx.fill();
+    }
+  } else if (hat.includes("beanie")) {
+    ctx.fillStyle = "#FF8EAE";
+    ctx.beginPath();
+    ctx.ellipse(x, y + 44, 96, 74, 0, Math.PI, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#FFF8E7";
+    rounded(ctx, x - 104, y + 30, 208, 30, 15);
+    ctx.fill();
+  } else if (hat.includes("gnats")) {
+    ctx.fillStyle = "#151515";
+    for (let i = 0; i < 7; i += 1) {
+      const a = (i / 7) * Math.PI * 2;
+      ellipse(ctx, x + Math.cos(a) * 96, y + 20 + Math.sin(a) * 28, 7, 7);
+      ctx.fill();
+    }
+  } else {
+    // the classic: a tiny frog perched on top
+    ctx.fillStyle = "#83D94E";
+    ellipse(ctx, x, y + 34, 52, 40);
+    ctx.fill();
+    ctx.fillStyle = "#FFF8E7";
+    ellipse(ctx, x - 22, y + 14, 16, 16);
+    ctx.fill();
+    ellipse(ctx, x + 22, y + 14, 16, 16);
+    ctx.fill();
+    ctx.fillStyle = "#151515";
+    ellipse(ctx, x - 22, y + 16, 7, 8);
+    ctx.fill();
+    ellipse(ctx, x + 22, y + 16, 7, 8);
+    ctx.fill();
+  }
+  ctx.restore();
 }

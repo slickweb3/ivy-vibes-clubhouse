@@ -69,9 +69,16 @@ export function FamiliarFoundry() {
   const [familiar, setFamiliar] = useState<Familiar | null>(null);
   const [copied, setCopied] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Bring back the last creature so returning visitors keep their familiar.
+  // Bring back the last creature so returning visitors keep their familiar —
+  // but never clobber text the visitor typed before hydration finished.
   useEffect(() => {
+    const typed = inputRef.current?.value ?? "";
+    if (typed.trim()) {
+      setValue(typed);
+      return;
+    }
     try {
       const last = window.localStorage.getItem(RECENT_KEY);
       if (last) {
@@ -158,6 +165,7 @@ export function FamiliarFoundry() {
             </label>
             <input
               id="familiar-seed"
+              ref={inputRef}
               value={value}
               onChange={(event) => setValue(event.target.value)}
               maxLength={64}
