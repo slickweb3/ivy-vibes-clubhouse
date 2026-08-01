@@ -1811,3 +1811,140 @@ html.dark body {
   .pond-pad,
   .pond-pad-fresh { animation: none; }
 }
+
+/* ==========================================================================
+   Section rail — the pond stem on the right edge.
+
+   A tactile lily-stem scroller: pads mark each section, the stem fills to your
+   depth, and dragging then releasing bounces you onto the nearest section. Kept
+   deliberately narrow so it never fights the content, and every animated value
+   is transform/opacity only.
+   ========================================================================== */
+.section-rail {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 45;
+  display: flex;
+  width: 30px;
+  max-height: 78vh;
+  transform: translateY(-50%);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 10px 0;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.section-rail-stem,
+.section-rail-glow {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  right: 13px;
+  width: 4px;
+  border-radius: var(--sb-radius);
+  pointer-events: none;
+}
+
+.section-rail-stem {
+  background: color-mix(in oklab, var(--ivy) 62%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--cream) 16%, transparent);
+}
+
+.section-rail-glow {
+  transform-origin: top center;
+  background: linear-gradient(180deg, var(--frog), var(--leaf) 55%, var(--yellow));
+  transition: transform 320ms var(--sb-ease);
+  box-shadow: 0 0 10px -2px color-mix(in oklab, var(--frog) 60%, transparent);
+}
+
+.section-rail[data-dragging="true"] .section-rail-glow {
+  transition: none;
+}
+
+.section-rail-pad {
+  position: relative;
+  display: grid;
+  width: 30px;
+  height: 26px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.section-rail-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--cream) 78%, var(--ivy));
+  box-shadow: 0 0 0 1.5px color-mix(in oklab, var(--ivy) 70%, transparent);
+  transition:
+    transform 260ms var(--sb-ease),
+    background-color 260ms var(--sb-ease);
+}
+
+.section-rail-pad:hover .section-rail-dot {
+  transform: scale(1.35);
+}
+
+.section-rail-pad[data-state="on"] .section-rail-dot {
+  background: var(--frog);
+  transform: scale(1.75);
+  box-shadow:
+    0 0 0 2px var(--ivy),
+    0 0 12px -1px color-mix(in oklab, var(--frog) 70%, transparent);
+}
+
+.section-rail-pad:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+/* Drag read-out: names the section you are about to land on. */
+.section-rail-tag {
+  position: absolute;
+  right: 34px;
+  top: 50%;
+  max-width: 46vw;
+  transform: translateY(-50%) scale(0.94);
+  white-space: nowrap;
+  border: 2px solid var(--charcoal);
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--charcoal);
+  font-family: var(--font-display, inherit);
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 180ms var(--sb-ease),
+    transform 240ms var(--sb-ease);
+  box-shadow: 0 4px 0 color-mix(in oklab, var(--ivy) 60%, transparent);
+}
+
+.section-rail-tag[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+/* Desktop: sit just inside the native scrollbar gutter. */
+@media (min-width: 640px) {
+  .section-rail {
+    right: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-rail-glow,
+  .section-rail-dot,
+  .section-rail-tag {
+    transition: none;
+  }
+}

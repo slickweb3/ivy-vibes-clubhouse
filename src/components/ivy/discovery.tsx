@@ -94,7 +94,7 @@ export function IvyDiscoveries({ context = "home" }: { context?: "home" | "arcad
         type="button"
         onClick={openJournal}
         aria-label={`Field journal — ${count} of ${total} discoveries found`}
-        className="pop fixed right-3 bottom-52 z-40 flex items-center gap-2 rounded-full border-2 border-ivy/70 bg-cream/90 px-3 py-2 font-display text-sm text-ivy shadow-[0_6px_0_rgba(23,79,54,0.45)] backdrop-blur-sm sm:right-6 sm:bottom-56"
+        className="pop fixed right-9 bottom-52 z-40 flex items-center gap-2 rounded-full border-2 border-ivy/70 bg-cream/90 px-3 py-2 font-display text-sm text-ivy shadow-[0_6px_0_rgba(23,79,54,0.45)] backdrop-blur-sm sm:right-16 sm:bottom-56"
       >
         <span aria-hidden className="ivy-journal-pip">
           🪷

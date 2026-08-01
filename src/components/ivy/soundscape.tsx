@@ -132,7 +132,7 @@ export function IvySoundscape() {
       : "Play Ivy's world";
 
   return (
-    <div className="fixed right-4 bottom-20 z-40 sm:right-6 sm:bottom-24">
+    <div className="fixed right-9 bottom-20 z-40 sm:right-16 sm:bottom-24">
       <button
         type="button"
         onClick={toggle}
