@@ -46,7 +46,7 @@ const TIKTOK: ProfileMeta = {
   avatar: avatarTiktok.url,
   profileUrl: projectConfig.socials.tiktok ?? "https://www.tiktok.com/@ivyvibing",
   tone: "lavender",
-  chrome: meta.chrome,
+  chrome: "bg-lavender",
 };
 
 const INSTAGRAM: ProfileMeta = {
