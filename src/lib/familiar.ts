@@ -27,19 +27,30 @@ export interface FamiliarTrait {
   value: string;
 }
 
+export type StatKey = "hop" | "croak" | "chill" | "mischief";
+
 export interface FamiliarStat {
+  key: StatKey;
   label: string;
-  /** 1-99 */
+  /** 5-99 */
   value: number;
-  glyph: string;
 }
 
 export interface FamiliarMove {
   name: string;
-  cost: string;
+  /** Dew cost, 1-3 pips. Always matches the move's damage multiplier. */
+  cost: number;
+  /** Which stat the damage is calculated from. */
+  stat: StatKey;
+  statLabel: string;
   effect: string;
+  /** Damage, derived: round(stat x multiplier / 5) x 5. */
   power: number;
+  /** Printed on the card so the maths is checkable. */
+  formula: string;
 }
+
+export type Element = "Leap" | "Sound" | "Sun" | "Mud";
 
 export interface Familiar {
   /** The exact text that summoned it (trimmed, original case). */
@@ -66,6 +77,14 @@ export interface Familiar {
   biome: string;
   /** Battle-style numbers, all derived from the same seed. */
   stats: FamiliarStat[];
+  /** Element, taken from the highest stat. Drives weakness and resistance. */
+  element: Element;
+  weakness: Element;
+  resists: Element;
+  /** Health, derived from Chill. */
+  hp: number;
+  /** Retreat cost in dew, derived from Hop. */
+  retreat: number;
   /** Overall power score, 1-99, the number collectors will argue about. */
   power: number;
   /** Two signature moves, printed on the card. */
