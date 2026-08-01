@@ -18,7 +18,6 @@ import { SocialWindows } from "@/components/ivy/social-windows";
 import { IvyPhotoRow, heroPhotoUrl } from "@/components/ivy/photo-row";
 import { LiveMarket } from "@/components/ivy/market";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
-import { DailyRibbit } from "@/components/ivy/daily-ribbit";
 import { ChorusPond } from "@/components/ivy/chorus-pond";
 import { PondChat } from "@/components/ivy/chat-box";
 
@@ -114,12 +113,6 @@ function Home() {
         <Hero media={media.hero} market={market} />
         <IvyPhotoRow />
         <MeetIvy />
-        <DailyRibbit />
-        <ChorusPond />
-        <PondChat />
-
-
-
         <SocialWindows posts={curated.all} />
         <TheLore />
         <WhyIvy />
@@ -129,6 +122,8 @@ function Home() {
         <OwnerCorner />
         <RoyalCourt />
         <FAQ />
+        <ChorusPond />
+        <PondChat />
       </main>
       <SiteFooter />
       <SectionRail />
