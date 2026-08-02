@@ -70,9 +70,96 @@ function Stat({
   );
 }
 
+/** Dexscreener-style live board: a compact, brand-native read of the pair. */
+function DexPanel({ snapshot }: { snapshot: MarketSnapshot }) {
+  const c = snapshot.priceChanges;
+  const windows: { label: string; value: number | null }[] = [
+    { label: "5m", value: c?.m5 ?? null },
+    { label: "1h", value: c?.h1 ?? null },
+    { label: "6h", value: c?.h6 ?? null },
+    { label: "24h", value: c?.h24 ?? null },
+  ];
+  const buys = snapshot.txns24h?.buys ?? 0;
+  const sells = snapshot.txns24h?.sells ?? 0;
+  const total = buys + sells;
+  const buyPct = total > 0 ? (buys / total) * 100 : 50;
+
+  return (
+    <div className="mt-6 overflow-hidden rounded-3xl bg-card pop-static">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-charcoal/10 px-4 py-3">
+        <p className="font-display text-base text-charcoal">
+          <span className="lowercase">ivy</span> / SOL
+        </p>
+        <p className="text-xs text-charcoal/70">
+          {snapshot.config.blockchain ?? "Solana"}
+          {snapshot.dexId ? ` · ${snapshot.dexId}` : ""}
+          {snapshot.config.launchPlatform ? ` via ${snapshot.config.launchPlatform}` : ""}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-px bg-charcoal/10 sm:grid-cols-4">
+        {[
+          { label: "Price USD", value: usd(snapshot.priceUsd, 8) },
+          { label: "Liquidity", value: compactUsd(snapshot.liquidityUsd) },
+          { label: "FDV", value: compactUsd(snapshot.fdvUsd) },
+          { label: "Market cap", value: compactUsd(snapshot.marketCapUsd ?? snapshot.fdvUsd) },
+        ].map((cell) => (
+          <div key={cell.label} className="bg-card px-4 py-3">
+            <p className="font-display text-[0.65rem] tracking-wide text-charcoal/60 uppercase">
+              {cell.label}
+            </p>
+            <p className="mt-1 font-display text-base text-charcoal sm:text-lg">
+              {cell.value ?? "—"}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-4 gap-px bg-charcoal/10">
+        {windows.map((w) => (
+          <div key={w.label} className="bg-card px-2 py-3 text-center">
+            <p className="font-display text-[0.65rem] tracking-wide text-charcoal/60 uppercase">
+              {w.label}
+            </p>
+            <p
+              className={`mt-1 font-display text-sm ${
+                w.value === null
+                  ? "text-charcoal/50"
+                  : w.value > 0
+                    ? "text-deep-ivy"
+                    : w.value < 0
+                      ? "text-berry"
+                      : "text-charcoal/70"
+              }`}
+            >
+              {w.value === null ? "—" : `${w.value > 0 ? "+" : ""}${w.value.toFixed(2)}%`}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-3 px-4 py-4">
+        <div className="flex items-center justify-between font-display text-xs text-charcoal/80">
+          <span>{buys.toLocaleString()} buys</span>
+          <span className="text-charcoal/60">
+            {total.toLocaleString()} txns · 24h vol {compactUsd(snapshot.volume24hUsd) ?? "—"}
+          </span>
+          <span>{sells.toLocaleString()} sells</span>
+        </div>
+        <div
+          className="flex h-2 overflow-hidden rounded-full bg-charcoal/10"
+          role="img"
+          aria-label={`${buys} buys versus ${sells} sells in the last 24 hours`}
+        >
+          <span className="bg-frog" style={{ width: `${buyPct}%` }} />
+          <span className="flex-1 bg-pink" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
-  const { embedsAllowed, openSettings } = useEmbedConsent();
-  const [chartOn, setChartOn] = useState(false);
   const [fetchedLabel, setFetchedLabel] = useState<string | null>(null);
   const chip = STATUS_LABEL[snapshot.status];
   const live = snapshot.status === "live";
@@ -81,7 +168,7 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
     setFetchedLabel(new Date(snapshot.fetchedAt).toLocaleTimeString());
   }, [snapshot.fetchedAt]);
 
-  const change = snapshot.priceChange24h;
+
 
   return (
     <Section
