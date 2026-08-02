@@ -99,9 +99,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;800&display=swap",
       },
+      { rel: "preload", as: "image", href: introSticker.url, fetchPriority: "high" },
     ],
     scripts: [
       {
+        // Runs before first paint: the intro curtain plays once per session and
+        // never for reduced-motion visitors, decided in CSS so React never
+        // mounts/unmounts it mid-animation (the old source of the flicker).
+        children:
+          "try{var d=document.documentElement;if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||sessionStorage.getItem('ivy-curtain')==='1'){d.setAttribute('data-curtain','off')}else{sessionStorage.setItem('ivy-curtain','1')}}catch(e){}",
+      },
+      {
+
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
