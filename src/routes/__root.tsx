@@ -143,6 +143,25 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        {/* Server-rendered so it is on screen at first paint — no flash of page
+            before the curtain, which is what used to look like a glitch. */}
+        <div aria-hidden className="ivy-curtain">
+          <div className="ivy-curtain-inner">
+            <div className="ivy-curtain-halo" />
+            <img
+              src={introSticker.url}
+              alt=""
+              width={512}
+              height={512}
+              className="ivy-curtain-art"
+              fetchPriority="high"
+              decoding="async"
+            />
+            <span className="ivy-curtain-ticker">$ivy</span>
+            <span className="ivy-curtain-mark">ivy vibing</span>
+            <span className="ivy-curtain-scan" />
+          </div>
+        </div>
         {children}
         <ScrollSignature />
         <Scripts />
@@ -150,6 +169,7 @@ function RootShell({ children }: { children: ReactNode }) {
     </html>
   );
 }
+
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
