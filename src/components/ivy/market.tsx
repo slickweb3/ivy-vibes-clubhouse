@@ -132,81 +132,39 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
         />
       </div>
 
-      {live ? (
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          {change !== null ? (
-            <span
-              className={`inline-flex min-h-9 items-center rounded-full px-3 font-display text-sm pop-static ${
-                change >= 0 ? "bg-frog text-charcoal" : "bg-pink text-charcoal"
-              }`}
+      {live ? <DexPanel snapshot={snapshot} /> : null}
+
+      {/* Always-open live chart */}
+      <div className="mt-8 overflow-hidden rounded-2xl bg-card p-4 pop-static">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="font-display text-lg text-charcoal">Live price chart</h3>
+          {snapshot.pairUrl ? (
+            <a
+              href={snapshot.pairUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-9 items-center rounded-full bg-lavender px-4 font-display text-xs text-charcoal pop"
             >
-              {change >= 0 ? "▲" : "▼"} {Math.abs(change).toFixed(2)}% (24h)
-            </span>
-          ) : null}
-          {snapshot.txns24h ? (
-            <span className="text-sm text-charcoal/80">
-              {snapshot.txns24h.buys.toLocaleString()} buys ·{" "}
-              {snapshot.txns24h.sells.toLocaleString()} sells (24h)
-            </span>
-          ) : null}
-          {snapshot.dexId ? (
-            <span className="text-sm text-charcoal/70">Pair on {snapshot.dexId}</span>
+              Open on Dexscreener ↗
+            </a>
           ) : null}
         </div>
-      ) : null}
-
-      {/* Consent-gated third-party chart */}
-      <div className="mt-8 overflow-hidden rounded-2xl bg-card p-4 pop-static">
-        <h3 className="font-display text-lg text-charcoal">Price chart</h3>
-        {!snapshot.chartEmbedUrl ? (
-          <p className="mt-2 text-sm text-charcoal/80">
-            The chart appears automatically the moment the official pair is trading.
-          </p>
-        ) : !embedsAllowed ? (
-          <div className="mt-3 space-y-3">
-            <p className="text-sm text-charcoal/80">
-              The chart is loaded from Dexscreener. Nothing third-party loads until you allow it.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button
-                onClick={openSettings}
-                className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog"
-              >
-                Allow embeds
-              </Button>
-              {snapshot.pairUrl ? (
-                <a
-                  href={snapshot.pairUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center rounded-full bg-yellow px-5 font-display text-sm text-charcoal pop"
-                >
-                  Open chart on Dexscreener
-                </a>
-              ) : null}
-            </div>
-          </div>
-        ) : !chartOn ? (
-          <div className="mt-3">
-            <Button
-              onClick={() => setChartOn(true)}
-              className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog"
-            >
-              Load the live chart
-            </Button>
-          </div>
-        ) : (
-          <div className="mt-3 aspect-[4/5] w-full overflow-hidden rounded-xl sm:aspect-[16/9]">
+        {snapshot.chartEmbedUrl ? (
+          <div className="mt-3 aspect-[3/4] w-full overflow-hidden rounded-xl sm:aspect-[16/9]">
             <iframe
               src={snapshot.chartEmbedUrl}
               title="$ivy live price chart on Dexscreener"
-              loading="lazy"
               className="h-full w-full border-0"
               allow="clipboard-write"
             />
           </div>
+        ) : (
+          <p className="mt-2 text-sm text-charcoal/80">
+            The chart appears automatically the moment the official pair is trading.
+          </p>
         )}
       </div>
+
 
       <p className="mt-5 rounded-xl bg-pink p-4 font-display text-sm text-charcoal pop-static">
         Market data is informational only, not financial advice. Always verify the mint address on
