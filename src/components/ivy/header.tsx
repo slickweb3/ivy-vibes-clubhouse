@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { announcement, joinTheVibeMessage, navLinks } from "@/data/site-content";
-import { officialLinks } from "@/config/project";
+import { officialLinks, projectConfig } from "@/config/project";
 import { CrownDoodle, FrogDoodle, IvyWordmark, PawDoodle } from "./doodles";
 import { cn } from "@/lib/utils";
 
