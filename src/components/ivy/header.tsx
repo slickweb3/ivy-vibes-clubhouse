@@ -23,17 +23,34 @@ const socialLabels: Record<string, string> = {
 };
 
 function AnnouncementBar() {
+  const ca = projectConfig.contractAddress;
+  const pumpUrl = projectConfig.tokenomicsUrl;
   return (
-    <div className="bg-ivy text-cream" role="region" aria-label="Announcement">
-      <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4 py-2 text-center">
-        <CrownDoodle className="hidden h-4 w-6 shrink-0 text-yellow wiggle sm:block" />
-        <PawDoodle className="hidden h-4 w-4 shrink-0 text-frog float-slow sm:block" />
-        <p className="text-xs leading-snug font-semibold sm:text-sm">{announcement}</p>
-        <FrogDoodle className="hidden h-4 w-5 shrink-0 text-frog wiggle sm:block" />
+    <div className="announce-bar text-cream" role="region" aria-label="Announcement">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 py-2 text-center">
+        <span className="flex items-center gap-2">
+          <CrownDoodle className="hidden h-4 w-6 shrink-0 text-yellow wiggle sm:block" />
+          <PawDoodle className="hidden h-4 w-4 shrink-0 text-frog float-slow sm:block" />
+          <p className="text-xs leading-snug font-semibold sm:text-sm">{announcement}</p>
+          <FrogDoodle className="hidden h-4 w-5 shrink-0 text-frog wiggle sm:block" />
+        </span>
+        {ca && pumpUrl ? (
+          <a
+            href={pumpUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={`View $ivy on pump.fun — ${ca}`}
+            className="holo-chip inline-flex max-w-full items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[0.65rem] tracking-tight sm:text-xs"
+          >
+            <span className="sr-only">Contract address on pump.fun: </span>
+            <span className="truncate">CA {ca}</span>
+          </a>
+        ) : null}
       </div>
     </div>
   );
 }
+
 
 function JoinTheVibeDialog({
   open,
