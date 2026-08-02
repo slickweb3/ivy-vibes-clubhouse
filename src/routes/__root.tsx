@@ -14,6 +14,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import introSticker from "../assets/ivy-intro-sticker.jpg.asset.json";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
