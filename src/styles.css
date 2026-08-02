@@ -1269,16 +1269,6 @@ html[data-scrolling="true"] .scroll-depth {
   }
 }
 
-@keyframes ivy-curtain-sheen {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
 @keyframes ivy-curtain-lift {
   0%,
   78% {
