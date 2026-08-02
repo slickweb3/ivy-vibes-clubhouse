@@ -14,6 +14,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import introSticker from "../assets/ivy-intro-sticker.jpg.asset.json";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
@@ -98,9 +99,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;800&display=swap",
       },
+      { rel: "preload", as: "image", href: introSticker.url, fetchPriority: "high" },
     ],
     scripts: [
       {
+        // Runs before first paint: the intro curtain plays once per session and
+        // never for reduced-motion visitors, decided in CSS so React never
+        // mounts/unmounts it mid-animation (the old source of the flicker).
+        children:
+          "try{var skip=window.matchMedia('(prefers-reduced-motion: reduce)').matches||sessionStorage.getItem('ivy-curtain')==='1';if(skip){var s=document.createElement('style');s.textContent='.ivy-curtain{display:none!important}';document.head.appendChild(s)}else{sessionStorage.setItem('ivy-curtain','1')}}catch(e){}",
+      },
+      {
+
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
@@ -143,6 +153,25 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        {/* Server-rendered so it is on screen at first paint — no flash of page
+            before the curtain, which is what used to look like a glitch. */}
+        <div aria-hidden className="ivy-curtain">
+          <div className="ivy-curtain-inner">
+            <div className="ivy-curtain-halo" />
+            <img
+              src={introSticker.url}
+              alt=""
+              width={512}
+              height={512}
+              className="ivy-curtain-art"
+              fetchPriority="high"
+              decoding="async"
+            />
+            <span className="ivy-curtain-ticker">$ivy</span>
+            <span className="ivy-curtain-mark">ivy vibing</span>
+            <span className="ivy-curtain-scan" />
+          </div>
+        </div>
         {children}
         <ScrollSignature />
         <Scripts />
@@ -150,6 +179,7 @@ function RootShell({ children }: { children: ReactNode }) {
     </html>
   );
 }
+
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();

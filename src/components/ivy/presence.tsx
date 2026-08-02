@@ -4,13 +4,12 @@ import { discover } from "@/lib/discoveries";
 /**
  * IvyPresence — the site's ambient "living environment" layer.
  *
- * Four jobs, all transform/opacity/custom-property work so nothing costs layout:
- *  1. A one-per-session cinematic curtain lift on first paint.
- *  2. Pointer + scroll telemetry published as CSS custom properties
+ * Three jobs, all transform/opacity/custom-property work so nothing costs layout:
+ *  1. Pointer + scroll telemetry published as CSS custom properties
  *     (`--ivy-px`, `--ivy-py`, `--ivy-depth`) that the atmosphere layers read.
- *  3. Section-aware aura: the section in view sets the two light colours of the
+ *  2. Section-aware aura: the section in view sets the two light colours of the
  *     atmosphere, so the environment shifts as the visitor travels the page.
- *  4. Magnetic pull on chunky `.pop` controls: the hovered control leans
+ *  3. Magnetic pull on chunky `.pop` controls: the hovered control leans
  *     toward the cursor via `--mx` / `--my`.
  *
  * Everything heavy is skipped for coarse pointers and `prefers-reduced-motion`.
@@ -27,20 +26,6 @@ const AURAS: Array<[string, string]> = [
 ];
 
 export function IvyPresence() {
-  const [curtain, setCurtain] = useState(false);
-
-  useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const seen = sessionStorage.getItem("ivy-curtain") === "1";
-    if (!reduce && !seen) {
-      setCurtain(true);
-      sessionStorage.setItem("ivy-curtain", "1");
-      const t = window.setTimeout(() => setCurtain(false), 1150);
-      return () => window.clearTimeout(t);
-    }
-    return undefined;
-  }, []);
-
   // Section-aware aura. One observer, no scroll math, no re-renders.
   useEffect(() => {
     const root = document.documentElement;
@@ -212,11 +197,6 @@ export function IvyPresence() {
               🐸
             </span>
           ))}
-        </div>
-      ) : null}
-      {curtain ? (
-        <div aria-hidden className="ivy-curtain">
-          <span className="ivy-curtain-mark">ivy vibing</span>
         </div>
       ) : null}
     </>

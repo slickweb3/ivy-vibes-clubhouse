@@ -3,18 +3,27 @@ import { Section, Sticker } from "@/components/ivy/primitives";
 import { FrogDoodle } from "@/components/ivy/doodles";
 import { discover } from "@/lib/discoveries";
 import { getPond, plantPondPad } from "@/lib/pond.functions";
-import { CROAKS, croakByNote, pondDay, type Croak } from "@/lib/pond-vocabulary";
+import {
+  CROAKS,
+  croakByNote,
+  msUntilPondReset,
+  pondDay,
+  pondMonth,
+  pondMonthLabel,
+  type Croak,
+} from "@/lib/pond-vocabulary";
 import { playPadNote, playPondSong, type SongHandle } from "@/lib/pond-song";
 import type { PondPad } from "@/lib/pond.server";
 
 /**
- * The Chorus Pond — the pond writes one song a day, and the visitors are the notes.
+ * The Chorus Pond — the pond writes one song a month, and the visitors are the notes.
  *
- * Every visitor may plant exactly one lily pad per UTC day: they pick a croak,
- * drop it anywhere in the water, and that croak becomes a note in Ivy's theme.
- * Press play and you hear the day itself — in the order people arrived. Pads
- * bloom live as strangers plant them, then the whole pond is wiped at midnight
- * UTC and a brand new song starts from silence.
+ * Every visitor may plant one lily pad per UTC day: they pick a croak, drop it
+ * anywhere in the water, and that croak becomes a note in Ivy's theme. Notes
+ * keep collecting all month, so the chorus grows into a real composition —
+ * played back in the order people arrived. Pads bloom live as strangers plant
+ * them, then on the first of the next month the pond empties and a brand new
+ * song starts from silence.
  */
 
 const PLANTER_KEY = "ivy-pond-planter";
@@ -33,22 +42,20 @@ function planterId(): string {
   }
 }
 
-function msUntilUtcMidnight(): number {
-  const now = new Date();
-  const next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
-  return Math.max(0, next - now.getTime());
-}
-
 function formatLeft(ms: number): string {
   const total = Math.floor(ms / 1000);
-  const h = Math.floor(total / 3600);
+  const d = Math.floor(total / 86_400);
+  const h = Math.floor((total % 86_400) / 3600);
   const m = Math.floor((total % 3600) / 60);
+  if (d > 0) return `${d}d ${h}h`;
   return `${h}h ${`${m}`.padStart(2, "0")}m`;
 }
 
 export function ChorusPond() {
   const [pads, setPads] = useState<PondPad[]>([]);
   const [day, setDay] = useState(() => pondDay());
+  const [month, setMonth] = useState(() => pondMonth());
+  const [monthLabel, setMonthLabel] = useState(() => pondMonthLabel(pondMonth()));
   const [loaded, setLoaded] = useState(false);
   const [croak, setCroak] = useState<Croak>(CROAKS[7]!);
   const [planted, setPlanted] = useState(false);
@@ -68,6 +75,8 @@ export function ChorusPond() {
         if (!alive) return;
         setPads(state.pads);
         setDay(state.day);
+        setMonth(state.month);
+        setMonthLabel(state.monthLabel);
         try {
           setPlanted(window.localStorage.getItem(`${PLANTED_PREFIX}${state.day}`) === "1");
         } catch {
@@ -84,8 +93,8 @@ export function ChorusPond() {
   }, []);
 
   useEffect(() => {
-    setLeft(msUntilUtcMidnight());
-    const timer = window.setInterval(() => setLeft(msUntilUtcMidnight()), 30_000);
+    setLeft(msUntilPondReset());
+    const timer = window.setInterval(() => setLeft(msUntilPondReset()), 30_000);
     return () => window.clearInterval(timer);
   }, []);
 
@@ -103,16 +112,20 @@ export function ChorusPond() {
         .channel("chorus-pond")
         .on(
           "postgres_changes",
-          { event: "INSERT", schema: "public", table: "pond_pads", filter: `day=eq.${day}` },
+          // Realtime filters cannot express a date range, so the month is
+          // checked here instead — a stray row from another month is ignored.
+          { event: "INSERT", schema: "public", table: "pond_pads" },
           (payload) => {
             const row = payload.new as {
               id: string;
+              day: string;
               croak: string;
               note_index: number;
               x: number;
               y: number;
               created_at: string;
             };
+            if (typeof row.day === "string" && !row.day.startsWith(month)) return;
             setPads((current) =>
               current.some((pad) => pad.id === row.id)
                 ? current
@@ -141,7 +154,7 @@ export function ChorusPond() {
       cancelled = true;
       cleanup?.();
     };
-  }, [loaded, day]);
+  }, [loaded, month]);
 
   useEffect(() => () => songRef.current?.stop(), []);
 
@@ -170,19 +183,19 @@ export function ChorusPond() {
           /* nothing to remember locally — the server still knows */
         }
         discover("chorus");
-        setMessage(`Your "${croak.word}" is in today's song.`);
+        setMessage(`Your "${croak.word}" is in the song of ${monthLabel}.`);
         return;
       }
       if (result.reason === "already-planted") {
         setPlanted(true);
         setMessage("One pad per day — yours is already floating out there.");
       } else if (result.reason === "pond-busy") {
-        setMessage("Today's pond is full. Wild. Come back tomorrow.");
+        setMessage("This month's pond is full. Wild. A new song starts on the 1st.");
       } else {
         setMessage("That croak is not in the pond's vocabulary.");
       }
     },
-    [croak, planted, pending],
+    [croak, planted, pending, monthLabel],
   );
 
   const onWaterClick = useCallback(
@@ -223,8 +236,8 @@ export function ChorusPond() {
     <Section
       id="chorus-pond"
       eyebrow="The chorus pond"
-      title="Every day the pond writes one song. You are a note in it."
-      intro="Pick a croak, drop it in the water, and it becomes a note in Ivy's theme — played in the order people arrived. One pad per visitor per day. At midnight UTC the pond empties and a brand new song begins from silence."
+      title="Every month the pond writes one song. You are a note in it."
+      intro="Pick a croak, drop it in the water, and it becomes a note in Ivy's theme — played in the order people arrived. One pad per visitor per day, collected all month long. On the 1st the pond empties and a brand new song begins from silence."
       tone="leaf"
     >
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
@@ -232,7 +245,7 @@ export function ChorusPond() {
         <div className="relative overflow-hidden rounded-3xl border-4 border-ivy bg-ivy p-3 pop-static">
           <div className="flex flex-wrap items-center justify-between gap-2 px-1 pb-2">
             <p className="font-display text-[0.7rem] tracking-[0.18em] text-cream/80 uppercase">
-              Song of {day}
+              Song of {monthLabel}
             </p>
             <p className="font-display text-[0.7rem] tracking-[0.18em] text-cream/80 uppercase tabular-nums">
               {tally} {tally === 1 ? "note" : "notes"} · resets in {formatLeft(left)}
@@ -246,7 +259,7 @@ export function ChorusPond() {
             disabled={planted || pending || !loaded}
             aria-label={
               planted
-                ? "You have already planted today's lily pad"
+                ? "You have already planted your lily pad for today"
                 : `Plant your "${croak.word}" lily pad — tap anywhere in the water`
             }
             className="pond-water relative block aspect-[16/10] w-full overflow-hidden rounded-2xl border-2 border-frog/40 disabled:cursor-default"
@@ -275,7 +288,7 @@ export function ChorusPond() {
 
             {loaded && tally === 0 ? (
               <span className="absolute inset-0 flex items-center justify-center px-6 text-center font-display text-cream/80">
-                Silent pond. Nobody has croaked today yet — plant the first note.
+                Silent pond. Nobody has croaked this month yet — plant the first note.
               </span>
             ) : null}
           </button>
@@ -288,7 +301,7 @@ export function ChorusPond() {
               className="pop inline-flex min-h-11 items-center gap-2 rounded-full bg-frog px-5 font-display text-charcoal disabled:opacity-50"
             >
               <FrogDoodle className="h-5 w-6 text-ivy" />
-              {playing ? "Stop the chorus" : "Play today's chorus"}
+              {playing ? "Stop the chorus" : `Play the ${monthLabel} chorus`}
             </button>
             <p className="text-sm text-cream/85">
               {playing
@@ -305,7 +318,7 @@ export function ChorusPond() {
           </p>
           <p className="mt-1 text-sm opacity-85">
             {planted
-              ? "Come back after midnight UTC for a brand new empty pond and a brand new song."
+              ? "Come back tomorrow to add another note, and on the 1st for a brand new empty pond."
               : "Each croak is a real note in Ivy's theme. Pick one, then tap anywhere in the pond to place it."}
           </p>
 

@@ -8,8 +8,10 @@
  * Nothing here invents a fact about Ivy, the token or any social account.
  */
 
-export const announcement =
-  "$ivy is live on pump.fun. Contract: 9m63AW5py9AQK218vxX4zEXp8gyFT2Cc9ZMnt6Fppump. Always verify before buying.";
+export const announcement = "community driven meme coin inspired by ivy vibing";
+
+/** Second line of the banner: always verify the contract before buying. */
+export const announcementVerify = "$ivy is live on pump.fun — always verify before buying.";
 
 export const heroCopy = {
   badge: "Official ivy vibing Project",

@@ -48,7 +48,41 @@ export function croakByNote(note: number): Croak {
   return CROAKS.find((c) => c.note === note) ?? CROAKS[7]!;
 }
 
-/** UTC day key, so the whole pond changes over at the same moment. */
+/** UTC day key — one pad per visitor per day. */
 export function pondDay(now: Date = new Date()): string {
   return now.toISOString().slice(0, 10);
+}
+
+/**
+ * UTC month key. The song itself is monthly: pads keep collecting all month,
+ * so the chorus grows into a real piece of music, then the pond empties on the
+ * first of the next month and a brand new song starts from silence.
+ */
+export function pondMonth(now: Date = new Date()): string {
+  return now.toISOString().slice(0, 7);
+}
+
+/** First and last UTC day keys of a `YYYY-MM` month, inclusive. */
+export function pondMonthRange(month: string): { from: string; to: string } {
+  const [y, m] = month.split("-").map(Number);
+  const year = y ?? new Date().getUTCFullYear();
+  const index = (m ?? 1) - 1;
+  const last = new Date(Date.UTC(year, index + 1, 0)).toISOString().slice(0, 10);
+  return { from: `${month}-01`, to: last };
+}
+
+/** "August 2026" — the human name of a pond song. */
+export function pondMonthLabel(month: string): string {
+  const { from } = pondMonthRange(month);
+  return new Date(`${from}T00:00:00Z`).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+/** Milliseconds until the pond empties (first instant of the next UTC month). */
+export function msUntilPondReset(now: Date = new Date()): number {
+  const next = Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1);
+  return Math.max(0, next - now.getTime());
 }
