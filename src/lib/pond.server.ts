@@ -7,7 +7,7 @@
  *  - positions are clamped so nothing can be planted outside the water,
  *  - reads only ever return today's pads, which carry nothing identifying.
  */
-import { croakByWord, pondDay } from "@/lib/pond-vocabulary";
+import { croakByWord, pondDay, pondMonth, pondMonthLabel, pondMonthRange } from "@/lib/pond-vocabulary";
 
 export interface PondPad {
   id: string;
@@ -19,7 +19,12 @@ export interface PondPad {
 }
 
 export interface PondState {
+  /** UTC day, used for the one-pad-per-visitor-per-day claim. */
   day: string;
+  /** `YYYY-MM` — the song this pond belongs to. */
+  month: string;
+  /** "August 2026". */
+  monthLabel: string;
   pads: PondPad[];
 }
 
@@ -29,8 +34,8 @@ export interface PlantResult {
   state: PondState;
 }
 
-/** Hard ceiling so one day's song stays a song and not a wall of noise. */
-const MAX_PADS_PER_DAY = 400;
+/** Hard ceiling so one month's song stays a song and not a wall of noise. */
+const MAX_PADS_PER_MONTH = 600;
 
 type Row = {
   id: string;
@@ -59,17 +64,21 @@ async function admin() {
 
 export async function readPond(): Promise<PondState> {
   const day = pondDay();
+  const month = pondMonth();
+  const monthLabel = pondMonthLabel(month);
+  const { from, to } = pondMonthRange(month);
   try {
     const db = await admin();
     const { data } = await db
       .from("pond_pads")
       .select("id, croak, note_index, x, y, created_at")
-      .eq("day", day)
+      .gte("day", from)
+      .lte("day", to)
       .order("created_at", { ascending: true })
-      .limit(MAX_PADS_PER_DAY);
-    return { day, pads: ((data ?? []) as Row[]).map(toPad) };
+      .limit(MAX_PADS_PER_MONTH);
+    return { day, month, monthLabel, pads: ((data ?? []) as Row[]).map(toPad) };
   } catch {
-    return { day, pads: [] };
+    return { day, month, monthLabel, pads: [] };
   }
 }
 
@@ -97,11 +106,13 @@ export async function plantPad(input: {
       .maybeSingle();
     if (existing) return { ok: false, reason: "already-planted", state: await readPond() };
 
+    const range = pondMonthRange(pondMonth());
     const { count } = await db
       .from("pond_pads")
       .select("id", { count: "exact", head: true })
-      .eq("day", day);
-    if ((count ?? 0) >= MAX_PADS_PER_DAY) {
+      .gte("day", range.from)
+      .lte("day", range.to);
+    if ((count ?? 0) >= MAX_PADS_PER_MONTH) {
       return { ok: false, reason: "pond-busy", state: await readPond() };
     }
 
@@ -129,6 +140,7 @@ export async function plantPad(input: {
 
     return { ok: true, state: await readPond() };
   } catch {
-    return { ok: false, reason: "pond-busy", state: { day, pads: [] } };
+    const month = pondMonth();
+    return { ok: false, reason: "pond-busy", state: { day, month, monthLabel: pondMonthLabel(month), pads: [] } };
   }
 }
