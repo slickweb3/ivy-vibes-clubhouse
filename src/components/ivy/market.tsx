@@ -124,7 +124,7 @@ function DexPanel({ snapshot }: { snapshot: MarketSnapshot }) {
                 w.value === null
                   ? "text-charcoal/50"
                   : w.value > 0
-                    ? "text-deep-ivy"
+                    ? "text-ivy"
                     : w.value < 0
                       ? "text-berry"
                       : "text-charcoal/70"
