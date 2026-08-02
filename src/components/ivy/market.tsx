@@ -7,9 +7,7 @@
  * is third-party, so it stays behind the cookie/embed consent gate.
  */
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { ComingSoonPill, Section, StatusChip, keepTickerCase } from "@/components/ivy/primitives";
-import { useEmbedConsent } from "@/components/ivy/cookie-consent";
 import { CountUp } from "@/components/ivy/count-up";
 import type { MarketSnapshot } from "@/lib/market.server";
 
