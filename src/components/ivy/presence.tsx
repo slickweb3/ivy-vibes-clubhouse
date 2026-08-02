@@ -4,12 +4,12 @@ import { discover } from "@/lib/discoveries";
 /**
  * IvyPresence — the site's ambient "living environment" layer.
  *
- * Four jobs, all transform/opacity/custom-property work so nothing costs layout:
- *  1. Pointer. Pointer + scroll telemetry published as CSS custom properties
+ * Three jobs, all transform/opacity/custom-property work so nothing costs layout:
+ *  1. Pointer + scroll telemetry published as CSS custom properties
  *     (`--ivy-px`, `--ivy-py`, `--ivy-depth`) that the atmosphere layers read.
- *  3. Section-aware aura: the section in view sets the two light colours of the
+ *  2. Section-aware aura: the section in view sets the two light colours of the
  *     atmosphere, so the environment shifts as the visitor travels the page.
- *  4. Magnetic pull on chunky `.pop` controls: the hovered control leans
+ *  3. Magnetic pull on chunky `.pop` controls: the hovered control leans
  *     toward the cursor via `--mx` / `--my`.
  *
  * Everything heavy is skipped for coarse pointers and `prefers-reduced-motion`.
