@@ -49,6 +49,7 @@
   --color-cream: var(--cream);
   --color-charcoal: var(--charcoal);
   --color-pink: var(--pink);
+  --color-berry: var(--berry);
   --color-leaf: var(--leaf);
   --color-lavender: var(--lavender);
   --color-yellow: var(--yellow);
@@ -68,6 +69,7 @@
   --cream: #fff8e7;
   --charcoal: #151515;
   --pink: #ff8eae;
+  --berry: #b3315a;
   --leaf: #c9f39b;
   --lavender: #c7b8ff;
   --yellow: #ffd86b;

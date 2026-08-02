@@ -7,9 +7,7 @@
  * is third-party, so it stays behind the cookie/embed consent gate.
  */
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { ComingSoonPill, Section, StatusChip, keepTickerCase } from "@/components/ivy/primitives";
-import { useEmbedConsent } from "@/components/ivy/cookie-consent";
 import { CountUp } from "@/components/ivy/count-up";
 import type { MarketSnapshot } from "@/lib/market.server";
 
@@ -70,9 +68,96 @@ function Stat({
   );
 }
 
+/** Dexscreener-style live board: a compact, brand-native read of the pair. */
+function DexPanel({ snapshot }: { snapshot: MarketSnapshot }) {
+  const c = snapshot.priceChanges;
+  const windows: { label: string; value: number | null }[] = [
+    { label: "5m", value: c?.m5 ?? null },
+    { label: "1h", value: c?.h1 ?? null },
+    { label: "6h", value: c?.h6 ?? null },
+    { label: "24h", value: c?.h24 ?? null },
+  ];
+  const buys = snapshot.txns24h?.buys ?? 0;
+  const sells = snapshot.txns24h?.sells ?? 0;
+  const total = buys + sells;
+  const buyPct = total > 0 ? (buys / total) * 100 : 50;
+
+  return (
+    <div className="mt-6 overflow-hidden rounded-3xl bg-card pop-static">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-charcoal/10 px-4 py-3">
+        <p className="font-display text-base text-charcoal">
+          <span className="lowercase">ivy</span> / SOL
+        </p>
+        <p className="text-xs text-charcoal/70">
+          {snapshot.config.blockchain ?? "Solana"}
+          {snapshot.dexId ? ` · ${snapshot.dexId}` : ""}
+          {snapshot.config.launchPlatform ? ` via ${snapshot.config.launchPlatform}` : ""}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-px bg-charcoal/10 sm:grid-cols-4">
+        {[
+          { label: "Price USD", value: usd(snapshot.priceUsd, 8) },
+          { label: "Liquidity", value: compactUsd(snapshot.liquidityUsd) },
+          { label: "FDV", value: compactUsd(snapshot.fdvUsd) },
+          { label: "Market cap", value: compactUsd(snapshot.marketCapUsd ?? snapshot.fdvUsd) },
+        ].map((cell) => (
+          <div key={cell.label} className="bg-card px-4 py-3">
+            <p className="font-display text-[0.65rem] tracking-wide text-charcoal/60 uppercase">
+              {cell.label}
+            </p>
+            <p className="mt-1 font-display text-base text-charcoal sm:text-lg">
+              {cell.value ?? "—"}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-4 gap-px bg-charcoal/10">
+        {windows.map((w) => (
+          <div key={w.label} className="bg-card px-2 py-3 text-center">
+            <p className="font-display text-[0.65rem] tracking-wide text-charcoal/60 uppercase">
+              {w.label}
+            </p>
+            <p
+              className={`mt-1 font-display text-sm ${
+                w.value === null
+                  ? "text-charcoal/50"
+                  : w.value > 0
+                    ? "text-ivy"
+                    : w.value < 0
+                      ? "text-berry"
+                      : "text-charcoal/70"
+              }`}
+            >
+              {w.value === null ? "—" : `${w.value > 0 ? "+" : ""}${w.value.toFixed(2)}%`}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-3 px-4 py-4">
+        <div className="flex items-center justify-between font-display text-xs text-charcoal/80">
+          <span>{buys.toLocaleString()} buys</span>
+          <span className="text-charcoal/60">
+            {total.toLocaleString()} txns · 24h vol {compactUsd(snapshot.volume24hUsd) ?? "—"}
+          </span>
+          <span>{sells.toLocaleString()} sells</span>
+        </div>
+        <div
+          className="flex h-2 overflow-hidden rounded-full bg-charcoal/10"
+          role="img"
+          aria-label={`${buys} buys versus ${sells} sells in the last 24 hours`}
+        >
+          <span className="bg-frog" style={{ width: `${buyPct}%` }} />
+          <span className="flex-1 bg-pink" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
-  const { embedsAllowed, openSettings } = useEmbedConsent();
-  const [chartOn, setChartOn] = useState(false);
   const [fetchedLabel, setFetchedLabel] = useState<string | null>(null);
   const chip = STATUS_LABEL[snapshot.status];
   const live = snapshot.status === "live";
@@ -81,7 +166,7 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
     setFetchedLabel(new Date(snapshot.fetchedAt).toLocaleTimeString());
   }, [snapshot.fetchedAt]);
 
-  const change = snapshot.priceChange24h;
+
 
   return (
     <Section
@@ -132,81 +217,39 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
         />
       </div>
 
-      {live ? (
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          {change !== null ? (
-            <span
-              className={`inline-flex min-h-9 items-center rounded-full px-3 font-display text-sm pop-static ${
-                change >= 0 ? "bg-frog text-charcoal" : "bg-pink text-charcoal"
-              }`}
+      {live ? <DexPanel snapshot={snapshot} /> : null}
+
+      {/* Always-open live chart */}
+      <div className="mt-8 overflow-hidden rounded-2xl bg-card p-4 pop-static">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="font-display text-lg text-charcoal">Live price chart</h3>
+          {snapshot.pairUrl ? (
+            <a
+              href={snapshot.pairUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-9 items-center rounded-full bg-lavender px-4 font-display text-xs text-charcoal pop"
             >
-              {change >= 0 ? "▲" : "▼"} {Math.abs(change).toFixed(2)}% (24h)
-            </span>
-          ) : null}
-          {snapshot.txns24h ? (
-            <span className="text-sm text-charcoal/80">
-              {snapshot.txns24h.buys.toLocaleString()} buys ·{" "}
-              {snapshot.txns24h.sells.toLocaleString()} sells (24h)
-            </span>
-          ) : null}
-          {snapshot.dexId ? (
-            <span className="text-sm text-charcoal/70">Pair on {snapshot.dexId}</span>
+              Open on Dexscreener ↗
+            </a>
           ) : null}
         </div>
-      ) : null}
-
-      {/* Consent-gated third-party chart */}
-      <div className="mt-8 overflow-hidden rounded-2xl bg-card p-4 pop-static">
-        <h3 className="font-display text-lg text-charcoal">Price chart</h3>
-        {!snapshot.chartEmbedUrl ? (
-          <p className="mt-2 text-sm text-charcoal/80">
-            The chart appears automatically the moment the official pair is trading.
-          </p>
-        ) : !embedsAllowed ? (
-          <div className="mt-3 space-y-3">
-            <p className="text-sm text-charcoal/80">
-              The chart is loaded from Dexscreener. Nothing third-party loads until you allow it.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button
-                onClick={openSettings}
-                className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog"
-              >
-                Allow embeds
-              </Button>
-              {snapshot.pairUrl ? (
-                <a
-                  href={snapshot.pairUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center rounded-full bg-yellow px-5 font-display text-sm text-charcoal pop"
-                >
-                  Open chart on Dexscreener
-                </a>
-              ) : null}
-            </div>
-          </div>
-        ) : !chartOn ? (
-          <div className="mt-3">
-            <Button
-              onClick={() => setChartOn(true)}
-              className="min-h-11 rounded-full bg-frog px-5 font-display text-charcoal pop hover:bg-frog"
-            >
-              Load the live chart
-            </Button>
-          </div>
-        ) : (
-          <div className="mt-3 aspect-[4/5] w-full overflow-hidden rounded-xl sm:aspect-[16/9]">
+        {snapshot.chartEmbedUrl ? (
+          <div className="mt-3 aspect-[3/4] w-full overflow-hidden rounded-xl sm:aspect-[16/9]">
             <iframe
               src={snapshot.chartEmbedUrl}
               title="$ivy live price chart on Dexscreener"
-              loading="lazy"
               className="h-full w-full border-0"
               allow="clipboard-write"
             />
           </div>
+        ) : (
+          <p className="mt-2 text-sm text-charcoal/80">
+            The chart appears automatically the moment the official pair is trading.
+          </p>
         )}
       </div>
+
 
       <p className="mt-5 rounded-xl bg-pink p-4 font-display text-sm text-charcoal pop-static">
         Market data is informational only, not financial advice. Always verify the mint address on
