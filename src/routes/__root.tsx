@@ -107,7 +107,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         // never for reduced-motion visitors, decided in CSS so React never
         // mounts/unmounts it mid-animation (the old source of the flicker).
         children:
-          "try{var d=document.documentElement;if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||sessionStorage.getItem('ivy-curtain')==='1'){d.setAttribute('data-curtain','off')}else{sessionStorage.setItem('ivy-curtain','1')}}catch(e){}",
+          "try{var skip=window.matchMedia('(prefers-reduced-motion: reduce)').matches||sessionStorage.getItem('ivy-curtain')==='1';if(skip){var s=document.createElement('style');s.textContent='.ivy-curtain{display:none!important}';document.head.appendChild(s)}else{sessionStorage.setItem('ivy-curtain','1')}}catch(e){}",
       },
       {
 

@@ -1176,10 +1176,6 @@ html[data-scrolling="true"] .scroll-depth {
   will-change: transform;
 }
 
-html[data-curtain="off"] .ivy-curtain {
-  display: none;
-}
-
 .ivy-curtain-inner {
   position: relative;
   display: grid;
@@ -1237,10 +1233,17 @@ html[data-curtain="off"] .ivy-curtain {
     var(--cream) 92%
   );
   background-size: 220% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--cream);
   animation: ivy-curtain-sheen 2600ms ease-in-out infinite;
+}
+
+/* Only claim the holographic sheen where text clipping is actually supported. */
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .ivy-curtain-ticker {
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 .ivy-curtain-mark {
