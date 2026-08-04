@@ -143,7 +143,7 @@ export function SectionRail() {
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
-      role="group"
+      role="navigation"
       aria-label="Leap between sections"
     >
       <span aria-hidden className="section-rail-stem" />
