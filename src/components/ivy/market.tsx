@@ -7,8 +7,7 @@
  * is third-party, so it stays behind the cookie/embed consent gate.
  */
 import { useEffect, useRef, useState } from "react";
-import { ComingSoonPill, Section, StatusChip, keepTickerCase } from "@/components/ivy/primitives";
-import { CountUp } from "@/components/ivy/count-up";
+import { Section, StatusChip } from "@/components/ivy/primitives";
 import type { MarketSnapshot } from "@/lib/market.server";
 
 function usd(value: number | null, digits = 2): string | null {
@@ -37,36 +36,6 @@ const STATUS_LABEL: Record<
   unavailable: { status: "pending", label: "Data provider unreachable" },
   disabled: { status: "off", label: "Live data paused" },
 };
-
-function Stat({
-  label,
-  value,
-  amount,
-  format,
-}: {
-  label: string;
-  value: string | null;
-  /** When present, the figure counts up on first view. */
-  amount?: number | null;
-  format?: (value: number) => string;
-}) {
-  return (
-    <div className="rounded-2xl bg-card p-4 pop-static">
-      <p className="font-display text-[0.7rem] tracking-wide text-charcoal/70 uppercase">
-        {keepTickerCase(label)}
-      </p>
-      <div className="mt-2 font-display text-xl text-charcoal sm:text-2xl">
-        {value === null ? (
-          <ComingSoonPill />
-        ) : amount !== null && amount !== undefined && format ? (
-          <CountUp value={amount} format={format} />
-        ) : (
-          value
-        )}
-      </div>
-    </div>
-  );
-}
 
 /** Dexscreener-style live board: a compact, brand-native read of the pair. */
 function DexPanel({ snapshot }: { snapshot: MarketSnapshot }) {
