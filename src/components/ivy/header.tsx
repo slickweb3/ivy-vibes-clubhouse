@@ -162,6 +162,8 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
   }, [isHome]);
 
   const href = (hash: string) => (isHome ? hash : `/${hash}`);
+  // Only offer Buy once a verified mint page exists — never a guessed link.
+  const buyUrl = projectConfig.tokenomicsUrl ?? null;
 
   return (
     <>
