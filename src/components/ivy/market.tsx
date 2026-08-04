@@ -219,7 +219,8 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
 
       {live ? <DexPanel snapshot={snapshot} /> : null}
 
-      {/* Always-open live chart */}
+      {/* Always-open live chart, mounted once it is close to the viewport so the
+          iframe never competes with the intro or first paint. */}
       <div className="mt-8 overflow-hidden rounded-2xl bg-card p-4 pop-static">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="font-display text-lg text-charcoal">Live price chart</h3>
@@ -235,20 +236,14 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
           ) : null}
         </div>
         {snapshot.chartEmbedUrl ? (
-          <div className="mt-3 aspect-[3/4] w-full overflow-hidden rounded-xl sm:aspect-[16/9]">
-            <iframe
-              src={snapshot.chartEmbedUrl}
-              title="$ivy live price chart on Dexscreener"
-              className="h-full w-full border-0"
-              allow="clipboard-write"
-            />
-          </div>
+          <ChartFrame src={snapshot.chartEmbedUrl} pairUrl={snapshot.pairUrl} />
         ) : (
           <p className="mt-2 text-sm text-charcoal/80">
             The chart appears automatically the moment the official pair is trading.
           </p>
         )}
       </div>
+
 
 
       <p className="mt-5 rounded-xl bg-pink p-4 font-display text-sm text-charcoal pop-static">
