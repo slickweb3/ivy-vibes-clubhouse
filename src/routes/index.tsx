@@ -17,6 +17,7 @@ import { Hero, MeetIvy, TheLore, WhyIvy, TokenRecord } from "@/components/ivy/se
 import { SocialWindows } from "@/components/ivy/social-windows";
 import { IvyPhotoRow, heroPhotoUrl } from "@/components/ivy/photo-row";
 import { LiveMarket } from "@/components/ivy/market";
+import { HowToBuy } from "@/components/ivy/how-to-buy";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
 import { ChorusPond } from "@/components/ivy/chorus-pond";
 import { PondChat } from "@/components/ivy/chat-box";
@@ -118,6 +119,7 @@ function Home() {
         <WhyIvy />
         <TokenRecord market={market ?? undefined} />
         {market ? <LiveMarket snapshot={market} /> : null}
+        <HowToBuy />
         <ArcadeTeaser />
         <OwnerCorner />
         <RoyalCourt />

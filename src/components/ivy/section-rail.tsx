@@ -21,6 +21,7 @@ const RAIL_SECTIONS: { id: string; label: string }[] = [
   { id: "why-ivy", label: "Why $ivy" },
   { id: "token-record", label: "Token record" },
   { id: "live-chart", label: "Live chart" },
+  { id: "how-to-buy", label: "How to buy" },
   { id: "arcade", label: "Lily Pad Leap" },
   { id: "royal-court", label: "Royal court" },
   { id: "chorus-pond", label: "Chorus pond" },
