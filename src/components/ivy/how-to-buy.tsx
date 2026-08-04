@@ -140,21 +140,21 @@ export function HowToBuy() {
       >
         <p className="measure font-display text-base text-charcoal/85">{active.blurb}</p>
 
-        <ol className="mt-6 grid gap-4 sm:grid-cols-2">
+        <ol className="mt-5 overflow-hidden rounded-2xl bg-card pop-static">
           {steps.map((step, index) => (
             <li
               key={step.title}
-              className="flex gap-4 rounded-2xl bg-card p-4 pop-static sm:p-5"
+              className="flex gap-3 border-b border-charcoal/10 p-3.5 last:border-0 sm:gap-4 sm:p-4"
             >
               <span
                 aria-hidden
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-yellow font-display text-sm text-charcoal"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-yellow font-display text-xs text-charcoal"
               >
                 {index + 1}
               </span>
               <div>
-                <h3 className="font-display text-base text-charcoal">{step.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed break-words text-charcoal/80">
+                <h3 className="font-display text-sm text-charcoal sm:text-base">{step.title}</h3>
+                <p className="mt-1 text-sm leading-snug break-words text-charcoal/80">
                   {step.body}
                 </p>
               </div>
@@ -163,7 +163,7 @@ export function HowToBuy() {
         </ol>
       </div>
 
-      <div className="mt-8 rounded-2xl bg-card p-4 pop-static sm:p-5">
+      <div className="mt-6 rounded-2xl bg-card p-4 pop-static sm:p-5">
         <div className="flex flex-wrap items-center gap-2">
           <Sticker tone="lavender">Official $ivy mint</Sticker>
           <span className="text-xs text-charcoal/70">{projectConfig.blockchain}</span>
