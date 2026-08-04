@@ -1,13 +1,19 @@
 import { CrownDoodle, FrogDoodle, LeafDoodle, PawDoodle } from "./doodles";
 import ivySticker from "@/assets/ivy-hop-sticker.png.asset.json";
 
-/** Ivy stickers tumbling slowly down the page, backflipping as they fall. */
+/**
+ * Ivy stickers tumbling slowly down the page, backflipping as they fall.
+ * `mobile: false` sprites only mount from `sm` up — phones and in-wallet
+ * browsers paint far fewer composited layers, which is what made scrolling
+ * feel sticky.
+ */
 const fallingIvys = [
-  { left: "8%", size: "h-20 w-auto", delay: "0s", duration: "46s" },
-  { left: "38%", size: "h-14 w-auto", delay: "17s", duration: "58s" },
-  { left: "66%", size: "h-24 w-auto", delay: "31s", duration: "52s" },
-  { left: "88%", size: "h-16 w-auto", delay: "9s", duration: "64s" },
+  { left: "8%", size: "h-20 w-auto", delay: "0s", duration: "46s", mobile: true },
+  { left: "38%", size: "h-14 w-auto", delay: "17s", duration: "58s", mobile: false },
+  { left: "66%", size: "h-24 w-auto", delay: "31s", duration: "52s", mobile: true },
+  { left: "88%", size: "h-16 w-auto", delay: "9s", duration: "64s", mobile: false },
 ];
+
 
 type Sprite = {
   Icon: typeof LeafDoodle;
