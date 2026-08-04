@@ -101,9 +101,12 @@ function readAmount(base64: string): number {
  * Counts token accounts for the mint across both SPL token programs, slicing
  * only the 8 balance bytes so the response stays small.
  */
-async function countHolders(
-  mint: string,
-): Promise<{ holders: number; accounts: number } | null> {
+async function countHolders(mint: string): Promise<{
+  holders: number;
+  accounts: number;
+  rawTotal: number;
+  rawTop10: number;
+} | null> {
   const results = await Promise.all(
     [TOKEN_PROGRAM, TOKEN_2022_PROGRAM].map((program) =>
       rpc<ProgramAccount[]>("getProgramAccounts", [
@@ -121,54 +124,42 @@ async function countHolders(
 
   let holders = 0;
   let accounts = 0;
+  const balances: number[] = [];
   for (const list of results) {
     if (!list) continue;
     for (const item of list) {
       accounts += 1;
       const data = item.account?.data;
       const raw = Array.isArray(data) ? data[0] : null;
-      if (raw && readAmount(raw) > 0) holders += 1;
+      const amount = raw ? readAmount(raw) : 0;
+      if (amount > 0) {
+        holders += 1;
+        balances.push(amount);
+      }
     }
   }
-  return { holders, accounts };
+  balances.sort((a, b) => b - a);
+  const rawTotal = balances.reduce((sum, value) => sum + value, 0);
+  const rawTop10 = balances.slice(0, 10).reduce((sum, value) => sum + value, 0);
+  return { holders, accounts, rawTotal, rawTop10 };
 }
 
-interface LargestAccounts {
-  value?: Array<{ uiAmount?: number | null }>;
-}
-interface SupplyResult {
-  value?: { uiAmount?: number | null };
-}
 interface MintAccountInfo {
   value?: {
     data?: {
-      parsed?: { info?: { mintAuthority?: string | null; freezeAuthority?: string | null } };
+      parsed?: { info?: { decimals?: number; mintAuthority?: string | null; freezeAuthority?: string | null } };
     };
   };
-}
-
-async function readConcentration(mint: string) {
-  const [largest, supply] = await Promise.all([
-    rpc<LargestAccounts>("getTokenLargestAccounts", [mint]),
-    rpc<SupplyResult>("getTokenSupply", [mint]),
-  ]);
-  const total = supply?.value?.uiAmount ?? null;
-  const list = largest?.value ?? [];
-  // A missing or empty RPC answer must stay null — 0% would be a lie.
-  if (list.length === 0 || !total || total <= 0) {
-    return { circulatingSupply: total, top10Percent: null };
-  }
-  const top10 = list.slice(0, 10).reduce((sum, entry) => sum + (entry.uiAmount ?? 0), 0);
-  return { circulatingSupply: total, top10Percent: (top10 / total) * 100 };
 }
 
 async function readAuthorities(mint: string) {
   const info = await rpc<MintAccountInfo>("getAccountInfo", [mint, { encoding: "jsonParsed" }]);
   const parsed = info?.value?.data?.parsed?.info;
-  if (!parsed) return { mintAuthorityRevoked: null, freezeAuthorityRevoked: null };
+  if (!parsed) return { mintAuthorityRevoked: null, freezeAuthorityRevoked: null, decimals: null };
   return {
     mintAuthorityRevoked: !parsed.mintAuthority,
     freezeAuthorityRevoked: !parsed.freezeAuthority,
+    decimals: typeof parsed.decimals === "number" ? parsed.decimals : null,
   };
 }
 
@@ -304,9 +295,8 @@ export async function readTokenIntel(): Promise<TokenIntel> {
     );
   }
 
-  const [counts, concentration, authorities, history] = await Promise.all([
+  const [counts, authorities, history] = await Promise.all([
     countHolders(mint),
-    readConcentration(mint),
     readAuthorities(mint),
     readHistory(mint),
   ]);
@@ -324,10 +314,15 @@ export async function readTokenIntel(): Promise<TokenIntel> {
   const mcap = market.marketCapUsd ?? market.fdvUsd;
   const txns = (market.txns24h?.buys ?? 0) + (market.txns24h?.sells ?? 0);
   const holders = counts.holders;
+  // Concentration and circulating supply come from the same account scan, so
+  // they never disagree with the holder count and need no extra RPC call.
+  const top10Percent = counts.rawTotal > 0 ? (counts.rawTop10 / counts.rawTotal) * 100 : null;
+  const circulatingSupply =
+    authorities.decimals !== null ? counts.rawTotal / 10 ** authorities.decimals : null;
 
   await recordSnapshot(
     mint,
-    { holders, accounts: counts.accounts, top10Percent: concentration.top10Percent },
+    { holders, accounts: counts.accounts, top10Percent },
     market,
     history[0]?.captured_at ?? null,
   );
@@ -340,8 +335,8 @@ export async function readTokenIntel(): Promise<TokenIntel> {
     holders,
     holderAccounts: counts.accounts,
     holderDeltas: buildDeltas(holders, history),
-    top10Percent: concentration.top10Percent,
-    circulatingSupply: concentration.circulatingSupply,
+    top10Percent,
+    circulatingSupply,
     mintAuthorityRevoked: authorities.mintAuthorityRevoked,
     freezeAuthorityRevoked: authorities.freezeAuthorityRevoked,
     liquidityToMcapPercent:
