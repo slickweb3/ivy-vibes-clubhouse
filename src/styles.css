@@ -2094,3 +2094,11 @@ html.dark body {
   }
 }
 
+
+/* Below-the-fold sections skip layout, paint and compositing until they are
+   near the viewport. The reserved intrinsic size keeps the scrollbar and the
+   section rail stable, so nothing rubber-bands as content streams in. */
+main > section:nth-of-type(n + 4) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}
