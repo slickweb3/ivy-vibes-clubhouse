@@ -713,26 +713,21 @@ export function TokenRecord({ market }: { market?: MarketSnapshot }) {
       intro="Nothing here is estimated. Every unconfirmed field stays marked Coming Soon."
       tone="white"
     >
-      <div className="overflow-hidden rounded-2xl bg-card pop-static">
-        <table className="w-full text-left">
-          <caption className="sr-only">Official $ivy token record</caption>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.label} className="border-b border-charcoal/10 last:border-0">
-                <th
-                  scope="row"
-                  className="w-1/2 p-4 font-display text-sm text-charcoal sm:text-base"
-                >
-                  {row.label}
-                </th>
-                <td className="p-4 text-sm text-charcoal/90 sm:text-base">
-                  {row.value === COMING_SOON ? <ComingSoonPill /> : row.value}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* A compact two-up record instead of a ten-row table: same facts, half
+          the scrolling on a phone. */}
+      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-charcoal/10 pop-static sm:grid-cols-3">
+        {rows.map((row) => (
+          <div key={row.label} className="bg-card p-3 sm:p-4">
+            <dt className="font-display text-[0.7rem] tracking-wide text-charcoal/65 uppercase">
+              {row.label}
+            </dt>
+            <dd className="mt-1 text-sm leading-snug break-words text-charcoal/90">
+              {row.value === COMING_SOON ? <ComingSoonPill /> : row.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <StatusChip
