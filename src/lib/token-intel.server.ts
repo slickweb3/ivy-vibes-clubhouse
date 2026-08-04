@@ -153,13 +153,13 @@ async function readConcentration(mint: string) {
     rpc<SupplyResult>("getTokenSupply", [mint]),
   ]);
   const total = supply?.value?.uiAmount ?? null;
-  const top10 = (largest?.value ?? [])
-    .slice(0, 10)
-    .reduce((sum, entry) => sum + (entry.uiAmount ?? 0), 0);
-  return {
-    circulatingSupply: total,
-    top10Percent: total && total > 0 ? (top10 / total) * 100 : null,
-  };
+  const list = largest?.value ?? [];
+  // A missing or empty RPC answer must stay null — 0% would be a lie.
+  if (list.length === 0 || !total || total <= 0) {
+    return { circulatingSupply: total, top10Percent: null };
+  }
+  const top10 = list.slice(0, 10).reduce((sum, entry) => sum + (entry.uiAmount ?? 0), 0);
+  return { circulatingSupply: total, top10Percent: (top10 / total) * 100 };
 }
 
 async function readAuthorities(mint: string) {
