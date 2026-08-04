@@ -209,7 +209,9 @@ export async function readMarketSnapshot(): Promise<MarketSnapshot> {
     preferred ?? [...pairs].sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0];
 
   const chain = best.chainId ?? "solana";
-  const pairAddress = best.pairAddress ?? null;
+  // Dexscreener only serves the embed on the lowercase pair path; a mixed-case
+  // address leaves the iframe stuck on "Loading pair…" forever.
+  const pairAddress = best.pairAddress ? best.pairAddress.toLowerCase() : null;
 
   return {
     status: "live",
@@ -217,7 +219,7 @@ export async function readMarketSnapshot(): Promise<MarketSnapshot> {
     config,
     pairUrl: best.url ?? (pairAddress ? `https://dexscreener.com/${chain}/${pairAddress}` : null),
     chartEmbedUrl: pairAddress
-      ? `https://dexscreener.com/${chain}/${pairAddress}?embed=1&theme=light&trades=0&info=0`
+      ? `https://dexscreener.com/${chain}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&chartLeftToolbar=0&chartTheme=dark&chartStyle=1&chartType=usd&interval=15`
       : null,
     dexId: best.dexId ?? null,
     priceUsd: numOf(best.priceUsd),
