@@ -169,9 +169,13 @@ export function SiteFooter() {
               <li key={link.hash}>
                 <a
                   href={`/${link.hash}`}
+                  onClick={(event) => {
+                    if (event.metaKey || event.ctrlKey || event.shiftKey) return;
+                    if (scrollToSection(link.hash)) event.preventDefault();
+                  }}
                   className="inline-flex min-h-11 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
-
                 >
+
                   {link.label}
                 </a>
               </li>
