@@ -118,6 +118,7 @@ function Home() {
         <WhyIvy />
         <TokenRecord market={market ?? undefined} />
         {market ? <LiveMarket snapshot={market} /> : null}
+        <HowToBuy />
         <ArcadeTeaser />
         <OwnerCorner />
         <RoyalCourt />
