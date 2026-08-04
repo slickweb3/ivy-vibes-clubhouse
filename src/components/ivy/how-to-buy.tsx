@@ -34,7 +34,7 @@ function buildSteps(coinUrl: string, mint: string): Record<TabId, Step[]> {
       },
       {
         title: "Open the official $ivy page",
-        body: `Go to ${coinUrl} — or tap the button below. Always compare the mint address on the page with the one published on this site.`,
+        body: "Tap the pump.fun button below to open the official coin page. Always compare the mint address shown there with the one published on this site.",
       },
       {
         title: "Connect your wallet",
