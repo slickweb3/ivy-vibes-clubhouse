@@ -9,6 +9,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Section, StatusChip } from "@/components/ivy/primitives";
 import type { MarketSnapshot } from "@/lib/market.server";
+import type { TokenIntel } from "@/lib/token-intel.server";
+import { TokenIntelPanel } from "@/components/ivy/token-intel";
 
 function usd(value: number | null, digits = 2): string | null {
   if (value === null) return null;
@@ -199,7 +201,13 @@ function ChartFrame({ src, pairUrl }: { src: string; pairUrl: string | null }) {
   );
 }
 
-export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
+export function LiveMarket({
+  snapshot,
+  intel,
+}: {
+  snapshot: MarketSnapshot;
+  intel?: TokenIntel | null;
+}) {
   const [fetchedLabel, setFetchedLabel] = useState<string | null>(null);
   const chip = STATUS_LABEL[snapshot.status];
   const live = snapshot.status === "live";
@@ -235,6 +243,9 @@ export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
       {/* No duplicate stat cards: the DEX board below carries price, market cap,
           liquidity and volume already. */}
       {live ? <DexPanel snapshot={snapshot} /> : null}
+
+      {/* Holder count + timeframe deltas + market-shape ratios, right beside the chart. */}
+      {intel && intel.status !== "disabled" ? <TokenIntelPanel intel={intel} /> : null}
 
 
       {/* Always-open live chart, mounted once it is close to the viewport so the
