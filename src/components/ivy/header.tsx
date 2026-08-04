@@ -172,10 +172,10 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
       >
         <nav
           aria-label="Main"
-          className="mx-auto flex max-w-6xl items-center gap-2 px-3 py-3 sm:gap-3 sm:px-6 lg:px-8"
+          className="mx-auto flex max-w-6xl items-center gap-1.5 px-3 py-3 sm:gap-3 sm:px-6 lg:px-8"
         >
           <Link to="/" className="min-w-0 shrink" aria-label="ivy vibing home">
-            <IvyWordmark />
+            <IvyWordmark compact />
           </Link>
 
           <ul className="ml-auto hidden items-center gap-1 lg:flex">
@@ -192,29 +192,44 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
             ))}
           </ul>
 
-          <Button
-            onClick={() => setJoinOpen(true)}
-            className="ml-auto min-h-11 shrink-0 rounded-full bg-pink px-3 font-display text-charcoal pop hover:bg-pink sm:px-4 lg:ml-2"
-          >
-            <span className="sm:hidden">Join</span>
-            <span className="hidden sm:inline">Join the Vibe</span>
-          </Button>
+          <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2 lg:ml-2">
+            {buyUrl ? (
+              <a
+                href={buyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center rounded-full bg-frog px-3 font-display text-sm text-charcoal pop transition-transform hover:-translate-y-0.5 sm:px-4 sm:text-base"
+              >
+                <span className="sm:hidden">Buy</span>
+                <span className="hidden sm:inline">Buy $ivy</span>
+              </a>
+            ) : null}
 
-          <button
-            type="button"
-            onClick={() => setMobileOpen((open) => !open)}
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-menu"
-            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-leaf text-charcoal pop lg:hidden"
-          >
-            {mobileOpen ? (
-              <X aria-hidden className="h-5 w-5" />
-            ) : (
-              <Menu aria-hidden className="h-5 w-5" />
-            )}
-            <span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
-          </button>
+            <Button
+              onClick={() => setJoinOpen(true)}
+              className="min-h-11 rounded-full bg-pink px-3 font-display text-charcoal pop hover:bg-pink sm:px-4"
+            >
+              <span className="sm:hidden">Join</span>
+              <span className="hidden sm:inline">Join the Vibe</span>
+            </Button>
+
+            <button
+              type="button"
+              onClick={() => setMobileOpen((open) => !open)}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-leaf text-charcoal pop lg:hidden"
+            >
+              {mobileOpen ? (
+                <X aria-hidden className="h-5 w-5" />
+              ) : (
+                <Menu aria-hidden className="h-5 w-5" />
+              )}
+              <span className="sr-only">{mobileOpen ? "Close menu" : "Open menu"}</span>
+            </button>
+          </div>
         </nav>
+
 
         <div ref={progressRef} aria-hidden className="scroll-progress h-[3px] w-full" />
 
