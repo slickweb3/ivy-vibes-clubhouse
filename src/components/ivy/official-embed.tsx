@@ -160,8 +160,14 @@ export function OfficialSocialEmbed({
                   post.originalCaption ??
                   `Ivy in an official ${label} video from @${post.sourceAccountHandle}`
                 }
-                loading="eager"
+                // Posters sit up to 17k px down the page; eager loading pulled
+                // ~24 remote thumbnails (~700 KB) into the very first mobile
+                // load. Lazy + low priority keeps them instant on approach
+                // without competing with the hero.
+                loading="lazy"
+                fetchPriority="low"
                 decoding="async"
+
                 referrerPolicy="no-referrer"
                 onError={() => setPosterBroken(true)}
                 className="absolute inset-0 h-full w-full object-cover"
