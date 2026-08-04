@@ -11,6 +11,8 @@
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { scrollToSection } from "@/lib/scroll-to-section";
+import { onScrollFrame } from "@/lib/scroll-observer";
+
 
 
 /** Short labels for the pads; ids that are absent are skipped automatically. */
