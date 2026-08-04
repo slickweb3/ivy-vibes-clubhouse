@@ -26,6 +26,10 @@ import { OwnerCorner, RoyalCourt, FAQ, SiteFooter } from "@/components/ivy/secti
 const TITLE = "$ivy — The Official ivy vibing Meme Coin";
 const DESCRIPTION =
   "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $ivy community project.";
+const OG_IMAGE = "https://ivyvibing.com/og-ivy-vibing.jpg";
+const OG_IMAGE_ALT =
+  "ivy vibing and $ivy wordmarks beside a photo of Ivy, with the note: community driven meme coin inspired by ivy vibing, fair launch on pump.fun.";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
