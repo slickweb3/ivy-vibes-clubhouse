@@ -163,8 +163,31 @@ async function fetchDexscreener(mint: string): Promise<DexPair[] | null> {
   }
 }
 
+/**
+ * Short-lived snapshot cache. Dexscreener data only moves every few seconds,
+ * so serving it from memory for 30s keeps TTFB flat under bursts and lets a
+ * provider hiccup fall back to the last good numbers instead of blanking the
+ * panel (which used to look like the page had "reset").
+ */
+const SNAPSHOT_TTL_MS = 30_000;
+let snapshotCache: { at: number; snapshot: MarketSnapshot } | null = null;
+
 /** Builds the public market snapshot. Never throws. */
 export async function readMarketSnapshot(): Promise<MarketSnapshot> {
+  const now = Date.now();
+  if (snapshotCache && now - snapshotCache.at < SNAPSHOT_TTL_MS) {
+    return snapshotCache.snapshot;
+  }
+  const snapshot = await buildMarketSnapshot();
+  // Never replace live numbers with an "unavailable" card on a transient failure.
+  if (snapshot.status !== "live" && snapshotCache?.snapshot.status === "live") {
+    return snapshotCache.snapshot;
+  }
+  snapshotCache = { at: now, snapshot };
+  return snapshot;
+}
+
+async function buildMarketSnapshot(): Promise<MarketSnapshot> {
   let config = DEFAULT_CONFIG;
   try {
     config = await readTokenLaunchConfig();
