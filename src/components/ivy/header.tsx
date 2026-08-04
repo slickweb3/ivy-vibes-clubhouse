@@ -117,6 +117,15 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [mobileOpen]);
+  // Arriving with a hash (e.g. /#how-to-buy from another page) needs the same
+  // settling scroll, otherwise the native jump lands short.
+  useEffect(() => {
+    if (!isHome || !window.location.hash) return;
+    const hash = window.location.hash;
+    const timer = window.setTimeout(() => scrollToSection(hash), 250);
+    return () => window.clearTimeout(timer);
+  }, [isHome]);
+
 
   // One rAF-throttled scroll listener drives both the nav elevation and the
   // reading-progress hairline, and writes the bar through a CSS variable so
