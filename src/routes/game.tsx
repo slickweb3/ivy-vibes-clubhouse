@@ -38,10 +38,13 @@ export const Route = createFileRoute("/game")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://ivyvibing.com/game" },
+      { property: "og:image", content: "https://ivyvibing.com/og-ivy-vibing.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://ivyvibing.com/og-ivy-vibing.jpg" },
     ],
-    links: [{ rel: "canonical", href: "/game" }],
-  }),
+    links: [{ rel: "canonical", href: "https://ivyvibing.com/game" }],
+
   loader: async () => ({ board: await getLeaderboard().catch(emptyBoard) }),
   component: GamePage,
   errorComponent: () => (
