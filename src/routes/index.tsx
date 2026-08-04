@@ -36,23 +36,24 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:url", content: "/" },
-      {
-        property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41c25704-61f3-450c-8529-61b43b1e3809/id-preview-7b226fe4--ae92a54f-76f5-4c2b-9762-2e06f523c495.lovable.app-1785391145344.png",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41c25704-61f3-450c-8529-61b43b1e3809/id-preview-7b226fe4--ae92a54f-76f5-4c2b-9762-2e06f523c495.lovable.app-1785391145344.png",
-      },
+      { property: "og:url", content: "https://ivyvibing.com/" },
+      // Purpose-built 1200x630 brand card in public/ — a stable URL that never
+      // goes stale, unlike an auto-captured page screenshot.
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: OG_IMAGE_ALT },
+      { name: "twitter:image", content: OG_IMAGE },
+      { name: "twitter:image:alt", content: OG_IMAGE_ALT },
+      { name: "twitter:site", content: "@Ivyvibing" },
+      { name: "twitter:creator", content: "@Ivyvibing" },
     ],
     links: [
-      { rel: "canonical", href: "/" },
+      { rel: "canonical", href: "https://ivyvibing.com/" },
       // The first frame-by-frame photo is the LCP candidate on the homepage.
       { rel: "preload", as: "image", href: heroPhotoUrl },
     ],
+
     scripts: [
       {
         type: "application/ld+json",
