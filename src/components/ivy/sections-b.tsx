@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import { scrollToSection } from "@/lib/scroll-to-section";
+
 import {
   Accordion,
   AccordionContent,
