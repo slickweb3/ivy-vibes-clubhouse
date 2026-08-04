@@ -8,7 +8,6 @@ import { EMPTY_SITE_MEDIA, type SiteMedia } from "@/types/media";
 import { SiteNav } from "@/components/ivy/header";
 import { BackToTop } from "@/components/ivy/back-to-top";
 import { SectionRail } from "@/components/ivy/section-rail";
-import { IvyDiscoveries } from "@/components/ivy/discovery";
 import { IvySoundscape } from "@/components/ivy/soundscape";
 import { faqEntries } from "@/data/site-content";
 import { AmbientVibes } from "@/components/ivy/ambient";
@@ -19,7 +18,6 @@ import { IvyPhotoRow, heroPhotoUrl } from "@/components/ivy/photo-row";
 import { LiveMarket } from "@/components/ivy/market";
 import { HowToBuy } from "@/components/ivy/how-to-buy";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
-import { ChorusPond } from "@/components/ivy/chorus-pond";
 import { PondChat } from "@/components/ivy/chat-box";
 
 
@@ -123,13 +121,11 @@ function Home() {
         <ArcadeTeaser />
         <OwnerCorner />
         <RoyalCourt />
-        <ChorusPond />
         <PondChat />
         <FAQ />
       </main>
       <SiteFooter />
       <SectionRail />
-      <IvyDiscoveries />
       <IvySoundscape />
       <BackToTop />
     </CookieConsentProvider>
