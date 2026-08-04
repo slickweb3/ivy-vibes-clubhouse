@@ -4,7 +4,6 @@ import { AmbientVibes } from "@/components/ivy/ambient";
 import { CookieConsentProvider } from "@/components/ivy/cookie-consent";
 import { Section } from "@/components/ivy/primitives";
 import { LilyPadLeap } from "@/components/ivy/minigame";
-import { IvyDiscoveries } from "@/components/ivy/discovery";
 import { IvySoundscape } from "@/components/ivy/soundscape";
 import { SiteFooter } from "@/components/ivy/sections-b";
 import { getLeaderboard } from "@/lib/game.functions";
@@ -114,7 +113,6 @@ function GamePage() {
           </p>
         </Section>
       </main>
-      <IvyDiscoveries context="arcade" />
       <IvySoundscape />
       <SiteFooter />
     </CookieConsentProvider>
