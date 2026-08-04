@@ -21,7 +21,7 @@ const TABS: { id: TabId; label: string; blurb: string }[] = [
   { id: "phantom", label: "Buy in Phantom", blurb: "Swap inside the Phantom wallet app on your phone or browser." },
 ];
 
-function useSteps(coinUrl: string, mint: string): Record<TabId, Step[]> {
+function buildSteps(coinUrl: string, mint: string): Record<TabId, Step[]> {
   return {
     pumpfun: [
       {
@@ -86,7 +86,7 @@ export function HowToBuy() {
   if (!hasVerifiedContract() || !mint) return null;
 
   const coinUrl = projectConfig.tokenomicsUrl ?? "https://pump.fun";
-  const steps = useSteps(coinUrl, mint)[tab];
+  const steps = buildSteps(coinUrl, mint)[tab];
   const active = TABS.find((entry) => entry.id === tab)!;
 
   const copyMint = async () => {
