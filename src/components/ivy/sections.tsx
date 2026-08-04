@@ -702,7 +702,23 @@ export function TokenRecord({ market }: { market?: MarketSnapshot }) {
         ? "Fair launch · no presale · no team allocation · 0% tax"
         : COMING_SOON,
     },
-    { label: "Record last updated", value: displayValue(config.tokenRecordUpdatedAt) },
+    {
+      label: "Record last updated",
+      // Render a human date, never the raw ISO stamp.
+      value: (() => {
+        const raw = config.tokenRecordUpdatedAt;
+        if (!raw) return COMING_SOON;
+        const parsed = new Date(raw);
+        return Number.isNaN(parsed.getTime())
+          ? raw
+          : parsed.toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+              timeZone: "UTC",
+            });
+      })(),
+    },
   ];
 
   return (
