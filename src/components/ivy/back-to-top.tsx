@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
+import { onScrollFrame } from "@/lib/scroll-observer";
 
 /**
  * Floating "back to the pond" control. Sits bottom-right (Ivy's hop sticker
@@ -9,23 +10,15 @@ import { ArrowUp } from "lucide-react";
 export function BackToTop() {
   const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
-    let frame = 0;
-    const onScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(() => {
-        frame = 0;
-        const past = window.scrollY > window.innerHeight * 1.5;
+  useEffect(
+    () =>
+      onScrollFrame((y) => {
+        const past = y > window.innerHeight * 1.5;
         setVisible((was) => (was === past ? was : past));
-      });
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
-  }, []);
+      }),
+    [],
+  );
+
 
   return (
     <button
