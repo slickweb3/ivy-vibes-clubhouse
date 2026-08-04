@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { scrollToSection } from "@/lib/scroll-to-section";
+import { onScrollFrame } from "@/lib/scroll-observer";
+
 
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
