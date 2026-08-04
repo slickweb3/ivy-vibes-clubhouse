@@ -259,7 +259,11 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
               <li key={link.hash}>
                 <a
                   href={href(link.hash)}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={(event) => {
+                    setMobileOpen(false);
+                    onAnchorClick(link.hash)(event);
+                  }}
+
                   className="flex min-h-12 items-center gap-2 border-b border-charcoal/15 font-display text-base text-charcoal"
                 >
                   <PawDoodle className="h-4 w-4 text-frog" />
