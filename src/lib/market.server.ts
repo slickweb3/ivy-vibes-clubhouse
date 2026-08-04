@@ -219,7 +219,7 @@ export async function readMarketSnapshot(): Promise<MarketSnapshot> {
     config,
     pairUrl: best.url ?? (pairAddress ? `https://dexscreener.com/${chain}/${pairAddress}` : null),
     chartEmbedUrl: pairAddress
-      ? `https://dexscreener.com/${chain}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&chartLeftToolbar=0&chartTheme=dark&chartStyle=1&chartType=usd&interval=15`
+      ? `https://dexscreener.com/${chain}/${pairAddress}?embed=1&theme=dark&trades=0&info=0`
       : null,
     dexId: best.dexId ?? null,
     priceUsd: numOf(best.priceUsd),
