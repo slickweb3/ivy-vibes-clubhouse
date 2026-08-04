@@ -1180,6 +1180,51 @@ export type Database = {
         }
         Relationships: []
       }
+      token_metrics_snapshots: {
+        Row: {
+          buys_24h: number | null
+          captured_at: string
+          holder_accounts: number | null
+          holders: number | null
+          id: string
+          liquidity_usd: number | null
+          market_cap_usd: number | null
+          mint: string
+          price_usd: number | null
+          sells_24h: number | null
+          top10_percent: number | null
+          volume_24h_usd: number | null
+        }
+        Insert: {
+          buys_24h?: number | null
+          captured_at?: string
+          holder_accounts?: number | null
+          holders?: number | null
+          id?: string
+          liquidity_usd?: number | null
+          market_cap_usd?: number | null
+          mint: string
+          price_usd?: number | null
+          sells_24h?: number | null
+          top10_percent?: number | null
+          volume_24h_usd?: number | null
+        }
+        Update: {
+          buys_24h?: number | null
+          captured_at?: string
+          holder_accounts?: number | null
+          holders?: number | null
+          id?: string
+          liquidity_usd?: number | null
+          market_cap_usd?: number | null
+          mint?: string
+          price_usd?: number | null
+          sells_24h?: number | null
+          top10_percent?: number | null
+          volume_24h_usd?: number | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
