@@ -8,6 +8,7 @@
  * no polling loops.
  */
 import { useEffect } from "react";
+import { onScrollFrame } from "@/lib/scroll-observer";
 
 const IDLE_MS = 900;
 
@@ -15,24 +16,18 @@ export function ScrollSignature() {
   useEffect(() => {
     const root = document.documentElement;
     let idleTimer: ReturnType<typeof setTimeout> | undefined;
-    let queued = false;
 
-    const settle = () => {
-      root.removeAttribute("data-scrolling");
-    };
-
-    const onScroll = () => {
-      if (!queued) {
-        queued = true;
-        // One attribute write per frame, never one per scroll event.
-        requestAnimationFrame(() => {
-          queued = false;
-          root.setAttribute("data-scrolling", "true");
-        });
-      }
+    // The shared observer already coalesces to one call per frame, so this is
+    // one attribute write per frame, never one per scroll event.
+    const stop = onScrollFrame(() => {
+      root.setAttribute("data-scrolling", "true");
       if (idleTimer) clearTimeout(idleTimer);
       idleTimer = setTimeout(settle, IDLE_MS);
-    };
+    });
+
+    function settle() {
+      root.removeAttribute("data-scrolling");
+    }
 
     // A pointerdown landing to the right of the content box is a thumb grab.
     const onPointerDown = (event: PointerEvent) => {
@@ -45,14 +40,14 @@ export function ScrollSignature() {
       root.removeAttribute("data-sb-grab");
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("pointerdown", onPointerDown, { passive: true });
     window.addEventListener("pointerup", onPointerUp, { passive: true });
     window.addEventListener("pointercancel", onPointerUp, { passive: true });
 
+
     return () => {
       if (idleTimer) clearTimeout(idleTimer);
-      window.removeEventListener("scroll", onScroll);
+      stop();
       window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointerup", onPointerUp);
       window.removeEventListener("pointercancel", onPointerUp);

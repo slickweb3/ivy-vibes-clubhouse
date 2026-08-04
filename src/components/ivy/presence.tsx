@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { discover } from "@/lib/discoveries";
+import { onScrollFrame } from "@/lib/scroll-observer";
+
 
 /**
  * IvyPresence — the site's ambient "living environment" layer.
@@ -85,11 +87,11 @@ export function IvyPresence() {
       if (!frame) frame = requestAnimationFrame(flush);
     };
 
-    const onScroll = () => {
+    const stopScroll = onScrollFrame((y) => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      const depth = max > 0 ? window.scrollY / max : 0;
+      const depth = max > 0 ? y / max : 0;
       root.style.setProperty("--ivy-depth", depth.toFixed(4));
-    };
+    });
 
     const onPointer = (event: PointerEvent) => {
       px = event.clientX / window.innerWidth;
@@ -110,14 +112,13 @@ export function IvyPresence() {
       schedule();
     };
 
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
     if (fine && !reduce) window.addEventListener("pointermove", onPointer, { passive: true });
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
+      stopScroll();
       window.removeEventListener("pointermove", onPointer);
+
       magnet?.style.removeProperty("--mx");
       magnet?.style.removeProperty("--my");
     };

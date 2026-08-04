@@ -1,66 +1,64 @@
-import { useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect, useRef, type ElementType, type ReactNode } from "react";
 
 /**
- * Scroll-triggered reveal. Uses a single IntersectionObserver per element,
- * unobserves after the first reveal (no re-renders afterwards) and skips
- * entirely when the visitor prefers reduced motion.
+ * Reveal — scroll-triggered entrance for a block of content.
+ *
+ * The markup is identical on the server and on the client (`data-shown="true"`),
+ * so hydration can never mismatch and no-JS / reduced-motion / crawler visitors
+ * always see finished content. After mount, the element is hidden imperatively
+ * and one IntersectionObserver flips the attribute back when it scrolls into
+ * view — attribute writes only, so React never re-renders during scroll and the
+ * animation (opacity + transform) stays on the compositor. The observer
+ * disconnects after the first reveal.
  */
-export function useReveal<T extends HTMLElement>(delay = 0) {
-  const ref = useRef<T | null>(null);
-  const [shown, setShown] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    if (
-      typeof window === "undefined" ||
-      !("IntersectionObserver" in window) ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setShown(true);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            observer.unobserve(entry.target);
-            if (delay) window.setTimeout(() => setShown(true), delay);
-            else setShown(true);
-          }
-        }
-      },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [delay]);
-
-  return { ref, shown };
-}
-
 export function Reveal({
   children,
   as,
-  className,
-  delay = 0,
   variant = "up",
+  delay = 0,
+  className,
 }: {
   children: ReactNode;
   as?: ElementType;
-  className?: string;
-  /** Stagger in ms. */
+  variant?: "up" | "zoom";
   delay?: number;
-  variant?: "up" | "fade" | "zoom";
+  className?: string;
 }) {
   const Tag = (as ?? "div") as ElementType;
-  const { ref, shown } = useReveal<HTMLElement>(delay);
+  const ref = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node || typeof IntersectionObserver === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    // Already in view on first paint (above the fold): leave it shown so the
+    // hero never flashes.
+    const box = node.getBoundingClientRect();
+    if (box.top < window.innerHeight * 0.9) return;
+
+    node.setAttribute("data-shown", "false");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          node.setAttribute("data-shown", "true");
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.05 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <Tag
       ref={ref}
-      data-shown={shown ? "true" : "false"}
-      className={cn("reveal", `reveal-${variant}`, className)}
+      data-shown="true"
+      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
+      className={["reveal", variant === "zoom" ? "reveal-zoom" : "reveal-up", className]
+        .filter(Boolean)
+        .join(" ")}
     >
       {children}
     </Tag>

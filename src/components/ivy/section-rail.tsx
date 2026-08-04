@@ -11,6 +11,8 @@
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { scrollToSection } from "@/lib/scroll-to-section";
+import { onScrollFrame } from "@/lib/scroll-observer";
+
 
 
 /** Short labels for the pads; ids that are absent are skipped automatically. */
@@ -80,29 +82,17 @@ export function SectionRail() {
   // Track which pad the visitor is currently sitting on.
   useEffect(() => {
     if (pads.length === 0) return;
-    let frame = 0;
-    const onScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(() => {
-        frame = 0;
-        if (Date.now() < lockRef.current) return;
-        const probe = window.scrollY + window.innerHeight * 0.32;
-        let next = 0;
-        pads.forEach((entry, index) => {
-          if (topOf(entry.id) <= probe) next = index;
-        });
-        setActive((was) => (was === next ? was : next));
+    return onScrollFrame((y) => {
+      if (Date.now() < lockRef.current) return;
+      const probe = y + window.innerHeight * 0.32;
+      let next = 0;
+      pads.forEach((entry, index) => {
+        if (topOf(entry.id) <= probe) next = index;
       });
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
+      setActive((was) => (was === next ? was : next));
+    });
   }, [pads, topOf]);
+
 
   const indexFromPointer = useCallback(
     (clientY: number) => {
@@ -153,7 +143,7 @@ export function SectionRail() {
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
-      role="group"
+      role="navigation"
       aria-label="Leap between sections"
     >
       <span aria-hidden className="section-rail-stem" />
