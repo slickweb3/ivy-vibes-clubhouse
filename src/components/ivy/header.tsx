@@ -165,6 +165,15 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
   // Buy scrolls to the on-site how-to-buy guide instead of leaving the site.
   const buyUrl = hasVerifiedContract() ? href("#how-to-buy") : null;
 
+  // In-page links go through the settling scroll helper so lazy sections can't
+  // leave the visitor short of the target.
+  const onAnchorClick = (hash: string) => (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (!isHome) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+    if (scrollToSection(hash)) event.preventDefault();
+  };
+
+
 
   return (
     <>
