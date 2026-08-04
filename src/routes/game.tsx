@@ -44,6 +44,8 @@ export const Route = createFileRoute("/game")({
       { name: "twitter:image", content: "https://ivyvibing.com/og-ivy-vibing.jpg" },
     ],
     links: [{ rel: "canonical", href: "https://ivyvibing.com/game" }],
+  }),
+
 
   loader: async () => ({ board: await getLeaderboard().catch(emptyBoard) }),
   component: GamePage,
