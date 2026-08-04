@@ -384,6 +384,7 @@ export const navLinks = [
   { label: "Fresh Posts", hash: "#social-windows" },
   { label: "The Lore", hash: "#the-lore" },
   { label: "$ivy", hash: "#token-record" },
+  { label: "How to Buy", hash: "#how-to-buy" },
   { label: "Game", hash: "#arcade" },
   { label: "FAQ", hash: "#faq" },
 ];
