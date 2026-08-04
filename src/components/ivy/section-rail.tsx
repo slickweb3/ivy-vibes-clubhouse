@@ -65,13 +65,15 @@ export function SectionRail() {
       if (!entry) return;
       lockRef.current = Date.now() + 700;
       setActive(index);
-      window.scrollTo({
-        top: index === 0 ? 0 : topOf(entry.id),
-        behavior: prefersReduced() ? "auto" : "smooth",
-      });
+      if (index === 0) {
+        window.scrollTo({ top: 0, behavior: prefersReduced() ? "auto" : "smooth" });
+        return;
+      }
+      scrollToSection(entry.id);
     },
-    [topOf],
+    [],
   );
+
 
   // Track which pad the visitor is currently sitting on.
   useEffect(() => {
