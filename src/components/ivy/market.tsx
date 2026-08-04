@@ -157,6 +157,79 @@ function DexPanel({ snapshot }: { snapshot: MarketSnapshot }) {
   );
 }
 
+/**
+ * The Dexscreener chart, always open but mounted only when it is near the
+ * viewport. Deferring keeps a heavy third-party iframe off the critical path on
+ * phones (a common cause of low-memory tab reloads).
+ */
+function ChartFrame({ src, pairUrl }: { src: string; pairUrl: string | null }) {
+  const holderRef = useRef<HTMLDivElement | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [slow, setSlow] = useState(false);
+
+  useEffect(() => {
+    const node = holderRef.current;
+    if (!node || mounted) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setMounted(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "600px 0px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [mounted]);
+
+  useEffect(() => {
+    if (!mounted || ready) return;
+    const timer = window.setTimeout(() => setSlow(true), 9000);
+    return () => window.clearTimeout(timer);
+  }, [mounted, ready]);
+
+  return (
+    <div
+      ref={holderRef}
+      className="relative mt-3 aspect-[3/4] w-full overflow-hidden rounded-xl bg-ivy/95 sm:aspect-[16/9]"
+    >
+      {mounted ? (
+        <iframe
+          src={src}
+          title="$ivy live price chart on Dexscreener"
+          className="h-full w-full border-0"
+          loading="lazy"
+          onLoad={() => setReady(true)}
+          allow="clipboard-write"
+        />
+      ) : null}
+      {!ready ? (
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
+          <span
+            aria-hidden
+            className="h-8 w-8 animate-spin rounded-full border-2 border-cream/30 border-t-frog"
+          />
+          <p className="px-6 font-display text-sm text-cream/80">
+            {slow ? "The chart is taking its time." : "Loading the live chart…"}
+          </p>
+          {slow && pairUrl ? (
+            <a
+              href={pairUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pointer-events-auto inline-flex min-h-9 items-center rounded-full bg-frog px-4 font-display text-xs text-charcoal pop"
+            >
+              Open the chart on Dexscreener ↗
+            </a>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function LiveMarket({ snapshot }: { snapshot: MarketSnapshot }) {
   const [fetchedLabel, setFetchedLabel] = useState<string | null>(null);
   const chip = STATUS_LABEL[snapshot.status];
