@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { legalPages } from "@/data/legal";
 
 const BASE_URL = "https://ivyvibing.com";
 
@@ -12,13 +13,11 @@ interface SitemapEntry {
 const entries: SitemapEntry[] = [
   { path: "/", changefreq: "weekly", priority: "1.0" },
   { path: "/game", changefreq: "weekly", priority: "0.7" },
-  { path: "/legal/terms", changefreq: "monthly", priority: "0.4" },
-  { path: "/legal/privacy", changefreq: "monthly", priority: "0.4" },
-  { path: "/legal/cookies", changefreq: "monthly", priority: "0.4" },
-  { path: "/legal/risk-disclosure", changefreq: "monthly", priority: "0.4" },
-  { path: "/legal/media-usage", changefreq: "monthly", priority: "0.4" },
-  { path: "/legal/community-guidelines", changefreq: "monthly", priority: "0.4" },
-  { path: "/legal/accessibility", changefreq: "monthly", priority: "0.4" },
+  ...legalPages.map((page) => ({
+    path: `/legal/${page.slug}`,
+    changefreq: "monthly" as const,
+    priority: "0.4",
+  })),
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({
