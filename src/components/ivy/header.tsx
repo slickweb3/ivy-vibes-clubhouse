@@ -127,29 +127,20 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
   }, [isHome]);
 
 
-  // One rAF-throttled scroll listener drives both the nav elevation and the
+  // The shared scroll observer drives both the nav elevation and the
   // reading-progress hairline, and writes the bar through a CSS variable so
   // React never re-renders while scrolling.
-  useEffect(() => {
-    let frame = 0;
-    const onScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(() => {
-        frame = 0;
-        const y = window.scrollY;
+  useEffect(
+    () =>
+      onScrollFrame((y) => {
         setScrolled((was) => (was === y > 8 ? was : y > 8));
         const max = document.documentElement.scrollHeight - window.innerHeight;
         const ratio = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
         progressRef.current?.style.setProperty("--progress", String(ratio));
-      });
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
-  }, []);
+      }),
+    [],
+  );
+
 
   // Highlight the section currently in view.
   useEffect(() => {
