@@ -193,30 +193,38 @@ export function Tape({ className, rotate = -6 }: { className?: string; rotate?: 
 
 /**
  * The wordmark. `tone="onDark"` keeps it legible on the deep-ivy footer and
- * other dark surfaces, where the default ivy/charcoal pair has no contrast.
+ * other dark surfaces. `compact` drops the ticker badge and leaf below `sm`
+ * so the nav row still fits a Buy and a Join button on a 320px screen.
  */
 export function IvyWordmark({
   className,
   tone = "onLight",
+  compact = false,
 }: {
   className?: string;
   tone?: "onLight" | "onDark";
+  compact?: boolean;
 }) {
   const onDark = tone === "onDark";
   return (
     <span className={cn("inline-flex items-center gap-2", className)}>
-      <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-frog pop-static">
+      <span className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-frog pop-static">
         <CrownDoodle className="absolute -top-3 left-1/2 h-4 w-6 -translate-x-1/2 text-yellow" />
         <PawDoodle className="h-4 w-4 text-cream" />
       </span>
-      <span className="font-display text-xl leading-none tracking-tight">
+      <span className="font-display text-lg leading-none tracking-tight sm:text-xl">
         <span className={onDark ? "text-leaf" : "text-ivy"}>ivy </span>
         <span className={onDark ? "text-cream" : "text-charcoal"}>vibing</span>
-        <span className="ml-1 rounded-full bg-yellow px-1.5 py-0.5 align-middle text-[0.6rem] tracking-widest text-charcoal lowercase pop-static">
+        <span
+          className={cn(
+            "ml-1 rounded-full bg-yellow px-1.5 py-0.5 align-middle text-[0.6rem] tracking-widest text-charcoal lowercase pop-static",
+            compact && "hidden sm:inline-block",
+          )}
+        >
           $ivy
         </span>
       </span>
-      <LeafDoodle className="h-4 w-4 text-frog" />
+      <LeafDoodle className={cn("h-4 w-4 text-frog", compact && "hidden sm:block")} />
     </span>
   );
 }

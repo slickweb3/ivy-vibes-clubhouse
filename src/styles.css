@@ -142,6 +142,11 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    /* Anchor jumps land below the sticky nav instead of under it. */
+    scroll-padding-top: 5.5rem;
+    /* Kills iOS/Android document rubber-banding and pull-to-refresh, which
+       read as "the page reloaded" inside wallet in-app browsers. */
+    overscroll-behavior: none;
   }
 
   body {
@@ -152,7 +157,9 @@
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
-    overscroll-behavior-y: none;
+    overscroll-behavior: none;
+    /* Mobile URL-bar show/hide must never resize the layout viewport. */
+    min-height: 100dvh;
   }
 
   img,
@@ -1042,7 +1049,7 @@ html::-webkit-scrollbar-corner {
   top: 0;
   right: 0;
   width: 3px;
-  height: 100vh;
+  height: 100dvh;
   transform-origin: top center;
   transform: scaleY(0);
   border-radius: var(--sb-radius);
