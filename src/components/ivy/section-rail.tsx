@@ -10,6 +10,8 @@
  * data attribute per frame, driven by a rAF-throttled scroll listener.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { scrollToSection } from "@/lib/scroll-to-section";
+
 
 /** Short labels for the pads; ids that are absent are skipped automatically. */
 const RAIL_SECTIONS: { id: string; label: string }[] = [
