@@ -2095,10 +2095,12 @@ html.dark body {
 }
 
 
-/* Below-the-fold sections skip layout, paint and compositing until they are
-   near the viewport. The reserved intrinsic size keeps the scrollbar and the
-   section rail stable, so nothing rubber-bands as content streams in. */
-main > section:nth-of-type(n + 4) {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 720px;
+/* NOTE: `content-visibility: auto` used to be applied to below-the-fold
+   sections. It made every in-page anchor land thousands of pixels short,
+   because unrendered sections collapse to their intrinsic size while the
+   browser computes the jump target. Paint containment on the heavy embed
+   cards (`.embed-perf`) covers the perf win without breaking navigation. */
+main > section {
+  contain: paint;
 }
+
