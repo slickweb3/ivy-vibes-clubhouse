@@ -6,7 +6,7 @@
  * everything renders "Coming Soon" and no chart is loaded. The chart iframe
  * is third-party, so it stays behind the cookie/embed consent gate.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ComingSoonPill, Section, StatusChip, keepTickerCase } from "@/components/ivy/primitives";
 import { CountUp } from "@/components/ivy/count-up";
 import type { MarketSnapshot } from "@/lib/market.server";
