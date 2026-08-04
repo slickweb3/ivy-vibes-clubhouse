@@ -18,6 +18,7 @@ export const Route = createFileRoute("/legal/$slug")({
       };
     }
     const title = `${loaderData.page.title} — ivy vibing`;
+    const url = `https://ivyvibing.com/legal/${loaderData.page.slug}`;
     return {
       meta: [
         { title },
@@ -25,10 +26,13 @@ export const Route = createFileRoute("/legal/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: loaderData.page.summary },
         { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
         { name: "twitter:card", content: "summary" },
       ],
+      links: [{ rel: "canonical", href: url }],
     };
   },
+
   errorComponent: () => <LegalMissing message="This policy could not be loaded." />,
   notFoundComponent: () => <LegalMissing message="That policy page does not exist." />,
   component: LegalPageView,
