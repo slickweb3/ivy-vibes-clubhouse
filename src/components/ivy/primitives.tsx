@@ -216,10 +216,11 @@ export function Section({
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className={cn("relative scroll-mt-28 py-14 sm:py-20 lg:py-24", toneClass, className)}
+      className={cn("relative scroll-mt-28 py-10 sm:py-14 lg:py-16", toneClass, className)}
     >
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-        <Reveal as="header" className="mb-8 max-w-3xl sm:mb-10">
+        <Reveal as="header" className="mb-6 max-w-3xl sm:mb-8">
+
           {eyebrow ? (
             <Sticker tone="yellow">
               <CrownDoodle className="h-3.5 w-5 text-frog" />
