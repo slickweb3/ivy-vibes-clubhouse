@@ -191,7 +191,18 @@ export function Tape({ className, rotate = -6 }: { className?: string; rotate?: 
   );
 }
 
-export function IvyWordmark({ className }: { className?: string }) {
+/**
+ * The wordmark. `tone="onDark"` keeps it legible on the deep-ivy footer and
+ * other dark surfaces, where the default ivy/charcoal pair has no contrast.
+ */
+export function IvyWordmark({
+  className,
+  tone = "onLight",
+}: {
+  className?: string;
+  tone?: "onLight" | "onDark";
+}) {
+  const onDark = tone === "onDark";
   return (
     <span className={cn("inline-flex items-center gap-2", className)}>
       <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-frog pop-static">
@@ -199,8 +210,8 @@ export function IvyWordmark({ className }: { className?: string }) {
         <PawDoodle className="h-4 w-4 text-cream" />
       </span>
       <span className="font-display text-xl leading-none tracking-tight">
-        <span className="text-ivy">ivy </span>
-        <span className="text-charcoal">vibing</span>
+        <span className={onDark ? "text-leaf" : "text-ivy"}>ivy </span>
+        <span className={onDark ? "text-cream" : "text-charcoal"}>vibing</span>
         <span className="ml-1 rounded-full bg-yellow px-1.5 py-0.5 align-middle text-[0.6rem] tracking-widest text-charcoal lowercase pop-static">
           $ivy
         </span>

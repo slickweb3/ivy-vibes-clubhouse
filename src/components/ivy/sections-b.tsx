@@ -153,7 +153,7 @@ export function SiteFooter() {
       <VineDivider className="opacity-40" />
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-4">
         <div className="lg:col-span-2">
-          <IvyWordmark />
+          <IvyWordmark tone="onDark" />
           <p className="mt-4 max-w-md text-sm leading-relaxed text-cream/80">{footerDisclaimer}</p>
           <div className="mt-4 flex gap-2" aria-hidden>
             <CrownDoodle className="h-5 w-8 text-yellow" />

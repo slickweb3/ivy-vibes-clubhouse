@@ -137,6 +137,7 @@ export function IvySoundscape() {
         type="button"
         onClick={toggle}
         aria-pressed={active}
+        aria-label={label}
         disabled={onGame}
         title={onGame ? "Muted in the arcade — the game plays the same theme" : label}
         className="pop inline-flex h-12 w-12 items-center justify-center rounded-full bg-lavender text-charcoal disabled:opacity-60"

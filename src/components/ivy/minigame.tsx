@@ -23,8 +23,8 @@ import { SeasonCard } from "@/components/ivy/player-card";
 import { gameAudio } from "@/lib/game-audio";
 import { audioScene } from "@/lib/audio/cue";
 import type { Leaderboard } from "@/lib/game.server";
-import runnerSprite from "@/assets/ivy-runner.png";
-import gameFrame from "@/assets/game-frame.png";
+import runnerSprite from "@/assets/ivy-runner.webp";
+import gameFrame from "@/assets/game-frame.webp";
 import { discover } from "@/lib/discoveries";
 
 const W = 480;
