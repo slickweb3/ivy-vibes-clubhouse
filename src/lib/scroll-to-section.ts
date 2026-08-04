@@ -18,14 +18,17 @@ export function scrollToSection(hash: string) {
   const node = document.getElementById(id);
   if (!node) return false;
 
-  const reduced = prefersReduced();
   const target = () =>
     Math.max(0, node.getBoundingClientRect().top + window.scrollY - NAV_OFFSET);
 
-  window.scrollTo({ top: target(), behavior: reduced ? "auto" : "smooth" });
+  const distance = Math.abs(target() - window.scrollY);
+  // Short hops animate; long hops jump instantly, which is both snappier and
+  // immune to layout shifts happening mid-animation.
+  const smooth = !prefersReduced() && distance < window.innerHeight * 1.5;
+  window.scrollTo({ top: target(), behavior: smooth ? "smooth" : "auto" });
 
-  // Re-align for ~900ms so late layout shifts cannot leave us off-target.
-  const deadline = Date.now() + 900;
+  // Keep re-aligning while images, embeds and fonts settle the layout.
+  const deadline = Date.now() + 1600;
   const settle = () => {
     const top = target();
     if (Math.abs(window.scrollY - top) > 2) {
@@ -33,7 +36,8 @@ export function scrollToSection(hash: string) {
     }
     if (Date.now() < deadline) window.requestAnimationFrame(settle);
   };
-  window.setTimeout(() => window.requestAnimationFrame(settle), reduced ? 0 : 420);
+  window.setTimeout(() => window.requestAnimationFrame(settle), smooth ? 500 : 0);
+
 
   if (window.location.hash !== `#${id}`) {
     window.history.replaceState(null, "", `#${id}`);
