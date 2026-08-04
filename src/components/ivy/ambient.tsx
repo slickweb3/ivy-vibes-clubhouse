@@ -133,10 +133,10 @@ export function AmbientVibes() {
     <>
       {/* Ivy herself, tumbling down with slow backflips. */}
       <div aria-hidden className="pointer-events-none fixed inset-0 z-[4] overflow-hidden">
-        {fallingIvys.map(({ left, size, delay, duration }) => (
+        {fallingIvys.map(({ left, size, delay, duration, mobile }) => (
           <span
             key={left}
-            className={`absolute top-[-20%] ${size} opacity-25 motion-safe:ivy-tumble`}
+            className={`absolute top-[-20%] ${size} ${mobile ? "" : "hidden sm:block"} opacity-25 motion-safe:ivy-tumble`}
             style={{ left, animationDelay: delay, animationDuration: duration }}
           >
             <img
@@ -158,26 +158,29 @@ export function AmbientVibes() {
         {sprites.map(({ Icon, left, size, delay, duration, tone }, index) => (
           <span
             key={`${left}-${index}`}
-            className={`absolute top-[-15%] ${size} ${tone} motion-safe:ivy-drift`}
+            className={`absolute top-[-15%] ${size} ${tone} ${index % 2 ? "hidden sm:block" : ""} motion-safe:ivy-drift`}
             style={{ left, animationDelay: delay, animationDuration: duration }}
           >
             <Icon className="h-full w-full" />
           </span>
         ))}
-        <span className="absolute -left-24 top-1/4 h-72 w-72 rounded-full bg-frog opacity-70 blur-3xl motion-safe:ivy-glow" />
+        {/* Big blurred glows are the most expensive layers here: phones get two
+            static ones, desktops get all four breathing. */}
+        <span className="absolute -left-24 top-1/4 h-72 w-72 rounded-full bg-frog opacity-70 blur-3xl sm:motion-safe:ivy-glow" />
         <span
-          className="absolute -right-24 bottom-1/4 h-80 w-80 rounded-full bg-lavender opacity-70 blur-3xl motion-safe:ivy-glow"
+          className="absolute -right-24 bottom-1/4 hidden h-80 w-80 rounded-full bg-lavender opacity-70 blur-3xl sm:block sm:motion-safe:ivy-glow"
           style={{ animationDelay: "5s" }}
         />
         <span
-          className="absolute left-1/3 top-2/3 h-56 w-56 rounded-full bg-pink opacity-50 blur-3xl motion-safe:ivy-glow"
+          className="absolute left-1/3 top-2/3 h-56 w-56 rounded-full bg-pink opacity-50 blur-3xl sm:motion-safe:ivy-glow"
           style={{ animationDelay: "9s" }}
         />
         <span
-          className="absolute right-1/4 top-0 h-52 w-52 rounded-full bg-yellow opacity-40 blur-3xl motion-safe:ivy-glow"
+          className="absolute right-1/4 top-0 hidden h-52 w-52 rounded-full bg-yellow opacity-40 blur-3xl sm:block sm:motion-safe:ivy-glow"
           style={{ animationDelay: "13s" }}
         />
       </div>
+
     </>
   );
 }
