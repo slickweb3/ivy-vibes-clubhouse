@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { announcement, joinTheVibeMessage, navLinks } from "@/data/site-content";
-import { officialLinks, projectConfig } from "@/config/project";
+import { hasVerifiedContract, officialLinks, projectConfig } from "@/config/project";
 import { CrownDoodle, FrogDoodle, IvyWordmark, PawDoodle } from "./doodles";
 import { cn } from "@/lib/utils";
 
@@ -162,8 +162,9 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
   }, [isHome]);
 
   const href = (hash: string) => (isHome ? hash : `/${hash}`);
-  // Only offer Buy once a verified mint page exists — never a guessed link.
-  const buyUrl = projectConfig.tokenomicsUrl ?? null;
+  // Buy scrolls to the on-site how-to-buy guide instead of leaving the site.
+  const buyUrl = hasVerifiedContract() ? href("#how-to-buy") : null;
+
 
   return (
     <>
@@ -198,14 +199,13 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
             {buyUrl ? (
               <a
                 href={buyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="inline-flex min-h-11 items-center rounded-full bg-frog px-3 font-display text-sm text-charcoal pop transition-transform hover:-translate-y-0.5 sm:px-4 sm:text-base"
               >
                 <span className="sm:hidden">Buy</span>
                 <span className="hidden sm:inline">Buy $ivy</span>
               </a>
             ) : null}
+
 
             <Button
               onClick={() => setJoinOpen(true)}
