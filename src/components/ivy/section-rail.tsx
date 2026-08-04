@@ -10,6 +10,8 @@
  * data attribute per frame, driven by a rAF-throttled scroll listener.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { scrollToSection } from "@/lib/scroll-to-section";
+
 
 /** Short labels for the pads; ids that are absent are skipped automatically. */
 const RAIL_SECTIONS: { id: string; label: string }[] = [
@@ -65,13 +67,15 @@ export function SectionRail() {
       if (!entry) return;
       lockRef.current = Date.now() + 700;
       setActive(index);
-      window.scrollTo({
-        top: index === 0 ? 0 : topOf(entry.id),
-        behavior: prefersReduced() ? "auto" : "smooth",
-      });
+      if (index === 0) {
+        window.scrollTo({ top: 0, behavior: prefersReduced() ? "auto" : "smooth" });
+        return;
+      }
+      scrollToSection(entry.id);
     },
-    [topOf],
+    [],
   );
+
 
   // Track which pad the visitor is currently sitting on.
   useEffect(() => {

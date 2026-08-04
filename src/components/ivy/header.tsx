@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { scrollToSection } from "@/lib/scroll-to-section";
+
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import {
@@ -115,6 +117,15 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [mobileOpen]);
+  // Arriving with a hash (e.g. /#how-to-buy from another page) needs the same
+  // settling scroll, otherwise the native jump lands short.
+  useEffect(() => {
+    if (!isHome || !window.location.hash) return;
+    const hash = window.location.hash;
+    const timer = window.setTimeout(() => scrollToSection(hash), 250);
+    return () => window.clearTimeout(timer);
+  }, [isHome]);
+
 
   // One rAF-throttled scroll listener drives both the nav elevation and the
   // reading-progress hairline, and writes the bar through a CSS variable so
@@ -165,6 +176,15 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
   // Buy scrolls to the on-site how-to-buy guide instead of leaving the site.
   const buyUrl = hasVerifiedContract() ? href("#how-to-buy") : null;
 
+  // In-page links go through the settling scroll helper so lazy sections can't
+  // leave the visitor short of the target.
+  const onAnchorClick = (hash: string) => (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (!isHome) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+    if (scrollToSection(hash)) event.preventDefault();
+  };
+
+
 
   return (
     <>
@@ -186,6 +206,7 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
               <li key={link.hash}>
                 <a
                   href={href(link.hash)}
+                  onClick={onAnchorClick(link.hash)}
                   aria-current={active === link.hash ? "true" : undefined}
                   className="nav-pill inline-flex min-h-11 items-center rounded-full px-3 font-display text-sm text-charcoal transition-colors hover:bg-leaf"
                 >
@@ -199,12 +220,14 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
             {buyUrl ? (
               <a
                 href={buyUrl}
+                onClick={onAnchorClick("#how-to-buy")}
                 className="inline-flex min-h-11 items-center rounded-full bg-frog px-3 font-display text-sm text-charcoal pop transition-transform hover:-translate-y-0.5 sm:px-4 sm:text-base"
               >
                 <span className="sm:hidden">Buy</span>
                 <span className="hidden sm:inline">Buy $ivy</span>
               </a>
             ) : null}
+
 
 
             <Button
@@ -245,7 +268,11 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
               <li key={link.hash}>
                 <a
                   href={href(link.hash)}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={(event) => {
+                    setMobileOpen(false);
+                    onAnchorClick(link.hash)(event);
+                  }}
+
                   className="flex min-h-12 items-center gap-2 border-b border-charcoal/15 font-display text-base text-charcoal"
                 >
                   <PawDoodle className="h-4 w-4 text-frog" />
