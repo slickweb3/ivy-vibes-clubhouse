@@ -197,6 +197,7 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
               <li key={link.hash}>
                 <a
                   href={href(link.hash)}
+                  onClick={onAnchorClick(link.hash)}
                   aria-current={active === link.hash ? "true" : undefined}
                   className="nav-pill inline-flex min-h-11 items-center rounded-full px-3 font-display text-sm text-charcoal transition-colors hover:bg-leaf"
                 >
@@ -210,12 +211,14 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
             {buyUrl ? (
               <a
                 href={buyUrl}
+                onClick={onAnchorClick("#how-to-buy")}
                 className="inline-flex min-h-11 items-center rounded-full bg-frog px-3 font-display text-sm text-charcoal pop transition-transform hover:-translate-y-0.5 sm:px-4 sm:text-base"
               >
                 <span className="sm:hidden">Buy</span>
                 <span className="hidden sm:inline">Buy $ivy</span>
               </a>
             ) : null}
+
 
 
             <Button
