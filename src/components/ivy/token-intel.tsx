@@ -66,7 +66,7 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
 
       {hasHolders ? (
         <>
-          <div className="grid grid-cols-2 gap-px bg-charcoal/10 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-px bg-charcoal/10 sm:grid-cols-3">
             <Cell
               label="Holders"
               value={intel.holders!.toLocaleString("en-US")}
@@ -81,11 +81,6 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
               label="Peak holders"
               value={(intel.recordedPeakHolders ?? intel.holders!).toLocaleString("en-US")}
               hint="Highest we have recorded on this site"
-            />
-            <Cell
-              label="Token accounts"
-              value={(intel.holderAccounts ?? 0).toLocaleString("en-US")}
-              hint="Includes wallets that have sold out"
             />
           </div>
 
