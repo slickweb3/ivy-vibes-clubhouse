@@ -12,7 +12,7 @@ import avatarTiktok from "@/assets/ivy-avatar-tiktok.png.asset.json";
 import avatarInstagram from "@/assets/ivy-avatar-instagram.png.asset.json";
 
 /**
- * Two tall "profile windows" — one per official public account. Each one is
+ * Official social profile windows. Each one is
  * styled like the real app it mirrors and scrolls through Ivy's official
  * platform embeds. Nothing is scraped, copied or re-hosted: every post is
  * rendered by Instagram / TikTok themselves.
@@ -76,7 +76,7 @@ export function SocialWindows({ posts }: { posts: CuratedPost[] }) {
       id="social-windows"
       eyebrow="Straight from her accounts"
       title="Ivy's live social windows"
-      intro="Tall, scrollable windows onto the Frog Queen's official TikTok, Instagram and X. Her captions stay exactly as she wrote them, shown by the platforms themselves."
+      intro="Tall, scrollable windows onto the Frog Queen's official TikTok and Instagram, plus reliable direct doors to her X profile and community. Her captions stay exactly as she wrote them."
       tone="lavender"
     >
       <div className="grid gap-8 lg:grid-cols-2">

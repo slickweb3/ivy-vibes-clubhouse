@@ -1,17 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { ExternalLinkIcon } from "lucide-react";
+import { ExternalLinkIcon, UsersIcon } from "lucide-react";
 import { Sticker } from "./primitives";
 import { FrogDoodle, PawDoodle } from "./doodles";
 import { projectConfig, isSet } from "@/config/project";
-
-/**
- * Ivy's official X window.
- *
- * This renders X's OWN syndicated timeline for @Ivyvibing in a plain iframe —
- * nothing is scraped, copied or re-hosted, and no API credentials are
- * involved. Using the syndication URL directly avoids widgets.js, which often
- * silently fails to mount (ad blockers, script timeouts, tracking guards).
- */
 
 const X_HANDLE = "Ivyvibing";
 const X_PROFILE_URL = isSet(projectConfig.socials.x)
@@ -19,67 +9,10 @@ const X_PROFILE_URL = isSet(projectConfig.socials.x)
   : `https://x.com/${X_HANDLE}`;
 const X_COMMUNITY_URL = projectConfig.socials.community;
 
-function timelineSrc(origin: string) {
-  const params = new URLSearchParams({
-    dnt: "true",
-    embedId: "twitter-widget-ivy",
-    frame: "false",
-    hideBorder: "true",
-    hideFooter: "true",
-    hideHeader: "true",
-    hideScrollBar: "false",
-    lang: "en",
-    origin,
-    theme: "light",
-    transparent: "true",
-    widgetsVersion: "2615f7e52b7e0:1702314776716",
-  });
-  return `https://syndication.twitter.com/srv/timeline-profile/screen-name/${X_HANDLE}?${params.toString()}`;
-}
-
+/** X rate-limits public timeline embeds, so this window links to canonical X pages instead. */
 export function XWindow() {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const [state, setState] = useState<"idle" | "loading" | "ready" | "failed">("idle");
-  const [src, setSrc] = useState<string | null>(null);
-
-  // Only mount the third-party frame when the window is actually near the
-  // viewport — same discipline as the Instagram / TikTok embeds.
-  useEffect(() => {
-    const node = hostRef.current;
-    if (!node || state !== "idle") return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setSrc(timelineSrc(window.location.origin));
-          setState("loading");
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "800px 0px" },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [state]);
-
-  // X's syndication response can hang; stop waiting after 20s and offer a
-  // direct link instead of spinning forever.
-  useEffect(() => {
-    if (state !== "loading") return;
-    const giveUp = window.setTimeout(() => {
-      setState((prev) => (prev === "loading" ? "failed" : prev));
-    }, 20_000);
-    return () => window.clearTimeout(giveUp);
-  }, [state]);
-
-
-
-
   return (
-    <div
-      ref={hostRef}
-      className="flex min-w-0 flex-col overflow-hidden rounded-[1.75rem] bg-card ink-border pop-static"
-    >
-      {/* Browser-ish chrome, matching the other live windows */}
+    <div className="flex min-w-0 flex-col overflow-hidden rounded-[1.75rem] bg-card ink-border pop-static">
       <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 border-b-2 border-charcoal/15 bg-yellow px-4 py-3">
         <span aria-hidden className="flex shrink-0 items-center gap-1.5">
           <span className="h-3 w-3 rounded-full bg-charcoal/25" />
@@ -92,7 +25,7 @@ export function XWindow() {
         </span>
       </div>
 
-      <div className="flex flex-col gap-4 px-4 py-5 sm:px-6">
+      <div className="flex flex-col gap-5 px-4 py-5 sm:px-6">
         <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4">
           <span
             aria-hidden
@@ -113,108 +46,47 @@ export function XWindow() {
             >
               @{X_HANDLE}
             </a>
-            <p className="mt-2 text-sm text-charcoal/80">
-              Ivy&apos;s official posts on X, shown by X itself.
-            </p>
+            <p className="mt-1 text-sm text-charcoal/80">The Frog Queen&apos;s official X profile.</p>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <a
             href={X_PROFILE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="pop inline-flex min-h-10 items-center gap-1.5 rounded-full bg-frog px-4 font-display text-charcoal"
+            className="pop flex min-h-28 flex-col justify-between rounded-2xl bg-frog p-4 text-charcoal ink-border"
           >
-            Follow on X
-            <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />
+            <span className="flex items-center justify-between gap-3">
+              <span className="font-display text-xl">Official profile</span>
+              <ExternalLinkIcon aria-hidden className="h-5 w-5 shrink-0" />
+            </span>
+            <span className="text-sm text-charcoal/75">See Ivy&apos;s newest posts directly on X</span>
           </a>
           {isSet(X_COMMUNITY_URL) ? (
             <a
               href={X_COMMUNITY_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="pop inline-flex min-h-10 items-center gap-1.5 rounded-full bg-lavender px-4 font-display text-charcoal"
+              className="pop flex min-h-28 flex-col justify-between rounded-2xl bg-lavender p-4 text-charcoal ink-border"
             >
-              X Community
-              <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />
+              <span className="flex items-center justify-between gap-3">
+                <span className="font-display text-xl">X Community</span>
+                <UsersIcon aria-hidden className="h-5 w-5 shrink-0" />
+              </span>
+              <span className="text-sm text-charcoal/75">Hop into the community conversation</span>
             </a>
           ) : null}
-          <Sticker tone="leaf">
-            <FrogDoodle className="h-3.5 w-4 text-ivy" />
-            live timeline
-          </Sticker>
         </div>
+        <Sticker tone="leaf">
+          <FrogDoodle className="h-3.5 w-4 text-ivy" />
+          official links
+        </Sticker>
       </div>
 
-      <div className="flex items-center gap-3 border-y-2 border-charcoal/15 bg-leaf/40 px-4 py-2 sm:px-6">
-        <span className="font-display text-xs uppercase tracking-wide text-charcoal">
-          Official X feed
-        </span>
-        <span aria-live="polite" className="ml-auto text-xs text-charcoal/70">
-          {state === "ready" ? "live" : state === "failed" ? "unavailable" : "loading…"}
-        </span>
-      </div>
-
-      <div className="relative">
-        <div className="h-[28rem] overflow-hidden sm:h-[38rem] lg:h-[44rem]">
-          {src ? (
-            <iframe
-              src={src}
-              title="Ivy's official X timeline"
-              loading="lazy"
-              scrolling="yes"
-              referrerPolicy="strict-origin-when-cross-origin"
-              sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"
-              className="h-full w-full border-0"
-              onLoad={() => setState("ready")}
-              onError={() => setState("failed")}
-            />
-          ) : null}
-        </div>
-
-
-        {/* Overlay, so the loading / fallback state sits inside the viewport
-            rather than being pushed below the (tall) widget container. */}
-        {state !== "ready" ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-card px-4 text-center">
-            {state === "failed" ? (
-              <>
-                <p className="text-sm text-charcoal/80">
-                  X&apos;s timeline widget couldn&apos;t load right now.
-                </p>
-                <a
-                  href={X_PROFILE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="pop inline-flex min-h-11 items-center gap-1.5 rounded-full bg-frog px-4 font-display text-charcoal"
-                >
-                  Open @{X_HANDLE} on X
-                  <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />
-                </a>
-              </>
-            ) : (
-              <>
-                <span
-                  aria-hidden
-                  className="h-8 w-8 animate-spin rounded-full border-2 border-charcoal/20 border-t-ivy"
-                />
-                <p className="text-sm text-charcoal/70">Hopping over to X…</p>
-              </>
-            )}
-          </div>
-        ) : null}
-
-
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-card to-transparent"
-        />
-      </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t-2 border-charcoal/15 px-4 py-3 text-xs sm:px-6">
-        <span className="text-charcoal/70">
-          Rendered by X&apos;s own embed — nothing copied or re-hosted.
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t-2 border-charcoal/15 bg-leaf/40 px-4 py-3 text-xs sm:px-6">
+        <span className="max-w-md text-charcoal/70">
+          Opens directly on X, avoiding the rate-limited embedded timeline.
         </span>
         <a
           href={X_PROFILE_URL}
