@@ -99,7 +99,6 @@ interface HomeData {
   media: SiteMedia;
   market: MarketSnapshot | null;
   curated: CuratedFeed;
-  intel: TokenIntel | null;
 }
 
 function Home() {
@@ -107,7 +106,15 @@ function Home() {
   const media = data?.media ?? EMPTY_SITE_MEDIA;
   const market = data?.market ?? null;
   const curated = data?.curated ?? EMPTY_CURATED_FEED;
-  const intel = data?.intel ?? null;
+  // Client-only, post-paint: the holder scan can take seconds and must never
+  // block SSR or hydration.
+  const { data: intel = null } = useQuery({
+    queryKey: ["token-intel"],
+    queryFn: () => getTokenIntel(),
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
 
   return (
     <CookieConsentProvider>
