@@ -157,13 +157,22 @@ export function XWindow() {
       </div>
 
       <div className="relative">
-        <div
-          role="region"
-          aria-label="Ivy's official X timeline"
-          className="pond-scroll h-[28rem] overflow-y-auto overscroll-contain px-3 py-4 sm:h-[38rem] sm:px-5 lg:h-[44rem]"
-        >
-          <div ref={frameRef} />
+        <div className="h-[28rem] overflow-hidden sm:h-[38rem] lg:h-[44rem]">
+          {src ? (
+            <iframe
+              src={src}
+              title="Ivy's official X timeline"
+              loading="lazy"
+              scrolling="yes"
+              referrerPolicy="strict-origin-when-cross-origin"
+              sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+              className="h-full w-full border-0"
+              onLoad={() => setState("ready")}
+              onError={() => setState("failed")}
+            />
+          ) : null}
         </div>
+
 
         {/* Overlay, so the loading / fallback state sits inside the viewport
             rather than being pushed below the (tall) widget container. */}
