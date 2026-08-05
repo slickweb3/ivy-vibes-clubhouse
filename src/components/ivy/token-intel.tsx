@@ -78,14 +78,14 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
               hint="Includes wallets that have sold out"
             />
             <Cell
-              label="Top 10 hold"
-              value={pct(intel.top10Percent)}
-              hint="Largest ten accounts, pools included"
-            />
-            <Cell
               label="Peak holders"
               value={(intel.recordedPeakHolders ?? intel.holders!).toLocaleString("en-US")}
               hint="Highest we have recorded on this site"
+            />
+            <Cell
+              label="Token accounts"
+              value={(intel.holderAccounts ?? 0).toLocaleString("en-US")}
+              hint="Includes wallets that have sold out"
             />
           </div>
 
