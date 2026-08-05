@@ -198,37 +198,40 @@ export function XWindow() {
           aria-label="Ivy's official X timeline"
           className="pond-scroll h-[28rem] overflow-y-auto overscroll-contain px-3 py-4 sm:h-[38rem] sm:px-5 lg:h-[44rem]"
         >
-          <div ref={frameRef} className="min-h-full" />
-
-          {state !== "ready" ? (
-            <div className="flex flex-col items-center justify-center gap-3 px-4 py-10 text-center">
-              {state === "failed" ? (
-                <>
-                  <p className="text-sm text-charcoal/80">
-                    X&apos;s timeline widget couldn&apos;t load right now.
-                  </p>
-                  <a
-                    href={X_PROFILE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="pop inline-flex min-h-11 items-center gap-1.5 rounded-full bg-frog px-4 font-display text-charcoal"
-                  >
-                    Open @{X_HANDLE} on X
-                    <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />
-                  </a>
-                </>
-              ) : (
-                <>
-                  <span
-                    aria-hidden
-                    className="h-8 w-8 animate-spin rounded-full border-2 border-charcoal/20 border-t-ivy"
-                  />
-                  <p className="text-sm text-charcoal/70">Hopping over to X…</p>
-                </>
-              )}
-            </div>
-          ) : null}
+          <div ref={frameRef} />
         </div>
+
+        {/* Overlay, so the loading / fallback state sits inside the viewport
+            rather than being pushed below the (tall) widget container. */}
+        {state !== "ready" ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-card px-4 text-center">
+            {state === "failed" ? (
+              <>
+                <p className="text-sm text-charcoal/80">
+                  X&apos;s timeline widget couldn&apos;t load right now.
+                </p>
+                <a
+                  href={X_PROFILE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pop inline-flex min-h-11 items-center gap-1.5 rounded-full bg-frog px-4 font-display text-charcoal"
+                >
+                  Open @{X_HANDLE} on X
+                  <ExternalLinkIcon aria-hidden className="h-3.5 w-3.5" />
+                </a>
+              </>
+            ) : (
+              <>
+                <span
+                  aria-hidden
+                  className="h-8 w-8 animate-spin rounded-full border-2 border-charcoal/20 border-t-ivy"
+                />
+                <p className="text-sm text-charcoal/70">Hopping over to X…</p>
+              </>
+            )}
+          </div>
+        ) : null}
+
 
         <div
           aria-hidden
