@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpIcon, ExternalLinkIcon } from "lucide-react";
 import { OfficialSocialEmbed } from "./official-embed";
+import { XWindow } from "./x-window";
+
 import { Section, Sticker } from "./primitives";
 import { FrogDoodle, PawDoodle } from "./doodles";
 import { projectConfig } from "@/config/project";
@@ -74,16 +76,18 @@ export function SocialWindows({ posts }: { posts: CuratedPost[] }) {
       id="social-windows"
       eyebrow="Straight from her accounts"
       title="Ivy's live social windows"
-      intro="Tall, scrollable windows onto the Frog Queen's official TikTok and Instagram. Her captions stay exactly as she wrote them, shown by the platforms themselves."
+      intro="Tall, scrollable windows onto the Frog Queen's official TikTok, Instagram and X. Her captions stay exactly as she wrote them, shown by the platforms themselves."
       tone="lavender"
     >
       <div className="grid gap-8 lg:grid-cols-2">
         {tiktok.length > 0 ? <ProfileWindow meta={TIKTOK} posts={tiktok} /> : null}
         {instagram.length > 0 ? <ProfileWindow meta={INSTAGRAM} posts={instagram} /> : null}
+        <XWindow />
       </div>
     </Section>
   );
 }
+
 
 function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[] }) {
   const label = platformLabel(meta.platform);
