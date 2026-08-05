@@ -12,7 +12,16 @@
 import { publicClient } from "@/lib/media-read.server";
 import { readMarketSnapshot } from "@/lib/market.server";
 
-const RPC_URL = () => process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
+// Public RPCs rate-limit heavy account scans, so we try several in order and
+// keep the first one that answers. SOLANA_RPC_URL (a paid endpoint) wins when set.
+const RPC_URLS = (): string[] => {
+  const configured = process.env['SOLANA_RPC_URL'];
+  return [
+    ...(configured ? [configured] : []),
+    "https://solana-rpc.publicnode.com",
+    "https://api.mainnet-beta.solana.com",
+  ];
+};
 
 const TOKEN_PROGRAM = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 const TOKEN_2022_PROGRAM = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
