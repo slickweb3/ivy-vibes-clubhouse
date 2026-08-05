@@ -177,6 +177,8 @@ async function readAuthorities(mint: string) {
 
 interface SnapshotRow {
   holders: number | null;
+  holder_accounts: number | null;
+  top10_percent: number | null;
   market_cap_usd: number | null;
   captured_at: string;
 }
