@@ -76,14 +76,15 @@ export const Route = createFileRoute("/")({
     ],
   }),
   // Public read model: approved + visible + active items only.
+  // On-chain intel (a slow full account scan) is deliberately NOT awaited here —
+  // it loads client-side after paint so it can never delay first render.
   loader: async (): Promise<HomeData> => {
-    const [media, market, curated, intel] = await Promise.all([
+    const [media, market, curated] = await Promise.all([
       getSiteMedia().catch(() => EMPTY_SITE_MEDIA),
       getMarketSnapshot().catch(() => null),
       getCuratedFeed().catch(() => EMPTY_CURATED_FEED),
-      getTokenIntel().catch(() => null),
     ]);
-    return { media, market, curated, intel };
+    return { media, market, curated };
   },
   component: Home,
   errorComponent: () => (
