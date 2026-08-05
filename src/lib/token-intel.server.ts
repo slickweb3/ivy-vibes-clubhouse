@@ -189,7 +189,7 @@ async function readHistory(mint: string): Promise<SnapshotRow[]> {
   const since = new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString();
   const { data } = await client
     .from("token_metrics_snapshots")
-    .select("holders, market_cap_usd, captured_at")
+    .select("holders, holder_accounts, top10_percent, market_cap_usd, captured_at")
     .eq("mint", mint)
     .gte("captured_at", since)
     .order("captured_at", { ascending: false })
