@@ -12,7 +12,16 @@
 import { publicClient } from "@/lib/media-read.server";
 import { readMarketSnapshot } from "@/lib/market.server";
 
-const RPC_URL = () => process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
+// Public RPCs rate-limit heavy account scans, so we try several in order and
+// keep the first one that answers. SOLANA_RPC_URL (a paid endpoint) wins when set.
+const RPC_URLS = (): string[] => {
+  const configured = process.env['SOLANA_RPC_URL'];
+  return [
+    ...(configured ? [configured] : []),
+    "https://solana-rpc.publicnode.com",
+    "https://api.mainnet-beta.solana.com",
+  ];
+};
 
 const TOKEN_PROGRAM = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 const TOKEN_2022_PROGRAM = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
@@ -68,20 +77,23 @@ const TIMEFRAMES: Array<{ key: TimeframeKey; label: string; hours: number }> = [
 ];
 
 async function rpc<T>(method: string, params: unknown[]): Promise<T | null> {
-  try {
-    const res = await fetch(RPC_URL(), {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-      signal: AbortSignal.timeout(15_000),
-    });
-    if (!res.ok) return null;
-    const json = (await res.json()) as { result?: T; error?: unknown };
-    if (json.error || json.result === undefined) return null;
-    return json.result;
-  } catch {
-    return null;
+  for (const url of RPC_URLS()) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!res.ok) continue;
+      const json = (await res.json()) as { result?: T; error?: unknown };
+      if (json.error || json.result === undefined) continue;
+      return json.result;
+    } catch {
+      continue;
+    }
   }
+  return null;
 }
 
 interface ProgramAccount {
@@ -165,6 +177,8 @@ async function readAuthorities(mint: string) {
 
 interface SnapshotRow {
   holders: number | null;
+  holder_accounts: number | null;
+  top10_percent: number | null;
   market_cap_usd: number | null;
   captured_at: string;
 }
@@ -175,7 +189,7 @@ async function readHistory(mint: string): Promise<SnapshotRow[]> {
   const since = new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString();
   const { data } = await client
     .from("token_metrics_snapshots")
-    .select("holders, market_cap_usd, captured_at")
+    .select("holders, holder_accounts, top10_percent, market_cap_usd, captured_at")
     .eq("mint", mint)
     .gte("captured_at", since)
     .order("captured_at", { ascending: false })
@@ -304,9 +318,32 @@ export async function readTokenIntel(): Promise<TokenIntel> {
   if (!counts) {
     const stale = cache?.intel;
     if (stale && stale.status === "live") return stale;
+    // No in-memory cache (fresh worker): fall back to the newest snapshot we
+    // recorded ourselves, clearly labelled as recorded rather than live.
+    const recorded = history.find((row) => row.holders !== null);
+    if (recorded && recorded.holders !== null) {
+      const minutes = Math.round((Date.now() - new Date(recorded.captured_at).getTime()) / 60_000);
+      const fallback = empty(
+        "live",
+        `Live chain read is rate-limited right now, so these holder figures are our last recorded snapshot (${minutes < 60 ? `${minutes} min` : `${Math.round(minutes / 60)} h`} ago).`,
+        mint,
+      );
+      fallback.holders = recorded.holders;
+      fallback.holderAccounts = recorded.holder_accounts;
+      fallback.top10Percent = recorded.top10_percent;
+      fallback.holderDeltas = buildDeltas(recorded.holders, history);
+      fallback.historyPoints = history.length;
+      fallback.trackingSince = history[history.length - 1]?.captured_at ?? null;
+      fallback.recordedPeakHolders = history.reduce<number | null>(
+        (peak, row) =>
+          row.holders !== null && (peak === null || row.holders > peak) ? row.holders : peak,
+        recorded.holders,
+      );
+      return fallback;
+    }
     return empty(
       "unavailable",
-      "The Solana RPC endpoint is not answering right now, so the holder count is unavailable.",
+      "On-chain holder data is temporarily unavailable — it will refresh automatically.",
       mint,
     );
   }
