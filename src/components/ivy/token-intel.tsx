@@ -66,7 +66,7 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
 
       {hasHolders ? (
         <>
-          <div className="grid grid-cols-2 gap-px bg-charcoal/10 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-px bg-charcoal/10 sm:grid-cols-3">
             <Cell
               label="Holders"
               value={intel.holders!.toLocaleString("en-US")}
@@ -76,11 +76,6 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
               label="Token accounts"
               value={(intel.holderAccounts ?? 0).toLocaleString("en-US")}
               hint="Includes wallets that have sold out"
-            />
-            <Cell
-              label="Top 10 hold"
-              value={pct(intel.top10Percent)}
-              hint="Largest ten accounts, pools included"
             />
             <Cell
               label="Peak holders"
@@ -178,8 +173,8 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
           </div>
 
           <p className="px-4 py-3 text-[0.75rem] leading-relaxed text-charcoal/70">
-            Holder counts include liquidity pools and exchange accounts, so treat “top 10 hold” as a
-            shape, not a verdict. Snapshots are recorded every 15 minutes
+            Holder counts include liquidity pools and exchange accounts. Snapshots are recorded
+            every 15 minutes
             {intel.trackingSince
               ? ` (history since ${new Date(intel.trackingSince).toLocaleDateString("en-US", {
                   month: "short",
