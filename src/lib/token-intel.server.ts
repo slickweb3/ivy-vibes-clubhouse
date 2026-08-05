@@ -37,6 +37,9 @@ export interface HolderDelta {
   percent: number | null;
   /** How old the compared snapshot actually is, in hours. */
   agedHours: number | null;
+  /** True when history is younger than the window, so this covers less time. */
+  partial: boolean;
+
 }
 
 export interface TokenIntel {
