@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from 
 import { scrollToSection } from "@/lib/scroll-to-section";
 import { onScrollFrame } from "@/lib/scroll-observer";
 
-
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import {
@@ -54,7 +53,6 @@ function AnnouncementBar() {
     </div>
   );
 }
-
 
 function JoinTheVibeDialog({
   open,
@@ -128,7 +126,6 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
     return () => window.clearTimeout(timer);
   }, [isHome]);
 
-
   // The shared scroll observer drives both the nav elevation and the
   // reading-progress hairline, and writes the bar through a CSS variable so
   // React never re-renders while scrolling.
@@ -142,7 +139,6 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
       }),
     [],
   );
-
 
   // Highlight the section currently in view.
   useEffect(() => {
@@ -176,8 +172,6 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
     if (scrollToSection(hash)) event.preventDefault();
   };
-
-
 
   return (
     <>
@@ -221,8 +215,6 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
               </a>
             ) : null}
 
-
-
             <Button
               onClick={() => setJoinOpen(true)}
               className="min-h-11 rounded-full bg-pink px-3 font-display text-charcoal pop hover:bg-pink sm:px-4"
@@ -247,7 +239,6 @@ export function SiteNav({ isHome = true }: { isHome?: boolean }) {
             </button>
           </div>
         </nav>
-
 
         <div ref={progressRef} aria-hidden className="scroll-progress h-[3px] w-full" />
 

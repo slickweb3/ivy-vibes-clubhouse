@@ -13,8 +13,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { scrollToSection } from "@/lib/scroll-to-section";
 import { onScrollFrame } from "@/lib/scroll-observer";
 
-
-
 /** Short labels for the pads; ids that are absent are skipped automatically. */
 const RAIL_SECTIONS: { id: string; label: string }[] = [
   { id: "main", label: "Top of the pond" },
@@ -63,21 +61,17 @@ export function SectionRail() {
     return Math.max(0, raw - NAV_OFFSET);
   }, []);
 
-  const leapTo = useCallback(
-    (index: number) => {
-      const entry = padsRef.current[index];
-      if (!entry) return;
-      lockRef.current = Date.now() + 700;
-      setActive(index);
-      if (index === 0) {
-        window.scrollTo({ top: 0, behavior: prefersReduced() ? "auto" : "smooth" });
-        return;
-      }
-      scrollToSection(entry.id);
-    },
-    [],
-  );
-
+  const leapTo = useCallback((index: number) => {
+    const entry = padsRef.current[index];
+    if (!entry) return;
+    lockRef.current = Date.now() + 700;
+    setActive(index);
+    if (index === 0) {
+      window.scrollTo({ top: 0, behavior: prefersReduced() ? "auto" : "smooth" });
+      return;
+    }
+    scrollToSection(entry.id);
+  }, []);
 
   // Track which pad the visitor is currently sitting on.
   useEffect(() => {
@@ -93,18 +87,14 @@ export function SectionRail() {
     });
   }, [pads, topOf]);
 
-
-  const indexFromPointer = useCallback(
-    (clientY: number) => {
-      const rail = railRef.current;
-      if (!rail || padsRef.current.length === 0) return 0;
-      const rect = rail.getBoundingClientRect();
-      const ratio = (clientY - rect.top) / Math.max(1, rect.height);
-      const clamped = Math.min(1, Math.max(0, ratio));
-      return Math.round(clamped * (padsRef.current.length - 1));
-    },
-    [],
-  );
+  const indexFromPointer = useCallback((clientY: number) => {
+    const rail = railRef.current;
+    if (!rail || padsRef.current.length === 0) return 0;
+    const rect = rail.getBoundingClientRect();
+    const ratio = (clientY - rect.top) / Math.max(1, rect.height);
+    const clamped = Math.min(1, Math.max(0, ratio));
+    return Math.round(clamped * (padsRef.current.length - 1));
+  }, []);
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.button !== undefined && event.button > 0) return;
@@ -163,7 +153,10 @@ export function SectionRail() {
           onKeyDown={(event) => {
             if (event.key === "ArrowDown" || event.key === "ArrowUp") {
               event.preventDefault();
-              const next = Math.min(pads.length - 1, Math.max(0, index + (event.key === "ArrowDown" ? 1 : -1)));
+              const next = Math.min(
+                pads.length - 1,
+                Math.max(0, index + (event.key === "ArrowDown" ? 1 : -1)),
+              );
               leapTo(next);
               const rail = railRef.current;
               const buttons = rail?.querySelectorAll<HTMLButtonElement>(".section-rail-pad");
@@ -175,11 +168,7 @@ export function SectionRail() {
           <span aria-hidden className="section-rail-dot" />
         </button>
       ))}
-      <span
-        aria-hidden
-        className="section-rail-tag"
-        data-visible={dragging ? "true" : "false"}
-      >
+      <span aria-hidden className="section-rail-tag" data-visible={dragging ? "true" : "false"}>
         {label}
       </span>
     </div>

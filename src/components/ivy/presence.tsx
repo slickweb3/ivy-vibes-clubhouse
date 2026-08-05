@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { discover } from "@/lib/discoveries";
 import { onScrollFrame } from "@/lib/scroll-observer";
 
-
 /**
  * IvyPresence — the site's ambient "living environment" layer.
  *

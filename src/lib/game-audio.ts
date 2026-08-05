@@ -78,7 +78,6 @@ function noise(dur: number, gain = 0.35, sweepTo = 400) {
   src.start();
 }
 
-
 /** One-shot ocarina tone for interaction cues: scoops into pitch, then glides. */
 function ocarinaCue(from: number, to: number, dur: number, gain: number) {
   const audio = ensure();
@@ -127,13 +126,7 @@ function arp(
  * scheduled a beat ahead, so it stays in time without any audio files.
  * ------------------------------------------------------------------------- */
 
-import {
-  BASS_ROOTS,
-  COUNTER,
-  HARP_SHAPE,
-  MELODY,
-  THEME_ROOT_HZ,
-} from "@/lib/audio/theme";
+import { BASS_ROOTS, COUNTER, HARP_SHAPE, MELODY, THEME_ROOT_HZ } from "@/lib/audio/theme";
 
 const hz = (semi: number) => THEME_ROOT_HZ * Math.pow(2, semi / 12);
 
@@ -164,24 +157,6 @@ function voice(
   osc.connect(env).connect(musicGain);
   osc.start(time);
   osc.stop(time + dur + 0.02);
-}
-
-function hat(time: number, gain: number) {
-  const audio = ctx;
-  if (!audio || !musicGain) return;
-  const frames = Math.floor(audio.sampleRate * 0.05);
-  const buffer = audio.createBuffer(1, frames, audio.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < frames; i += 1) data[i] = (Math.random() * 2 - 1) * (1 - i / frames);
-  const src = audio.createBufferSource();
-  src.buffer = buffer;
-  const filter = audio.createBiquadFilter();
-  filter.type = "highpass";
-  filter.frequency.value = 5200;
-  const env = audio.createGain();
-  env.gain.value = gain;
-  src.connect(filter).connect(env).connect(musicGain);
-  src.start(time);
 }
 
 /** Soft ocarina doubling of the lead: sine core with a blooming vibrato. */
@@ -297,7 +272,8 @@ function scheduleMusic() {
 
     if (intensity > 0.45) {
       const high = COUNTER[i];
-      if (high !== null && i % 8 === 0) voice(t, hz(high), spb * 2.6, "triangle", 0.018 * intensity);
+      if (high !== null && i % 8 === 0)
+        voice(t, hz(high), spb * 2.6, "triangle", 0.018 * intensity);
     }
 
     // foley: frogs answer each phrase, and Ivy signs off every loop

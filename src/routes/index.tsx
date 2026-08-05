@@ -1,3 +1,4 @@
+import { lazy } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getSiteMedia } from "@/lib/site-media.functions";
@@ -20,10 +21,15 @@ import { IvyPhotoRow, heroPhotoUrl } from "@/components/ivy/photo-row";
 import { LiveMarket } from "@/components/ivy/market";
 import { HowToBuy } from "@/components/ivy/how-to-buy";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
-import { PondChat } from "@/components/ivy/chat-box";
-
+import { DeferredMount, SectionSkeleton } from "@/components/ivy/deferred";
 
 import { OwnerCorner, RoyalCourt, FAQ, SiteFooter } from "@/components/ivy/sections-b";
+
+// Wallet-signed chat is purely interactive and sits at the very bottom, so its
+// chunk is fetched only when a reader actually scrolls down to it.
+const PondChat = lazy(() =>
+  import("@/components/ivy/chat-box").then((m) => ({ default: m.PondChat })),
+);
 
 const TITLE = "$ivy — The Official ivy vibing Meme Coin";
 const DESCRIPTION =
@@ -31,7 +37,6 @@ const DESCRIPTION =
 const OG_IMAGE = "https://ivyvibing.com/og-ivy-vibing.jpg";
 const OG_IMAGE_ALT =
   "ivy vibing and $ivy wordmarks beside a photo of Ivy, with the note: community driven meme coin inspired by ivy vibing, fair launch on pump.fun.";
-
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -103,7 +108,6 @@ interface HomeData {
 
 function Home() {
   const data = Route.useLoaderData();
-  const media = data?.media ?? EMPTY_SITE_MEDIA;
   const market = data?.market ?? null;
   const curated = data?.curated ?? EMPTY_CURATED_FEED;
   // Client-only, post-paint: the holder scan can take seconds and must never
@@ -127,7 +131,7 @@ function Home() {
       <AmbientVibes />
       <SiteNav />
       <main id="main">
-        <Hero media={media.hero} market={market} />
+        <Hero market={market} />
         <IvyPhotoRow />
         <MeetIvy />
         <SocialWindows posts={curated.all} />
@@ -139,7 +143,9 @@ function Home() {
         <ArcadeTeaser />
         <OwnerCorner />
         <RoyalCourt />
-        <PondChat />
+        <DeferredMount fallback={<SectionSkeleton height={520} />}>
+          <PondChat />
+        </DeferredMount>
         <FAQ />
       </main>
       <SiteFooter />

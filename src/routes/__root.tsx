@@ -109,7 +109,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "try{var skip=window.matchMedia('(prefers-reduced-motion: reduce)').matches||sessionStorage.getItem('ivy-curtain')==='1';if(skip){var s=document.createElement('style');s.textContent='.ivy-curtain{display:none!important}';document.head.appendChild(s)}else{sessionStorage.setItem('ivy-curtain','1')}}catch(e){}",
       },
       {
-
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
@@ -178,7 +177,6 @@ function RootShell({ children }: { children: ReactNode }) {
     </html>
   );
 }
-
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();

@@ -388,4 +388,3 @@ export const navLinks = [
   { label: "Game", hash: "#arcade" },
   { label: "FAQ", hash: "#faq" },
 ];
-

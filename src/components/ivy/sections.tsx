@@ -40,19 +40,10 @@ import {
 } from "@/config/project";
 import type { MarketSnapshot } from "@/lib/market.server";
 import { MiniChart } from "@/components/ivy/mini-chart";
-import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ Hero */
 
-export function Hero({
-  media,
-  market,
-  curatedHero,
-}: {
-  media?: UnifiedMediaItem | null;
-  market?: MarketSnapshot | null;
-  curatedHero?: CuratedPost | null;
-}) {
+export function Hero({ market }: { market?: MarketSnapshot | null }) {
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden bg-leaf band-leaf">
       <div className="pointer-events-none absolute -top-10 -right-8 hidden opacity-70 sm:block">
@@ -168,7 +159,6 @@ export function FreshFromTheFrogQueen({
   media: SiteMedia;
   curated?: CuratedPost[];
 }) {
-  const { postsPerPlatform } = projectConfig.socialFeed;
   const trackRef = useRef<HTMLUListElement>(null);
 
   const importedPlatforms = [
@@ -176,7 +166,6 @@ export function FreshFromTheFrogQueen({
       key: "instagram" as const,
       label: "Instagram",
       heading: "Latest on Instagram",
-      slotLabel: "Official Ivy Reel",
       posts: media.freshPosts.instagram,
       connection: media.connections.instagram,
     },
@@ -184,7 +173,6 @@ export function FreshFromTheFrogQueen({
       key: "tiktok" as const,
       label: "TikTok",
       heading: "Latest on TikTok",
-      slotLabel: "Official Ivy video",
       posts: media.freshPosts.tiktok,
       connection: media.connections.tiktok,
     },
@@ -249,10 +237,8 @@ export function FreshFromTheFrogQueen({
               key={platform.key}
               label={platform.label}
               heading={platform.heading}
-              slotLabel={platform.slotLabel}
               posts={platform.posts}
               connection={platform.connection}
-              count={postsPerPlatform}
               lastUpdated={media.lastUpdated}
             />
           ))}
@@ -267,18 +253,14 @@ export function FreshFromTheFrogQueen({
 function PlatformFeed({
   label,
   heading,
-  slotLabel,
   posts,
   connection,
-  count,
   lastUpdated,
 }: {
   label: string;
   heading: string;
-  slotLabel: string;
   posts: UnifiedMediaItem[];
   connection: SiteMedia["connections"]["instagram"];
-  count: number;
   lastUpdated: string | null;
 }) {
   const trackRef = useRef<HTMLUListElement>(null);
@@ -289,8 +271,6 @@ function PlatformFeed({
     if (!track) return;
     track.scrollBy({ left: direction * track.clientWidth * 0.85, behavior: "smooth" });
   };
-
-  const slots = 0;
 
   return (
     <div className="rounded-2xl bg-card p-5 pop-static">
@@ -326,16 +306,6 @@ function PlatformFeed({
         {posts.map((post) => (
           <li key={post.key} className="rail-item w-[72%] min-w-0 shrink-0 sm:w-auto">
             <PostCard post={post} />
-          </li>
-        ))}
-        {Array.from({ length: slots }).map((_, index) => (
-          <li key={`slot-${index}`} className="rail-item w-[72%] min-w-0 shrink-0 sm:w-auto">
-            <MediaPlaceholder
-              label={slotLabel}
-              aspect="square"
-              tone={index === 1 ? "lavender" : "leaf"}
-              compact
-            />
           </li>
         ))}
       </ul>
@@ -743,7 +713,6 @@ export function TokenRecord({ market }: { market?: MarketSnapshot }) {
           </div>
         ))}
       </dl>
-
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <StatusChip

@@ -14,7 +14,6 @@ const fallingIvys = [
   { left: "88%", size: "h-16 w-auto", delay: "9s", duration: "64s", mobile: false },
 ];
 
-
 type Sprite = {
   Icon: typeof LeafDoodle;
   left: string;
@@ -180,7 +179,6 @@ export function AmbientVibes() {
           style={{ animationDelay: "13s" }}
         />
       </div>
-
     </>
   );
 }

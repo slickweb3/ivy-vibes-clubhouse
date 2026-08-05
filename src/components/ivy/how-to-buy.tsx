@@ -17,11 +17,19 @@ interface Step {
 }
 
 const TABS: { id: TabId; label: string; blurb: string }[] = [
-  { id: "pumpfun", label: "Buy on pump.fun", blurb: "The fastest route — buy straight on the launch platform." },
-  { id: "phantom", label: "Buy in Phantom", blurb: "Swap inside the Phantom wallet app on your phone or browser." },
+  {
+    id: "pumpfun",
+    label: "Buy on pump.fun",
+    blurb: "The fastest route — buy straight on the launch platform.",
+  },
+  {
+    id: "phantom",
+    label: "Buy in Phantom",
+    blurb: "Swap inside the Phantom wallet app on your phone or browser.",
+  },
 ];
 
-function buildSteps(coinUrl: string, mint: string): Record<TabId, Step[]> {
+function buildSteps(mint: string): Record<TabId, Step[]> {
   return {
     pumpfun: [
       {
@@ -86,7 +94,7 @@ export function HowToBuy() {
   if (!hasVerifiedContract() || !mint) return null;
 
   const coinUrl = projectConfig.tokenomicsUrl ?? "https://pump.fun";
-  const steps = buildSteps(coinUrl, mint)[tab];
+  const steps = buildSteps(mint)[tab];
   const active = TABS.find((entry) => entry.id === tab)!;
 
   const copyMint = async () => {

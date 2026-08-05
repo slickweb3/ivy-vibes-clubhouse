@@ -14,7 +14,6 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import bs58 from "bs58";
 import { Pause, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusChip } from "@/components/ivy/primitives";
@@ -192,6 +191,8 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   const nonceRef = useRef<string | null>(null);
   const jumpRef = useRef<() => void>(() => {});
   const stepRef = useRef<(now: number) => void>(() => {});
+  // finishRun is declared after the loop; the ref keeps the dependency honest.
+  const finishRunRef = useRef<(run: RunState) => void>(() => {});
   const phaseRef = useRef<"idle" | "playing" | "paused" | "over">("idle");
   const bestRef = useRef(0);
   const calmRef = useRef(false);
@@ -595,7 +596,7 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
         run.flash = Math.max(0, run.flash - rawDt * 2);
         draw(run);
         if (run.hitstop <= 0 && run.over) {
-          finishRun(run);
+          finishRunRef.current(run);
           return;
         }
         rafRef.current = requestAnimationFrame(stepRef.current);
@@ -824,29 +825,33 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
   }, []);
 
   stepRef.current = step;
+  finishRunRef.current = finishRun;
 
-  const start = useCallback(async (hopImmediately = false) => {
-    // Never leave a second loop running — that used to double the game speed.
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    gameAudio.unlock();
-    gameAudio.startMusic();
-    // Ivy's world music steps aside so the game theme has the stage.
-    audioScene("hush");
-    runRef.current = freshRun();
-    if (hopImmediately) applyJump(runRef.current);
-    setScore(0);
-    setStatus(null);
-    setPhase("playing");
-    nonceRef.current = null;
-    lastRef.current = performance.now();
-    rafRef.current = requestAnimationFrame(stepRef.current);
-    try {
-      const { nonce } = await beginRun({});
-      nonceRef.current = nonce;
-    } catch {
+  const start = useCallback(
+    async (hopImmediately = false) => {
+      // Never leave a second loop running — that used to double the game speed.
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      gameAudio.unlock();
+      gameAudio.startMusic();
+      // Ivy's world music steps aside so the game theme has the stage.
+      audioScene("hush");
+      runRef.current = freshRun();
+      if (hopImmediately) applyJump(runRef.current);
+      setScore(0);
+      setStatus(null);
+      setPhase("playing");
       nonceRef.current = null;
-    }
-  }, [beginRun]);
+      lastRef.current = performance.now();
+      rafRef.current = requestAnimationFrame(stepRef.current);
+      try {
+        const { nonce } = await beginRun({});
+        nonceRef.current = nonce;
+      } catch {
+        nonceRef.current = null;
+      }
+    },
+    [beginRun],
+  );
 
   const resume = useCallback(() => {
     if (phaseRef.current !== "paused") return;
@@ -1069,6 +1074,8 @@ export function LilyPadLeap({ initialLeaderboard }: { initialLeaderboard: Leader
         `Nonce: ${nonce}`,
       ].join("\n");
       const signed = await provider.signMessage(new TextEncoder().encode(message), "utf8");
+      // Loaded on demand at signing time; the arcade bundle stays lean.
+      const { default: bs58 } = await import("bs58");
       const result = await sendScore({
         data: {
           wallet,

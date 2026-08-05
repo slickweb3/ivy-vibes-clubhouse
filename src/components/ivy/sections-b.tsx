@@ -177,7 +177,6 @@ export function SiteFooter() {
                   }}
                   className="inline-flex min-h-11 items-center text-sm text-cream/80 underline-offset-4 hover:underline"
                 >
-
                   {link.label}
                 </a>
               </li>

@@ -27,15 +27,7 @@ function signed(value: number | null): string {
   return `${value > 0 ? "+" : ""}${value.toLocaleString("en-US")}`;
 }
 
-function Cell({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-}) {
+function Cell({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <div className="bg-card px-4 py-3">
       <p className="font-display text-[0.65rem] tracking-wide text-charcoal/60 uppercase">
@@ -115,7 +107,6 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
               </div>
             ))}
           </div>
-
 
           <div className="mt-px grid grid-cols-2 gap-px bg-charcoal/10 sm:grid-cols-4">
             <Cell

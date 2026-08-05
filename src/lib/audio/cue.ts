@@ -1,4 +1,9 @@
-import type { AudioCue, AudioScene } from "./engine";
+/** Which part of the world we are in — used to colour the arrangement. */
+export type AudioScene = "landing" | "explore" | "game" | "hush";
+
+/** Every interaction sound the site can ask for. */
+export type AudioCue =
+  "press" | "hover" | "open" | "reward" | "discovery" | "jump" | "land" | "fail";
 
 /** Anything that can answer a cue — the site player, or nothing at all. */
 export type AudioSink = {
@@ -10,9 +15,9 @@ export type AudioSink = {
  * Weightless bridge to the sound engine.
  *
  * Any component can fire a cue through this module: it costs nothing when the
- * visitor has not opted in (the engine module is never even fetched), and the
- * calls become real audio the moment they do. `import type` keeps the engine
- * out of every bundle that only wants to make a noise.
+ * visitor has not opted in (`@/lib/game-audio` is never even fetched), and the
+ * calls become real audio the moment they do. Only types cross this boundary,
+ * so a component that merely wants to make a noise pulls in no audio code.
  */
 let engine: AudioSink | null = null;
 
