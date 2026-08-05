@@ -85,6 +85,11 @@ export function XWindow() {
         setState("failed");
         return;
       }
+      // X's widget can hang on a slow or rate-limited syndication response, so
+      // we stop waiting after 10s and offer a direct link instead.
+      const giveUp = window.setTimeout(() => {
+        if (!cancelled) setState((prev) => (prev === "loading" ? "failed" : prev));
+      }, 10_000);
       try {
         const rendered = await twttr.widgets.createTimeline(
           { sourceType: "profile", screenName: X_HANDLE },
@@ -95,12 +100,15 @@ export function XWindow() {
         setState(rendered ? "ready" : "failed");
       } catch {
         if (!cancelled) setState("failed");
+      } finally {
+        window.clearTimeout(giveUp);
       }
     })();
     return () => {
       cancelled = true;
     };
   }, [state]);
+
 
   return (
     <div
