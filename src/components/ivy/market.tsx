@@ -149,7 +149,7 @@ function ChartFrame({ src, pairUrl }: { src: string; pairUrl: string | null }) {
           observer.disconnect();
         }
       },
-      { rootMargin: "600px 0px" },
+      { rootMargin: "1200px 0px" },
     );
     observer.observe(node);
     return () => observer.disconnect();
@@ -171,7 +171,6 @@ function ChartFrame({ src, pairUrl }: { src: string; pairUrl: string | null }) {
           src={src}
           title="$ivy live price chart on Dexscreener"
           className="h-full w-full border-0"
-          loading="lazy"
           onLoad={() => setReady(true)}
           allow="clipboard-write"
         />
