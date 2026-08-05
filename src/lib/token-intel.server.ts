@@ -315,6 +315,26 @@ export async function readTokenIntel(): Promise<TokenIntel> {
     readHistory(mint),
   ]);
 
+  // Market-shape ratios come from Dexscreener, not the RPC, so they stay
+  // available even when the account scan is rate-limited.
+  const mcapNow = market.marketCapUsd ?? market.fdvUsd;
+  const txnsNow = (market.txns24h?.buys ?? 0) + (market.txns24h?.sells ?? 0);
+  const applyMarket = (target: TokenIntel, holderCount: number | null) => {
+    target.liquidityToMcapPercent =
+      market.liquidityUsd !== null && mcapNow ? (market.liquidityUsd / mcapNow) * 100 : null;
+    target.turnover24hPercent =
+      market.volume24hUsd !== null && mcapNow ? (market.volume24hUsd / mcapNow) * 100 : null;
+    target.buyPressurePercent =
+      txnsNow > 0 ? ((market.txns24h?.buys ?? 0) / txnsNow) * 100 : null;
+    target.avgTradeUsd =
+      txnsNow > 0 && market.volume24hUsd !== null ? market.volume24hUsd / txnsNow : null;
+    target.volumePerHolderUsd =
+      holderCount && holderCount > 0 && market.volume24hUsd !== null
+        ? market.volume24hUsd / holderCount
+        : null;
+    target.mcapPerHolderUsd = holderCount && holderCount > 0 && mcapNow ? mcapNow / holderCount : null;
+  };
+
   if (!counts) {
     const stale = cache?.intel;
     if (stale && stale.status === "live") return stale;
@@ -334,6 +354,9 @@ export async function readTokenIntel(): Promise<TokenIntel> {
       fallback.holderDeltas = buildDeltas(recorded.holders, history);
       fallback.historyPoints = history.length;
       fallback.trackingSince = history[history.length - 1]?.captured_at ?? null;
+      fallback.mintAuthorityRevoked = authorities.mintAuthorityRevoked;
+      fallback.freezeAuthorityRevoked = authorities.freezeAuthorityRevoked;
+      applyMarket(fallback, recorded.holders);
       fallback.recordedPeakHolders = history.reduce<number | null>(
         (peak, row) =>
           row.holders !== null && (peak === null || row.holders > peak) ? row.holders : peak,
@@ -347,6 +370,7 @@ export async function readTokenIntel(): Promise<TokenIntel> {
       mint,
     );
   }
+
 
   const mcap = market.marketCapUsd ?? market.fdvUsd;
   const txns = (market.txns24h?.buys ?? 0) + (market.txns24h?.sells ?? 0);
