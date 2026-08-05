@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { getSiteMedia } from "@/lib/site-media.functions";
 import { getMarketSnapshot } from "@/lib/market.functions";
 import { getTokenIntel } from "@/lib/token-intel.functions";
-import type { TokenIntel } from "@/lib/token-intel.server";
 import { getCuratedFeed } from "@/lib/curated.functions";
 import { EMPTY_CURATED_FEED, type CuratedFeed } from "@/types/curated";
 import type { MarketSnapshot } from "@/lib/market.server";
