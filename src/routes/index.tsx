@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { getSiteMedia } from "@/lib/site-media.functions";
 import { getMarketSnapshot } from "@/lib/market.functions";
 import { getTokenIntel } from "@/lib/token-intel.functions";
-import type { TokenIntel } from "@/lib/token-intel.server";
 import { getCuratedFeed } from "@/lib/curated.functions";
 import { EMPTY_CURATED_FEED, type CuratedFeed } from "@/types/curated";
 import type { MarketSnapshot } from "@/lib/market.server";
@@ -76,14 +76,15 @@ export const Route = createFileRoute("/")({
     ],
   }),
   // Public read model: approved + visible + active items only.
+  // On-chain intel (a slow full account scan) is deliberately NOT awaited here —
+  // it loads client-side after paint so it can never delay first render.
   loader: async (): Promise<HomeData> => {
-    const [media, market, curated, intel] = await Promise.all([
+    const [media, market, curated] = await Promise.all([
       getSiteMedia().catch(() => EMPTY_SITE_MEDIA),
       getMarketSnapshot().catch(() => null),
       getCuratedFeed().catch(() => EMPTY_CURATED_FEED),
-      getTokenIntel().catch(() => null),
     ]);
-    return { media, market, curated, intel };
+    return { media, market, curated };
   },
   component: Home,
   errorComponent: () => (
@@ -98,7 +99,6 @@ interface HomeData {
   media: SiteMedia;
   market: MarketSnapshot | null;
   curated: CuratedFeed;
-  intel: TokenIntel | null;
 }
 
 function Home() {
@@ -106,7 +106,15 @@ function Home() {
   const media = data?.media ?? EMPTY_SITE_MEDIA;
   const market = data?.market ?? null;
   const curated = data?.curated ?? EMPTY_CURATED_FEED;
-  const intel = data?.intel ?? null;
+  // Client-only, post-paint: the holder scan can take seconds and must never
+  // block SSR or hydration.
+  const { data: intel = null } = useQuery({
+    queryKey: ["token-intel"],
+    queryFn: () => getTokenIntel(),
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
 
   return (
     <CookieConsentProvider>
