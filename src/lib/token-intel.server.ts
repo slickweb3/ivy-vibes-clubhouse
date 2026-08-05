@@ -77,20 +77,23 @@ const TIMEFRAMES: Array<{ key: TimeframeKey; label: string; hours: number }> = [
 ];
 
 async function rpc<T>(method: string, params: unknown[]): Promise<T | null> {
-  try {
-    const res = await fetch(RPC_URL(), {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-      signal: AbortSignal.timeout(15_000),
-    });
-    if (!res.ok) return null;
-    const json = (await res.json()) as { result?: T; error?: unknown };
-    if (json.error || json.result === undefined) return null;
-    return json.result;
-  } catch {
-    return null;
+  for (const url of RPC_URLS()) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!res.ok) continue;
+      const json = (await res.json()) as { result?: T; error?: unknown };
+      if (json.error || json.result === undefined) continue;
+      return json.result;
+    } catch {
+      continue;
+    }
   }
+  return null;
 }
 
 interface ProgramAccount {
