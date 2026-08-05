@@ -36,6 +36,7 @@ import { Route as AuthenticatedAdminTokenRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminWinnersRouteImport } from './routes/_authenticated/admin.winners'
 import { Route as ApiPublicCuratedPostsRouteImport } from './routes/api/public/curated-posts'
 import { Route as ApiPublicMarketRouteImport } from './routes/api/public/market'
+import { Route as ApiPublicTokenSnapshotRouteImport } from './routes/api/public/token-snapshot'
 import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
 import { Route as ApiPublicOauthProviderActionRouteImport } from './routes/api/public/oauth/$provider.$action'
 
@@ -178,6 +179,11 @@ const ApiPublicMarketRoute = ApiPublicMarketRouteImport.update({
   path: '/api/public/market',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicTokenSnapshotRoute = ApiPublicTokenSnapshotRouteImport.update({
+  id: '/api/public/token-snapshot',
+  path: '/api/public/token-snapshot',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksSocialSyncRoute =
   ApiPublicHooksSocialSyncRouteImport.update({
     id: '/api/public/hooks/social-sync',
@@ -217,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/admin/winners': typeof AuthenticatedAdminWinnersRoute
   '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
+  '/api/public/token-snapshot': typeof ApiPublicTokenSnapshotRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/admin/winners': typeof AuthenticatedAdminWinnersRoute
   '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
+  '/api/public/token-snapshot': typeof ApiPublicTokenSnapshotRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
@@ -279,6 +287,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/winners': typeof AuthenticatedAdminWinnersRoute
   '/api/public/curated-posts': typeof ApiPublicCuratedPostsRoute
   '/api/public/market': typeof ApiPublicMarketRoute
+  '/api/public/token-snapshot': typeof ApiPublicTokenSnapshotRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/oauth/$provider/$action': typeof ApiPublicOauthProviderActionRoute
@@ -311,6 +320,7 @@ export interface FileRouteTypes {
     | '/admin/winners'
     | '/api/public/curated-posts'
     | '/api/public/market'
+    | '/api/public/token-snapshot'
     | '/admin/'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
@@ -341,6 +351,7 @@ export interface FileRouteTypes {
     | '/admin/winners'
     | '/api/public/curated-posts'
     | '/api/public/market'
+    | '/api/public/token-snapshot'
     | '/admin'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
@@ -372,6 +383,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/winners'
     | '/api/public/curated-posts'
     | '/api/public/market'
+    | '/api/public/token-snapshot'
     | '/_authenticated/admin/'
     | '/api/public/hooks/social-sync'
     | '/api/public/oauth/$provider/$action'
@@ -396,6 +408,7 @@ export interface RootRouteChildren {
   LegalSlugRoute: typeof LegalSlugRoute
   ApiPublicCuratedPostsRoute: typeof ApiPublicCuratedPostsRoute
   ApiPublicMarketRoute: typeof ApiPublicMarketRoute
+  ApiPublicTokenSnapshotRoute: typeof ApiPublicTokenSnapshotRoute
   ApiPublicHooksSocialSyncRoute: typeof ApiPublicHooksSocialSyncRoute
   ApiPublicOauthProviderActionRoute: typeof ApiPublicOauthProviderActionRoute
 }
@@ -591,6 +604,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMarketRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/token-snapshot': {
+      id: '/api/public/token-snapshot'
+      path: '/api/public/token-snapshot'
+      fullPath: '/api/public/token-snapshot'
+      preLoaderRoute: typeof ApiPublicTokenSnapshotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/social-sync': {
       id: '/api/public/hooks/social-sync'
       path: '/api/public/hooks/social-sync'
@@ -654,6 +674,7 @@ const rootRouteChildren: RootRouteChildren = {
   LegalSlugRoute: LegalSlugRoute,
   ApiPublicCuratedPostsRoute: ApiPublicCuratedPostsRoute,
   ApiPublicMarketRoute: ApiPublicMarketRoute,
+  ApiPublicTokenSnapshotRoute: ApiPublicTokenSnapshotRoute,
   ApiPublicHooksSocialSyncRoute: ApiPublicHooksSocialSyncRoute,
   ApiPublicOauthProviderActionRoute: ApiPublicOauthProviderActionRoute,
 }

@@ -37,6 +37,9 @@ export interface HolderDelta {
   percent: number | null;
   /** How old the compared snapshot actually is, in hours. */
   agedHours: number | null;
+  /** True when history is younger than the window, so this covers less time. */
+  partial: boolean;
+
 }
 
 export interface TokenIntel {
@@ -230,17 +233,27 @@ async function recordSnapshot(
 
 function buildDeltas(current: number | null, history: SnapshotRow[]): HolderDelta[] {
   const now = Date.now();
+  const withHolders = history.filter((row) => row.holders !== null);
+  const oldest = withHolders[withHolders.length - 1];
   return TIMEFRAMES.map(({ key, label, hours }) => {
-    if (current === null) return { key, label, from: null, change: null, percent: null, agedHours: null };
+    if (current === null) return { key, label, from: null, change: null, percent: null, agedHours: null, partial: false };
     const target = now - hours * 3600_000;
     // Newest snapshot at or before the window start; tolerate a stale-by-half window.
-    const match = history.find(
-      (row) =>
-        row.holders !== null &&
-        new Date(row.captured_at).getTime() <= target + 5 * 60_000,
+    let match = withHolders.find(
+      (row) => new Date(row.captured_at).getTime() <= target + 5 * 60_000,
     );
+    let partial = false;
+    // No snapshot that old yet: fall back to the oldest one we have, but only
+    // when it covers at least half the window, and say it is partial.
+    if (!match && oldest) {
+      const coveredHours = (now - new Date(oldest.captured_at).getTime()) / 3600_000;
+      if (coveredHours >= hours * 0.5) {
+        match = oldest;
+        partial = true;
+      }
+    }
     if (!match || match.holders === null) {
-      return { key, label, from: null, change: null, percent: null, agedHours: null };
+      return { key, label, from: null, change: null, percent: null, agedHours: null, partial: false };
     }
     const from = match.holders;
     const agedHours = (now - new Date(match.captured_at).getTime()) / 3600_000;
@@ -251,9 +264,11 @@ function buildDeltas(current: number | null, history: SnapshotRow[]): HolderDelt
       change: current - from,
       percent: from > 0 ? ((current - from) / from) * 100 : null,
       agedHours,
+      partial,
     };
   });
 }
+
 
 const TTL_MS = 5 * 60_000;
 let cache: { at: number; intel: TokenIntel } | null = null;
@@ -271,6 +286,8 @@ function empty(status: TokenIntel["status"], message: string | null, mint: strin
       change: null,
       percent: null,
       agedHours: null,
+      partial: false,
+
     })),
     top10Percent: null,
     mintAuthorityRevoked: null,

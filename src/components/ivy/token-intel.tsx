@@ -110,9 +110,17 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
                     : `${delta.percent > 0 ? "+" : ""}${delta.percent.toFixed(1)}%`}
                 </p>
                 <p className="text-[0.7rem] text-charcoal/65">{signed(delta.change)}</p>
+                {delta.partial && delta.agedHours !== null ? (
+                  <p className="text-[0.6rem] leading-tight text-charcoal/55">
+                    {delta.agedHours < 24
+                      ? `only ${Math.round(delta.agedHours)}h tracked`
+                      : `only ${Math.round(delta.agedHours / 24)}d tracked`}
+                  </p>
+                ) : null}
               </div>
             ))}
           </div>
+
 
           <div className="mt-px grid grid-cols-2 gap-px bg-charcoal/10 sm:grid-cols-4">
             <Cell
