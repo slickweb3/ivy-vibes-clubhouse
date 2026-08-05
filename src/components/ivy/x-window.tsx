@@ -7,10 +7,10 @@ import { projectConfig, isSet } from "@/config/project";
 /**
  * Ivy's official X window.
  *
- * This renders X's OWN embedded timeline widget for @Ivyvibing — nothing is
- * scraped, copied or re-hosted, and no API credentials are involved. The
- * widget script is only fetched once the window scrolls into view, so it never
- * costs anything on first paint.
+ * This renders X's OWN syndicated timeline for @Ivyvibing in a plain iframe —
+ * nothing is scraped, copied or re-hosted, and no API credentials are
+ * involved. Using the syndication URL directly avoids widgets.js, which often
+ * silently fails to mount (ad blockers, script timeouts, tracking guards).
  */
 
 const X_HANDLE = "Ivyvibing";
@@ -18,45 +18,31 @@ const X_PROFILE_URL = isSet(projectConfig.socials.x)
   ? projectConfig.socials.x
   : `https://x.com/${X_HANDLE}`;
 const X_COMMUNITY_URL = projectConfig.socials.community;
-const WIDGET_SRC = "https://platform.twitter.com/widgets.js";
 
-interface Twttr {
-  widgets: {
-    createTimeline: (
-      source: { sourceType: "profile"; screenName: string },
-      target: HTMLElement,
-      options?: Record<string, unknown>,
-    ) => Promise<HTMLElement | undefined>;
-  };
-}
-
-let widgetPromise: Promise<Twttr | null> | null = null;
-
-/** Loads X's widgets.js exactly once per page. */
-function loadWidgets(): Promise<Twttr | null> {
-  if (widgetPromise) return widgetPromise;
-  widgetPromise = new Promise<Twttr | null>((resolve) => {
-    const existing = (window as unknown as { twttr?: Twttr }).twttr;
-    if (existing?.widgets?.createTimeline) {
-      resolve(existing);
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = WIDGET_SRC;
-    script.async = true;
-    script.onload = () => resolve((window as unknown as { twttr?: Twttr }).twttr ?? null);
-    script.onerror = () => resolve(null);
-    document.head.appendChild(script);
+function timelineSrc(origin: string) {
+  const params = new URLSearchParams({
+    dnt: "true",
+    embedId: "twitter-widget-ivy",
+    frame: "false",
+    hideBorder: "true",
+    hideFooter: "true",
+    hideHeader: "true",
+    hideScrollBar: "false",
+    lang: "en",
+    origin,
+    theme: "light",
+    transparent: "true",
+    widgetsVersion: "2615f7e52b7e0:1702314776716",
   });
-  return widgetPromise;
+  return `https://syndication.twitter.com/srv/timeline-profile/screen-name/${X_HANDLE}?${params.toString()}`;
 }
 
 export function XWindow() {
   const hostRef = useRef<HTMLDivElement>(null);
-  const frameRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<"idle" | "loading" | "ready" | "failed">("idle");
+  const [src, setSrc] = useState<string | null>(null);
 
-  // Only fetch the third-party widget when the window is actually near the
+  // Only mount the third-party frame when the window is actually near the
   // viewport — same discipline as the Instagram / TikTok embeds.
   useEffect(() => {
     const node = hostRef.current;
@@ -64,50 +50,28 @@ export function XWindow() {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
+          setSrc(timelineSrc(window.location.origin));
           setState("loading");
           observer.disconnect();
         }
       },
-      { rootMargin: "600px 0px" },
+      { rootMargin: "800px 0px" },
     );
     observer.observe(node);
     return () => observer.disconnect();
   }, [state]);
 
+  // X's syndication response can hang; stop waiting after 20s and offer a
+  // direct link instead of spinning forever.
   useEffect(() => {
     if (state !== "loading") return;
-    let cancelled = false;
-    void (async () => {
-      const twttr = await loadWidgets();
-      const target = frameRef.current;
-      if (cancelled || !target) return;
-      if (!twttr?.widgets?.createTimeline) {
-        setState("failed");
-        return;
-      }
-      // X's widget can hang on a slow or rate-limited syndication response, so
-      // we stop waiting after 10s and offer a direct link instead.
-      const giveUp = window.setTimeout(() => {
-        if (!cancelled) setState((prev) => (prev === "loading" ? "failed" : prev));
-      }, 10_000);
-      try {
-        const rendered = await twttr.widgets.createTimeline(
-          { sourceType: "profile", screenName: X_HANDLE },
-          target,
-          { theme: "light", chrome: "noheader nofooter transparent", height: 640, dnt: true },
-        );
-        if (cancelled) return;
-        setState(rendered ? "ready" : "failed");
-      } catch {
-        if (!cancelled) setState("failed");
-      } finally {
-        window.clearTimeout(giveUp);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
+    const giveUp = window.setTimeout(() => {
+      setState((prev) => (prev === "loading" ? "failed" : prev));
+    }, 20_000);
+    return () => window.clearTimeout(giveUp);
   }, [state]);
+
+
 
 
   return (
@@ -193,13 +157,22 @@ export function XWindow() {
       </div>
 
       <div className="relative">
-        <div
-          role="region"
-          aria-label="Ivy's official X timeline"
-          className="pond-scroll h-[28rem] overflow-y-auto overscroll-contain px-3 py-4 sm:h-[38rem] sm:px-5 lg:h-[44rem]"
-        >
-          <div ref={frameRef} />
+        <div className="h-[28rem] overflow-hidden sm:h-[38rem] lg:h-[44rem]">
+          {src ? (
+            <iframe
+              src={src}
+              title="Ivy's official X timeline"
+              loading="lazy"
+              scrolling="yes"
+              referrerPolicy="strict-origin-when-cross-origin"
+              sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+              className="h-full w-full border-0"
+              onLoad={() => setState("ready")}
+              onError={() => setState("failed")}
+            />
+          ) : null}
         </div>
+
 
         {/* Overlay, so the loading / fallback state sits inside the viewport
             rather than being pushed below the (tall) widget container. */}
