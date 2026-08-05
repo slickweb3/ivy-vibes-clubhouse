@@ -286,6 +286,8 @@ function empty(status: TokenIntel["status"], message: string | null, mint: strin
       change: null,
       percent: null,
       agedHours: null,
+      partial: false,
+
     })),
     top10Percent: null,
     mintAuthorityRevoked: null,
