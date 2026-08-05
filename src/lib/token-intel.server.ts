@@ -316,9 +316,32 @@ export async function readTokenIntel(): Promise<TokenIntel> {
   if (!counts) {
     const stale = cache?.intel;
     if (stale && stale.status === "live") return stale;
+    // No in-memory cache (fresh worker): fall back to the newest snapshot we
+    // recorded ourselves, clearly labelled as recorded rather than live.
+    const recorded = history.find((row) => row.holders !== null);
+    if (recorded && recorded.holders !== null) {
+      const minutes = Math.round((Date.now() - new Date(recorded.captured_at).getTime()) / 60_000);
+      const fallback = empty(
+        "live",
+        `Live chain read is rate-limited right now, so these holder figures are our last recorded snapshot (${minutes < 60 ? `${minutes} min` : `${Math.round(minutes / 60)} h`} ago).`,
+        mint,
+      );
+      fallback.holders = recorded.holders;
+      fallback.holderAccounts = recorded.holder_accounts;
+      fallback.top10Percent = recorded.top10_percent;
+      fallback.holderDeltas = buildDeltas(recorded.holders, history);
+      fallback.historyPoints = history.length;
+      fallback.trackingSince = history[history.length - 1]?.captured_at ?? null;
+      fallback.recordedPeakHolders = history.reduce<number | null>(
+        (peak, row) =>
+          row.holders !== null && (peak === null || row.holders > peak) ? row.holders : peak,
+        recorded.holders,
+      );
+      return fallback;
+    }
     return empty(
       "unavailable",
-      "The Solana RPC endpoint is not answering right now, so the holder count is unavailable.",
+      "On-chain holder data is temporarily unavailable — it will refresh automatically.",
       mint,
     );
   }
