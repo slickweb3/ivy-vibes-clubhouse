@@ -46,7 +46,9 @@ export function XWindow() {
             >
               @{X_HANDLE}
             </a>
-            <p className="mt-1 text-sm text-charcoal/80">The Frog Queen&apos;s official X profile.</p>
+            <p className="mt-1 text-sm text-charcoal/80">
+              The Frog Queen&apos;s official X profile.
+            </p>
           </div>
         </div>
 
@@ -61,7 +63,9 @@ export function XWindow() {
               <span className="font-display text-xl">Official profile</span>
               <ExternalLinkIcon aria-hidden className="h-5 w-5 shrink-0" />
             </span>
-            <span className="text-sm text-charcoal/75">See Ivy&apos;s newest posts directly on X</span>
+            <span className="text-sm text-charcoal/75">
+              See Ivy&apos;s newest posts directly on X
+            </span>
           </a>
           {isSet(X_COMMUNITY_URL) ? (
             <a

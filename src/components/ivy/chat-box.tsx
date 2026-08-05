@@ -8,7 +8,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import bs58 from "bs58";
 import { Section } from "@/components/ivy/primitives";
 import { Button } from "@/components/ui/button";
 import { getChat, sendChatMessage, startChatMessage } from "@/lib/chat.functions";
@@ -101,6 +100,9 @@ export function PondChat() {
         `Nonce: ${nonce}`,
       ].join("\n");
       const signed = await provider.signMessage(new TextEncoder().encode(message), "utf8");
+      // base58 is only needed the moment someone actually signs, so it is
+      // fetched then instead of riding along in the first-load bundle.
+      const { default: bs58 } = await import("bs58");
       return postMessage({
         data: { wallet, body, nonce, signature: bs58.encode(signed.signature) },
       });

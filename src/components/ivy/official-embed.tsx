@@ -30,7 +30,6 @@ function releaseEmbedSlot(release: () => void) {
   if (index >= 0) mountedEmbeds.splice(index, 1);
 }
 
-
 /**
  * Renders one curated post using the platform's OWN official embed.
  *
@@ -117,8 +116,6 @@ export function OfficialSocialEmbed({
   useEffect(() => {
     if (!inView && playing) setPlaying(false);
   }, [inView, playing]);
-
-
 
   // TikTok gives us its own official poster image, so the card shows a real
   // picture straight away and the video opens in TikTok's player on tap.

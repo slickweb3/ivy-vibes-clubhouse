@@ -59,11 +59,14 @@ export function chatChallenge(input: { wallet: string; nonce: string; body: stri
 
 /** Collapse whitespace and drop control characters; keeps emoji intact. */
 export function cleanBody(raw: string): string {
-  return raw
-    .replace(/[\u0000-\u001f\u007f\u200b-\u200f\u2028\u2029]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, MAX_MESSAGE_LENGTH);
+  return (
+    raw
+      // eslint-disable-next-line no-control-regex -- stripping control chars is the point
+      .replace(/[\u0000-\u001f\u007f\u200b-\u200f\u2028\u2029]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, MAX_MESSAGE_LENGTH)
+  );
 }
 
 export async function readChat(limit = 50): Promise<ChatMessage[]> {

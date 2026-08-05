@@ -88,7 +88,6 @@ export function SocialWindows({ posts }: { posts: CuratedPost[] }) {
   );
 }
 
-
 function ProfileWindow({ meta, posts }: { meta: ProfileMeta; posts: CuratedPost[] }) {
   const label = platformLabel(meta.platform);
 

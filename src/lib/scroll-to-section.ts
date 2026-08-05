@@ -2,8 +2,7 @@ const NAV_OFFSET = 84;
 
 function prefersReduced() {
   return (
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 }
 
@@ -18,8 +17,7 @@ export function scrollToSection(hash: string) {
   const node = document.getElementById(id);
   if (!node) return false;
 
-  const target = () =>
-    Math.max(0, node.getBoundingClientRect().top + window.scrollY - NAV_OFFSET);
+  const target = () => Math.max(0, node.getBoundingClientRect().top + window.scrollY - NAV_OFFSET);
 
   const distance = Math.abs(target() - window.scrollY);
   // Short hops animate; long hops jump instantly, which is both snappier and
@@ -37,7 +35,6 @@ export function scrollToSection(hash: string) {
     if (Date.now() < deadline) window.requestAnimationFrame(settle);
   };
   window.setTimeout(() => window.requestAnimationFrame(settle), smooth ? 500 : 0);
-
 
   if (window.location.hash !== `#${id}`) {
     window.history.replaceState(null, "", `#${id}`);

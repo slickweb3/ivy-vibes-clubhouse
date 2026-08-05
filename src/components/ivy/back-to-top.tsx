@@ -19,7 +19,6 @@ export function BackToTop() {
     [],
   );
 
-
   return (
     <button
       type="button"

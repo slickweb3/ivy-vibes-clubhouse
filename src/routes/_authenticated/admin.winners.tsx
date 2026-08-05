@@ -41,7 +41,9 @@ function WinnerCard({
 }) {
   const queryClient = useQueryClient();
   const save = useServerFn(recordPayout);
-  const [tokens, setTokens] = useState(String(winner.tokens || (winner.place === 1 ? defaultTokens : 0)));
+  const [tokens, setTokens] = useState(
+    String(winner.tokens || (winner.place === 1 ? defaultTokens : 0)),
+  );
   const [tx, setTx] = useState(winner.txSignature ?? "");
   const [copied, setCopied] = useState(false);
 
@@ -185,9 +187,7 @@ function WinnersPage() {
         </div>
       </section>
 
-      {query.isLoading ? (
-        <p className="text-charcoal/80">Loading months…</p>
-      ) : null}
+      {query.isLoading ? <p className="text-charcoal/80">Loading months…</p> : null}
 
       {data?.seasons.length === 0 ? (
         <section className="rounded-2xl bg-card p-5 pop-static">

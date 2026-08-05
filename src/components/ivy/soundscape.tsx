@@ -2,8 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import { useRouterState } from "@tanstack/react-router";
 import { discover, DISCOVERY_EVENT } from "@/lib/discoveries";
-import { registerAudioEngine } from "@/lib/audio/cue";
-import type { AudioCue } from "@/lib/audio/engine";
+import { registerAudioEngine, type AudioCue } from "@/lib/audio/cue";
 
 /**
  * IvySoundscape — one button, one soundtrack.
@@ -114,7 +113,6 @@ export function IvySoundscape() {
       window.removeEventListener(DISCOVERY_EVENT, onDiscovery);
     };
   }, [active]);
-
 
   const toggle = useCallback(() => {
     setOn((was) => {

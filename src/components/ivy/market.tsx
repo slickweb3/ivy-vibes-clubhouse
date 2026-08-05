@@ -215,8 +215,6 @@ export function LiveMarket({
     setFetchedLabel(new Date(snapshot.fetchedAt).toLocaleTimeString());
   }, [snapshot.fetchedAt]);
 
-
-
   return (
     <Section
       id="live-chart"
@@ -246,7 +244,6 @@ export function LiveMarket({
       {/* Holder count + timeframe deltas + market-shape ratios, right beside the chart. */}
       {intel && intel.status !== "disabled" ? <TokenIntelPanel intel={intel} /> : null}
 
-
       {/* Always-open live chart, mounted once it is close to the viewport so the
           iframe never competes with the intro or first paint. */}
       <div className="mt-8 overflow-hidden rounded-2xl bg-card p-4 pop-static">
@@ -271,8 +268,6 @@ export function LiveMarket({
           </p>
         )}
       </div>
-
-
 
       <p className="mt-5 rounded-xl bg-pink p-4 font-display text-sm text-charcoal pop-static">
         Market data is informational only, not financial advice. Always verify the mint address on

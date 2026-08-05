@@ -15,7 +15,7 @@ import { readMarketSnapshot } from "@/lib/market.server";
 // Public RPCs rate-limit heavy account scans, so we try several in order and
 // keep the first one that answers. SOLANA_RPC_URL (a paid endpoint) wins when set.
 const RPC_URLS = (): string[] => {
-  const configured = process.env['SOLANA_RPC_URL'];
+  const configured = process.env["SOLANA_RPC_URL"];
   return [
     ...(configured ? [configured] : []),
     "https://solana-rpc.publicnode.com",
@@ -39,7 +39,6 @@ export interface HolderDelta {
   agedHours: number | null;
   /** True when history is younger than the window, so this covers less time. */
   partial: boolean;
-
 }
 
 export interface TokenIntel {
@@ -162,7 +161,13 @@ async function countHolders(mint: string): Promise<{
 interface MintAccountInfo {
   value?: {
     data?: {
-      parsed?: { info?: { decimals?: number; mintAuthority?: string | null; freezeAuthority?: string | null } };
+      parsed?: {
+        info?: {
+          decimals?: number;
+          mintAuthority?: string | null;
+          freezeAuthority?: string | null;
+        };
+      };
     };
   };
 }
@@ -236,7 +241,16 @@ function buildDeltas(current: number | null, history: SnapshotRow[]): HolderDelt
   const withHolders = history.filter((row) => row.holders !== null);
   const oldest = withHolders[withHolders.length - 1];
   return TIMEFRAMES.map(({ key, label, hours }) => {
-    if (current === null) return { key, label, from: null, change: null, percent: null, agedHours: null, partial: false };
+    if (current === null)
+      return {
+        key,
+        label,
+        from: null,
+        change: null,
+        percent: null,
+        agedHours: null,
+        partial: false,
+      };
     const target = now - hours * 3600_000;
     // Newest snapshot at or before the window start; tolerate a stale-by-half window.
     let match = withHolders.find(
@@ -253,7 +267,15 @@ function buildDeltas(current: number | null, history: SnapshotRow[]): HolderDelt
       }
     }
     if (!match || match.holders === null) {
-      return { key, label, from: null, change: null, percent: null, agedHours: null, partial: false };
+      return {
+        key,
+        label,
+        from: null,
+        change: null,
+        percent: null,
+        agedHours: null,
+        partial: false,
+      };
     }
     const from = match.holders;
     const agedHours = (now - new Date(match.captured_at).getTime()) / 3600_000;
@@ -269,11 +291,14 @@ function buildDeltas(current: number | null, history: SnapshotRow[]): HolderDelt
   });
 }
 
-
 const TTL_MS = 5 * 60_000;
 let cache: { at: number; intel: TokenIntel } | null = null;
 
-function empty(status: TokenIntel["status"], message: string | null, mint: string | null): TokenIntel {
+function empty(
+  status: TokenIntel["status"],
+  message: string | null,
+  mint: string | null,
+): TokenIntel {
   return {
     status,
     mint,
@@ -287,7 +312,6 @@ function empty(status: TokenIntel["status"], message: string | null, mint: strin
       percent: null,
       agedHours: null,
       partial: false,
-
     })),
     top10Percent: null,
     mintAuthorityRevoked: null,
@@ -341,15 +365,15 @@ export async function readTokenIntel(): Promise<TokenIntel> {
       market.liquidityUsd !== null && mcapNow ? (market.liquidityUsd / mcapNow) * 100 : null;
     target.turnover24hPercent =
       market.volume24hUsd !== null && mcapNow ? (market.volume24hUsd / mcapNow) * 100 : null;
-    target.buyPressurePercent =
-      txnsNow > 0 ? ((market.txns24h?.buys ?? 0) / txnsNow) * 100 : null;
+    target.buyPressurePercent = txnsNow > 0 ? ((market.txns24h?.buys ?? 0) / txnsNow) * 100 : null;
     target.avgTradeUsd =
       txnsNow > 0 && market.volume24hUsd !== null ? market.volume24hUsd / txnsNow : null;
     target.volumePerHolderUsd =
       holderCount && holderCount > 0 && market.volume24hUsd !== null
         ? market.volume24hUsd / holderCount
         : null;
-    target.mcapPerHolderUsd = holderCount && holderCount > 0 && mcapNow ? mcapNow / holderCount : null;
+    target.mcapPerHolderUsd =
+      holderCount && holderCount > 0 && mcapNow ? mcapNow / holderCount : null;
   };
 
   if (!counts) {
@@ -387,7 +411,6 @@ export async function readTokenIntel(): Promise<TokenIntel> {
       mint,
     );
   }
-
 
   const mcap = market.marketCapUsd ?? market.fdvUsd;
   const txns = (market.txns24h?.buys ?? 0) + (market.txns24h?.sells ?? 0);
@@ -427,7 +450,8 @@ export async function readTokenIntel(): Promise<TokenIntel> {
       holders > 0 && market.volume24hUsd !== null ? market.volume24hUsd / holders : null,
     mcapPerHolderUsd: holders > 0 && mcap ? mcap / holders : null,
     recordedPeakHolders: history.reduce<number | null>(
-      (peak, row) => (row.holders !== null && (peak === null || row.holders > peak) ? row.holders : peak),
+      (peak, row) =>
+        row.holders !== null && (peak === null || row.holders > peak) ? row.holders : peak,
       holders,
     ),
     recordedPeakMarketCapUsd: history.reduce<number | null>(

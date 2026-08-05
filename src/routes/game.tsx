@@ -46,7 +46,6 @@ export const Route = createFileRoute("/game")({
     links: [{ rel: "canonical", href: "https://ivyvibing.com/game" }],
   }),
 
-
   loader: async () => ({ board: await getLeaderboard().catch(emptyBoard) }),
   component: GamePage,
   errorComponent: () => (

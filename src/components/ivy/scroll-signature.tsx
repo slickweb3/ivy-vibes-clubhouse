@@ -44,7 +44,6 @@ export function ScrollSignature() {
     window.addEventListener("pointerup", onPointerUp, { passive: true });
     window.addEventListener("pointercancel", onPointerUp, { passive: true });
 
-
     return () => {
       if (idleTimer) clearTimeout(idleTimer);
       stop();

@@ -2,7 +2,7 @@
  * "The Legend of Frog Queen Ivy" — the single melodic source of truth.
  *
  * One theme, one key, one arrangement skeleton, shared by the arcade synth
- * (`src/lib/game-audio.ts`) and the site soundscape (`src/lib/audio/engine.ts`)
+ * (`src/lib/game-audio.ts`), which powers both the arcade and the site player,
  * so the whole world sings the same tune. The game plays it buoyant; the site
  * plays it slower, sparser and quieter — same melody, calmer performance.
  *
@@ -16,6 +16,7 @@ export const THEME_ROOT_HZ = 146.83;
 const R = null;
 
 /** 64 sixteenth-notes: the heroic call, its lift, the answer, then home. */
+// prettier-ignore
 export const MELODY: (number | null)[] = [
   // bar 1 — the call
   19, R, R, 14, R, 12, R, 14, 19, R, R, R, 21, R, 19, R,
@@ -28,6 +29,7 @@ export const MELODY: (number | null)[] = [
 ];
 
 /** High counter-melody, saved for the fastest part of a run. */
+// prettier-ignore
 export const COUNTER: (number | null)[] = [
   31, R, R, R, 26, R, R, R, 31, R, R, R, 33, R, R, R,
   29, R, R, R, 24, R, R, R, 29, R, R, R, 31, R, R, R,
