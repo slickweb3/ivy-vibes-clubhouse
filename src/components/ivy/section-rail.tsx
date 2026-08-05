@@ -20,7 +20,7 @@ const RAIL_SECTIONS: { id: string; label: string }[] = [
   { id: "main", label: "Top of the pond" },
   { id: "ivy-photos", label: "Frame by frame" },
   { id: "meet-ivy", label: "Meet Ivy" },
-  { id: "social-windows", label: "Instagram & TikTok" },
+  { id: "social-windows", label: "Instagram, TikTok & X" },
   { id: "the-lore", label: "The lore" },
   { id: "why-ivy", label: "Why $ivy" },
   { id: "token-record", label: "Token record" },
