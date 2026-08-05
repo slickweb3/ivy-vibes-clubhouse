@@ -173,8 +173,8 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
           </div>
 
           <p className="px-4 py-3 text-[0.75rem] leading-relaxed text-charcoal/70">
-            Holder counts include liquidity pools and exchange accounts, so treat “top 10 hold” as a
-            shape, not a verdict. Snapshots are recorded every 15 minutes
+            Holder counts include liquidity pools and exchange accounts. Snapshots are recorded
+            every 15 minutes
             {intel.trackingSince
               ? ` (history since ${new Date(intel.trackingSince).toLocaleDateString("en-US", {
                   month: "short",
