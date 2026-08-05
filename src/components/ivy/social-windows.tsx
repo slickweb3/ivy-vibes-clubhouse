@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpIcon, ExternalLinkIcon } from "lucide-react";
 import { OfficialSocialEmbed } from "./official-embed";
+import { XWindow } from "./x-window";
+
 import { Section, Sticker } from "./primitives";
 import { FrogDoodle, PawDoodle } from "./doodles";
 import { projectConfig } from "@/config/project";
