@@ -152,11 +152,18 @@ async function countHolders(mint: string): Promise<{
       }
     }
   }
+  // Some public RPCs answer a mint-filtered scan with an empty list instead of
+  // an error when the token program is excluded from their secondary indexes.
+  // A live mint with real trading never has zero accounts, so treat that as
+  // "blocked" rather than recording a false 0 (which would also produce a fake
+  // -100% delta on every timeframe).
+  if (accounts === 0 || holders === 0) return null;
   balances.sort((a, b) => b - a);
   const rawTotal = balances.reduce((sum, value) => sum + value, 0);
   const rawTop10 = balances.slice(0, 10).reduce((sum, value) => sum + value, 0);
   return { holders, accounts, rawTotal, rawTop10 };
 }
+
 
 interface MintAccountInfo {
   value?: {
