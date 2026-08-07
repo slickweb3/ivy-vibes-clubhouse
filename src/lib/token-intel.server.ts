@@ -396,15 +396,20 @@ export async function readTokenIntel(): Promise<TokenIntel> {
     const recorded = history.find((row) => row.holders !== null);
     if (recorded && recorded.holders !== null) {
       const minutes = Math.round((Date.now() - new Date(recorded.captured_at).getTime()) / 60_000);
+      const agedH = (Date.now() - new Date(recorded.captured_at).getTime()) / 3600_000;
       const fallback = empty(
         "live",
-        `Live chain read is rate-limited right now, so these holder figures are our last recorded snapshot (${minutes < 60 ? `${minutes} min` : `${Math.round(minutes / 60)} h`} ago).`,
+        `Public chain endpoints are refusing the holder scan right now, so this holder figure is our last recorded snapshot (${minutes < 60 ? `${minutes} min` : `${Math.round(minutes / 60)} h`} ago). Timeframe changes stay blank until a live read succeeds.`,
         mint,
       );
       fallback.holders = recorded.holders;
       fallback.holderAccounts = recorded.holder_accounts;
       fallback.top10Percent = recorded.top10_percent;
-      fallback.holderDeltas = buildDeltas(recorded.holders, history);
+      // Deltas would compare a stale figure against the same stale series, so
+      // they'd read as "0% change" — leave them blank instead of implying calm.
+      fallback.holderDeltas =
+        agedH <= 1 ? buildDeltas(recorded.holders, history) : fallback.holderDeltas;
+
       fallback.historyPoints = history.length;
       fallback.trackingSince = history[history.length - 1]?.captured_at ?? null;
       fallback.mintAuthorityRevoked = authorities.mintAuthorityRevoked;
