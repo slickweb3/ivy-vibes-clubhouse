@@ -99,9 +99,11 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
                 <p className="text-[0.7rem] text-charcoal/65">{signed(delta.change)}</p>
                 {delta.partial && delta.agedHours !== null ? (
                   <p className="text-[0.6rem] leading-tight text-charcoal/55">
-                    {delta.agedHours < 24
-                      ? `only ${Math.round(delta.agedHours)}h tracked`
-                      : `only ${Math.round(delta.agedHours / 24)}d tracked`}
+                    {delta.agedHours < 1
+                      ? `vs ${Math.round(delta.agedHours * 60)}m ago`
+                      : delta.agedHours < 48
+                        ? `vs ${Math.round(delta.agedHours)}h ago`
+                        : `vs ${Math.round(delta.agedHours / 24)}d ago`}
                   </p>
                 ) : null}
               </div>

@@ -256,15 +256,11 @@ function buildDeltas(current: number | null, history: SnapshotRow[]): HolderDelt
     let match = withHolders.find(
       (row) => new Date(row.captured_at).getTime() <= target + 5 * 60_000,
     );
-    let partial = false;
     // No snapshot that old yet: fall back to the oldest one we have, but only
-    // when it covers at least half the window, and say it is partial.
+    // when it covers at least half the window.
     if (!match && oldest) {
       const coveredHours = (now - new Date(oldest.captured_at).getTime()) / 3600_000;
-      if (coveredHours >= hours * 0.5) {
-        match = oldest;
-        partial = true;
-      }
+      if (coveredHours >= hours * 0.5) match = oldest;
     }
     if (!match || match.holders === null) {
       return {
@@ -279,6 +275,10 @@ function buildDeltas(current: number | null, history: SnapshotRow[]): HolderDelt
     }
     const from = match.holders;
     const agedHours = (now - new Date(match.captured_at).getTime()) / 3600_000;
+    // Flag the window whenever the snapshot we compared against is meaningfully
+    // older or newer than the window it stands in for, so the UI can say what
+    // it actually measured instead of implying an exact 1h/24h figure.
+    const partial = Math.abs(agedHours - hours) > Math.max(hours * 0.25, 0.5);
     return {
       key,
       label,
@@ -290,6 +290,7 @@ function buildDeltas(current: number | null, history: SnapshotRow[]): HolderDelt
     };
   });
 }
+
 
 const TTL_MS = 5 * 60_000;
 let cache: { at: number; intel: TokenIntel } | null = null;
