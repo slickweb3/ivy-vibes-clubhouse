@@ -224,7 +224,11 @@ async function recordSnapshot(
   newestAt: string | null,
 ) {
   if (newestAt && Date.now() - new Date(newestAt).getTime() < 15 * 60 * 1000) return;
+  // Never write a holder-less or zero row: the timeframe grid reads these
+  // snapshots as fact, so a bad row shows up as a fake swing forever.
+  if (!intel.holders || intel.holders <= 0) return;
   try {
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("token_metrics_snapshots").insert({
       mint,
