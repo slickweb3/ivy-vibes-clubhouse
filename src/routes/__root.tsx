@@ -80,8 +80,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "twitter:description",
         content:
           "Meet Ivy, the internet's Short Spine Queen and Frog Queen. Explore her story, watch official Ivy videos and follow the upcoming $ivy community project.",
+      // Google Search Console ownership proof for ivyvibing.com — must stay
+      // server-rendered in the root <head> for Google to read it.
+      {
+        name: "google-site-verification",
+        content: "A_xt0d-kNxeCGTnL4PFCB7BaP4Gb21ZzcYbbHYShW5s",
       },
     ],
+
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
