@@ -48,8 +48,13 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-charcoal/10 px-4 py-3">
         <h3 className="font-display text-lg text-charcoal">Holders &amp; on-chain health</h3>
         <p className="text-xs text-charcoal/70">
-          {hasHolders ? "Solana RPC · refreshed every 5 min" : "Waiting on chain data"}
+          {!hasHolders
+            ? "Waiting on chain data"
+            : intel.message
+              ? "Last recorded snapshot"
+              : "Solana RPC · refreshed every 5 min"}
         </p>
+
       </div>
 
       {intel.message ? (
