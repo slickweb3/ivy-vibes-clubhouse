@@ -239,10 +239,8 @@ async function buildMarketSnapshot(): Promise<MarketSnapshot> {
     provider: "dexscreener",
     config,
     pairUrl: best.url ?? (pairAddress ? `https://dexscreener.com/${chain}/${pairAddress}` : null),
-    // Only embed=1&theme=dark are safe: adding trades=0/info=0 leaves the
-    // Dexscreener iframe stuck on "Loading pair…" forever (verified in browser).
     chartEmbedUrl: pairAddress
-      ? `https://dexscreener.com/${chain}/${pairAddress}?embed=1&theme=dark`
+      ? `https://dexscreener.com/${chain}/${pairAddress}?embed=1&theme=dark&info=0`
       : null,
     dexId: best.dexId ?? null,
     priceUsd: numOf(best.priceUsd),
