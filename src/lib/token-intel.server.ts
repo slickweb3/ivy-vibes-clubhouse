@@ -282,7 +282,12 @@ async function recordSnapshot(
   }
 }
 
-function buildDeltas(current: number | null, history: SnapshotRow[]): HolderDelta[] {
+function buildDeltas(
+  current: number | null,
+  history: SnapshotRow[],
+  /** Indexer-published change percentages, used ahead of our own snapshots. */
+  published: Partial<Record<TimeframeKey, number | undefined>> = {},
+): HolderDelta[] {
   const now = Date.now();
   const withHolders = history.filter((row) => row.holders !== null);
   const oldest = withHolders[withHolders.length - 1];
@@ -297,7 +302,21 @@ function buildDeltas(current: number | null, history: SnapshotRow[]): HolderDelt
         agedHours: null,
         partial: false,
       };
+    const percent = published[key];
+    if (typeof percent === "number" && Number.isFinite(percent)) {
+      const from = Math.round(current / (1 + percent / 100));
+      return {
+        key,
+        label,
+        from,
+        change: current - from,
+        percent,
+        agedHours: hours,
+        partial: false,
+      };
+    }
     const target = now - hours * 3600_000;
+
     // Newest snapshot at or before the window start; tolerate a stale-by-half window.
     let match = withHolders.find(
       (row) => new Date(row.captured_at).getTime() <= target + 5 * 60_000,
