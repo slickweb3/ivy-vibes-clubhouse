@@ -416,59 +416,54 @@ export async function readTokenIntel(): Promise<TokenIntel> {
     );
   }
 
-  const [counts, authorities, history] = await Promise.all([
-    countHolders(mint),
+  // The account scan only works on an indexing (paid) endpoint. Public RPCs
+  // answer "excluded from account secondary indexes", so we don't waste the
+  // request unless SOLANA_RPC_URL is configured.
+  const canScan = Boolean(process.env["SOLANA_RPC_URL"]);
+  const [counts, authorities, history, jup] = await Promise.all([
+    canScan ? countHolders(mint) : Promise.resolve(null),
     readAuthorities(mint),
     readHistory(mint),
+    readJupiterToken(mint),
   ]);
 
-  // Market-shape ratios come from Dexscreener, not the RPC, so they stay
-  // available even when the account scan is rate-limited.
-  const mcapNow = market.marketCapUsd ?? market.fdvUsd;
-  const txnsNow = (market.txns24h?.buys ?? 0) + (market.txns24h?.sells ?? 0);
-  const applyMarket = (target: TokenIntel, holderCount: number | null) => {
-    target.liquidityToMcapPercent =
-      market.liquidityUsd !== null && mcapNow ? (market.liquidityUsd / mcapNow) * 100 : null;
-    target.turnover24hPercent =
-      market.volume24hUsd !== null && mcapNow ? (market.volume24hUsd / mcapNow) * 100 : null;
-    target.buyPressurePercent = txnsNow > 0 ? ((market.txns24h?.buys ?? 0) / txnsNow) * 100 : null;
-    target.avgTradeUsd =
-      txnsNow > 0 && market.volume24hUsd !== null ? market.volume24hUsd / txnsNow : null;
-    target.volumePerHolderUsd =
-      holderCount && holderCount > 0 && market.volume24hUsd !== null
-        ? market.volume24hUsd / holderCount
-        : null;
-    target.mcapPerHolderUsd =
-      holderCount && holderCount > 0 && mcapNow ? mcapNow / holderCount : null;
-  };
+  const mcap = market.marketCapUsd ?? market.fdvUsd;
+  const txns = (market.txns24h?.buys ?? 0) + (market.txns24h?.sells ?? 0);
 
-  if (!counts) {
+  // Holders: our own scan when we have an indexing RPC, otherwise Jupiter's
+  // indexer (a real published count, not an estimate).
+  const holders = counts?.holders ?? jup?.holderCount ?? null;
+
+  if (holders === null) {
     const stale = cache?.intel;
     if (stale && stale.status === "live") return stale;
-    // No in-memory cache (fresh worker): fall back to the newest snapshot we
-    // recorded ourselves, clearly labelled as recorded rather than live.
     const recorded = history.find((row) => row.holders !== null);
     if (recorded && recorded.holders !== null) {
       const minutes = Math.round((Date.now() - new Date(recorded.captured_at).getTime()) / 60_000);
-      const agedH = (Date.now() - new Date(recorded.captured_at).getTime()) / 3600_000;
       const fallback = empty(
         "live",
-        `Public chain endpoints are refusing the holder scan right now, so this holder figure is our last recorded snapshot (${minutes < 60 ? `${minutes} min` : `${Math.round(minutes / 60)} h`} ago). Timeframe changes stay blank until a live read succeeds.`,
+        `Live holder data is unavailable right now, so this figure is our last recorded snapshot (${minutes < 60 ? `${minutes} min` : `${Math.round(minutes / 60)} h`} ago). Timeframe changes stay blank until a live read succeeds.`,
         mint,
       );
       fallback.holders = recorded.holders;
       fallback.holderAccounts = recorded.holder_accounts;
-      fallback.top10Percent = recorded.top10_percent;
-      // Deltas would compare a stale figure against the same stale series, so
-      // they'd read as "0% change" — leave them blank instead of implying calm.
-      fallback.holderDeltas =
-        agedH <= 1 ? buildDeltas(recorded.holders, history) : fallback.holderDeltas;
-
       fallback.historyPoints = history.length;
       fallback.trackingSince = history[history.length - 1]?.captured_at ?? null;
       fallback.mintAuthorityRevoked = authorities.mintAuthorityRevoked;
       fallback.freezeAuthorityRevoked = authorities.freezeAuthorityRevoked;
-      applyMarket(fallback, recorded.holders);
+      fallback.liquidityToMcapPercent =
+        market.liquidityUsd !== null && mcap ? (market.liquidityUsd / mcap) * 100 : null;
+      fallback.turnover24hPercent =
+        market.volume24hUsd !== null && mcap ? (market.volume24hUsd / mcap) * 100 : null;
+      fallback.buyPressurePercent =
+        txns > 0 ? ((market.txns24h?.buys ?? 0) / txns) * 100 : null;
+      fallback.avgTradeUsd =
+        txns > 0 && market.volume24hUsd !== null ? market.volume24hUsd / txns : null;
+      fallback.volumePerHolderUsd =
+        recorded.holders > 0 && market.volume24hUsd !== null
+          ? market.volume24hUsd / recorded.holders
+          : null;
+      fallback.mcapPerHolderUsd = recorded.holders > 0 && mcap ? mcap / recorded.holders : null;
       fallback.recordedPeakHolders = history.reduce<number | null>(
         (peak, row) =>
           row.holders !== null && (peak === null || row.holders > peak) ? row.holders : peak,
@@ -483,18 +478,17 @@ export async function readTokenIntel(): Promise<TokenIntel> {
     );
   }
 
-  const mcap = market.marketCapUsd ?? market.fdvUsd;
-  const txns = (market.txns24h?.buys ?? 0) + (market.txns24h?.sells ?? 0);
-  const holders = counts.holders;
-  // Concentration and circulating supply come from the same account scan, so
-  // they never disagree with the holder count and need no extra RPC call.
-  const top10Percent = counts.rawTotal > 0 ? (counts.rawTop10 / counts.rawTotal) * 100 : null;
+  const top10Percent =
+    counts && counts.rawTotal > 0
+      ? (counts.rawTop10 / counts.rawTotal) * 100
+      : (jup?.audit?.topHoldersPercentage ?? null);
+  const decimals = authorities.decimals ?? jup?.decimals ?? null;
   const circulatingSupply =
-    authorities.decimals !== null ? counts.rawTotal / 10 ** authorities.decimals : null;
+    counts && decimals !== null ? counts.rawTotal / 10 ** decimals : (jup?.circSupply ?? null);
 
   await recordSnapshot(
     mint,
-    { holders, accounts: counts.accounts, top10Percent },
+    { holders, accounts: counts?.accounts ?? null, top10Percent },
     market,
     history[0]?.captured_at ?? null,
   );
@@ -505,12 +499,20 @@ export async function readTokenIntel(): Promise<TokenIntel> {
     status: "live",
     mint,
     holders,
-    holderAccounts: counts.accounts,
-    holderDeltas: buildDeltas(holders, history),
+    holderAccounts: counts?.accounts ?? null,
+    // Short windows come from Jupiter's published holder change; 7d/30d come
+    // from the snapshots we record ourselves.
+    holderDeltas: buildDeltas(holders, history, {
+      h1: jup?.stats1h?.holderChange,
+      h6: jup?.stats6h?.holderChange,
+      h24: jup?.stats24h?.holderChange,
+    }),
     top10Percent,
     circulatingSupply,
-    mintAuthorityRevoked: authorities.mintAuthorityRevoked,
-    freezeAuthorityRevoked: authorities.freezeAuthorityRevoked,
+    mintAuthorityRevoked:
+      authorities.mintAuthorityRevoked ?? jup?.audit?.mintAuthorityDisabled ?? null,
+    freezeAuthorityRevoked:
+      authorities.freezeAuthorityRevoked ?? jup?.audit?.freezeAuthorityDisabled ?? null,
     liquidityToMcapPercent:
       market.liquidityUsd !== null && mcap ? (market.liquidityUsd / mcap) * 100 : null,
     turnover24hPercent:
@@ -541,3 +543,4 @@ export async function readTokenIntel(): Promise<TokenIntel> {
   cache = { at: Date.now(), intel };
   return intel;
 }
+
