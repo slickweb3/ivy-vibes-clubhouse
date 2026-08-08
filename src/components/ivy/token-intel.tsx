@@ -89,9 +89,10 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
             <p className="font-display text-sm text-charcoal">Holder change by timeframe</p>
             <p className="mt-0.5 text-[0.75rem] text-charcoal/65">
               {anyHistory
-                ? "Compared against our own recorded snapshots — no estimates."
-                : "Tracking just started, so longer windows fill in as snapshots are recorded."}
+                ? "1h / 6h / 24h come from live on-chain holder tracking; 7d and 30d compare against our own recorded snapshots."
+                : "1h / 6h / 24h are live; 7d and 30d fill in as our own snapshots are recorded."}
             </p>
+
           </div>
           <div className="mt-3 grid grid-cols-5 gap-px bg-charcoal/10">
             {intel.holderDeltas.map((delta) => (
