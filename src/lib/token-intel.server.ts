@@ -190,6 +190,40 @@ async function readAuthorities(mint: string) {
   };
 }
 
+/**
+ * Jupiter's public token endpoint. It runs its own indexer, so it answers the
+ * holder question that free RPCs refuse, and it publishes real 1h/6h/24h
+ * holder change percentages measured against its own history.
+ */
+interface JupToken {
+  id: string;
+  decimals?: number;
+  circSupply?: number;
+  holderCount?: number;
+  stats1h?: { holderChange?: number };
+  stats6h?: { holderChange?: number };
+  stats24h?: { holderChange?: number };
+  audit?: {
+    mintAuthorityDisabled?: boolean;
+    freezeAuthorityDisabled?: boolean;
+    topHoldersPercentage?: number;
+  };
+}
+
+async function readJupiterToken(mint: string): Promise<JupToken | null> {
+  try {
+    const res = await fetch(
+      `https://lite-api.jup.ag/tokens/v2/search?query=${encodeURIComponent(mint)}`,
+      { headers: { accept: "application/json" }, signal: AbortSignal.timeout(7_000) },
+    );
+    if (!res.ok) return null;
+    const list = (await res.json()) as JupToken[];
+    return Array.isArray(list) ? (list.find((token) => token.id === mint) ?? null) : null;
+  } catch {
+    return null;
+  }
+}
+
 interface SnapshotRow {
   holders: number | null;
   holder_accounts: number | null;
@@ -197,6 +231,7 @@ interface SnapshotRow {
   market_cap_usd: number | null;
   captured_at: string;
 }
+
 
 async function readHistory(mint: string): Promise<SnapshotRow[]> {
   const client = publicClient();
