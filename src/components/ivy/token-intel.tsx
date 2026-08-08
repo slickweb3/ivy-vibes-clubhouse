@@ -52,7 +52,7 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
             ? "Waiting on chain data"
             : intel.message
               ? "Last recorded snapshot"
-              : "Solana RPC · refreshed every 5 min"}
+              : "Live on-chain · refreshed every 5 min"}
         </p>
 
       </div>
@@ -69,11 +69,13 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
               value={intel.holders!.toLocaleString("en-US")}
               hint="Wallets with a non-zero $ivy balance"
             />
-            <Cell
-              label="Token accounts"
-              value={(intel.holderAccounts ?? 0).toLocaleString("en-US")}
-              hint="Includes wallets that have sold out"
-            />
+            {intel.holderAccounts !== null ? (
+              <Cell
+                label="Token accounts"
+                value={intel.holderAccounts.toLocaleString("en-US")}
+                hint="Includes wallets that have sold out"
+              />
+            ) : null}
             <Cell
               label="Peak holders"
               value={(intel.recordedPeakHolders ?? intel.holders!).toLocaleString("en-US")}
@@ -81,14 +83,16 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
             />
           </div>
 
+
           {/* Timeframe holder movement */}
           <div className="border-t border-charcoal/10 px-4 pt-4">
             <p className="font-display text-sm text-charcoal">Holder change by timeframe</p>
             <p className="mt-0.5 text-[0.75rem] text-charcoal/65">
               {anyHistory
-                ? "Compared against our own recorded snapshots — no estimates."
-                : "Tracking just started, so longer windows fill in as snapshots are recorded."}
+                ? "1h / 6h / 24h come from live on-chain holder tracking; 7d and 30d compare against our own recorded snapshots."
+                : "1h / 6h / 24h are live; 7d and 30d fill in as our own snapshots are recorded."}
             </p>
+
           </div>
           <div className="mt-3 grid grid-cols-5 gap-px bg-charcoal/10">
             {intel.holderDeltas.map((delta) => (
