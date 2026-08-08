@@ -52,7 +52,7 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
             ? "Waiting on chain data"
             : intel.message
               ? "Last recorded snapshot"
-              : "Solana RPC · refreshed every 5 min"}
+              : "Live on-chain · refreshed every 5 min"}
         </p>
 
       </div>
@@ -69,17 +69,20 @@ export function TokenIntelPanel({ intel }: { intel: TokenIntel }) {
               value={intel.holders!.toLocaleString("en-US")}
               hint="Wallets with a non-zero $ivy balance"
             />
-            <Cell
-              label="Token accounts"
-              value={(intel.holderAccounts ?? 0).toLocaleString("en-US")}
-              hint="Includes wallets that have sold out"
-            />
+            {intel.holderAccounts !== null ? (
+              <Cell
+                label="Token accounts"
+                value={intel.holderAccounts.toLocaleString("en-US")}
+                hint="Includes wallets that have sold out"
+              />
+            ) : null}
             <Cell
               label="Peak holders"
               value={(intel.recordedPeakHolders ?? intel.holders!).toLocaleString("en-US")}
               hint="Highest we have recorded on this site"
             />
           </div>
+
 
           {/* Timeframe holder movement */}
           <div className="border-t border-charcoal/10 px-4 pt-4">
