@@ -140,8 +140,18 @@ function ChartFrame({ src, pairUrl }: { src: string; pairUrl: string | null }) {
   const [slow, setSlow] = useState(false);
 
   useEffect(() => {
+    if (mounted) return;
     const node = holderRef.current;
-    if (!node || mounted) return;
+    // Desktop has memory to spare: mount immediately so the chart is already
+    // there when the reader arrives, and so a missed observer callback can
+    // never leave the panel spinning forever.
+    const wide =
+      typeof window !== "undefined" &&
+      (window.innerWidth >= 1024 || typeof IntersectionObserver === "undefined");
+    if (!node || wide) {
+      setMounted(true);
+      return;
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
@@ -164,7 +174,7 @@ function ChartFrame({ src, pairUrl }: { src: string; pairUrl: string | null }) {
   return (
     <div
       ref={holderRef}
-      className="relative mt-3 aspect-[3/4] w-full overflow-hidden rounded-xl bg-ivy/95 sm:aspect-[16/9]"
+      className="relative mt-3 h-[68vh] max-h-[560px] min-h-[380px] w-full overflow-hidden rounded-xl bg-ivy/95 sm:h-[480px] lg:h-[560px]"
     >
       {mounted ? (
         <iframe
@@ -172,6 +182,8 @@ function ChartFrame({ src, pairUrl }: { src: string; pairUrl: string | null }) {
           title="$ivy live price chart on Dexscreener"
           className="h-full w-full border-0"
           onLoad={() => setReady(true)}
+          loading="eager"
+          referrerPolicy="no-referrer-when-downgrade"
           allow="clipboard-write"
         />
       ) : null}
