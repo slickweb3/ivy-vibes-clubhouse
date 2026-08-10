@@ -142,7 +142,7 @@ export function LivePulse({
             onClick={() => scrollToSection("how-to-buy")}
             className="inline-flex min-h-11 items-center rounded-full bg-frog px-5 font-display text-sm text-charcoal pop"
           >
-            How to buy <span className="lowercase">$ivy</span>
+            How to buy{" "}<span className="lowercase">$ivy</span>
           </button>
           <Link
             to="/"
