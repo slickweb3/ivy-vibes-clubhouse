@@ -239,8 +239,10 @@ async function buildMarketSnapshot(): Promise<MarketSnapshot> {
     provider: "dexscreener",
     config,
     pairUrl: best.url ?? (pairAddress ? `https://dexscreener.com/${chain}/${pairAddress}` : null),
+    // Chart-only embed: no info panel, no trades table, no left toolbar, so the
+    // candles fill the frame on desktop instead of being squeezed into a strip.
     chartEmbedUrl: pairAddress
-      ? `https://dexscreener.com/${chain}/${pairAddress}?embed=1&theme=dark&info=0`
+      ? `https://dexscreener.com/${chain}/${pairAddress}?embed=1&loadChartSettings=0&trades=0&tabs=0&info=0&chartLeftToolbar=0&chartTimeframesToolbar=0&chartTheme=dark&theme=dark&chartStyle=1&chartType=usd&interval=15`
       : null,
     dexId: best.dexId ?? null,
     priceUsd: numOf(best.priceUsd),
