@@ -132,6 +132,7 @@ function Home() {
       <SiteNav />
       <main id="main">
         <Hero market={market} />
+        <LivePulse snapshot={market} intel={intel} />
         <IvyPhotoRow />
         <MeetIvy />
         <SocialWindows posts={curated.all} />
