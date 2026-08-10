@@ -19,6 +19,7 @@ import { Hero, MeetIvy, TheLore, WhyIvy, TokenRecord } from "@/components/ivy/se
 import { SocialWindows } from "@/components/ivy/social-windows";
 import { IvyPhotoRow, heroPhotoUrl } from "@/components/ivy/photo-row";
 import { LiveMarket } from "@/components/ivy/market";
+import { LivePulse } from "@/components/ivy/live-pulse";
 import { HowToBuy } from "@/components/ivy/how-to-buy";
 import { ArcadeTeaser } from "@/components/ivy/arcade-teaser";
 import { DeferredMount, SectionSkeleton } from "@/components/ivy/deferred";
