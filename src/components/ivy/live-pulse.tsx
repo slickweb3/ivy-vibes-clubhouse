@@ -64,7 +64,7 @@ export function LivePulse({
   const live = snapshot?.status === "live";
   const change = snapshot?.priceChange24h ?? null;
   const up = (change ?? 0) >= 0;
-  const holders = intel?.holderCount ?? null;
+  const holders = intel?.holders ?? null;
   const mintRevoked = intel?.mintAuthorityRevoked === true;
   const freezeRevoked = intel?.freezeAuthorityRevoked === true;
 
