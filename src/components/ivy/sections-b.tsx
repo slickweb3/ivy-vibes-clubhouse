@@ -213,9 +213,17 @@ export function SiteFooter() {
 
       <div className="border-t border-cream/15">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-xs text-cream/70 sm:px-6">
-          <p>
-            © {new Date().getFullYear()} {projectConfig.projectName}. Not financial advice.
-          </p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <p>
+              © {new Date().getFullYear()} {projectConfig.projectName}. Not financial advice.
+            </p>
+            <a
+              href="mailto:slickdotsol@gmail.com"
+              className="text-cream/80 underline-offset-4 hover:text-cream hover:underline"
+            >
+              Contact: slickdotsol@gmail.com
+            </a>
+          </div>
           <Sticker tone="frog">Short Spine. Big Vibes.</Sticker>
         </div>
       </div>
